@@ -9,7 +9,7 @@
 # =====================================================================
 # Cloudflare のダッシュボードの Worker 名と同じにする
 # （GitHub からのビルドは自動でダッシュボードの名前に合わせられますが、ずれないように同じにしておく）
-name = "corpseskintoolpage"
+name = "mayosbedrocktool"
 main = "src/index.js"
 compatibility_date = "2025-09-01"
 # WebSocket の圧縮（permessage-deflate）を使わない。
@@ -26,7 +26,7 @@ binding = "ASSETS"
 # この URL は、サイトのファイルより先に Bot（src/index.js）が受け取る
 #   /v/<接続コード> … Minecraft の /wsserver（WebSocket）・ブラウザでひらくと接続チェック
 #   /ws/<接続キー> … 接続キーそのままでつなぐとき
-#   /api/…        … 設定ページ・BDS アドオン・サイトから
+#   /api/…         … 設定ページ・BDS アドオン・サイトから
 #   /interactions … Discord のスラッシュコマンド
 run_worker_first = ["/v/*", "/ws/*", "/connect/*", "/api/*", "/interactions", "/health"]
 
