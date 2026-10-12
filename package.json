@@ -1,0 +1,15 @@
+{
+  "name": "mayo-mc-tools",
+  "version": "1.0.0",
+  "private": true,
+  "description": "マイクラ統合版ツール（死体スキン・近接VC）制作: MaYo / mayo01297・二次配布禁止",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "node test/ws-handshake.test.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}

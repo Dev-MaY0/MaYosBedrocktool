@@ -1,0 +1,44 @@
+# =====================================================================
+#  マイクラ統合版ツール（サイト + 近接VC Bot）… Cloudflare Workers 1つで動きます
+#  制作: MaYo (mayo01297)  二次配布禁止
+#
+#  ・public/ … サイト（トップ・死体スキン・近接VC・設定ページ）
+#  ・src/    … 近接VC の Discord Bot
+#  デプロイしたら https://<この Worker の URL>/setup/ を開いて、
+#  Discord の Bot のトークンを貼るだけで設定が終わります（くわしくは DEPLOY.md）。
+# =====================================================================
+# Cloudflare のダッシュボードの Worker 名と同じにする
+# （GitHub からのビルドは自動でダッシュボードの名前に合わせられますが、ずれないように同じにしておく）
+name = "corpseskintoolpage"
+main = "src/index.js"
+compatibility_date = "2025-09-01"
+# WebSocket の圧縮（permessage-deflate）を使わない。
+# 2023-08-15 以降の compatibility_date では、相手が Sec-WebSocket-Extensions: permessage-deflate を
+# 送ってくると、Workers が自動で圧縮を有効にする（コードでヘッダーを消しても止められない）。
+# Minecraft の /wsserver が「プロトコルエラー（1002）」ですぐ切る問題への対策。
+# メッセージは小さいので、圧縮しなくても困らない。
+compatibility_flags = ["no_web_socket_compression"]
+
+# サイトのファイル（/ /corpse/ /vc/ /setup/ … ふつうのページ）
+[assets]
+directory = "./public"
+binding = "ASSETS"
+# この URL は、サイトのファイルより先に Bot（src/index.js）が受け取る
+#   /v/<接続コード> … Minecraft の /wsserver（WebSocket）・ブラウザでひらくと接続チェック
+#   /ws/<接続キー> … 接続キーそのままでつなぐとき
+#   /api/…        … 設定ページ・BDS アドオン・サイトから
+#   /interactions … Discord のスラッシュコマンド
+run_worker_first = ["/v/*", "/ws/*", "/connect/*", "/api/*", "/interactions", "/health"]
+
+[vars]
+# ふつうは変えない
+DISCORD_API = "https://discord.com/api/v10"
+
+# Discord サーバー（ギルド）ごとに 1 つずつ作られる部屋
+[[durable_objects.bindings]]
+name = "GUILD"
+class_name = "GuildRoom"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["GuildRoom"]
