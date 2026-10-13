@@ -209,6 +209,8 @@ ol.steps > li { margin: 6px 0; }
 .copybox button:hover { background: var(--blue-hover); }
 .copybox.disabled code { color: #8d939c; }
 .copybox.disabled button { background: #b2b6be; cursor: default; }
+details.conn > summary { cursor: pointer; font-size: 14px; color: var(--sub); margin: 10px 0 4px; }
+details.conn.nosum > summary { display: none; }
 .sub-hint { color: var(--sub); font-size: 12.5px; margin: 2px 0 0; }
 table.cmds { width: 100%; border-collapse: collapse; font-size: 14px; }
 table.cmds th, table.cmds td { text-align: left; border-bottom: 1px solid var(--border); padding: 7px 6px; vertical-align: top; }
@@ -249,6 +251,7 @@ table.cmds td:first-child { white-space: nowrap; }
     <a href="../" data-page="home">🏠 トップ</a>
     <a href="../corpse/" data-page="corpse">🪦 死体スキン</a>
     <a href="../vc/" data-page="vc" aria-current="page">🎙 近接VC</a>
+    <a href="../talk/" data-page="talk">🎧 サイトでVC</a>
   </div>
 </nav>
 
@@ -260,7 +263,9 @@ table.cmds td:first-child { white-space: nowrap; }
     <ol>
       <li>① の「Bot を招待する」を押す</li>
       <li>Discord で <span class="cmd">/vc setup</span> を送る → 届いた<b>ファイルをひらく</b>（近接VCアドオンが入ります）</li>
-      <li>ワールドでチートをオンにして、Discord に出た <span class="cmd">/wsserver …</span> をチャットに貼る</li>
+      <li data-conn="connector">ホストは <a href="../download/MaYoVCConnector.zip">近接VC コネクター</a>（Windows）をひらいて、Discord に出た <span class="cmd">/wsserver …</span> を貼って「スタート」</li>
+      <li data-conn="connector">ワールドでチートをオンにして、チャットで <span class="cmd">/wsserver ws://127.0.0.1:19131</span> を送る</li>
+      <li data-conn="relay" hidden>ワールドでチートをオンにして、Discord に出た <span class="cmd">/wsserver ws://…/v/…</span> をそのままチャットで送る</li>
       <li>遊ぶ人は <span class="cmd">/vc link</span> で自分の名前を選んで、「🎮 近接VC ロビー」に入る</li>
     </ol>
     <p class="sub-hint" style="margin-top:6px">Discord のメッセージの「サイトでくわしく見る」ボタンから来ると、接続キーが自動で入ります。下の手順は、くわしく知りたいとき・BDS で使うときに。</p>
@@ -316,7 +321,7 @@ table.cmds td:first-child { white-space: nowrap; }
       <div class="label">遊ぶ場所</div>
       <div class="modes" role="radiogroup">
         <label class="mode" id="modeWorldBox"><input type="radio" name="mode" value="world" checked>
-          <span><b>だれかのワールド</b><small>ホストがワールドを開いて、チャットで /wsserver を打つ（チートON）。Realms では使えません。</small></span></label>
+          <span><b>だれかのワールド</b><small id="modeWorldNote">ホストが Windows の PC でワールドを開いて、近接VC コネクターを使う（チートON）。Realms では使えません。</small></span></label>
         <label class="mode" id="modeBdsBox"><input type="radio" name="mode" value="bds">
           <span><b>BDS・レンタルサーバー</b><small>サーバーのアドオンが Bot に直接送る。ベータ API と permissions.json の設定が必要。</small></span></label>
       </div>
@@ -339,16 +344,38 @@ table.cmds td:first-child { white-space: nowrap; }
     <div class="indent">
       <p class="live" id="liveStatus" hidden></p>
       <div class="panel" id="panelWorld">
-        <p style="margin:0 0 4px"><b>だれかのワールド</b>（ホストがやること・ワールドを開くたびに）</p>
+        <!-- リレー（Google Cloud の VM・Railway など）が設定されているとき -->
+        <div id="worldRelay" hidden>
+        <p style="margin:0 0 4px"><b>だれかのワールド</b>（ホストがやること）</p>
         <ol class="steps">
           <li>ワールドの設定で「<b>チートを有効にする</b>」をオン、「ビヘイビアパック」で「<b>近接VC BP</b>」を有効にする</li>
-          <li>ワールドを開いて、チャットにこのコマンドを貼り付けて送る
-            <div class="copybox" id="wsBox"><code id="wsCmd">（接続キーを入れると、ここにコマンドが出ます）</code><button type="button" id="wsCopy">コピー</button></div>
-            <p class="sub-hint">「サーバーに接続できませんでした」と出るときは、<a id="checkLink" href="#" target="_blank" rel="noopener">接続チェック</a>をひらいたまま、もう一度送ってください（どこで止まっているか分かります）。</p>
+          <li>ワールドを開いて、チャットにこれを送る（ワールドを開くたびに）
+            <div class="copybox" id="relayBox"><code id="relayCmd">（接続キーを入れると、ここにコマンドが出ます）</code><button type="button" id="relayCopy">コピー</button></div>
           </li>
           <li>チャットに「<b>[近接VC] Discord「サーバー名」とつながりました</b>」と出たら準備OK</li>
         </ol>
-        <p class="sub-hint">ホストがワールドを閉じると、全員「🎮 近接VC ロビー」に戻ります。</p>
+        <p class="sub-hint">つながらないときは、<a class="checkLink" href="#" target="_blank" rel="noopener">接続チェック</a>をひらいたまま、もう一度送ってください（どこで止まっているか分かります）。<br>
+          ホストがワールドを閉じると、全員「🎮 近接VC ロビー」に戻ります。</p>
+        </div>
+        <details class="conn nosum" id="worldConnector" open>
+        <summary>予備: リレーが動かないとき（近接VC コネクター・Windows）</summary>
+        <p style="margin:0 0 4px" id="connectorTitle"><b>だれかのワールド</b>（ホストがやること・Windows の PC）</p>
+        <p class="sub-hint" style="margin:0 0 6px">Minecraft の <span class="cmd">/wsserver</span> は、インターネット上の Bot（Cloudflare）に直接つなぐと、すぐ切れてしまいます。<br>そこで、PC の中で中継する「<b>近接VC コネクター</b>」を使います（インストール不要・ダブルクリックでひらくだけ）。</p>
+        <ol class="steps">
+          <li><a class="btn btn-blue" href="../download/MaYoVCConnector.zip" style="padding:6px 14px;font-size:14px">近接VC コネクターをダウンロード（.zip）</a><br>
+            zip をひらいて <b>MaYoVCConnector.exe</b> をダブルクリック（「Windows によって PC が保護されました」と出たら「詳細情報」→「実行」）</li>
+          <li>コネクターに、このコマンドを貼り付けて「<b>スタート</b>」（2回目からは、ひらくだけで自動でスタートします）
+            <div class="copybox" id="wsBox"><code id="wsCmd">（接続キーを入れると、ここにコマンドが出ます）</code><button type="button" id="wsCopy">コピー</button></div>
+          </li>
+          <li>ワールドの設定で「<b>チートを有効にする</b>」をオン、「ビヘイビアパック」で「<b>近接VC BP</b>」を有効にする</li>
+          <li>ワールドを開いて、チャットにこれを送る（ワールドを開くたびに）
+            <div class="copybox"><code id="localCmd">/wsserver ws://127.0.0.1:19131</code><button type="button" id="localCopy">コピー</button></div>
+          </li>
+          <li>チャットに「<b>[近接VC] Discord「サーバー名」とつながりました</b>」と出たら準備OK</li>
+        </ol>
+        <p class="sub-hint">つながらないときは、<a class="checkLink" id="checkLink" href="#" target="_blank" rel="noopener">接続チェック</a>をひらいたまま、もう一度送ってください（どこで止まっているか分かります）。<br>
+          遊んでいるあいだは、コネクターを開いたままにしてください。ホストがワールドを閉じると、全員「🎮 近接VC ロビー」に戻ります。</p>
+        </details>
       </div>
       <div class="panel" id="panelBds" hidden>
         <p style="margin:0 0 4px"><b>BDS・レンタルサーバー</b>（サーバーの管理者がやること・最初の1回だけ）</p>
@@ -420,7 +447,10 @@ table.cmds td:first-child { white-space: nowrap; }
     <div class="help-body">
       <h4>■ /wsserver でつながらない（「サーバーに接続できませんでした」）</h4>
       <ul>
-        <li>まず <b>接続チェック</b>（④ のリンク、または Discord の「接続チェック」ボタン）をひらいたまま、コマンドを送ってください。Bot まで届いたかどうかが、その場で分かります。</li>
+        <li data-conn="relay" hidden><b>Discord の <code>/vc key</code> で出たコマンド（<code>/wsserver ws://〜/v/〜</code>）を、そのまま送ってください。</b>リレー（中継サーバー）を通してつなぎます。「サーバーに接続できませんでした」と出るときは、リレーが止まっているか、アドレス・ポート番号がちがいます（サイトを公開した人は <a href="../setup/">設定ページ</a> の「リレーをためす」で確認できます）。</li>
+        <li><b>近接VC コネクターを使ってください。</b>Minecraft の <code>/wsserver</code> は、Cloudflare 上の Bot に直接つなぐと 0.3 秒ほどで切れてしまいます（接続チェックに「コード 59907＝1002: プロトコルエラー」と出ます）。コネクターを使うと、Minecraft は PC の中のコネクターにつなぐので、この問題が起きません。</li>
+        <li>コネクターの画面が「つながっています」にならないときは、<b>接続チェック</b>（④ のリンク、または Discord の「接続チェック」ボタン）をひらいたまま、もう一度送ってください。「コネクター経由で Minecraft から接続がきました」と出れば、コネクターから Bot までは届いています。</li>
+        <li>コネクターの画面に何も出ないときは、Minecraft のコマンドが <code>/wsserver ws://127.0.0.1:19131</code> になっているか（コネクターに表示されたものと同じか）確認してください。</li>
         <li>ワールドのチートがオンになっているか確認してください（ホストがオペレーター権限を持っている必要があります）。</li>
         <li>「設定」→「一般」の WebSocket の項目：「WebSocket を有効にする」のようなスイッチがあればオン、「暗号化された WebSocket を要求」はオフにして、Minecraft を一度終了してからひらき直してください。</li>
         <li>コマンドの <code>ws://</code> を <code>wss://</code> に変えると、つながることがあります。</li>
@@ -574,6 +604,7 @@ const CFG = window.SITE_CONFIG || {};
 const cfgBot = String(CFG.botUrl || "").replace(/\/+$/, "");
 const BOT = cfgBot && !/ここに|xxxx/i.test(cfgBot) ? cfgBot : (/^https?:$/.test(location.protocol) ? location.origin : "");
 let APP_ID = /^\d{15,22}$/.test(String(CFG.discordAppId || "")) ? String(CFG.discordAppId) : "";
+let RELAY = "";   // リレー（Google Cloud の VM・Railway など）のアドレス。Bot の /api/info から（なければ近接VC コネクターの案内）
 let configured = false;
 
 /** Bot が設定ずみか（アプリケーションID は Bot から教えてもらう） */
@@ -583,6 +614,7 @@ async function loadInfo() {
       const res = await fetch(`${BOT}/api/info`, { cache: "no-store" });
       const j = await res.json();
       if (j.ok && j.appId) APP_ID = String(j.appId);
+      RELAY = j.ok && typeof j.relay === "string" && /^[a-z0-9.-]+(:\d{1,5})?$/i.test(j.relay) ? j.relay : "";
       configured = !!(j.ok && j.configured && APP_ID);
     } catch (e) {
       configured = false;
@@ -644,9 +676,26 @@ function render() {
     ? (info && info.shortCode ? `/wsserver ws://${wsHost()}/v/${info.shortCode}` : `/wsserver ws://${wsHost()}/ws/${key}`)
     : "";
   $("wsCmd").textContent = cmd || (configured ? "（接続キーを入れると、ここにコマンドが出ます）" : "（Bot の設定が終わっていません）");
+  // リレーがあるときは、Minecraft からリレーにつなぐコマンドを先に出す（コネクターは予備）
+  const relayCmd = RELAY && valid && configured
+    ? (info && info.shortCode ? `/wsserver ws://${RELAY}/v/${info.shortCode}` : `/wsserver ws://${RELAY}/ws/${key}`)
+    : "";
+  $("relayCmd").textContent = relayCmd || (configured ? "（接続キーを入れると、ここにコマンドが出ます）" : "（Bot の設定が終わっていません）");
+  $("relayBox").classList.toggle("disabled", !relayCmd);
+  $("relayCopy").disabled = !relayCmd;
+  $("worldRelay").hidden = !RELAY;
+  const wc = $("worldConnector");
+  if (wc.classList.contains("nosum") === !!RELAY) { wc.classList.toggle("nosum", !RELAY); wc.open = !RELAY; }
+  $("connectorTitle").hidden = !!RELAY;
+  for (const el of document.querySelectorAll("[data-conn]")) el.hidden = (el.dataset.conn === "relay") !== !!RELAY;
+  $("modeWorldNote").textContent = RELAY
+    ? "ホストがワールドを開いて、チャットで /wsserver を送る（チートON）。Realms では使えません。"
+    : "ホストが Windows の PC でワールドを開いて、近接VC コネクターを使う（チートON）。Realms では使えません。";
   const checkUrl = valid && configured && info && info.shortCode ? `${BOT}/v/${info.shortCode}` : "";
-  $("checkLink").href = checkUrl || "#help";
-  if (checkUrl) $("checkLink").target = "_blank"; else $("checkLink").removeAttribute("target");
+  for (const a of document.querySelectorAll("a.checkLink")) {
+    a.href = checkUrl || "#help";
+    if (checkUrl) a.target = "_blank"; else a.removeAttribute("target");
+  }
   $("wsBox").classList.toggle("disabled", !cmd);
   $("wsCopy").disabled = !cmd;
   const d = state.lastDownload;
@@ -877,6 +926,8 @@ for (const r of document.querySelectorAll('input[name="mode"]'))
   r.addEventListener("change", () => { state.mode = r.value; saveState(); render(); });
 $("downloadBtn").addEventListener("click", download);
 $("wsCopy").addEventListener("click", () => copyFrom($("wsCmd"), $("wsCopy")));
+$("relayCopy").addEventListener("click", () => copyFrom($("relayCmd"), $("relayCopy")));
+$("localCopy").addEventListener("click", () => copyFrom($("localCmd"), $("localCopy")));
 $("packCopy").addEventListener("click", () => copyFrom($("packJson"), $("packCopy")));
 $("permCopy").addEventListener("click", () => copyFrom($("permJson"), $("permCopy")));
 $("openHelp").addEventListener("click", () => { $("help").open = true; });

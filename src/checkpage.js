@@ -24,6 +24,7 @@ main { max-width: 760px; margin: 0 auto; padding: 16px; }
 .cmd code { flex: 1; min-width: 0; overflow-wrap: anywhere; background: #1f2328; color: #e6edf3; border-radius: 6px; padding: 9px 11px; font-family: ui-monospace, Consolas, monospace; font-size: 14px; }
 .cmd button { flex: none; border: 0; border-radius: 6px; background: var(--blue); color: #fff; font-weight: 700; padding: 0 14px; cursor: pointer; font-size: 14px; }
 .label { font-size: 13.5px; color: var(--sub); margin: 8px 0 0; }
+.dl { display: inline-block; background: var(--blue); color: #fff; font-weight: 700; text-decoration: none; padding: 8px 16px; border-radius: 6px; }
 ul.tries { list-style: none; margin: 0; padding: 0; font-size: 14px; }
 ul.tries li { padding: 6px 8px; border-bottom: 1px dashed var(--line); border-radius: 6px; }
 ul.tries li:last-child { border-bottom: 0; }
@@ -54,10 +55,35 @@ export function badCodePage() {
 <footer>© MaYo (mayo01297)　二次配布禁止</footer></body></html>`;
 }
 
-/** 接続チェックのページ */
-export function checkPage({ host, code }) {
+/** 接続チェックのページ（relay … リレーのアドレス。あれば Minecraft からリレーにつなぐ案内を先に出す） */
+export function checkPage({ host, code, relay = "" }) {
   const ws = `/wsserver ws://${host}/v/${code}`;
   const wss = `/wsserver wss://${host}/v/${code}`;
+  const viaRelay = relay ? `/wsserver ws://${relay}/v/${code}` : "";
+  const connectorSteps = `
+    <p style="margin:8px 0"><a class="dl" href="/download/MaYoVCConnector.zip">近接VC コネクターをダウンロード（.zip）</a></p>
+    <p class="label">コネクターに貼り付けて「スタート」</p>
+    <div class="cmd"><code id="c1">${esc(ws)}</code><button type="button" data-copy="c1">コピー</button></div>
+    <p class="label">このページをひらいたまま、Minecraft のチャットで送る</p>
+    <div class="cmd"><code id="c3">/wsserver ws://127.0.0.1:19131</code><button type="button" data-copy="c3">コピー</button></div>`;
+  const first = relay ? `
+  <section class="card">
+    <h2>① Minecraft のチャットで送る</h2>
+    <p class="label" style="margin-top:0">このページをひらいたまま、ワールドに入って、チャットでこれを送ってください（リレー経由でつながります）。</p>
+    <div class="cmd"><code id="c0">${esc(viaRelay)}</code><button type="button" data-copy="c0">コピー</button></div>
+    <p class="label">リレーが動いているかは、ブラウザで <a href="http://${esc(relay)}/" target="_blank" rel="noopener">http://${esc(relay)}/</a> をひらくと分かります（「MaYoVCRelay … OK」と出れば動いています）。</p>
+    <details style="margin-top:10px"><summary class="label" style="cursor:pointer">予備: リレーが動かないとき（近接VC コネクター・Windows）</summary>${connectorSteps}
+    </details>
+  </section>
+` : `
+  <section class="card">
+    <h2>① 近接VC コネクター（Windows）でつなぐ</h2>
+    <p class="label" style="margin-top:0">Minecraft の /wsserver は、Cloudflare 上の Bot に直接つなぐと、すぐ切れてしまいます。PC の中で中継する「近接VC コネクター」を使ってください。</p>${connectorSteps}
+    <details style="margin-top:10px"><summary class="label" style="cursor:pointer">コネクターを使わずに直接つなぐ（ほとんどの場合、すぐ切れます）</summary>
+      <div class="cmd"><code id="c2">${esc(wss)}</code><button type="button" data-copy="c2">コピー</button></div>
+    </details>
+  </section>
+`;
   return `<!doctype html>
 <!-- 近接VC 接続チェック  制作: MaYo (mayo01297)  二次配布禁止 -->
 <html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex">
@@ -67,14 +93,7 @@ export function checkPage({ host, code }) {
   <section class="card" aria-live="polite">
     <div class="state" id="state"><div class="big" id="icon">…</div><div><b id="title">確認しています…</b><p id="sub"></p></div></div>
   </section>
-
-  <section class="card">
-    <h2>① このページをひらいたまま、Minecraft のチャットで送る</h2>
-    <div class="cmd"><code id="c1">${esc(ws)}</code><button type="button" data-copy="c1">コピー</button></div>
-    <p class="label">↓ だめなら、こちらも試してください（<b>ws</b> → <b>wss</b>）</p>
-    <div class="cmd"><code id="c2">${esc(wss)}</code><button type="button" data-copy="c2">コピー</button></div>
-  </section>
-
+${first}
   <section class="card" aria-live="polite">
     <h2>② Minecraft からの接続の記録（3秒ごとに更新）</h2>
     <ul class="tries" id="tries"></ul>
@@ -89,7 +108,9 @@ export function checkPage({ host, code }) {
       <li>Minecraft の「設定」→「一般」にある <b>WebSocket</b> の項目を見る：「WebSocket を有効にする」のようなスイッチがあれば <b>オン</b>、「<b>暗号化された WebSocket を要求</b>」は <b>オフ</b></li>
       <li>設定を変えたら、<b>Minecraft を一度完全に終了</b>して、ひらき直す</li>
       <li>コマンドを <b>2〜3回</b> 送ってみる（1回目は失敗することがあります）</li>
-      <li>上の <b>wss://</b> のほうも試す</li>
+      ${relay ? `<li>Minecraft のコマンドが ① のもの（<b>${esc(viaRelay)}</b>）と同じか確認する。ポート番号（<b>:</b> のあとの数字）も必要です</li>
+      <li>ブラウザで <b>http://${esc(relay)}/</b> がひらけないときは、リレー（中継サーバー）が止まっています。Google Cloud の VM・Railway のサービスが動いているか、アドレスが変わっていないか確認する</li>` : ""}
+      <li>コネクターを使っているときは、コネクターの画面が「Minecraft からの接続を待っています」になっているか、Minecraft のコマンドがコネクターに出ているもの（<b>/wsserver ws://127.0.0.1:19131</b>）と同じか確認する</li>
       <li>学校・お店などの Wi-Fi や、セキュリティソフトの「Web保護」が止めていることがあります。<b>スマホのテザリング</b>など、ちがう回線でも試す</li>
       <li>Realms のワールドでは使えません（自分のワールドで、ホストが送ってください）</li>
     </ol>
@@ -99,6 +120,7 @@ export function checkPage({ host, code }) {
 <script>
 "use strict";
 const CODE = ${JSON.stringify(code)};
+const RELAY = ${JSON.stringify(relay)};
 const opened = Date.now();
 const $ = id => document.getElementById(id);
 let skew = 0;
@@ -109,10 +131,11 @@ async function load() {
   try { d = await (await fetch("/v/" + CODE + "?json=1", { cache: "no-store" })).json(); } catch (e) { show("ng", "!", "Bot につながりません", "インターネットの接続を確認してください。"); return; }
   if (!d.ok) { show("bad", "✗", "この接続コードは見つかりません", "Discord で /vc key を送って、新しいコマンドを確認してください。"); return; }
   skew = (d.now || Date.now()) - Date.now();
+  const where = d.kind === "web" ? "サイトの部屋「" + d.guildName + "」" : "Discord「" + d.guildName + "」";
   const now = Date.now() + skew;
-  if (d.mode === "ws") show("ok", "✓", "つながっています！（Discord「" + d.guildName + "」）", d.ready ? (d.encrypted ? "暗号化して通信しています。" : "通信しています。") : "準備しています…");
-  else if (d.mode === "bds") show("ok", "✓", "BDS からつながっています（Discord「" + d.guildName + "」）", "");
-  else show("ng", "…", "接続コードは正しいです（Discord「" + d.guildName + "」）", "まだ Minecraft とはつながっていません。① のコマンドを送ってください。");
+  if (d.mode === "ws") show("ok", "✓", "つながっています！（" + where + "）", d.ready ? (d.encrypted ? "暗号化して通信しています。" : "通信しています。") : "準備しています…");
+  else if (d.mode === "bds") show("ok", "✓", "BDS からつながっています（" + where + "）", "");
+  else show("ng", "…", "接続コードは正しいです（" + where + "）", "まだ Minecraft とはつながっていません。① のコマンドを送ってください。");
   const ul = $("tries"); ul.textContent = "";
   for (const x of d.tries || []) {
     const li = document.createElement("li");
@@ -127,8 +150,9 @@ async function load() {
   const hint = $("hint");
   hint.hidden = false; hint.className = "hint";
   if (d.mode === "ws") hint.textContent = "うまくいっています。Minecraft のチャットに「[近接VC] … とつながりました」が出ていれば完成です。";
-  else if (!fresh.length) hint.textContent = "このページをひらいてから、まだ何も届いていません。Minecraft でコマンドを送ると、数秒でここに出ます。出なければ ③ を見てください。";
-  else if (fresh.some(x => x.kind === "close" || x.kind === "error")) { hint.className = "hint warn"; hint.textContent = "Bot までは届いていますが、すぐ切れています。記録の「切れました」の行と、その下の灰色の行（Minecraft が送ってきた条件）を見ると、原因が分かります。スクリーンショットを残しておいてください。"; }
+  else if (!fresh.length) hint.textContent = "このページをひらいてから、まだ何も届いていません。Minecraft でコマンドを送ると、数秒でここに出ます。出なければ ③ を見てください。" + (RELAY ? "（「サーバーに接続できませんでした」と出るときは、リレーが止まっているか、アドレス・ポートがちがいます）" : "");
+  else if (fresh.some(x => x.kind === "close" && /1002/.test(x.text)) && !fresh.some(x => x.kind === "open" && /コネクター|リレー/.test(x.text))) { hint.className = "hint warn"; hint.textContent = RELAY ? "Minecraft から Bot（Cloudflare）に直接つないだため、すぐ切れました。上の ① のコマンド（リレー経由）を送ってください。" : "Minecraft から直接つないだため、すぐ切れました（Minecraft と Cloudflare の相性の問題です）。上の「近接VC コネクター」を使ってつないでください。"; }
+  else if (fresh.some(x => x.kind === "close" || x.kind === "error")) { hint.className = "hint warn"; hint.textContent = "Bot までは届いていますが、すぐ切れています。記録の「切れました」の行と、その下の灰色の行を見ると、原因が分かります。スクリーンショットを残しておいてください。"; }
   else if (fresh.some(x => x.kind === "noupgrade")) { hint.className = "hint warn"; hint.textContent = "Bot までは届いていますが、とちゅうで WebSocket の形がこわされています。wss:// のほうを試すか、ちがう回線で試してください。"; }
   else hint.textContent = "Bot まで届いています。";
 }

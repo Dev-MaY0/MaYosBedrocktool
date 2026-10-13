@@ -1,0 +1,13 @@
+{
+  "name": "mayo-billing-stopper",
+  "version": "1.0.0",
+  "private": true,
+  "description": "予算の上限に達したら VM を止めて課金を無効にする（Google Cloud の Cloud Run functions 用）制作: MaYo / mayo01297・二次配布禁止",
+  "main": "index.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@google-cloud/functions-framework": "^5.0.0"
+  }
+}

@@ -188,6 +188,7 @@ dialog::backdrop { background: rgba(20, 22, 26, .5); }
 .feature .btn { text-decoration: none; padding: 12px 18px; font-size: 16px; width: 100%; }
 .feature.corpse .ficon { background: #e2f1dc; }
 .feature.vc .ficon { background: #e7e9fd; }
+.feature.talk .ficon { background: #fdeee0; }
 .btn-indigo { background: #5865f2; }
 .btn-indigo:hover { background: #6b77f5; }
 .note { color: var(--sub); font-size: 12.5px; margin: 0 0 12px; }
@@ -212,6 +213,7 @@ dialog::backdrop { background: rgba(20, 22, 26, .5); }
     <a href="./" data-page="home" aria-current="page">🏠 トップ</a>
     <a href="./corpse/" data-page="corpse">🪦 死体スキン</a>
     <a href="./vc/" data-page="vc">🎙 近接VC</a>
+    <a href="./talk/" data-page="talk">🎧 サイトでVC</a>
   </div>
 </nav>
 
@@ -249,8 +251,22 @@ dialog::backdrop { background: rgba(20, 22, 26, .5); }
       </ul>
       <a class="btn btn-indigo" href="vc/">近接VCをはじめる →</a>
     </section>
+
+    <section class="feature talk" aria-labelledby="f3">
+      <div class="ficon" aria-hidden="true">🎧</div>
+      <h3 id="f3">サイトで近接VC</h3>
+      <p class="lead">Discord なし・ブラウザで話す近接ボイスチャット</p>
+      <ul>
+        <li><b>近いほど大きく、遠いほど小さく</b>聞こえる（声が届く距離は自由に設定）</li>
+        <li>相手のいる方向（<b>左右</b>）から聞こえる</li>
+        <li>ちがうディメンションの人・離れた人の声は聞こえない</li>
+        <li>部屋を作ってリンクを送るだけ。マイクラのチャットで本人確認</li>
+        <li>アドオンを入れると、死んだ人どうしだけで話せる</li>
+      </ul>
+      <a class="btn btn-green" href="talk/">サイトで近接VCをはじめる →</a>
+    </section>
   </div>
-  <p class="note">※ 近接VCは Discord のVCを自動で切り替える方式です。Discord の仕様で、距離に合わせて声の大きさを少しずつ変えることはできません。</p>
+  <p class="note">※ Discord 版の近接VCは、Discord のVCを自動で切り替える方式です（Discord の仕様で、距離に合わせて声の大きさを少しずつ変えることはできません）。距離で音量を変えたいときは「サイトで近接VC」を使ってください。</p>
 
   <!-- 制作者について（全ページ共通: partials/about.html） -->
   <details class="card about" id="about">

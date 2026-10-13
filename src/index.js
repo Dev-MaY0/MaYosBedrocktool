@@ -1,17 +1,21 @@
 // =====================================================================
 //  近接VC Bot（入口）… サイト（public/）と同じ Worker で動く
 //  - /api/setup    … 設定ページ（/setup/）から、Bot のトークンを登録する
+//  - /api/setup/relay … 設定ページから、リレー（中継サーバー）のアドレスを保存する・ためす
 //  - /interactions … Discord のスラッシュコマンド
 //  - /v/<接続コード> … ワールド用（ホストが /wsserver でつなぐ。ブラウザでひらくと接続チェック）
 //  - /ws/<接続キー> … ワールド用（接続キーそのままでつなぐとき）
 //  - /api/update   … BDS 用（アドオンが位置のグループを送ってくる）
 //  - /api/check    … サイトから接続キーを確認する
+//  - /api/web/…    … サイト内の近接VC（部屋を作る・ブラウザの WebSocket・ホストの操作）
 //  制作: MaYo (mayo01297)  二次配布禁止
 // =====================================================================
 import { GuildRoom, CODE_RE } from "./guild.js";
 import { verifyDiscordRequest } from "./discord.js";
-import { resolveEnv, runSetup, setupStatus, isSet, loadStored, saveStored, inviteUrl } from "./appconfig.js";
+import { resolveEnv, runSetup, setupStatus, isSet, loadStored, saveStored, inviteUrl, saveRelay, vpsCommand } from "./appconfig.js";
+import { sha256hex } from "./webvc.js";
 import { checkPage, badCodePage } from "./checkpage.js";
+import { testRelay } from "./relaycheck.js";
 
 export { GuildRoom };
 
@@ -39,6 +43,18 @@ const html = (body, status = 200) =>
   new Response(body, { status, headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" } });
 
 const room = (env, guildId) => env.GUILD.get(env.GUILD.idFromName(guildId));
+const directory = env => env.GUILD.get(env.GUILD.idFromName("__directory__"));
+
+// サイト内VC の部屋 ID（6 文字。まぎらわしい 0 O 1 I は使わない）
+const ROOM_RE = /^[A-HJ-NP-Z2-9]{6}$/;
+function randomText(n, abc) {
+  const b = crypto.getRandomValues(new Uint8Array(n));
+  let s = "";
+  for (const x of b) s += abc[x % abc.length];
+  return s;
+}
+const webRoomId = v => { const r = String(v || "").trim().toUpperCase(); return ROOM_RE.test(r) ? r : ""; };
+const webRoom = (env, id) => room(env, "web:" + id);
 
 /**
  * Minecraft の WebSocket を、部屋（Durable Object）に渡す。
@@ -48,6 +64,11 @@ const room = (env, guildId) => env.GUILD.get(env.GUILD.idFromName(guildId));
 function wsToRoom(stub, request, inner) {
   const ext = request.headers.get("Sec-WebSocket-Extensions") || "";
   if (ext) inner.searchParams.set("ext", ext.slice(0, 120));
+  // 近接VC コネクター（PC で動く中継アプリ）や、近接VC リレー（Google Cloud の VM・Railway など）からの接続か
+  const connector = request.headers.get("X-VC-Connector") || "";
+  const relay = request.headers.get("X-VC-Relay") || "";
+  const via = connector ? connector : relay ? "relay:" + relay : "";
+  if (via) inner.searchParams.set("via", via.replace(/[^\w.:-]/g, "").slice(0, 24));
   return stub.fetch(new Request(inner, request));
 }
 
@@ -90,6 +111,82 @@ export default {
       await markTried(env);
       const r = await runSetup(env, { token: String(body.token || ""), origin: url.origin });
       return json(r, r.ok ? 200 : 400);
+    }
+    // リレー（中継サーバー）のアドレスを保存（Bot のトークンで本人か確かめる）→ そのまま、つながるかためす
+    if (path === "/api/setup/relay" && request.method === "POST") {
+      let body = {};
+      try { body = await request.json(); } catch (e) { body = {}; }
+      if (await recentlyTried(env)) return json({ ok: false, error: "少し待ってから、もう一度押してください。" }, 429);
+      await markTried(env);
+      const r = await saveRelay(env, { token: String(body.token || ""), relay: String(body.relay || "") });
+      if (r.ok && r.relay) r.test = await testRelay(r.relay, url.host);
+      return json(r, r.ok ? 200 : 400);
+    }
+    // 保存してあるリレーがつながるか、ためすだけ（アドレスは入力させない）
+    if (path === "/api/setup/relay/test" && request.method === "POST") {
+      if (await recentlyTried(env)) return json({ ok: false, error: "少し待ってから、もう一度押してください。" }, 429);
+      await markTried(env);
+      const e = await resolveEnv(env, { fresh: true });
+      if (!e.RELAY_HOST) return json({ ok: false, error: "リレーのアドレスが保存されていません。" }, 400);
+      return json(await testRelay(e.RELAY_HOST, url.host));
+    }
+
+    // VPS（ConoHa など）に貼るコマンド（リレー＋音声中継）。Bot のトークンで確かめる
+    if (path === "/api/setup/vps" && request.method === "POST") {
+      let body = {};
+      try { body = await request.json(); } catch (e) { body = {}; }
+      if (await recentlyTried(env)) return json({ ok: false, error: "少し待ってから、もう一度押してください。" }, 429);
+      await markTried(env);
+      const r = await vpsCommand(env, { token: String(body.token || ""), origin: url.origin, host: url.host });
+      return json(r, r.ok ? 200 : 400);
+    }
+
+    // ---- サイト内の近接VC ----
+    if (path === "/api/web/rooms" && request.method === "POST") {
+      let body = {};
+      try { body = await request.json(); } catch (e) { body = {}; }
+      // いたずら防止: 同じ IP から 1 時間に 5 部屋まで（IP そのものは保存しない）
+      const ipKey = (await sha256hex("vc:" + (request.headers.get("CF-Connecting-IP") || "local"))).slice(0, 16);
+      const rate = await (await directory(env).fetch("https://room/dir/rate", { method: "POST", body: JSON.stringify({ k: ipKey, max: 5 }) })).json();
+      if (!rate.ok) return json({ ok: false, error: "部屋を作りすぎです。1 時間ほど待ってから作ってください。" }, 429);
+      const name = String(body.name || "").replace(/[\u0000-\u001f<>]/g, "").trim().slice(0, 40);
+      const hostKey = randomText(24, "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789");
+      for (let i = 0; i < 5; i++) {
+        const roomId = randomText(6, "ABCDEFGHJKLMNPQRSTUVWXYZ23456789");
+        const r = await webRoom(env, roomId).fetch("https://room/web/create", { method: "POST", body: JSON.stringify({ roomId, name, hostKeyHash: await sha256hex(hostKey) }) });
+        if (r.status === 409) continue;
+        const j = await r.json();
+        if (!j.ok) return json({ ok: false, error: "部屋を作れませんでした。" }, 500);
+        return json({ ok: true, roomId, hostKey });
+      }
+      return json({ ok: false, error: "部屋を作れませんでした。もう一度ためしてください。" }, 500);
+    }
+    if (path === "/api/web/room") {
+      const id = webRoomId(url.searchParams.get("r"));
+      if (!id) return json({ ok: false, error: "部屋の番号の形がちがいます" }, 400);
+      return webRoom(env, id).fetch("https://room/web/info");
+    }
+    if (path === "/api/web/host" && request.method === "POST") {
+      let body = {};
+      try { body = await request.json(); } catch (e) { body = {}; }
+      const id = webRoomId(body.r);
+      if (!id) return json({ ok: false, error: "部屋の番号の形がちがいます" }, 400);
+      const r = await webRoom(env, id).fetch("https://room/web/host", { method: "POST", body: JSON.stringify(body) });
+      const j = await r.json();
+      if (j.ok && j.worldCode) {
+        const e = await resolveEnv(env);
+        j.relay = e.RELAY_HOST || "";
+        j.relayCommand = e.RELAY_HOST ? `/wsserver ws://${e.RELAY_HOST}/v/${j.worldCode}` : "";
+        j.connectorCommand = `/wsserver ws://${url.host}/v/${j.worldCode}`;
+        j.checkUrl = `${url.origin}/v/${j.worldCode}`;
+      }
+      return json(j, r.status);
+    }
+    if (path === "/api/web/socket") {
+      const id = webRoomId(url.searchParams.get("r"));
+      if (!id) return new Response("部屋の番号の形がちがいます", { status: 400 });
+      if ((request.headers.get("Upgrade") || "").toLowerCase() !== "websocket") return new Response("WebSocket でつないでください", { status: 426 });
+      return webRoom(env, id).fetch(new Request("https://room/web/socket", request));
     }
 
     // ---- Discord ----
@@ -157,7 +254,7 @@ export default {
         const r = await g.fetch("https://room/diag?code=" + code);
         return new Response(r.body, { status: r.status, headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" } });
       }
-      if (isBrowser) return html(checkPage({ host: url.host, code }));
+      if (isBrowser) return html(checkPage({ host: url.host, code, relay: (await resolveEnv(env)).RELAY_HOST }));
       // ブラウザでも WebSocket でもない（とちゅうで Upgrade が消された Minecraft の接続など）→ 記録しておく
       ctx.waitUntil(g.fetch("https://room/diag?code=" + code, { method: "POST", body: JSON.stringify({ scheme }) }).catch(() => {}));
       return new Response("Minecraft のチャットで /wsserver を使ってつないでください", { status: 426 });
@@ -195,13 +292,13 @@ export default {
 
     if (path === "/api/info") {
       const e = await resolveEnv(env);
-      return cors(json({ ok: true, configured: e.CONFIGURED && e.SETUP_OK, appId: e.DISCORD_APP_ID || null, appName: e.APP_NAME || "", invite: inviteUrl(e.DISCORD_APP_ID) }));
+      return cors(json({ ok: true, configured: e.CONFIGURED && e.SETUP_OK, appId: e.DISCORD_APP_ID || null, appName: e.APP_NAME || "", invite: inviteUrl(e.DISCORD_APP_ID), relay: e.RELAY_HOST || "" }));
     }
 
     // WebSocket なのに、どのURLにも当てはまらない（コマンドのURLのまちがい）
     if ((request.headers.get("Upgrade") || "").toLowerCase() === "websocket") {
       console.log(JSON.stringify({ ev: "mc_badpath", path: path.slice(0, 40) }));
-      return new Response("URL がちがいます。/wsserver ws://<この Worker のURL>/v/<接続コード> の形で送ってください（Discord の /vc key で確認できます）", { status: 404 });
+      return new Response("URL がちがいます。Discord の /vc key で出た /wsserver コマンドを、そのまま送ってください", { status: 404 });
     }
     // それ以外はサイトのファイル（なければ 404 ページ）
     return env.ASSETS ? env.ASSETS.fetch(request) : new Response("Not Found", { status: 404 });

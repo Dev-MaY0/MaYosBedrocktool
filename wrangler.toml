@@ -12,10 +12,10 @@
 name = "mayosbedrocktool"
 main = "src/index.js"
 compatibility_date = "2025-09-01"
-# WebSocket の圧縮（permessage-deflate）を使わない。
+# WebSocket の圧縮（permessage-deflate）を使わない（念のため）。
 # 2023-08-15 以降の compatibility_date では、相手が Sec-WebSocket-Extensions: permessage-deflate を
 # 送ってくると、Workers が自動で圧縮を有効にする（コードでヘッダーを消しても止められない）。
-# Minecraft の /wsserver が「プロトコルエラー（1002）」ですぐ切る問題への対策。
+# Minecraft 自身は圧縮を求めていないが、コネクターやほかのツールからつないでも同じ形にしておく。
 # メッセージは小さいので、圧縮しなくても困らない。
 compatibility_flags = ["no_web_socket_compression"]
 
@@ -26,13 +26,17 @@ binding = "ASSETS"
 # この URL は、サイトのファイルより先に Bot（src/index.js）が受け取る
 #   /v/<接続コード> … Minecraft の /wsserver（WebSocket）・ブラウザでひらくと接続チェック
 #   /ws/<接続キー> … 接続キーそのままでつなぐとき
-#   /api/…         … 設定ページ・BDS アドオン・サイトから
+#   /api/…        … 設定ページ・BDS アドオン・サイトから
 #   /interactions … Discord のスラッシュコマンド
 run_worker_first = ["/v/*", "/ws/*", "/connect/*", "/api/*", "/interactions", "/health"]
 
 [vars]
 # ふつうは変えない
 DISCORD_API = "https://discord.com/api/v10"
+# リレー（中継サーバー）のアドレス。ふつうはサイトの /setup/ で入れるので、ここは書かなくてOK。
+# ここに書くと /setup/ で保存したものより優先されます
+#   例: "34.82.1.2"（Google Cloud の VM の外部 IP・ポート 80）／ "vc.example.com"（独自ドメイン）／ "shuttle.proxy.rlwy.net:15140"（Railway）
+# RELAY_HOST = ""
 
 # Discord サーバー（ギルド）ごとに 1 つずつ作られる部屋
 [[durable_objects.bindings]]

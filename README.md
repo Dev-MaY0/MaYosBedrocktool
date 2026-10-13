@@ -6,12 +6,14 @@
 
 1. このフォルダを GitHub のリポジトリ（Private でOK）にアップロード
 2. Cloudflare →「Workers & Pages」→「作成」→「リポジトリをインポート」
-   - Worker 名は `wrangler.toml` の `name`（いまは `corpseskintoolpage`）と同じにする
+   - Worker 名は `wrangler.toml` の `name`（いまは `mayosbedrocktool`）と同じにする
    - このフォルダをリポジトリの `cloudflare/` に置いたときは、「設定」→「ビルド」の **ルートディレクトリ** を `cloudflare` にする
 3. できたサイトの `/setup/` をひらいて、Discord の Bot のトークンを貼って「設定する」
 
 | フォルダ・ファイル | 中身 |
 |---|---|
-| `public/` | サイト（トップ・死体スキン・近接VC・設定ページ） |
+| `public/` | サイト（トップ・死体スキン・近接VC・サイトで近接VC・設定ページ） |
 | `src/` | 近接VC の Discord Bot と、Minecraft の `/wsserver` の受け口（`/v/<接続コード>`） |
 | `wrangler.toml` | Worker の設定（Durable Object `GUILD` → `GuildRoom`、WebSocket の圧縮オフ） |
+| `relay/` | 近接VC リレー（**Google Cloud の VM** や **Railway** で動かす中継サーバー）。Minecraft の `/wsserver` を PC のアプリなしで Bot につなぐ。Cloudflare では使いません。手順は [relay/vps/README.md](relay/vps/README.md)（VPS・ConoHa）・[relay/gcp/README.md](relay/gcp/README.md)（Google Cloud）・[relay/README.md](relay/README.md)（Railway） |
+| `test/` | Worker のテスト（`npm test`。Cloudflare では使いません） |

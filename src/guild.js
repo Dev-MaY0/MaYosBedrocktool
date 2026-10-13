@@ -11,6 +11,7 @@ import { DiscordRest, BudgetError, RateLimitError, editOriginal, hasPerm, PERM }
 import { buildVcAddon, hasAddonTemplate } from "./addon.js";
 import { resolveEnv } from "./appconfig.js";
 import { WS_ENCRYPT_PROTOCOL, beginKeyExchange, finishKeyExchange, newCipherState, encryptText, decryptBytes } from "./mcenc.js";
+import { webMethods } from "./webvc.js";
 
 export const DEAD_ROOM = 31;
 const MAX_ROOM = 30;
@@ -105,6 +106,8 @@ export class GuildRoom {
     this.staleMs = Number(env.BDS_STALE_MS) || BDS_STALE_DEFAULT_MS;
     this.retryAt = 0;   // Discord の回数制限が明けるまで待つ時刻
     this.softRetry = 0; // 連続移動の待ちなどで、あとでもう一度確認する時刻
+    // ブラウザ（サイト内VC）の「ping」には、部屋を起こさずに「pong」と返す
+    try { ctx.setWebSocketAutoResponse(new WebSocketRequestResponsePair("ping", "pong")); } catch (e) { /* 古い環境 */ }
     ctx.blockConcurrencyWhile(async () => {
       this.cfg = (await this.storage.get("cfg")) || null;
       this.links = (await this.storage.get("links")) || {};
@@ -182,6 +185,18 @@ export class GuildRoom {
         const guildId = await this.storage.get("dir:" + url.searchParams.get("code"));
         return json({ guildId: guildId || null });
       }
+      case "/dir/rate": {
+        // いたずら防止: 同じ人（IP のハッシュ）が 1 時間に作れる部屋の数（"__directory__" だけが使う）
+        const b = await request.json();
+        const hour = Math.floor(Date.now() / 3600000);
+        let r = await this.storage.get("rate");
+        if (!r || r.hour !== hour) r = { hour, c: {} };
+        const n = (r.c[b.k] || 0) + 1;
+        if (n > (Number(b.max) || 5)) return json({ ok: false });
+        r.c[b.k] = n;
+        await this.storage.put("rate", r);
+        return json({ ok: true });
+      }
       case "/dir/put": {
         const b = await request.json();
         const cur = await this.storage.get("dir:" + b.code);
@@ -193,6 +208,15 @@ export class GuildRoom {
       }
       case "/update":
         return this.onBdsUpdate(await request.json());
+      // ---- サイト内の近接VC（webvc.js）----
+      case "/web/create":
+        return this.webCreate(await request.json());
+      case "/web/info":
+        return this.webInfo();
+      case "/web/host":
+        return this.webHost(await request.json());
+      case "/web/socket":
+        return this.webAccept(request);
       case "/check":
         return this.onCheck(url.searchParams.get("secret"));
       default:
@@ -259,14 +283,19 @@ export class GuildRoom {
     const ext =(request.headers.get("Sec-WebSocket-Extensions") || new URL(request.url).searchParams.get("ext") || "").slice(0, 120);
     const ua = (request.headers.get("User-Agent") || "").slice(0, 80);
     const ver = (request.headers.get("Sec-WebSocket-Version") || "").slice(0, 8);
-    const detail = `拡張: ${ext || "なし"}・サブプロトコル: ${offered.filter(Boolean).join(", ") || "なし"}・版: ${ver || "?"}${ua ? `・UA: ${ua}` : ""}`;
+    // どこを通ってきたか（入口の index.js が via に入れて渡す。コネクター: "1.0.0"、リレー: "relay:1.0.0"）
+    const via = (new URL(request.url).searchParams.get("via") || request.headers.get("X-VC-Connector") || "").slice(0, 24);
+    const viaRelay = via.startsWith("relay:");
+    const viaName = !via ? "" : viaRelay ? "リレー" : "コネクター";
+    const viaVer = viaRelay ? via.slice(6) : via;
+    const detail = `${via ? `${viaName}経由（v${viaVer}）・` : ""}拡張: ${ext || "なし"}・サブプロトコル: ${offered.filter(Boolean).join(", ") || "なし"}・版: ${ver || "?"}${ua ? `・UA: ${ua}` : ""}`;
     const pair = new WebSocketPair();
     const [client, server] = Object.values(pair);
     this.ctx.acceptWebSocket(server, ["mc"]);
     server.serializeAttachment({ init: false, since: Date.now(), wantEnc, scheme, sent: 0, recv: 0 });
     this.bdsMode = false;
     this.poll = null;
-    await this.noteTry({ kind: "open", text: `✓ Minecraft から接続がきました${canEnc ? "（暗号化あり）" : ""}`, scheme, detail });
+    await this.noteTry({ kind: "open", text: `✓ ${via ? `${viaName}経由で ` : ""}Minecraft から接続がきました${canEnc ? "（暗号化あり）" : ""}`, scheme, detail });
     await this.storage.setAlarm(Date.now() + 300); // 最初の設定は少し待ってから送る
     const headers = canEnc ? { "Sec-WebSocket-Protocol": WS_ENCRYPT_PROTOCOL } : {};
     return new Response(null, { status: 101, webSocket: client, headers });
@@ -356,6 +385,7 @@ export class GuildRoom {
     a.initAt = Date.now();
     this.setAtt(ws, a);
     if (!this.poll) this.startPoll(ws);
+    if (this.isWebRoom()) { this.webWorld(true); this.webStartPos(); }
   }
 
   diagInfo() {
@@ -363,6 +393,7 @@ export class GuildRoom {
     const a = ws ? this.att(ws) : null;
     return {
       guildName: this.cfg?.guildName || "",
+      kind: this.cfg?.kind || "discord",
       mode: this.liveMode(),
       encrypted: !!(a && a.enc),
       ready: !!(a && a.init),
@@ -388,7 +419,10 @@ export class GuildRoom {
   initSocket(ws) {
     this.mcSend(ws, "subscribe", { eventName: "PlayerMessage" });
     this.sendConfig(ws);
-    this.tell(ws, null, `§a[近接VC] Discord「${this.cfg?.guildName || "サーバー"}」とつながりました（声が届く距離: ${this.radius}ブロック）`);
+    if (this.isWebRoom())
+      this.tell(ws, null, `§a[近接VC] サイトの部屋「${this.cfg.guildName}」とつながりました（声が届く距離: ${this.radius}ブロック）。サイトに出た「!vc 6けたの数字」をチャットで送ると、サイトのVCに入れます`);
+    else
+      this.tell(ws, null, `§a[近接VC] Discord「${this.cfg?.guildName || "サーバー"}」とつながりました（声が届く距離: ${this.radius}ブロック）`);
   }
 
   startPoll(ws) {
@@ -398,6 +432,7 @@ export class GuildRoom {
   }
 
   async webSocketMessage(ws, message) {
+    if (this.isWebSocket(ws)) return this.onWebMessage(ws, message);
     // 暗号化は順番どおりに復号しないといけないので、await より前にやる
     let text;
     try { text = this.decodeIncoming(ws, message); } catch (e) { text = ""; }
@@ -420,6 +455,7 @@ export class GuildRoom {
     }
     await this.useEnv();
     if (h.messagePurpose === "commandResponse") {
+      if (this.webPos && await this.webOnResponse(h.requestId, b)) return;
       const p = this.poll;
       const tag = p && p.pending.get(h.requestId);
       if (!tag) return;
@@ -459,6 +495,7 @@ export class GuildRoom {
 
   async onChat(ws, body) {
     const sender = String(body.sender || "").trim();
+    if (this.isWebRoom()) return this.webOnChat(ws, sender, body.message);
     const m = /^!vc\s+(\d{4})$/i.exec(String(body.message || "").trim());
     if (!m || !sender) return;
     const r = await this.confirmLink(sender, m[1]);
@@ -469,11 +506,13 @@ export class GuildRoom {
   async webSocketClose(ws, code, reason) {
     // 返事の close は、正しい範囲のコードでしか送れない（範囲外だと例外になる）
     try { ws.close(code >= 1000 && code <= 4999 && code !== 1005 && code !== 1006 ? code : 1000, "bye"); } catch (e) { /* 無視 */ }
+    if (this.isWebSocket(ws)) return this.onWebClose(ws);
     await this.noteClose(ws, code, reason);
     await this.onSocketGone(ws);
   }
 
   async webSocketError(ws, error) {
+    if (this.isWebSocket(ws)) return this.onWebClose(ws);
     await this.noteClose(ws, "error", String((error && error.message) || error || ""));
     await this.onSocketGone(ws);
   }
@@ -507,6 +546,7 @@ export class GuildRoom {
     if (this.socket(ws)) return; // ほかのワールドがつながっている
     this.poll = null;
     this.desired = new Map();
+    if (this.isWebRoom()) this.webWorld(false);
     await this.reconcile(); // 全員ロビーへ
   }
 
@@ -534,6 +574,8 @@ export class GuildRoom {
         await this.startSession(ws);
       }
       if (!this.poll || now - this.poll.at > 6000) this.startPoll(ws);
+      // サイト内VC: 位置を読むのが止まっていたら、やり直す（部屋がメモリから消えたあとなど）
+      if (this.isWebRoom()) { if (!this.webPos) this.webStartPos(); else await this.webPosTick(); }
       await this.storage.setAlarm(now + POLL_MS);
       return;
     }
@@ -785,7 +827,27 @@ export class GuildRoom {
     throw new Error("接続コードを作れませんでした。もう一度ためしてください。");
   }
 
+  /** リレー（Google Cloud の VM・Railway など）のアドレス。/setup/ か Cloudflare の変数 RELAY_HOST で設定したもの。なければ "" */
+  get relayHost() {
+    return (this.env && this.env.RELAY_HOST) || "";
+  }
+
+  /**
+   * Minecraft で送るコマンド。
+   * リレーがあるとき: /wsserver ws://<リレー>/v/<コード>（Minecraft から直接）
+   * ないとき: /wsserver ws://<この Worker>/v/<コード>（近接VC コネクターに貼る）
+   */
   wsCommand(origin) {
+    if (this.relayHost) return this.relayCommand();
+    return this.connectorCommand(origin);
+  }
+
+  relayCommand() {
+    return `/wsserver ws://${this.relayHost}/v/${this.cfg.shortCode}`;
+  }
+
+  /** 近接VC コネクターに貼るコマンド（Worker に直接） */
+  connectorCommand(origin) {
     const host = origin ? new URL(origin).host : "（Bot のURL）";
     return `/wsserver ws://${host}/v/${this.cfg.shortCode}`;
   }
@@ -810,23 +872,49 @@ export class GuildRoom {
     return { name: a.name, data: a.data };
   }
 
+  /** 近接VC コネクター（Windows 用の中継アプリ）のダウンロード */
+  connectorButton(label = this.relayHost ? "予備: 近接VC コネクター（Windows）" : "近接VC コネクターをダウンロード") {
+    const site = (this.env.SITE_URL || "").replace(/\/$/, "");
+    return { label, url: `${site}/download/MaYoVCConnector.zip` };
+  }
+
+  /** ワールド用の案内につけるボタン（リレーがあるときは、コネクターは予備なので最後） */
+  worldButtons() {
+    return this.relayHost
+      ? [this.checkButton(), this.siteButton(), this.connectorButton()]
+      : [this.connectorButton(), this.siteButton(), this.checkButton()];
+  }
+
   /** ワールドでの始め方（setup・key で使う） */
   worldSteps(origin, hasFile) {
     return [
-      "**ワールドで遊ぶとき（ホストがやること）**",
+      this.relayHost ? "**ワールドで遊ぶとき（ホストがやること）**" : "**ワールドで遊ぶとき（ホストがやること・Windows の PC）**",
       hasFile ? "1. 下のファイルをひらく（近接VCアドオンが Minecraft に入ります）" : "1. サイトの近接VCページで、近接VCアドオンを作って入れる",
       "2. ワールドの設定で「チート」をオン、ビヘイビアパックで「近接VC BP」をオン",
-      "3. ワールドに入って、チャットでこれを送る（ワールドを開くたびに）",
-      ...this.commandLines(origin),
+      ...this.commandLines(origin, 3),
     ];
   }
 
-  /** /wsserver のコマンドと、つながらないときの案内 */
-  commandLines(origin) {
+  /**
+   * つなぎ方。Minecraft の /wsserver は Cloudflare に直接つなぐと 0.3 秒で切れてしまう（1002）。
+   * （Minecraft は返事の「Connection: Upgrade」が大文字でないと切る。Cloudflare は小文字で返す）
+   * リレー（Google Cloud の VM・Railway など）があれば、Minecraft からリレーにつなぐ。なければ PC の中で中継する「近接VC コネクター」を使う。
+   */
+  commandLines(origin, n = 1) {
+    if (this.relayHost) {
+      return [
+        `${n}. ワールドに入って、チャットでこれを送る（ワールドを開くたびに）`,
+        "```" + this.relayCommand() + "```",
+        "→「[近接VC] … とつながりました」と出たら完成！（つながらないときは「接続チェック」ボタンへ）",
+        "（リレーが止まっているときは、予備の「近接VC コネクター」でもつなげます。くわしくは接続チェックのページへ）",
+      ];
+    }
     return [
-      "```" + this.wsCommand(origin) + "```",
-      "→「[近接VC] … とつながりました」と出たら完成！",
-      "「サーバーに接続できませんでした」と出るときは、下の **「接続チェック」** をひらいてからもう一度送ってください（どこで止まっているか分かります）。",
+      `${n}. 下のボタンから「近接VC コネクター」をダウンロードしてひらき、このコマンドを貼り付けて「スタート」`,
+      "```" + this.connectorCommand(origin) + "```",
+      `${n + 1}. ワールドに入って、チャットでこれを送る（ワールドを開くたびに）`,
+      "```/wsserver ws://127.0.0.1:19131```",
+      "→「[近接VC] … とつながりました」と出たら完成！（つながらないときは「接続チェック」ボタンへ）",
     ];
   }
 
@@ -895,7 +983,7 @@ export class GuildRoom {
         this.keyLine(),
       ].join("\n"),
       files: file ? [file] : [],
-      buttons: [this.siteButton(), this.checkButton()],
+      buttons: this.worldButtons(),
     };
   }
 
@@ -905,8 +993,8 @@ export class GuildRoom {
     if (!this.cfg) return "まだ準備ができていません。先に `/vc setup` をしてください。";
     await this.ensureShortCode();
     return {
-      content: ["**ワールドでつなぐコマンド**（ホストがチャットで送る）", ...this.commandLines(origin), "", this.keyLine()].join("\n"),
-      buttons: [this.siteButton(), this.checkButton()],
+      content: [this.relayHost ? "**ワールドでつなぐとき**（ホスト）" : "**ワールドでつなぐとき**（ホスト・Windows の PC）", ...this.commandLines(origin), "", this.keyLine()].join("\n"),
+      buttons: this.worldButtons(),
     };
   }
 
@@ -927,7 +1015,7 @@ export class GuildRoom {
         "3. `config/default/permissions.json` の `allowed_modules` に `\"@minecraft/server-net\"` を足す",
         "4. サーバーを再起動（くわしくは下のボタンからサイトへ）"]
       : ["📦 **近接VCアドオン（ワールド用）**です。", ...this.worldSteps(origin, true).slice(1)];
-    return { content: lines.join("\n"), files: [file], buttons: mode === "bds" ? [this.siteButton()] : [this.siteButton(), this.checkButton()] };
+    return { content: lines.join("\n"), files: [file], buttons: mode === "bds" ? [this.siteButton()] : this.worldButtons() };
   }
 
   async cmdRekey(it, origin) {
@@ -943,8 +1031,9 @@ export class GuildRoom {
     return {
       content: ["🔁 接続キーと接続コードを作り直しました。前のものはもう使えません。",
         "BDS の人は `/vc addon type:BDS用` で新しいアドオンを入れ直してください。", "",
-        "**ワールドでつなぐ新しいコマンド**", ...this.commandLines(origin), "", this.keyLine()].join("\n"),
-      buttons: [this.siteButton(), this.checkButton()],
+        this.relayHost ? "**ワールドでつなぐとき**（新しいコマンドで送り直してください）" : "**ワールドでつなぐとき**（コネクターに新しいコマンドを貼り直してください）",
+        ...this.commandLines(origin), "", this.keyLine()].join("\n"),
+      buttons: this.worldButtons(),
     };
   }
 
@@ -1063,3 +1152,6 @@ export class GuildRoom {
     return lines.join("\n");
   }
 }
+
+// サイト内の近接VC（webvc.js）のメソッドを足す
+Object.assign(GuildRoom.prototype, webMethods);

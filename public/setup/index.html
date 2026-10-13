@@ -200,6 +200,17 @@ ul.result li.ng { color: var(--red); }
 ul.result li.ng::before { content: "✗ "; font-weight: 700; }
 .small-note { color: var(--sub); font-size: 12.5px; margin: 10px 0 0; }
 .small-note code { background: #eef0f3; border-radius: 4px; padding: 1px 5px; }
+.relay-now { margin: 0 0 10px; font-size: 14.5px; }
+.relay-now b { font-family: ui-monospace, Consolas, monospace; overflow-wrap: anywhere; }
+.relay-row { margin-top: 8px; }
+.copybox { display: flex; align-items: stretch; margin: 10px 0 2px; }
+.copybox[hidden] { display: none; }
+.copybox code { flex: 1; min-width: 0; background: #24262b; color: #e9f5e3; border-radius: 6px 0 0 6px; padding: 9px 11px; font-family: ui-monospace, Consolas, monospace; font-size: 13px; overflow-x: auto; white-space: nowrap; }
+.copybox button { flex: none; border: 0; border-radius: 0 6px 6px 0; background: var(--blue); color: #fff; font-weight: 700; font-size: 13px; padding: 0 14px; cursor: pointer; }
+.btn[hidden] { display: none; }
+ul.result li.warn { color: var(--orange); }
+ul.result li.warn::before { content: "! "; font-weight: 700; }
+@media (prefers-color-scheme: dark) { .small-note code { background: #2a2e35; } }
 </style>
 </head>
 <body>
@@ -217,6 +228,7 @@ ul.result li.ng::before { content: "✗ "; font-weight: 700; }
     <a href="../" data-page="home">🏠 トップ</a>
     <a href="../corpse/" data-page="corpse">🪦 死体スキン</a>
     <a href="../vc/" data-page="vc">🎙 近接VC</a>
+    <a href="../talk/" data-page="talk">🎧 サイトでVC</a>
   </div>
 </nav>
 
@@ -255,6 +267,51 @@ ul.result li.ng::before { content: "✗ "; font-weight: 700; }
       <p class="small-note">トークンは、この Worker（あなたの Cloudflare）の中にだけ保存されます。ほかの人には見せないでください。<br>
         Bot を作り直したときや、トークンを Reset したときは、新しいトークンをもう一度入れてください。<br>
         上級者向け: Cloudflare の「設定」→「変数とシークレット」に <code>DISCORD_TOKEN</code>（シークレット）を入れておくと、このページを開くだけで自動で設定されます。</p>
+    </div>
+  </section>
+
+  <!-- VPS -->
+  <section class="card" aria-labelledby="t3">
+    <h2 class="step" id="t3"><span class="num">🖥</span><span>VPS（ConoHa など）にリレーと音声の中継を入れる</span></h2>
+    <div class="indent">
+      <p style="margin:0 0 8px;font-size:14.5px">月額が決まっている VPS（Ubuntu）に、<b>近接VC リレー</b>（Minecraft の /wsserver 用）と、<b>音声の中継（TURN）</b>（サイトで近接VC の声がつながりにくい人用）を、コマンド 1 つで入れます。</p>
+      <ol class="how">
+        <li>下にトークンを入れて「<b>VPS に貼るコマンドを作る</b>」</li>
+        <li>VPS に SSH でログインして（例: Windows の PowerShell で <code>ssh root@VPSのIP</code>）、出てきたコマンドを貼り付けて Enter</li>
+        <li>最後に出る「リレーのアドレス」（VPS の IP）を、下の 📡 に入れて「保存してためす」</li>
+      </ol>
+      <div class="token-row">
+        <input id="vpsToken" type="password" autocomplete="off" spellcheck="false" placeholder="確認のため Bot のトークン（上で入れたもの）" aria-label="確認用の Bot のトークン（VPS）">
+        <button class="btn btn-green" id="vpsBtn" type="button">VPS に貼るコマンドを作る</button>
+      </div>
+      <ul class="result" id="vpsResult"></ul>
+      <div class="copybox" id="vpsBox" hidden><code id="vpsCmd"></code><button type="button" id="vpsCopy">コピー</button></div>
+      <p class="small-note">コマンドには、音声の中継の合言葉が入っています。<b>人に見せないでください</b>（見られたときは、Cloudflare のシークレット <code>TURN_SECRET</code> に新しい合言葉を入れて、コマンドを作り直して VPS で動かし直します）。<span id="turnNow"></span></p>
+    </div>
+  </section>
+
+  <!-- リレー -->
+  <section class="card" aria-labelledby="t2">
+    <h2 class="step" id="t2"><span class="num">📡</span><span>リレー（中継サーバー）のアドレスを入れる</span></h2>
+    <div class="indent">
+      <p style="margin:0 0 8px;font-size:14.5px">Minecraft の /wsserver は、Cloudflare の Bot に直接つなぐと、すぐ切れてしまいます（Minecraft が求める返事の形と、Cloudflare の返事の形がちがうため）。
+        VPS（ConoHa など）・Google Cloud・Railway に置いた「<b>近接VC リレー</b>」を通すと、PC のアプリなしでつなげます。<br>
+        ここにリレーのアドレスを入れると、Discord の <b>/vc key</b> や「サイトで近接VC」で出るコマンドが <code>/wsserver ws://リレーのアドレス/v/接続コード</code> に変わります。</p>
+      <p class="relay-now" id="relayNow">いまの設定: 確認しています…</p>
+      <div class="token-row">
+        <input id="relayInput" type="text" autocomplete="off" spellcheck="false" placeholder="例: 160.251.1.2 ／ vc.example.com ／ xxx.proxy.rlwy.net:15140" aria-label="リレーのアドレス">
+      </div>
+      <div class="token-row relay-row">
+        <input id="relayToken" type="password" autocomplete="off" spellcheck="false" placeholder="確認のため Bot のトークン（上で入れたもの）" aria-label="確認用の Bot のトークン">
+        <button class="btn btn-green" id="relayBtn" type="button">保存してためす</button>
+      </div>
+      <div class="actions"><button class="btn btn-sub" id="relayTestBtn" type="button" hidden>いまのリレーがつながるか、ためす</button></div>
+      <ul class="result" id="relayResult"></ul>
+      <p class="small-note"><b>VPS（ConoHa など）</b>: VPS の IP アドレス（例: <code>160.251.1.2</code>）。上の 🖥 のコマンドで入れたときは、ポート番号はいりません。<br>
+        <b>Google Cloud の VM</b>: VM の外部 IP（例: <code>34.82.1.2</code>）か、それに向けた独自ドメイン（例: <code>vc.example.com</code>）。ポート 80 で動かしているときは、ポート番号はいりません。<br>
+        <b>Railway</b>: 「Settings」→「Networking」→「TCP Proxy」に出るアドレス（<code>〜.proxy.rlwy.net:12345</code>）を、<b>: のあとのポート番号まで</b>。独自ドメインなら <code>vc.example.com:12345</code>（Railway のポート番号）。<br>
+        空にして保存すると、リレーを使わない案内（近接VC コネクター）に戻ります。トークンは確認に使うだけで、ここでは保存しません。<br>
+        上級者向け: Cloudflare の変数 <code>RELAY_HOST</code>（wrangler.toml の [vars]）に入れると、そちらが優先されます。</p>
     </div>
   </section>
 
@@ -381,6 +438,8 @@ async function refresh() {
     showState("ng", "設定ページにつながりません", "サイトを Cloudflare Workers で動かしているか確認してください。");
     return;
   }
+  showRelay(st);
+  $("turnNow").textContent = st.turn ? "　いま: 音声の中継の合言葉は作成ずみです。" : "";
   if (st.configured && st.setupOk) {
     showState("ok", `設定ずみです（Bot「${st.appName}」）`, "あとは Bot を Discord サーバーに招待して、Discord で /vc setup を送るだけです。");
     $("inviteBtn").href = st.invite;
@@ -394,6 +453,87 @@ async function refresh() {
     $("doneActions").hidden = true;
   }
 }
+
+// ---- リレー ----
+let relayNow = "";
+function relayLine(kind, text) {
+  const li = document.createElement("li"); li.className = kind; li.textContent = text; $("relayResult").appendChild(li);
+}
+function showTest(t) {
+  if (!t) return;
+  if (t.ok) relayLine("ok", `リレーが動いています（MaYoVCRelay v${t.version}${t.target ? "・中継先: " + t.target : ""}）`);
+  else relayLine("ng", t.error || "リレーにつながりませんでした。");
+  if (t.warn) relayLine("warn", t.warn);
+}
+function showRelay(st) {
+  relayNow = st.relay || "";
+  const el = $("relayNow"); el.textContent = "いまの設定: ";
+  if (relayNow) {
+    const b = document.createElement("b"); b.textContent = relayNow; el.appendChild(b);
+    el.append(st.relayFrom === "var" ? "（Cloudflare の変数 RELAY_HOST）" : "（このページで保存）");
+    if (!$("relayInput").value) $("relayInput").value = relayNow;
+  } else {
+    el.append("なし（Discord では「近接VC コネクター」を使う案内になります）");
+  }
+  if (st.relayError) { const w = document.createElement("div"); w.style.color = "var(--red)"; w.textContent = "Cloudflare の変数 RELAY_HOST がまちがっています: " + st.relayError; el.appendChild(w); }
+  if (st.relayFrom === "var") { const w = document.createElement("div"); w.className = "small-note"; w.style.margin = "4px 0 0"; w.textContent = "※ Cloudflare の変数 RELAY_HOST が入っているので、ここで保存しても、そちらが使われます。"; el.appendChild(w); }
+  $("relayTestBtn").hidden = !relayNow;
+}
+async function saveRelay() {
+  const relay = $("relayInput").value.trim(), token = $("relayToken").value.trim();
+  $("relayResult").textContent = "";
+  if (!token) { $("relayToken").focus(); relayLine("ng", "確認のため、Bot のトークンを入れてください。"); return; }
+  if (/\.rlwy\.net$/i.test(relay.replace(/^[a-z]+:\/\//i, "").replace(/[/?#].*$/, ""))) relayLine("warn", "ポート番号がありません。Railway の TCP Proxy なら「:12345」のような番号がつきます（ないとつながりません）。");
+  $("relayBtn").disabled = true; $("relayBtn").textContent = "保存しています…";
+  try {
+    const res = await fetch("../api/setup/relay", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token, relay }) });
+    const r = await res.json();
+    if (!r.ok) relayLine("ng", r.error || "保存できませんでした。");
+    else {
+      $("relayToken").value = "";
+      relayLine("ok", r.saved ? `保存しました（${r.saved}）。/vc key で出るコマンドが変わります（反映まで 30 秒くらいかかることがあります）。` : "リレーを使わない設定にしました。");
+      showTest(r.test);
+    }
+  } catch (e) { relayLine("ng", "つながりませんでした。もう一度ためしてください。"); }
+  $("relayBtn").disabled = false; $("relayBtn").textContent = "保存してためす";
+  await refresh();
+}
+async function testRelay() {
+  $("relayResult").textContent = "";
+  $("relayTestBtn").disabled = true;
+  try {
+    const res = await fetch("../api/setup/relay/test", { method: "POST" });
+    const r = await res.json();
+    showTest(r);
+  } catch (e) { relayLine("ng", "つながりませんでした。もう一度ためしてください。"); }
+  $("relayTestBtn").disabled = false;
+}
+$("relayBtn").addEventListener("click", saveRelay);
+async function makeVps() {
+  const token = $("vpsToken").value.trim();
+  $("vpsResult").textContent = "";
+  const line = (kind, text) => { const li = document.createElement("li"); li.className = kind; li.textContent = text; $("vpsResult").appendChild(li); };
+  if (!token) { $("vpsToken").focus(); line("ng", "確認のため、Bot のトークンを入れてください。"); return; }
+  $("vpsBtn").disabled = true;
+  try {
+    const r = await (await fetch("../api/setup/vps", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token }) })).json();
+    if (!r.ok) line("ng", r.error || "作れませんでした。");
+    else {
+      $("vpsToken").value = "";
+      $("vpsCmd").textContent = r.command; $("vpsBox").hidden = false;
+      line("ok", "コマンドを作りました。VPS に SSH でログインして、貼り付けて Enter を押してください。");
+    }
+  } catch (e) { line("ng", "つながりませんでした。もう一度ためしてください。"); }
+  $("vpsBtn").disabled = false;
+  await refresh();
+}
+$("vpsBtn").addEventListener("click", makeVps);
+$("vpsCopy").addEventListener("click", () => {
+  const b = $("vpsCopy");
+  const done = ok => { b.textContent = ok ? "コピー済み" : "失敗"; setTimeout(() => { b.textContent = "コピー"; }, 1500); };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText($("vpsCmd").textContent).then(() => done(true), () => done(false)); else done(false);
+});
+$("relayTestBtn").addEventListener("click", testRelay);
 
 async function setup() {
   const token = $("tokenInput").value.trim();
