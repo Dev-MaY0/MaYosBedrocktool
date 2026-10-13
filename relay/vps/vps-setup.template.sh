@@ -220,6 +220,9 @@ if [ -z "$ROOT" ]; then
   echo "  リレーのアドレス:  $PUBLIC_IP$( [ "$RELAY_PORT" != "80" ] && printf ':%s' "$RELAY_PORT" )"
   echo "    → サイトの /setup/ の「📡 リレーのアドレス」に入れて「保存してためす」"
   echo
+  echo "  サイト版の近接VC: ホストはワールドで（チートをオン）  /wsserver ws://$PUBLIC_IP$( [ "$RELAY_PORT" != "80" ] && printf ':%s' "$RELAY_PORT" )/new"
+  echo "    → ゲームに出た 6 けたの部屋番号を、みんながサイトで入れる"
+  echo
   echo "  ブラウザで http://$PUBLIC_IP$( [ "$RELAY_PORT" != "80" ] && printf ':%s' "$RELAY_PORT" )/ をひらくと、動いているか分かります"
   echo "  ※ VPS の会社の「セキュリティグループ」（ConoHa など）でも、ポートをあけてください"
   echo "=================================================="

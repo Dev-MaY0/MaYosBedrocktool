@@ -26,9 +26,10 @@ binding = "ASSETS"
 # この URL は、サイトのファイルより先に Bot（src/index.js）が受け取る
 #   /v/<接続コード> … Minecraft の /wsserver（WebSocket）・ブラウザでひらくと接続チェック
 #   /ws/<接続キー> … 接続キーそのままでつなぐとき
+#   /new          … マイクラの /wsserver で、サイトの近接VC の部屋を作る
 #   /api/…        … 設定ページ・BDS アドオン・サイトから
 #   /interactions … Discord のスラッシュコマンド
-run_worker_first = ["/v/*", "/ws/*", "/connect/*", "/api/*", "/interactions", "/health"]
+run_worker_first = ["/v/*", "/ws/*", "/connect/*", "/api/*", "/interactions", "/health", "/new"]
 
 [vars]
 # ふつうは変えない

@@ -1,0 +1,1017 @@
+<!doctype html>
+<!--
+  近接VC（Minecraft 統合版 × Discord）
+  制作: MaYo (mayo01297)  https://github.com/Dev-MaY0
+  このサイトとアドオンの二次配布（再アップロード・改変しての配布・自作発言）は禁止です。
+-->
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="author" content="MaYo (mayo01297)">
+<meta name="copyright" content="© 2026 MaYo (mayo01297) 二次配布禁止">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>近接VC（Discord 版）</title>
+<meta name="description" content="Minecraft 統合版で近くにいる人とだけ Discord で話せる近接VC。死んだら死亡者VCへ。制作: MaYo (mayo01297)">
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAB40lEQVR4nO3dsU3DQBiAUYJo2SJESGnTUNGzAQ0lKzADK7AAc6RKwwBIjAE9bJAUxjrD915rWb7i0y/5fJJX6832+4ys89ELYCwBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIE4AcQKIE0CcAOIuRi+AeV0/Xx29bgLECSBOAHECiBNAnADiBBA3eR9gd3v4jXVkfd09HL3+/vQx6/NNgDgBxAkgTgBxAogTQJwA4pwHGOzUe/6p7/lT9wlMgDgBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIE4AcQKIE0CcAOIWfx7g9eXy6PX7x89F3790JkCcAOIEECeAOAHECSBOAHECiBNAnADiBBAngDgBxAkgTgBxiz8PMPV7++j7l84EiBNAnADiBBAngDgBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIG7x5wH+u7n/B3CKCRAngDgBxAkgTgBxAogTQNzkfYC3/c2k+3e3h6lLOGrq+ma3H/t4EyBOAHECiBNAnADiBBAngLg/fx5g8e/5g506T2ACxAkgTgBxAogTQJwA4gQQt/h9AO/58zIB4gQQJ4A4AcQJIE4AcQKIW6032+/Ri2AcEyBOAHECiBNAnADiBBAngDgBxAkgTgBxAogTQJwA4gQQJ4C4Hz5iK0yQ/79HAAAAAElFTkSuQmCC">
+<style>
+/* =====================================================================
+   共通スタイル（全ページ）  制作: MaYo (mayo01297)  二次配布禁止
+   白ベース・角の丸いカード・グラデーションのアクセント（SNS アプリのような雰囲気）
+   ===================================================================== */
+:root {
+  --back: #fafafa; --panel: #ffffff; --border: #dbdbdb; --border-soft: #efefef; --input: #fafafa;
+  --text: #262626; --sub: #737373; --link: #00376b;
+  --header: #ffffff; --header-sub: #737373;
+  --blue: #0095f6; --blue-hover: #1877f2; --blue-pale: #e8f3ff;
+  --green: #22a55b; --green-hover: #1d9150; --green-down: #17803f; --green-pale: #e7f7ee;
+  --red: #ed4956; --orange: #f39c12; --preview: #f2f2f2;
+  --grad: linear-gradient(45deg, #feda75 0%, #fa7e1e 25%, #d62976 50%, #962fbf 75%, #4f5bd5 100%);
+  --grad-btn: linear-gradient(90deg, #f56040 0%, #e1306c 45%, #833ab4 100%);
+  --radius: 16px;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .04), 0 6px 20px rgba(0, 0, 0, .05);
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic UI", Meiryo, system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--back); color: var(--text); font-family: var(--font); font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+button, input, select, textarea { font: inherit; color: inherit; }
+a { color: var(--link); }
+.pixel { image-rendering: pixelated; image-rendering: crisp-edges; }
+
+/* ---- header ---- */
+header { background: rgba(255, 255, 255, .92); color: var(--text); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 20; -webkit-backdrop-filter: saturate(180%) blur(12px); backdrop-filter: saturate(180%) blur(12px); }
+.header-in { max-width: 920px; margin: 0 auto; padding: 10px 16px; display: flex; align-items: center; gap: 12px; }
+.header-in img { width: 42px; height: 42px; flex: none; border-radius: 12px; padding: 2px; background: var(--grad); }
+.header-in h1 { margin: 0; font-size: 20px; line-height: 1.25; font-weight: 800; letter-spacing: -.01em; background: var(--grad-btn); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.header-in p { margin: 1px 0 0; color: var(--header-sub); font-size: 12.5px; }
+.header-in .help-btn { margin-left: auto; flex: none; color: var(--text); background: #efefef; border: 0; border-radius: 10px; padding: 7px 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none; white-space: nowrap; }
+.header-in .help-btn:hover { background: #e3e3e3; }
+
+main { max-width: 920px; margin: 0 auto; padding: 18px 16px 90px; }
+.card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+.step { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; font-size: 17px; font-weight: 700; }
+.num { width: 30px; height: 30px; flex: none; border-radius: 50%; background: var(--grad); color: #fff; display: grid; place-items: center; font-size: 15px; font-weight: 700; box-shadow: 0 2px 8px rgba(214, 41, 118, .25); }
+.indent { padding-left: 40px; }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 10px; cursor: pointer; color: #fff; font-weight: 600; transition: filter .15s, transform .05s, background .15s; }
+.btn:active { transform: scale(.98); }
+.btn svg { width: 20px; height: 20px; flex: none; }
+.btn:disabled { background: #c7c7c7 !important; cursor: default; filter: none; }
+.btn-blue { background: var(--blue); padding: 10px 18px; font-size: 15.5px; }
+.btn-blue:hover { background: var(--blue-hover); }
+.btn-green { background: var(--grad-btn); padding: 14px 22px; font-size: 17px; width: 100%; max-width: 480px; box-shadow: 0 6px 18px rgba(225, 48, 108, .25); }
+.btn-green:hover { filter: brightness(1.06); }
+.btn-green.pulse { animation: pulse 0.5s ease-in-out 3 alternate; }
+@keyframes pulse { to { box-shadow: 0 0 0 7px rgba(225, 48, 108, .22); } }
+.hint { margin: 8px 0 2px; color: var(--sub); font-size: 13px; }
+.link { color: var(--blue); background: none; border: 0; padding: 0; cursor: pointer; font-size: 14px; font-weight: 600; text-align: left; }
+.link:hover { text-decoration: underline; }
+.link:disabled { color: var(--sub); cursor: default; text-decoration: none; }
+.link svg { width: 15px; height: 15px; vertical-align: -2px; margin-right: 4px; }
+hr { border: 0; border-top: 1px solid var(--border-soft); margin: 14px 0 10px; }
+.btn-outline { display: inline-flex; align-items: center; gap: 6px; background: #efefef; color: var(--text); border: 0; border-radius: 10px; padding: 7px 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none; }
+.btn-outline:hover { background: #e3e3e3; }
+.btn-outline svg { width: 15px; height: 15px; flex: none; }
+
+.notice { background: #fff8e6; border: 1px solid #f7d58a; border-radius: 12px; padding: 10px 14px; font-size: 13px; margin: 0 0 14px; }
+.notice[hidden] { display: none; }
+
+input[type=text], input[type=password], input[type=search], input:not([type]), textarea { border-radius: 10px; }
+.settings { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 0 0 4px; }
+.settings label { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; }
+.settings select, select { font: inherit; font-size: 15px; padding: 6px 10px; border: 1px solid var(--border); border-radius: 10px; background: var(--input); color: var(--text); }
+.settings select:focus, select:focus { outline: none; border-color: #a8a8a8; }
+kbd { font-family: inherit; background: #efefef; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 6px; padding: 0 6px; font-size: 13px; }
+
+/* ---- help ---- */
+details.help { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 12px; box-shadow: var(--shadow); }
+details.help summary { cursor: pointer; padding: 14px 20px; font-weight: 700; }
+details.help .help-body { padding: 0 20px 16px; font-size: 14px; }
+details.help h4 { margin: 14px 0 4px; font-size: 14px; }
+details.help ol, details.help ul { margin: 4px 0; padding-left: 22px; }
+details.help code { background: #efefef; border-radius: 6px; padding: 1px 6px; }
+.small { color: var(--sub); font-size: 12px; text-align: center; margin-top: 20px; line-height: 1.8; }
+.small a { color: var(--sub); }
+
+/* ---- 制作者について（折りたたみ） ---- */
+details.about { padding: 0; }
+details.about > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 14px 20px; border-radius: var(--radius); }
+details.about > summary::-webkit-details-marker { display: none; }
+details.about > summary:hover { background: #fafafa; }
+details.about > summary:focus-visible { outline: 3px solid rgba(0, 149, 246, .35); outline-offset: -3px; }
+details.about .sum-t { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 12px; min-width: 0; }
+details.about .ttl { font-size: 16px; font-weight: 700; }
+details.about .sub { font-size: 13px; color: var(--sub); }
+details.about .sub > span { display: inline-block; white-space: nowrap; }
+details.about .sum-hint { margin-left: auto; font-size: 13px; color: var(--blue); font-weight: 600; white-space: nowrap; }
+details.about .h-close, details.about[open] .h-open { display: none; }
+details.about[open] .h-close { display: inline; }
+details.about .chev { width: 20px; height: 20px; flex: none; color: var(--sub); transition: transform .2s; }
+details.about[open] .chev { transform: rotate(180deg); }
+details.about[open] > summary { border-radius: var(--radius) var(--radius) 0 0; }
+.about-body { padding: 2px 20px 20px; }
+.num svg { width: 16px; height: 16px; }
+.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.about-box { border: 1px solid var(--border-soft); border-radius: 14px; padding: 14px 16px 16px; background: #fff; }
+.about-box h3 { margin: 0 0 10px; font-size: 15px; }
+.profile { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.avatar { width: 72px; height: 72px; flex: none; border-radius: 50%; border: 3px solid #fff; outline: 2px solid transparent; object-fit: cover; background: #fff5ac; box-shadow: 0 0 0 2px #d62976; }
+.pname { font-size: 18px; font-weight: 700; line-height: 1.3; }
+.psub { color: var(--sub); font-size: 13px; }
+.about-box p { margin: 0 0 8px; font-size: 14px; }
+.about-box .label { margin: 10px 0 6px; font-size: 13px; font-weight: 700; color: var(--sub); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chips span { background: #efefef; border-radius: 999px; padding: 3px 12px; font-size: 13px; }
+.chips span.more { background: none; color: var(--sub); padding: 2px 2px; }
+.links { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.links li { display: flex; align-items: center; gap: 10px; border: 1px solid var(--border-soft); border-radius: 12px; padding: 8px 10px; }
+.links .ic { width: 34px; height: 34px; flex: none; border-radius: 10px; display: grid; place-items: center; color: #fff; }
+.links .ic svg { width: 20px; height: 20px; }
+.links .lt { flex: 1; min-width: 0; line-height: 1.35; }
+.links .lt small { display: block; color: var(--sub); font-size: 12px; }
+.links .lt b { word-break: break-all; }
+.links a.go, .links button { flex: none; border: 0; color: #fff; background: var(--blue); border-radius: 8px; padding: 5px 12px; font-size: 12.5px; font-weight: 600; cursor: pointer; text-decoration: none; font-family: inherit; }
+.links a.go:hover, .links button:hover { background: var(--blue-hover); }
+.license { margin: 14px 0 0 40px; background: #fff1f2; border: 1px solid #f6c3c8; border-radius: 12px; padding: 10px 14px; font-size: 14px; }
+.license b.ng { color: var(--red); }
+.license ul { margin: 4px 0; padding-left: 20px; }
+
+/* ---- status bar & dialog ---- */
+#status { position: fixed; left: 50%; transform: translateX(-50%); bottom: 14px; width: min(680px, calc(100% - 24px)); background: rgba(38, 38, 38, .94); color: #fff; border-radius: 14px; padding: 10px 16px; font-size: 14px; display: flex; align-items: center; gap: 10px; min-height: 44px; z-index: 30; box-shadow: 0 8px 30px rgba(0, 0, 0, .2); }
+#status .dot { width: 18px; height: 18px; border-radius: 50%; flex: none; display: grid; place-items: center; color: #fff; font-size: 11px; font-weight: 700; }
+#status.ok .dot { background: var(--green); }
+#status.warn .dot { background: var(--orange); }
+#status.info .dot { background: var(--blue); }
+#status.busy .dot { border: 2px solid #fff; border-right-color: transparent; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+dialog { border: 0; border-radius: 18px; padding: 0; max-width: 520px; width: calc(100% - 32px); box-shadow: 0 20px 60px rgba(0, 0, 0, .25); color: var(--text); }
+dialog::backdrop { background: rgba(0, 0, 0, .55); }
+.dlg-body { padding: 22px 24px 8px; }
+.dlg-body h3 { margin: 0 0 8px; font-size: 17px; }
+.dlg-body p { margin: 0 0 8px; white-space: pre-line; font-size: 14px; }
+.dlg-btns { display: flex; justify-content: flex-end; gap: 8px; padding: 10px 18px 18px; flex-wrap: wrap; }
+.dlg-btns button { border-radius: 10px; padding: 8px 16px; cursor: pointer; font-weight: 600; border: 0; background: #efefef; color: var(--text); }
+.dlg-btns button.primary { background: var(--blue); color: #fff; }
+
+/* ---- ゲストの名前（partials/guest.js）---- */
+.gmodal { position: fixed; inset: 0; z-index: 50; background: rgba(0, 0, 0, .55); display: grid; place-items: center; padding: 16px; }
+.gmodal .gbox { width: min(400px, 100%); background: #fff; border-radius: 22px; padding: 30px 26px 24px; text-align: center; box-shadow: 0 20px 60px rgba(0, 0, 0, .3); }
+.gmodal .ring { width: 88px; height: 88px; margin: 0 auto 12px; border-radius: 50%; padding: 3px; background: var(--grad); }
+.gmodal .ring > div { width: 100%; height: 100%; border-radius: 50%; background: #fff; border: 3px solid #fff; display: grid; place-items: center; font-size: 34px; }
+.gmodal h2 { margin: 0 0 4px; font-size: 20px; }
+.gmodal p { margin: 0 0 16px; color: var(--sub); font-size: 13.5px; }
+.gmodal input { width: 100%; font-size: 16px; padding: 12px 14px; border: 1px solid var(--border); background: var(--input); border-radius: 12px; margin-bottom: 10px; }
+.gmodal input:focus { outline: none; border-color: #a8a8a8; background: #fff; }
+.gmodal button { width: 100%; }
+.gmodal .gerr { color: var(--red); font-size: 13px; min-height: 1.4em; margin: 8px 0 0; }
+.gmodal .gnote { color: var(--sub); font-size: 12px; margin: 12px 0 0; }
+.av { --c: #ccc; width: 36px; height: 36px; flex: none; border-radius: 50%; display: grid; place-items: center; color: #fff; font-weight: 700; font-size: 15px; background: var(--c); }
+.av.ring { box-shadow: 0 0 0 2px #fff, 0 0 0 4px #d62976; }
+
+@media (max-width: 640px) {
+  body { font-size: 14.5px; }
+  .header-in { padding: 8px 12px; gap: 10px; }
+  .header-in img { width: 36px; height: 36px; border-radius: 10px; }
+  .header-in h1 { font-size: 17px; }
+  .header-in p { display: none; }
+  main { padding: 12px 12px 90px; }
+  .card { padding: 16px 14px 16px; border-radius: 14px; }
+  .indent { padding-left: 0; }
+  .btn-blue { width: 100%; }
+  .btn-green { font-size: 16px; padding: 13px 14px; }
+  .wide-only { display: none; }
+  .header-in .help-btn { padding: 6px 12px; font-size: 13px; }
+  .about-grid { grid-template-columns: 1fr; }
+  .license { margin-left: 0; }
+  details.about > summary { padding: 12px 14px; }
+  .about-body { padding: 2px 14px 14px; }
+}
+
+/* ---- サイトのメニュー ---- */
+.sitenav { background: rgba(255, 255, 255, .92); border-bottom: 1px solid var(--border-soft); position: sticky; top: 63px; z-index: 19; -webkit-backdrop-filter: saturate(180%) blur(12px); backdrop-filter: saturate(180%) blur(12px); }
+.sitenav-in { max-width: 920px; margin: 0 auto; padding: 8px 12px; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+.sitenav-in::-webkit-scrollbar { display: none; }
+.sitenav a { color: var(--text); text-decoration: none; padding: 6px 14px; font-size: 14px; font-weight: 600; border-radius: 999px; white-space: nowrap; background: #efefef; }
+.sitenav a:hover { background: #e3e3e3; }
+.sitenav a[aria-current="page"] { color: #fff; background: #262626; }
+@media (max-width: 640px) {
+  .sitenav { top: 53px; }
+  .sitenav-in { padding: 7px 10px; gap: 5px; }
+  .sitenav a { padding: 5px 10px; font-size: 12.5px; }
+}
+
+/* ---- 共通の部品（入力・コピー欄・かんたんな流れ・チップ）---- */
+.field, .search input, .key-row input, .token-row input, .row input[type=text], .row input[type=password] { font-size: 16px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--input); color: var(--text); transition: border-color .15s, background .15s; }
+.field:focus, .search input:focus, .key-row input:focus, .token-row input:focus, .row input[type=text]:focus, .row input[type=password]:focus { outline: none; border-color: #a8a8a8; background: #fff; }
+.copybox { display: flex; align-items: center; gap: 6px; margin: 8px 0 2px; max-width: 100%; background: #f5f5f5; border: 1px solid var(--border-soft); border-radius: 12px; padding: 4px 4px 4px 12px; }
+.copybox[hidden] { display: none; }
+.copybox code, .copybox pre { flex: 1; min-width: 0; margin: 0; background: none; color: var(--text); padding: 6px 0; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 13px; overflow-x: auto; white-space: nowrap; scrollbar-width: thin; }
+.copybox pre { white-space: pre; font-size: 12.5px; }
+.copybox button { flex: none; align-self: stretch; border: 0; border-radius: 9px; background: var(--blue); color: #fff; font-weight: 600; font-size: 13px; padding: 0 14px; cursor: pointer; }
+.copybox button:hover { background: var(--blue-hover); }
+.copybox.disabled code { color: #a8a8a8; }
+.copybox.disabled button { background: #c7c7c7; cursor: default; }
+.easy, .tip { position: relative; background: linear-gradient(135deg, #fff7fb 0%, #f7f4ff 100%); border: 1px solid #f1e4f3; border-radius: var(--radius); padding: 14px 18px; margin: 0 0 16px; }
+.tip { padding: 10px 14px; margin-top: 10px; font-size: 14px; border-radius: 12px; }
+.easy b.t { display: block; font-size: 15px; margin-bottom: 4px; }
+.easy ol { margin: 0; padding-left: 22px; font-size: 14px; }
+.easy li { margin: 3px 0; }
+.chip { display: inline-flex; align-items: center; gap: 4px; font-size: 12.5px; font-weight: 600; border-radius: 999px; padding: 3px 11px; background: #efefef; color: var(--sub); vertical-align: 1px; }
+.chip:empty { display: none; }
+.chip.on { background: var(--green-pale); color: var(--green-down); }
+.chip.warn { background: #fff1db; color: #a35b00; }
+.chip.dead { background: #f1e9ff; color: #6b3fb8; }
+.cmd { display: inline-block; background: #efefef; border-radius: 6px; padding: 1px 7px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 13.5px; }
+.sub-hint { color: var(--sub); font-size: 12.5px; margin: 4px 0 0; }
+ol.steps { margin: 4px 0 0; padding-left: 22px; font-size: 14px; }
+ol.steps > li { margin: 8px 0; }
+.btn-indigo { background: #5865f2; padding: 12px 20px; font-size: 16px; text-decoration: none; }
+.btn-indigo:hover { background: #4752c4; }
+.btn-sub { background: #efefef; color: var(--text); padding: 10px 16px; font-size: 15px; text-decoration: none; }
+.btn-sub:hover { background: #e3e3e3; }
+.btn[hidden] { display: none; }
+.toast { position: fixed; left: 50%; bottom: 22px; transform: translate(-50%, 20px); opacity: 0; pointer-events: none; z-index: 60; background: rgba(38, 38, 38, .95); color: #fff; border-radius: 12px; padding: 10px 16px; font-size: 14px; max-width: calc(100% - 32px); box-shadow: 0 8px 30px rgba(0, 0, 0, .2); transition: opacity .2s, transform .2s; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+.gmodal .gcancel { text-align: center; margin-top: 10px; color: var(--sub); }
+
+/* ---- チャットの吹き出し（チャット・サイトで近接VC）---- */
+.cmsgs { overflow-y: auto; padding: 10px 14px 8px; display: flex; flex-direction: column; overscroll-behavior: contain; }
+.cm { display: flex; align-items: flex-start; gap: 8px; margin-top: 2px; }
+.cm.first { margin-top: 10px; }
+.cm > .av { width: 30px; height: 30px; font-size: 13px; }
+.cm.cont > .av { visibility: hidden; height: 0; }
+.cm .cbody { min-width: 0; max-width: min(78%, 540px); display: flex; flex-direction: column; align-items: flex-start; }
+.cm .who { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 6px; font-size: 12px; color: var(--sub); margin: 0 0 3px 12px; }
+.cm .who b { color: var(--text); font-weight: 600; }
+.cm .click { cursor: pointer; }
+.cm b.click:hover { text-decoration: underline; }
+.cm .bub { background: #efefef; color: var(--text); border-radius: 20px; padding: 8px 14px; font-size: 14.5px; line-height: 1.45; white-space: pre-wrap; overflow-wrap: anywhere; }
+.cm .bub.game { background: #e9f7ee; }
+.cm.mine { flex-direction: row-reverse; }
+.cm.mine .cbody { align-items: flex-end; }
+.cm.mine .bub { background: #3797f0; color: #fff; }
+.cm.mine .bub.game { background: #1f9d55; }
+.tagb { font-style: normal; font-size: 10.5px; font-weight: 700; border-radius: 999px; padding: 0 7px; line-height: 1.6; }
+.tagb.v { background: #e8f3ff; color: #0064c8; }
+.tagb.game { background: #e7f7ee; color: #17803f; }
+.tagb.guest { background: #efefef; color: var(--sub); }
+.tagb.p { background: #fff1e6; color: #b45309; }
+.tagb.s { background: #f1e9ff; color: #6b3fb8; }
+.cday { text-align: center; color: var(--sub); font-size: 11.5px; font-weight: 600; margin: 14px 0 2px; }
+.cempty { color: var(--sub); text-align: center; font-size: 13.5px; margin: auto 0; padding: 30px 10px; }
+.composer { display: flex; align-items: flex-end; gap: 6px; border: 1px solid var(--border); border-radius: 24px; padding: 4px 4px 4px 16px; margin: 8px 12px 12px; background: #fff; }
+.composer:focus-within { border-color: #a8a8a8; }
+.composer textarea { flex: 1; min-width: 0; border: 0; outline: none; resize: none; font-size: 15px; line-height: 1.45; padding: 7px 0; min-height: 36px; max-height: 120px; background: none; border-radius: 0; }
+.composer .cnt { font-size: 11.5px; color: var(--sub); align-self: center; white-space: nowrap; }
+.composer .cnt.over { color: var(--red); font-weight: 700; }
+.composer .send { flex: none; border: 0; background: none; color: var(--blue); font-weight: 700; font-size: 15px; padding: 7px 12px; cursor: pointer; border-radius: 18px; }
+.composer .send:hover:not(:disabled) { background: var(--blue-pale); }
+.composer .send:disabled { color: #b2dffc; cursor: default; }
+
+
+/* ===== 近接VCページ ===== */
+.what ul { margin: 0; padding-left: 22px; }
+.what li { margin: 3px 0; }
+.what .note { color: var(--sub); font-size: 12.5px; margin: 10px 0 0; }
+.key-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.key-row input { flex: 1 1 260px; min-width: 0; font-size: 15px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+.key-row .btn-blue { padding: 9px 16px; font-size: 15px; }
+.check-result { margin: 8px 0 0; font-size: 13.5px; min-height: 1.6em; }
+.check-result.ok { color: var(--green-down); }
+.check-result.ng { color: var(--red); }
+.label { font-weight: 700; font-size: 14px; margin: 14px 0 6px; }
+.modes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.mode { display: flex; gap: 10px; align-items: flex-start; border: 1.5px solid var(--border); border-radius: 14px; padding: 12px 14px; cursor: pointer; background: #fff; transition: border-color .15s, background .15s; }
+.mode:hover { background: #fafafa; }
+.mode input { margin-top: 4px; accent-color: #d62976; }
+.mode b { display: block; font-size: 15px; }
+.mode small { display: block; color: var(--sub); font-size: 12.5px; line-height: 1.5; }
+.mode.sel { border-color: #d62976; background: #fff5f9; }
+.dl-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 14px; }
+.dl-note { color: var(--sub); font-size: 13px; margin: 0; flex: 1 1 220px; }
+.last-dl { margin: 10px 0 0; font-size: 13px; color: var(--sub); }
+.panel[hidden] { display: none; }
+details.conn > summary { cursor: pointer; font-size: 14px; color: var(--sub); margin: 10px 0 4px; }
+details.conn.nosum > summary { display: none; }
+table.cmds { width: 100%; border-collapse: collapse; font-size: 14px; }
+table.cmds th, table.cmds td { text-align: left; border-bottom: 1px solid var(--border); padding: 7px 6px; vertical-align: top; }
+table.cmds th { font-size: 12.5px; color: var(--sub); font-weight: 700; }
+table.cmds td:first-child { white-space: nowrap; }
+.who { display: inline-block; font-size: 11.5px; border-radius: 999px; padding: 0 8px; background: #efefef; color: var(--sub); white-space: nowrap; }
+.who.admin { background: #fde8e6; color: #a8322a; }
+.step .num.done { background: var(--green); }
+.step.is-done { color: var(--green-down); }
+.live { margin: 0 0 12px; padding: 9px 14px; border-radius: 12px; font-size: 14px; background: #f5f5f5; border: 1px solid var(--border-soft); }
+.live.on { background: var(--green-pale); border-color: #bfe6cf; color: var(--green-down); font-weight: 700; }
+.live[hidden] { display: none; }
+@media (max-width: 640px) {
+  .modes { grid-template-columns: 1fr; }
+  .btn-indigo { width: 100%; }
+  table.cmds td:first-child { white-space: normal; }
+}
+</style>
+<script src="../../config.js"></script>
+</head>
+<body>
+<header>
+  <div class="header-in">
+    <img class="pixel" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAB40lEQVR4nO3dsU3DQBiAUYJo2SJESGnTUNGzAQ0lKzADK7AAc6RKwwBIjAE9bJAUxjrD915rWb7i0y/5fJJX6832+4ys89ELYCwBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIE4AcQKIE0CcAOIuRi+AeV0/Xx29bgLECSBOAHECiBNAnADiBBA3eR9gd3v4jXVkfd09HL3+/vQx6/NNgDgBxAkgTgBxAogTQJwA4pwHGOzUe/6p7/lT9wlMgDgBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIE4AcQKIE0CcAOIWfx7g9eXy6PX7x89F3790JkCcAOIEECeAOAHECSBOAHECiBNAnADiBBAngDgBxAkgTgBxiz8PMPV7++j7l84EiBNAnADiBBAngDgBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIG7x5wH+u7n/B3CKCRAngDgBxAkgTgBxAogTQNzkfYC3/c2k+3e3h6lLOGrq+ma3H/t4EyBOAHECiBNAnADiBBAngLg/fx5g8e/5g506T2ACxAkgTgBxAogTQJwA4gQQt/h9AO/58zIB4gQQJ4A4AcQJIE4AcQKIW6032+/Ri2AcEyBOAHECiBNAnADiBBAngDgBxAkgTgBxAogTQJwA4gQQJ4C4Hz5iK0yQ/79HAAAAAElFTkSuQmCC">
+    <div>
+      <h1>近接VC（Discord 版）</h1>
+      <p>Minecraft の位置で Discord のVCを自動で切り替え　｜　制作: MaYo（mayo01297）</p>
+    </div>
+    <a class="help-btn" href="#help" id="openHelp">？<span class="wide-only"> 使い方・困ったとき</span></a>
+  </div>
+</header>
+<nav class="sitenav" aria-label="サイトのメニュー">
+  <div class="sitenav-in">
+    <a href="../../" data-page="home">🏠 ホーム</a>
+    <a href="../../corpse/" data-page="corpse">🪦 死体スキン</a>
+    <a href="../../vc/" data-page="vc" aria-current="page">🎙 近接VC</a>
+    <a href="../../chat/" data-page="chat">💬 チャット</a>
+  </div>
+</nav>
+
+<main>
+  <p class="sub-hint" style="margin:0 0 12px"><a href="../">← 近接VC のえらび方</a>　・　Discord なしで、ブラウザで話すときは <a href="../../talk/">サイト版</a></p>
+  <p class="notice" id="configNotice" hidden>⚠ まだ近接VC Bot の設定が終わっていません。サイトを公開した人は、<a href="../../setup/">設定ページ</a>で Discord の Bot のトークンを入れてください。</p>
+
+  <div class="easy" role="note">
+    <b class="t">⚡ かんたんな流れ（ワールドで遊ぶとき）</b>
+    <ol>
+      <li>① の「Bot を招待する」を押す</li>
+      <li>Discord で <span class="cmd">/vc setup</span> を送る → 届いた<b>ファイルをひらく</b>（近接VCアドオンが入ります）</li>
+      <li data-conn="connector">ホストは <a href="../../download/MaYoVCConnector.zip">近接VC コネクター</a>（Windows）をひらいて、Discord に出た <span class="cmd">/wsserver …</span> を貼って「スタート」</li>
+      <li data-conn="connector">ワールドでチートをオンにして、チャットで <span class="cmd">/wsserver ws://127.0.0.1:19131</span> を送る</li>
+      <li data-conn="relay" hidden>ワールドでチートをオンにして、Discord に出た <span class="cmd">/wsserver ws://…/v/…</span> をそのままチャットで送る</li>
+      <li>遊ぶ人は <span class="cmd">/vc link</span> で自分の名前を選んで、「🎮 近接VC ロビー」に入る</li>
+    </ol>
+    <p class="sub-hint" style="margin-top:6px">Discord のメッセージの「サイトでくわしく見る」ボタンから来ると、接続キーが自動で入ります。下の手順は、くわしく知りたいとき・BDS で使うときに。</p>
+  </div>
+
+  <!-- できること -->
+  <section class="card what" aria-labelledby="w0">
+    <h2 class="step" id="w0"><span class="num">🎙</span>近接VCでできること</h2>
+    <div class="indent">
+      <ul>
+        <li>Minecraft で<b>近くにいるプレイヤーの声だけ</b>聞こえる（近い人どうしを Discord の同じVCに自動で移動）</li>
+        <li>離れると別のVCに分かれて、<b>一定の距離で聞こえなくなる</b>（声が届く距離は <span class="cmd">/vc distance</span> で設定）</li>
+        <li>プレイヤーが死んだら<b>死亡者専用VC</b>へ（死亡者どうしだけで話せる。リスポーンすると元に戻る）</li>
+        <li>Discord のユーザーと Minecraft のプレイヤーを<b>紐付け</b>る</li>
+        <li><b>専用の Discord Bot</b> で、VCの参加者を管理（だれがどこにいるか・紐付け・リセット）</li>
+      </ul>
+      <p class="note">※ Discord のVCを切り替える方式のため、距離に合わせて声の大きさを少しずつ変えることはできません（Discord の仕様）。近い人どうしは同じVC、離れると別のVC、という切り替えになります。</p>
+    </div>
+  </section>
+
+  <!-- ① -->
+  <section class="card" aria-labelledby="s1">
+    <h2 class="step" id="s1"><span class="num" data-n="1">1</span>Bot を Discord サーバーに招待する</h2>
+    <div class="indent">
+      <a class="btn btn-indigo" id="inviteBtn" href="#" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-9l-5 4v-4H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg>
+        Bot を招待する
+      </a>
+      <p class="hint">サーバーの管理者がやってください。Bot には「チャンネルの管理」「メンバーを移動」「接続」などの権限が必要です（招待のときに自動でつきます）。</p>
+    </div>
+  </section>
+
+  <!-- ② -->
+  <section class="card" aria-labelledby="s2">
+    <h2 class="step" id="s2"><span class="num" data-n="2">2</span>Discord で <span class="cmd">/vc setup</span> を送る</h2>
+    <div class="indent">
+      <p style="margin:0">Bot が「🎮 近接VC ロビー」「💀 死亡者VC」「🔊 近接VC 1〜4」を自動で作って、<b>ワールド用の近接VCアドオン</b>と <b>/wsserver のコマンド</b>を送ってくれます（自分にだけ見えるメッセージ）。<br>
+      メッセージの「<b>サイトでくわしく見る</b>」ボタンを押すと、このページに接続キーが自動で入ります。</p>
+    </div>
+  </section>
+
+  <!-- ③ -->
+  <section class="card" aria-labelledby="s3">
+    <h2 class="step" id="s3"><span class="num" data-n="3">3</span>近接VCアドオンを作る</h2>
+    <div class="indent">
+      <div class="label" style="margin-top:0">接続キー</div>
+      <div class="key-row">
+        <input id="keyInput" type="text" autocomplete="off" spellcheck="false" placeholder="/vc setup で出たキーを貼り付け（例: 1234567890….AbCd…）" aria-label="接続キー">
+        <button class="btn btn-blue" id="checkBtn" type="button">確認する</button>
+      </div>
+      <p class="check-result" id="checkResult" aria-live="polite"></p>
+
+      <div class="label">遊ぶ場所</div>
+      <div class="modes" role="radiogroup">
+        <label class="mode" id="modeWorldBox"><input type="radio" name="mode" value="world" checked>
+          <span><b>だれかのワールド</b><small id="modeWorldNote">ホストが Windows の PC でワールドを開いて、近接VC コネクターを使う（チートON）。Realms では使えません。</small></span></label>
+        <label class="mode" id="modeBdsBox"><input type="radio" name="mode" value="bds">
+          <span><b>BDS・レンタルサーバー</b><small>サーバーのアドオンが Bot に直接送る。ベータ API と permissions.json の設定が必要。</small></span></label>
+      </div>
+
+      <div class="dl-row">
+        <button class="btn btn-green" id="downloadBtn" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v11M7.5 9.5 12 14l4.5-4.5M4 14v6h16v-6"/></svg>
+          近接VCアドオンをダウンロード（.mcaddon）
+        </button>
+        <p class="dl-note" id="dlNote">ワールド用は、接続キーがなくても作れます。BDS用は接続キーが入ったアドオンになります。</p>
+      </div>
+      <p class="last-dl" id="lastDl" hidden></p>
+      <p class="sub-hint">Discord の <span class="cmd">/vc setup</span> や <span class="cmd">/vc addon</span> でも、同じアドオンがもらえます。<br>作り直したときは、Minecraft の「設定」→「ストレージ」→「ビヘイビアパック」で古い「近接VC BP」を消してから入れるとスッキリします（名前の最後に作った日時が付きます）。</p>
+    </div>
+  </section>
+
+  <!-- ④ -->
+  <section class="card" aria-labelledby="s4">
+    <h2 class="step" id="s4"><span class="num" data-n="4">4</span>ゲームと Discord をつなぐ</h2>
+    <div class="indent">
+      <p class="live" id="liveStatus" hidden></p>
+      <div class="panel" id="panelWorld">
+        <!-- リレー（Google Cloud の VM・Railway など）が設定されているとき -->
+        <div id="worldRelay" hidden>
+        <p style="margin:0 0 4px"><b>だれかのワールド</b>（ホストがやること）</p>
+        <ol class="steps">
+          <li>ワールドの設定で「<b>チートを有効にする</b>」をオン、「ビヘイビアパック」で「<b>近接VC BP</b>」を有効にする</li>
+          <li>ワールドを開いて、チャットにこれを送る（ワールドを開くたびに）
+            <div class="copybox" id="relayBox"><code id="relayCmd">（接続キーを入れると、ここにコマンドが出ます）</code><button type="button" id="relayCopy">コピー</button></div>
+          </li>
+          <li>チャットに「<b>[近接VC] Discord「サーバー名」とつながりました</b>」と出たら準備OK</li>
+        </ol>
+        <p class="sub-hint">つながらないときは、<a class="checkLink" href="#" target="_blank" rel="noopener">接続チェック</a>をひらいたまま、もう一度送ってください（どこで止まっているか分かります）。<br>
+          ホストがワールドを閉じると、全員「🎮 近接VC ロビー」に戻ります。</p>
+        </div>
+        <details class="conn nosum" id="worldConnector" open>
+        <summary>予備: リレーが動かないとき（近接VC コネクター・Windows）</summary>
+        <p style="margin:0 0 4px" id="connectorTitle"><b>だれかのワールド</b>（ホストがやること・Windows の PC）</p>
+        <p class="sub-hint" style="margin:0 0 6px">Minecraft の <span class="cmd">/wsserver</span> は、インターネット上の Bot（Cloudflare）に直接つなぐと、すぐ切れてしまいます。<br>そこで、PC の中で中継する「<b>近接VC コネクター</b>」を使います（インストール不要・ダブルクリックでひらくだけ）。</p>
+        <ol class="steps">
+          <li><a class="btn btn-blue" href="../../download/MaYoVCConnector.zip" style="padding:6px 14px;font-size:14px">近接VC コネクターをダウンロード（.zip）</a><br>
+            zip をひらいて <b>MaYoVCConnector.exe</b> をダブルクリック（「Windows によって PC が保護されました」と出たら「詳細情報」→「実行」）</li>
+          <li>コネクターに、このコマンドを貼り付けて「<b>スタート</b>」（2回目からは、ひらくだけで自動でスタートします）
+            <div class="copybox" id="wsBox"><code id="wsCmd">（接続キーを入れると、ここにコマンドが出ます）</code><button type="button" id="wsCopy">コピー</button></div>
+          </li>
+          <li>ワールドの設定で「<b>チートを有効にする</b>」をオン、「ビヘイビアパック」で「<b>近接VC BP</b>」を有効にする</li>
+          <li>ワールドを開いて、チャットにこれを送る（ワールドを開くたびに）
+            <div class="copybox"><code id="localCmd">/wsserver ws://127.0.0.1:19131</code><button type="button" id="localCopy">コピー</button></div>
+          </li>
+          <li>チャットに「<b>[近接VC] Discord「サーバー名」とつながりました</b>」と出たら準備OK</li>
+        </ol>
+        <p class="sub-hint">つながらないときは、<a class="checkLink" id="checkLink" href="#" target="_blank" rel="noopener">接続チェック</a>をひらいたまま、もう一度送ってください（どこで止まっているか分かります）。<br>
+          遊んでいるあいだは、コネクターを開いたままにしてください。ホストがワールドを閉じると、全員「🎮 近接VC ロビー」に戻ります。</p>
+        </details>
+      </div>
+      <div class="panel" id="panelBds" hidden>
+        <p style="margin:0 0 4px"><b>BDS・レンタルサーバー</b>（サーバーの管理者がやること・最初の1回だけ）</p>
+        <ol class="steps">
+          <li>③ で作った「近接VC BP」を、サーバーのワールドにビヘイビアパックとして入れる（入れ方はサーバーによってちがいます。<span class="cmd">world_behavior_packs.json</span> に書くときは下の内容）
+            <div class="copybox" id="packBox"><pre id="packJson">（BDS用をダウンロードすると、ここに出ます）</pre><button type="button" id="packCopy">コピー</button></div>
+          </li>
+          <li>ワールドの実験的機能「<b>ベータ API</b>」をオンにする（BDS で HTTP 通信を使うのに必要です）</li>
+          <li><span class="cmd">config/default/permissions.json</span> を次の内容にする（<span class="cmd">@minecraft/server-net</span> を使えるようにする）
+            <div class="copybox"><pre id="permJson">{
+  "allowed_modules": [
+    "@minecraft/server-gametest",
+    "@minecraft/server",
+    "@minecraft/server-ui",
+    "@minecraft/server-admin",
+    "@minecraft/server-editor",
+    "@minecraft/server-net"
+  ]
+}</pre><button type="button" id="permCopy">コピー</button></div>
+          </li>
+          <li>サーバーを再起動する。つながらないときは、チャットに「<b>[近接VC] Discord の Bot につながりません</b>」と出ます</li>
+        </ol>
+        <p class="sub-hint">サーバーが止まると、1分後に全員「🎮 近接VC ロビー」に戻ります。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ⑤ -->
+  <section class="card" aria-labelledby="s5">
+    <h2 class="step" id="s5"><span class="num" data-n="5">5</span>遊ぶ人みんながやること</h2>
+    <div class="indent">
+      <ol class="steps">
+        <li>Discord で <span class="cmd">/vc link</span> を送る（最初の1回だけ）。ゲーム中なら、自分の名前が候補に出るので選ぶだけ</li>
+        <li>紐付けを確かめる
+          <ul>
+            <li><b>ワールド</b>: マイクラのチャットで、Bot に言われたとおり <span class="cmd">!vc 1234</span> のように送る</li>
+            <li><b>BDS</b>: ゲームの中に確認画面が出るので「紐付ける」を押す</li>
+          </ul>
+        </li>
+        <li>遊ぶときは Discord の「<b>🎮 近接VC ロビー</b>」に入っておく → ゲームの中の位置で、自動でVCが切り替わります（数秒かかることがあります）</li>
+        <li>死んだら「<b>💀 死亡者VC</b>」へ。リスポーンすると、近くの人のVCに戻ります</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- コマンド -->
+  <section class="card" aria-labelledby="c0">
+    <h2 class="step" id="c0"><span class="num">/</span>Bot のコマンド</h2>
+    <div class="indent">
+      <table class="cmds">
+        <thead><tr><th>コマンド</th><th>できること</th></tr></thead>
+        <tbody>
+          <tr><td><span class="cmd">/vc setup</span> <span class="who admin">管理者</span></td><td>近接VC用のVCを作って、接続キーを出す（もう一度やっても作り直しません）</td></tr>
+          <tr><td><span class="cmd">/vc link</span> <span class="who">みんな</span></td><td>自分の Discord とマイクラのアカウントを紐付ける（ゲーム中の人は名前が候補に出る）</td></tr>
+          <tr><td><span class="cmd">/vc unlink</span> <span class="who">みんな</span></td><td>紐付けを外す（管理者は、ほかの人の紐付けも外せる）</td></tr>
+          <tr><td><span class="cmd">/vc status</span> <span class="who">みんな</span></td><td>つながっているか・だれがどのVCにいるか・紐付けていない人を見る</td></tr>
+          <tr><td><span class="cmd">/vc distance</span> <span class="who admin">管理者</span></td><td>声が届く距離（4〜128ブロック、ふだんは20）を変える</td></tr>
+          <tr><td><span class="cmd">/vc reset</span> <span class="who admin">管理者</span></td><td>全員をロビーに戻す</td></tr>
+          <tr><td><span class="cmd">/vc addon</span> <span class="who">みんな</span></td><td>近接VCアドオンのファイルをもらう（BDS用は管理者だけ）</td></tr>
+          <tr><td><span class="cmd">/vc key</span> <span class="who admin">管理者</span></td><td>/wsserver のコマンドと接続キーをもう一度見る</td></tr>
+          <tr><td><span class="cmd">/vc rekey</span> <span class="who admin">管理者</span></td><td>接続キーと接続コードを作り直す（人に見られたとき）</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <details class="help" id="help">
+    <summary>？ 使い方・困ったとき</summary>
+    <div class="help-body">
+      <h4>■ /wsserver でつながらない（「サーバーに接続できませんでした」）</h4>
+      <ul>
+        <li data-conn="relay" hidden><b>Discord の <code>/vc key</code> で出たコマンド（<code>/wsserver ws://〜/v/〜</code>）を、そのまま送ってください。</b>リレー（中継サーバー）を通してつなぎます。「サーバーに接続できませんでした」と出るときは、リレーが止まっているか、アドレス・ポート番号がちがいます（サイトを公開した人は <a href="../../setup/">設定ページ</a> の「リレーをためす」で確認できます）。</li>
+        <li><b>近接VC コネクターを使ってください。</b>Minecraft の <code>/wsserver</code> は、Cloudflare 上の Bot に直接つなぐと 0.3 秒ほどで切れてしまいます（接続チェックに「コード 59907＝1002: プロトコルエラー」と出ます）。コネクターを使うと、Minecraft は PC の中のコネクターにつなぐので、この問題が起きません。</li>
+        <li>コネクターの画面が「つながっています」にならないときは、<b>接続チェック</b>（④ のリンク、または Discord の「接続チェック」ボタン）をひらいたまま、もう一度送ってください。「コネクター経由で Minecraft から接続がきました」と出れば、コネクターから Bot までは届いています。</li>
+        <li>コネクターの画面に何も出ないときは、Minecraft のコマンドが <code>/wsserver ws://127.0.0.1:19131</code> になっているか（コネクターに表示されたものと同じか）確認してください。</li>
+        <li>ワールドのチートがオンになっているか確認してください（ホストがオペレーター権限を持っている必要があります）。</li>
+        <li>「設定」→「一般」の WebSocket の項目：「WebSocket を有効にする」のようなスイッチがあればオン、「暗号化された WebSocket を要求」はオフにして、Minecraft を一度終了してからひらき直してください。</li>
+        <li>コマンドの <code>ws://</code> を <code>wss://</code> に変えると、つながることがあります。</li>
+        <li>学校などの Wi-Fi や、セキュリティソフトの「Web保護」が止めていることがあります。スマホのテザリングなど、ちがう回線でも試してください。</li>
+        <li>Discord で <code>/vc rekey</code> をした後は、新しいコマンド（接続コードが変わります）を使ってください（<code>/vc key</code> で見られます）。</li>
+      </ul>
+      <h4>■ VCが切り替わらない</h4>
+      <ul>
+        <li>Discord で <code>/vc status</code> を送ると、だれがどうなっているか見られます。</li>
+        <li>「VCに入っていません」→ 先に「🎮 近接VC ロビー」に入ってください。Bot は、VCに入っていない人を動かせません。</li>
+        <li>「近接VC以外のVCにいます」→ 近接VCとは関係ないVCにいる人は、勝手に動かしません。ロビーに移ってください。</li>
+        <li>「ゲームにいるけど紐付けていない人」に名前があったら、その人は <code>/vc link</code> をしてください。</li>
+        <li>Bot の役職（ロール）に「メンバーを移動」の権限があるか確認してください。</li>
+      </ul>
+      <h4>■ 死亡者VCについて</h4>
+      <p>死んだ人は「💀 死亡者VC」に移動して、死亡者どうしだけで話せます。生きている人には聞こえません。リスポーンすると、近くの人のVCに戻ります。</p>
+      <h4>■ 近接VCの数が足りない・増えた</h4>
+      <p>グループが増えると「🔊 近接VC 5」「6」… と自動で作ります（最大30）。</p>
+      <h4>■ 声の大きさが距離で変わらない</h4>
+      <p>Discord の Bot は、ほかの人の声の大きさを変えられないため、「近い人どうしは同じVC・離れたら別のVC」という方式です。声が届く距離は <code>/vc distance</code> で変えられます。</p>
+      <h4>■ データについて</h4>
+      <p>アドオンが Bot に送るのは「だれとだれが同じグループか（部屋の番号）」だけで、座標は送りません。Bot（Cloudflare）には、Discord のユーザーIDと名前・マイクラの名前・紐付け・接続キーが保存されます。</p>
+    </div>
+  </details>
+
+  <!-- 制作者について（全ページ共通: partials/about.html） -->
+  <details class="card about" id="about">
+    <summary>
+      <span class="num"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4.2"/><path d="M3.5 21c.8-4.6 4.2-7 8.5-7s7.7 2.4 8.5 7z"/></svg></span>
+      <span class="sum-t"><span class="ttl">制作者について</span><span class="sub"><span>MaYo（mayo01297）</span><span>・二次配布禁止</span></span></span>
+      <span class="sum-hint"><span class="h-open">ひらく</span><span class="h-close">とじる</span></span>
+      <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+    </summary>
+    <div class="about-body">
+    <div class="about-grid indent">
+      <div class="about-box">
+        <h3>自己紹介</h3>
+        <div class="profile">
+          <img class="avatar" src="data:image/png;base64,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" alt="MaYo のアイコン" width="72" height="72">
+          <div>
+            <div class="pname">MaYo</div>
+            <div class="psub">高校1年生</div>
+          </div>
+        </div>
+        <p>普段は、マインクラフトの PvP クライアントを作ったり、Roblox でゲームを作ったり、アドオンを作ったり、マインクラフトのマップを作ったりしています。</p>
+        <p class="label">好きなゲーム</p>
+        <div class="chips">
+          <span>マインクラフト</span><span>第五人格</span><span>崩壊：スターレイル</span><span>Roblox</span><span>Dead by Daylight</span><span class="more">など</span>
+        </div>
+      </div>
+      <div class="about-box">
+        <h3>関連リンク</h3>
+        <ul class="links">
+          <li>
+            <span class="ic" style="background:#24292f"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M13.5 4.5l-3 15"/></svg></span>
+            <span class="lt"><small>GitHub</small><b>Dev-MaY0</b></span>
+            <a class="go" href="https://github.com/Dev-MaY0" target="_blank" rel="noopener noreferrer">ひらく</a>
+          </li>
+          <li>
+            <span class="ic" style="background:#5865f2"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-9l-5 4v-4H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><circle cx="8.5" cy="11" r="1.5" fill="#5865f2"/><circle cx="15.5" cy="11" r="1.5" fill="#5865f2"/></svg></span>
+            <span class="lt"><small>Discord</small><b>mayokun_k</b></span>
+            <button type="button" data-copy="mayokun_k">コピー</button>
+          </li>
+          <li>
+            <span class="ic" style="background:#3c8527"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 2.5l8.5 4.5v10L12 21.5 3.5 17V7z"/><path d="M3.5 7L12 11.5 20.5 7M12 11.5v10"/></svg></span>
+            <span class="lt"><small>Minecraft</small><b>mayo01297</b></span>
+            <button type="button" data-copy="mayo01297">コピー</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="license">
+      <b>クレジット・二次配布について</b><br>
+      このスキン登録ページと「プレイヤーの死体アドオン」は、<b>MaYo（mayo01297）</b>が制作しました。<br>
+      <b class="ng">二次配布は禁止です。</b>次のことはしないでください。
+      <ul>
+        <li>このページのファイルやアドオンを、ほかのサイト・SNS・Discord サーバーなどにアップロードして配ること</li>
+        <li>改変して配ること</li>
+        <li>自分が作ったと言うこと（自作発言）</li>
+      </ul>
+      紹介するときは、このページのURLを共有してください。
+    </div>
+    </div>
+  </details>
+<script>
+// ---- 制作者について（名前のコピー・リンクで開く） 制作: MaYo (mayo01297) ----
+(function () {
+  var about = document.getElementById("about");
+  function copyText(text, btn) {
+    function done(ok) {
+      if (typeof window.setStatus === "function")
+        window.setStatus(ok ? "ok" : "warn", ok ? "「" + text + "」をコピーしました。" : "コピーできませんでした。「" + text + "」を手で入力してください。");
+      if (btn) {
+        btn.textContent = ok ? "コピー済み" : "失敗";
+        clearTimeout(btn._t);
+        btn._t = setTimeout(function () { btn.textContent = "コピー"; }, 1600);
+      }
+    }
+    function fallback() {
+      var t = document.createElement("textarea");
+      t.value = text; t.setAttribute("readonly", ""); t.style.position = "fixed"; t.style.opacity = "0";
+      document.body.appendChild(t); t.select();
+      var ok = false;
+      try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+      t.remove();
+      done(ok);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(function () { done(true); }, fallback);
+    else fallback();
+  }
+  Array.prototype.forEach.call(document.querySelectorAll("#about [data-copy]"), function (b) {
+    b.addEventListener("click", function () { copyText(b.getAttribute("data-copy"), b); });
+  });
+  // ページのどこにある「制作者について」リンクでも開く（あとから読み込まれるフッターも）
+  document.addEventListener("click", function (ev) {
+    var a = ev.target && ev.target.closest ? ev.target.closest('a[href="#about"]') : null;
+    if (a) about.open = true;
+  });
+  window.addEventListener("hashchange", function () { if (location.hash === "#about") about.open = true; });
+  if (location.hash === "#about") about.open = true;
+})();
+</script>
+
+  <p class="small">近接VC（Discord 版）<br>© 2026 MaYo（mayo01297）　・　二次配布禁止　・　<a href="#about">制作者について</a>　・　<a href="../../setup/">管理者用の設定</a></p>
+</main>
+
+<div id="status" class="info" role="status" aria-live="polite"><span class="dot">i</span><span id="statusText">① から順番にやってください。</span></div>
+
+<script>
+"use strict";
+// =====================================================================
+//  近接VC ページ  制作: MaYo (mayo01297)  二次配布禁止
+// =====================================================================
+const VC_TEMPLATE = {
+"PlayerCorpseVC_BP/manifest.json":"ewogICJmb3JtYXRfdmVyc2lvbiI6IDIsCiAgImhlYWRlciI6IHsKICAgICJuYW1lIjogIui/keaOpVZDIEJQIiwKICAgICJkZXNjcmlwdGlvbiI6ICJNaW5lY3JhZnQg44Gu5Lit44Gn6L+R44GP44Gr44GE44KL5Lq644Gp44GG44GX44KS44CBRGlzY29yZCDjga7lkIzjgZhWQ+OBq+iHquWLleOBp+enu+WLleOBl+OBvuOBmeOAglxu5Yi25L2cOiBNYVlvIChtYXlvMDEyOTcp77yP5LqM5qyh6YWN5biD56aB5q2iIiwKICAgICJ1dWlkIjogImI4NzNiOTYwLTAzN2ItNDgyMS04NmUzLTZiMzdmNTQwNjc2NyIsCiAgICAidmVyc2lvbiI6IFsxLCAwLCAwXSwKICAgICJtaW5fZW5naW5lX3ZlcnNpb24iOiBbMSwgMjEsIDkwXQogIH0sCiAgIm1vZHVsZXMiOiBbCiAgICB7CiAgICAgICJ0eXBlIjogInNjcmlwdCIsCiAgICAgICJsYW5ndWFnZSI6ICJqYXZhc2NyaXB0IiwKICAgICAgInV1aWQiOiAiOWQ3NWRhY2QtNmFiOS00Nzg1LWIxNzctYTY3NzJiYjQwNDg3IiwKICAgICAgInZlcnNpb24iOiBbMSwgMCwgMF0sCiAgICAgICJlbnRyeSI6ICJzY3JpcHRzL21haW5fd29ybGQuanMiCiAgICB9CiAgXSwKICAiZGVwZW5kZW5jaWVzIjogWwogICAgewogICAgICAibW9kdWxlX25hbWUiOiAiQG1pbmVjcmFmdC9zZXJ2ZXIiLAogICAgICAidmVyc2lvbiI6ICIyLjAuMCIKICAgIH0KICBdLAogICJtZXRhZGF0YSI6IHsKICAgICJhdXRob3JzIjogWyJNYVlvIChtYXlvMDEyOTcpIl0sCiAgICAibGljZW5zZSI6ICJBbGwgcmlnaHRzIHJlc2VydmVkLiDkuozmrKHphY3luIPnpoHmraLvvIjlho3jgqLjg4Pjg5fjg63jg7zjg4njg7vmlLnlpInjgZfjgabjga7phY3luIPjg7voh6rkvZznmbroqIDjga7npoHmraLvvIkiLAogICAgInVybCI6ICJodHRwczovL2dpdGh1Yi5jb20vRGV2LU1hWTAiCiAgfQp9Cg==",
+"PlayerCorpseVC_BP/pack_icon.png":"iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAB40lEQVR4nO3dsU3DQBiAUYJo2SJESGnTUNGzAQ0lKzADK7AAc6RKwwBIjAE9bJAUxjrD915rWb7i0y/5fJJX6832+4ys89ELYCwBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIE4AcQKIE0CcAOIuRi+AeV0/Xx29bgLECSBOAHECiBNAnADiBBA3eR9gd3v4jXVkfd09HL3+/vQx6/NNgDgBxAkgTgBxAogTQJwA4pwHGOzUe/6p7/lT9wlMgDgBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIE4AcQKIE0CcAOIWfx7g9eXy6PX7x89F3790JkCcAOIEECeAOAHECSBOAHECiBNAnADiBBAngDgBxAkgTgBxiz8PMPV7++j7l84EiBNAnADiBBAngDgBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIG7x5wH+u7n/B3CKCRAngDgBxAkgTgBxAogTQNzkfYC3/c2k+3e3h6lLOGrq+ma3H/t4EyBOAHECiBNAnADiBBAngLg/fx5g8e/5g506T2ACxAkgTgBxAogTQJwA4gQQt/h9AO/58zIB4gQQJ4A4AcQJIE4AcQKIW6032+/Ri2AcEyBOAHECiBNAnADiBBAngDgBxAkgTgBxAogTQJwA4gQQJ4C4Hz5iK0yQ/79HAAAAAElFTkSuQmCC",
+"PlayerCorpseVC_BP/scripts/cluster.js":"Ly8gPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09Ci8vICDov5HmjqVWQzog6L+R44GP44Gr44GE44KL5Lq644Gp44GG44GX44KS44Kw44Or44O844OX77yI6YOo5bGL77yJ44Gr5YiG44GR44KLCi8vICBNaW5lY3JhZnQg44Gr5L6d5a2Y44GX44Gq44GE6KiI566X44Gg44GR44Gu44OV44Kh44Kk44Or77yI44OG44K544OI44GX44KE44GZ44GE44KI44GG44Gr5YiG44GR44Gm44GE44G+44GZ77yJCi8vICDliLbkvZw6IE1hWW8gKG1heW8wMTI5NykgIOS6jOasoemFjeW4g+emgeatogovLyA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0KCi8qKiDmrbvjgpPjgafjgYTjgovkurrjga7pg6jlsYvnlarlj7fvvIhEaXNjb3JkIOOBp+OBr+OAjOatu+S6oeiAhVZD44CN77yJICovCmV4cG9ydCBjb25zdCBERUFEX1JPT00gPSAzMTsKLyoqIOeUn+OBjeOBpuOBhOOCi+S6uuOBrumDqOWxi+OBryAx44CcMzAgKi8KZXhwb3J0IGNvbnN0IE1BWF9ST09NID0gMzA7CgovKioKICogcGxheWVyczogW3sgbmFtZSwgZGltLCB4LCB5LCB6LCBkZWFkIH1dCiAqIHByZXY6ICAgIE1hcDxuYW1lLCDpg6jlsYvnlarlj7c+77yI5YmN5Zue44Gu57WQ5p6c44CC6YOo5bGL44Gu55Wq5Y+344KS44Gq44KL44G544GP5aSJ44GI44Gq44GE44Gf44KB44Gr5L2/44GG77yJCiAqIHJhZGl1czogIOOBk+OBrui3nembou+8iOODluODreODg+OCr++8ieS7peWGheOBruS6uuOBqeOBhuOBl+OBr+WQjOOBmOmDqOWxiwogKiDmiLvjgorlgKQ6ICBNYXA8bmFtZSwg6YOo5bGL55Wq5Y+3PiAgMCA9IOmDqOWxi+OBquOBlywgMeOAnDMwID0g6L+R5o6lVkMsIDMxID0g5q275Lqh6ICFVkMKICoKICog44O7QSDjgaggQiDjgYzov5HjgY/jgIFCIOOBqCBDIOOBjOi/keOBkeOCjOOBsOOAgUHjg7tC44O7QyDjga/lkIzjgZjpg6jlsYvvvIjlo7Djga7jg6rjg6zjg7zvvIkKICog44O75ZCM44GY6YOo5bGL44Gu5Lq644GvIHJhZGl1cyArIOS9meijle+8iGV4dHJh77yJ44G+44Gn6Zui44KM44Gq44GE44Go5Yil44KM44Gq44GE77yI5aKD55uu44GnVkPjgYzooYzjgaPjgZ/jgormnaXjgZ/jgorjgZfjgarjgYTjgojjgYbjgavvvIkKICovCmV4cG9ydCBmdW5jdGlvbiBjb21wdXRlUm9vbXMocGxheWVycywgcHJldiwgcmFkaXVzLCBleHRyYSkgewogIGNvbnN0IG91dCA9IG5ldyBNYXAoKTsKICBjb25zdCByID0gTWF0aC5tYXgoMSwgTnVtYmVyKHJhZGl1cykgfHwgMjApOwogIGNvbnN0IGtlZXAgPSByICsgKGV4dHJhID09PSB1bmRlZmluZWQgPyBNYXRoLm1heCgzLCByICogMC4yKSA6IGV4dHJhKTsKICBjb25zdCBqb2luMiA9IHIgKiByLCBrZWVwMiA9IGtlZXAgKiBrZWVwOwogIHByZXYgPSBwcmV2IHx8IG5ldyBNYXAoKTsKCiAgY29uc3QgYWxpdmUgPSBbXTsKICBmb3IgKGNvbnN0IHAgb2YgcGxheWVycykgewogICAgaWYgKHAuZGVhZCkgb3V0LnNldChwLm5hbWUsIERFQURfUk9PTSk7CiAgICBlbHNlIGFsaXZlLnB1c2gocCk7CiAgfQoKICAvLyDjgaTjgarjgYzjgaPjgabjgYTjgovkurrjgpLjgb7jgajjgoHjgovvvIhVbmlvbi1GaW5k77yJCiAgY29uc3QgcGFyZW50ID0gYWxpdmUubWFwKChfLCBpKSA9PiBpKTsKICBjb25zdCBmaW5kID0gaSA9PiB7CiAgICB3aGlsZSAocGFyZW50W2ldICE9PSBpKSB7IHBhcmVudFtpXSA9IHBhcmVudFtwYXJlbnRbaV1dOyBpID0gcGFyZW50W2ldOyB9CiAgICByZXR1cm4gaTsKICB9OwogIGZvciAobGV0IGkgPSAwOyBpIDwgYWxpdmUubGVuZ3RoOyBpKyspIHsKICAgIGNvbnN0IGEgPSBhbGl2ZVtpXTsKICAgIGNvbnN0IHJhID0gcHJldi5nZXQoYS5uYW1lKTsKICAgIGZvciAobGV0IGogPSBpICsgMTsgaiA8IGFsaXZlLmxlbmd0aDsgaisrKSB7CiAgICAgIGNvbnN0IGIgPSBhbGl2ZVtqXTsKICAgICAgaWYgKGEuZGltICE9PSBiLmRpbSkgY29udGludWU7CiAgICAgIGNvbnN0IGR4ID0gYS54IC0gYi54LCBkeSA9IGEueSAtIGIueSwgZHogPSBhLnogLSBiLno7CiAgICAgIGNvbnN0IGQyID0gZHggKiBkeCArIGR5ICogZHkgKyBkeiAqIGR6OwogICAgICBjb25zdCB0b2dldGhlciA9IHJhICE9PSB1bmRlZmluZWQgJiYgcmEgPj0gMSAmJiByYSA8PSBNQVhfUk9PTSAmJiByYSA9PT0gcHJldi5nZXQoYi5uYW1lKTsKICAgICAgaWYgKGQyIDw9IGpvaW4yIHx8ICh0b2dldGhlciAmJiBkMiA8PSBrZWVwMikpIHBhcmVudFtmaW5kKGkpXSA9IGZpbmQoaik7CiAgICB9CiAgfQoKICBjb25zdCBncm91cHMgPSBuZXcgTWFwKCk7CiAgYWxpdmUuZm9yRWFjaCgocCwgaSkgPT4gewogICAgY29uc3Qgcm9vdCA9IGZpbmQoaSk7CiAgICBpZiAoIWdyb3Vwcy5oYXMocm9vdCkpIGdyb3Vwcy5zZXQocm9vdCwgW10pOwogICAgZ3JvdXBzLmdldChyb290KS5wdXNoKHAubmFtZSk7CiAgfSk7CgogIC8vIOWkp+OBjeOBhOOCsOODq+ODvOODl+OBi+OCieOAgeWJjeWbnuOBrumDqOWxi+eVquWPt+OCkuOBquOCi+OBueOBj+W8leOBjeOBpOOBkAogIGNvbnN0IGxpc3QgPSBbLi4uZ3JvdXBzLnZhbHVlcygpXS5zb3J0KChhLCBiKSA9PiBiLmxlbmd0aCAtIGEubGVuZ3RoIHx8IChhWzBdIDwgYlswXSA/IC0xIDogMSkpOwogIGNvbnN0IHVzZWQgPSBuZXcgU2V0KCk7CiAgZm9yIChjb25zdCBuYW1lcyBvZiBsaXN0KSB7CiAgICBjb25zdCBjb3VudCA9IG5ldyBNYXAoKTsKICAgIGZvciAoY29uc3QgbiBvZiBuYW1lcykgewogICAgICBjb25zdCBpZCA9IHByZXYuZ2V0KG4pOwogICAgICBpZiAoaWQgPj0gMSAmJiBpZCA8PSBNQVhfUk9PTSAmJiAhdXNlZC5oYXMoaWQpKSBjb3VudC5zZXQoaWQsIChjb3VudC5nZXQoaWQpIHx8IDApICsgMSk7CiAgICB9CiAgICBsZXQgaWQgPSAwLCBiZXN0ID0gMDsKICAgIGZvciAoY29uc3QgW2ssIGNdIG9mIGNvdW50KSBpZiAoYyA+IGJlc3QgfHwgKGMgPT09IGJlc3QgJiYgayA8IGlkKSkgeyBpZCA9IGs7IGJlc3QgPSBjOyB9CiAgICBpZiAoIWlkKSBmb3IgKGxldCBrID0gMTsgayA8PSBNQVhfUk9PTTsgaysrKSBpZiAoIXVzZWQuaGFzKGspKSB7IGlkID0gazsgYnJlYWs7IH0KICAgIGlmIChpZCkgdXNlZC5hZGQoaWQpOwogICAgZm9yIChjb25zdCBuIG9mIG5hbWVzKSBvdXQuc2V0KG4sIGlkKTsgLy8g6YOo5bGL44GM6Laz44KK44Gq44GE44Go44GN77yIMzHjgrDjg6vjg7zjg5fku6XkuIrvvInjga8gMCA9IOODreODk+ODvAogIH0KICByZXR1cm4gb3V0Owp9CgpleHBvcnQgZnVuY3Rpb24gc2FtZVJvb21zKGEsIGIpIHsKICBpZiAoYS5zaXplICE9PSBiLnNpemUpIHJldHVybiBmYWxzZTsKICBmb3IgKGNvbnN0IFtrLCB2XSBvZiBhKSBpZiAoYi5nZXQoaykgIT09IHYpIHJldHVybiBmYWxzZTsKICByZXR1cm4gdHJ1ZTsKfQo=",
+"PlayerCorpseVC_BP/scripts/core.js":"Ly8gPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09Ci8vICDov5HmjqVWQyDjgqLjg4njgqrjg7PvvIjlhbHpgJrpg6jliIbvvIkKLy8gIC0gMC4156eS44GU44Go44Gr5YWo5ZOh44Gu5L2N572u44KS6KaL44Gm44CB6L+R44GE5Lq644Gp44GG44GX44KS44Kw44Or44O844OX44Gr5YiG44GR44KLCi8vICAtIOatu+OCk+OBoOS6uuOBr+OAjOatu+S6oeiAheOAjeOCsOODq+ODvOODl+OAgeODquOCueODneODvOODs+OBl+OBn+OCieWFg+OBq+aIu+OCiwovLyAg5Yi25L2cOiBNYVlvIChtYXlvMDEyOTcpICDkuozmrKHphY3luIPnpoHmraIKLy8gPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09CmltcG9ydCB7IHdvcmxkLCBzeXN0ZW0sIFBsYXllciB9IGZyb20gIkBtaW5lY3JhZnQvc2VydmVyIjsKaW1wb3J0IHsgY29tcHV0ZVJvb21zLCBzYW1lUm9vbXMgfSBmcm9tICIuL2NsdXN0ZXIuanMiOwppbXBvcnQgeyBWQ19DT05GSUcgfSBmcm9tICIuL3ZjX2NvbmZpZy5qcyI7Cgpjb25zdCBEUF9SQURJVVMgPSAicGN2YzpyYWRpdXMiOwpjb25zdCBJTlRFUlZBTF9USUNLUyA9IDEwOwoKY29uc3QgZGVhZCA9IG5ldyBTZXQoKTsKbGV0IHJvb21zID0gbmV3IE1hcCgpOwpsZXQgcmFkaXVzID0gTWF0aC5tYXgoNCwgTWF0aC5taW4oMTI4LCBOdW1iZXIoVkNfQ09ORklHLnJhZGl1cykgfHwgMjApKTsKbGV0IHJhZGl1c0xvYWRlZCA9IGZhbHNlOwoKZXhwb3J0IGZ1bmN0aW9uIGdldFJhZGl1cygpIHsKICBpZiAoIXJhZGl1c0xvYWRlZCkgewogICAgcmFkaXVzTG9hZGVkID0gdHJ1ZTsKICAgIHRyeSB7CiAgICAgIGNvbnN0IHNhdmVkID0gd29ybGQuZ2V0RHluYW1pY1Byb3BlcnR5KERQX1JBRElVUyk7CiAgICAgIGlmICh0eXBlb2Ygc2F2ZWQgPT09ICJudW1iZXIiICYmIHNhdmVkID49IDQgJiYgc2F2ZWQgPD0gMTI4KSByYWRpdXMgPSBzYXZlZDsKICAgIH0gY2F0Y2ggKGUpIHsKICAgICAgLy8g44G+44Gg6Kqt44KB44Gq44GE44Go44GN44Gv6Kit5a6a44OV44Kh44Kk44Or44Gu5YCkCiAgICB9CiAgfQogIHJldHVybiByYWRpdXM7Cn0KCi8qKiBEaXNjb3JkIOOBriAvdmMgZGlzdGFuY2Ug44GL44KJ5aSJ44GI44KJ44KM44KLICovCmV4cG9ydCBmdW5jdGlvbiBzZXRSYWRpdXMobikgewogIG4gPSBNYXRoLm1heCg0LCBNYXRoLm1pbigxMjgsIE1hdGgucm91bmQoTnVtYmVyKG4pIHx8IDApKSk7CiAgaWYgKCFuIHx8IG4gPT09IHJhZGl1cykgcmV0dXJuOwogIHJhZGl1cyA9IG47CiAgdHJ5IHsgd29ybGQuc2V0RHluYW1pY1Byb3BlcnR5KERQX1JBRElVUywgbik7IH0gY2F0Y2ggKGUpIHsgLyog5L+d5a2Y44Gn44GN44Gq44GP44Gm44KC5YuV44GPICovIH0KfQoKd29ybGQuYWZ0ZXJFdmVudHMuZW50aXR5RGllLnN1YnNjcmliZSgKICAoZXYpID0+IHsKICAgIGlmIChldi5kZWFkRW50aXR5IGluc3RhbmNlb2YgUGxheWVyKSBkZWFkLmFkZChldi5kZWFkRW50aXR5Lm5hbWUpOwogIH0sCiAgeyBlbnRpdHlUeXBlczogWyJtaW5lY3JhZnQ6cGxheWVyIl0gfQopOwp3b3JsZC5hZnRlckV2ZW50cy5wbGF5ZXJTcGF3bi5zdWJzY3JpYmUoKGV2KSA9PiBkZWFkLmRlbGV0ZShldi5wbGF5ZXIubmFtZSkpOwp3b3JsZC5hZnRlckV2ZW50cy5wbGF5ZXJMZWF2ZS5zdWJzY3JpYmUoKGV2KSA9PiBkZWFkLmRlbGV0ZShldi5wbGF5ZXJOYW1lKSk7CgpzeXN0ZW0uYWZ0ZXJFdmVudHMuc2NyaXB0RXZlbnRSZWNlaXZlLnN1YnNjcmliZSgoZXYpID0+IHsKICBpZiAoZXYuaWQgIT09ICJwY3ZjOmNvbmZpZyIpIHJldHVybjsKICB0cnkgewogICAgY29uc3QgYyA9IEpTT04ucGFyc2UoZXYubWVzc2FnZSB8fCAie30iKTsKICAgIGlmIChjLnJhZGl1cykgc2V0UmFkaXVzKGMucmFkaXVzKTsKICB9IGNhdGNoIChlKSB7CiAgICBjb25zb2xlLndhcm4oYFvov5HmjqVWQ10g6Kit5a6a44KS6Kqt44KB44G+44Gb44KT44Gn44GX44GfOiAke2V2Lm1lc3NhZ2V9YCk7CiAgfQp9KTsKCi8qKgogKiBvblJvb21zKHBsYXllcnMsIHJvb21zLCBjaGFuZ2VkKSDjgpIgMC4156eS44GU44Go44Gr5ZG844G2CiAqIHJvb21zOiBNYXA85ZCN5YmNLCDpg6jlsYvnlarlj7c+ICAwID0g6YOo5bGL44Gq44GXLCAx44CcMzAgPSDov5HmjqVWQywgMzEgPSDmrbvkuqHogIVWQwogKi8KZXhwb3J0IGZ1bmN0aW9uIHN0YXJ0TG9vcChvblJvb21zKSB7CiAgc3lzdGVtLnJ1bkludGVydmFsKCgpID0+IHsKICAgIGNvbnN0IHBsYXllcnMgPSB3b3JsZC5nZXRBbGxQbGF5ZXJzKCk7CiAgICBjb25zdCBsaXN0ID0gW107CiAgICBmb3IgKGNvbnN0IHAgb2YgcGxheWVycykgewogICAgICB0cnkgewogICAgICAgIGNvbnN0IGwgPSBwLmxvY2F0aW9uOwogICAgICAgIGxpc3QucHVzaCh7IG5hbWU6IHAubmFtZSwgZGltOiBwLmRpbWVuc2lvbi5pZCwgeDogbC54LCB5OiBsLnksIHo6IGwueiwgZGVhZDogZGVhZC5oYXMocC5uYW1lKSB9KTsKICAgICAgfSBjYXRjaCAoZSkgewogICAgICAgIC8vIOiqreOBv+i+vOOBv+S4reOBruODl+ODrOOCpOODpOODvOOBquOBqQogICAgICB9CiAgICB9CiAgICBjb25zdCBuZXh0ID0gY29tcHV0ZVJvb21zKGxpc3QsIHJvb21zLCBnZXRSYWRpdXMoKSk7CiAgICBjb25zdCBjaGFuZ2VkID0gIXNhbWVSb29tcyhuZXh0LCByb29tcyk7CiAgICByb29tcyA9IG5leHQ7CiAgICB0cnkgewogICAgICBvblJvb21zKHBsYXllcnMsIG5leHQsIGNoYW5nZWQpOwogICAgfSBjYXRjaCAoZSkgewogICAgICBjb25zb2xlLndhcm4oYFvov5HmjqVWQ10gJHtlfWApOwogICAgfQogIH0sIElOVEVSVkFMX1RJQ0tTKTsKfQo=",
+"PlayerCorpseVC_BP/scripts/main_bds.js":"Ly8gPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09Ci8vICDov5HmjqVWQyDjgqLjg4njgqrjg7PvvIhCRFPjg7vjg6zjg7Pjgr/jg6vjgrXjg7zjg5Djg7znlKjvvIkKLy8gIOOCsOODq+ODvOODl+OBjOWkieOCj+OBo+OBn+OBqOOBje+8iOOBqDEw56eS44GU44Go77yJ44Gr44CBQm90IOOBuCBIVFRQIOOBp+mAgeOCi+OAggovLyAg5b+F6KaB44Gq44KC44GuOgovLyAgIOODu+ODr+ODvOODq+ODieOBruWun+mok+eahOapn+iDveOAjOODmeODvOOCvyBBUEnjgI0KLy8gICDjg7tjb25maWcvZGVmYXVsdC9wZXJtaXNzaW9ucy5qc29uIOOBriBhbGxvd2VkX21vZHVsZXMg44GrICJAbWluZWNyYWZ0L3NlcnZlci1uZXQiCi8vICDliLbkvZw6IE1hWW8gKG1heW8wMTI5NykgIOS6jOasoemFjeW4g+emgeatogovLyA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0KaW1wb3J0IHsgd29ybGQgfSBmcm9tICJAbWluZWNyYWZ0L3NlcnZlciI7CmltcG9ydCB7IGh0dHAsIEh0dHBSZXF1ZXN0LCBIdHRwUmVxdWVzdE1ldGhvZCB9IGZyb20gIkBtaW5lY3JhZnQvc2VydmVyLW5ldCI7CmltcG9ydCB7IEFjdGlvbkZvcm1EYXRhIH0gZnJvbSAiQG1pbmVjcmFmdC9zZXJ2ZXItdWkiOwppbXBvcnQgeyBzdGFydExvb3AsIHNldFJhZGl1cyB9IGZyb20gIi4vY29yZS5qcyI7CmltcG9ydCB7IFZDX0NPTkZJRyB9IGZyb20gIi4vdmNfY29uZmlnLmpzIjsKCmNvbnN0IFVQREFURV9VUkwgPSBTdHJpbmcoVkNfQ09ORklHLmFwaSB8fCAiIikucmVwbGFjZSgvXC8rJC8sICIiKSArICIvYXBpL3VwZGF0ZSI7CmNvbnN0IEhFQVJUQkVBVF9NUyA9IDEwMDAwOwoKbGV0IGxhdGVzdCA9IG5ldyBNYXAoKTsKbGV0IGJ1c3kgPSBmYWxzZTsKbGV0IGRpcnR5ID0gdHJ1ZTsKbGV0IGxhc3RTZW50ID0gMDsKbGV0IGZhaWx1cmVzID0gMDsKbGV0IHdhcm5lZCA9IGZhbHNlOwpjb25zdCBjb25maXJtcyA9IFtdOwpjb25zdCBwcm9tcHRlZCA9IG5ldyBTZXQoKTsKCmZ1bmN0aW9uIGZpbmRQbGF5ZXIobmFtZSkgewogIGNvbnN0IGxvd2VyID0gU3RyaW5nKG5hbWUgfHwgIiIpLnRvTG93ZXJDYXNlKCk7CiAgcmV0dXJuIHdvcmxkLmdldEFsbFBsYXllcnMoKS5maW5kKChwKSA9PiBwLm5hbWUudG9Mb3dlckNhc2UoKSA9PT0gbG93ZXIpOwp9CgpmdW5jdGlvbiB0ZWxsUGxheWVyKG5hbWUsIHRleHQpIHsKICBjb25zdCBwID0gZmluZFBsYXllcihuYW1lKTsKICBpZiAocCAmJiB0ZXh0KSBwLnNlbmRNZXNzYWdlKHRleHQpOwp9CgovKiogRGlzY29yZCDjgacgL3ZjIGxpbmsg44GX44Gf5Lq644Gr44CB56K66KqN44Gu55S76Z2i44KS5Ye644GZICovCmZ1bmN0aW9uIHByb21wdExpbmsocmVxKSB7CiAgY29uc3QgaWQgPSBgJHtyZXEuY29kZX06JHtTdHJpbmcocmVxLmdhbWVydGFnKS50b0xvd2VyQ2FzZSgpfWA7CiAgaWYgKHByb21wdGVkLmhhcyhpZCkpIHJldHVybjsKICBjb25zdCBwbGF5ZXIgPSBmaW5kUGxheWVyKHJlcS5nYW1lcnRhZyk7CiAgaWYgKCFwbGF5ZXIpIHJldHVybjsKICBwcm9tcHRlZC5hZGQoaWQpOwogIG5ldyBBY3Rpb25Gb3JtRGF0YSgpCiAgICAudGl0bGUoIui/keaOpVZDIikKICAgIC5ib2R5KGBEaXNjb3JkIOOBruOAjCR7cmVxLmRpc2NvcmR944CN44Go44CB44GT44Gu44Ki44Kr44Km44Oz44OI77yIJHtwbGF5ZXIubmFtZX3vvInjgpLntJDku5jjgZHjgb7jgZnjgYvvvJ9cblxuYCArCiAgICAgICLntJDku5jjgZHjgovjgajjgIHjgrLjg7zjg6Djga7kuK3jga7kvY3nva7jgavlkIjjgo/jgZvjgaYgRGlzY29yZCDjga5WQ+OBjOiHquWLleOBp+WIh+OCiuabv+OCj+OCiuOBvuOBmeOAglxuIiArCiAgICAgICLlv4PlvZPjgZ/jgorjgYzjgarjgYTjgajjgY3jga/jgIzjgoTjgoHjgovjgI3jgpLmirzjgZfjgabjgY/jgaDjgZXjgYTjgIIiKQogICAgLmJ1dHRvbigi57SQ5LuY44GR44KLIikKICAgIC5idXR0b24oIuOChOOCgeOCiyIpCiAgICAuc2hvdyhwbGF5ZXIpCiAgICAudGhlbigocmVzKSA9PiB7CiAgICAgIGlmIChyZXMuY2FuY2VsZWQpIHsKICAgICAgICBpZiAocmVzLmNhbmNlbGF0aW9uUmVhc29uID09PSAiVXNlckJ1c3kiKSBwcm9tcHRlZC5kZWxldGUoaWQpOyAvLyDjgbvjgYvjga7nlLvpnaLjgpLplovjgYTjgabjgYTjgZ8g4oaSIOOBguOBqOOBp+OCguOBhuS4gOW6pgogICAgICAgIHJldHVybjsKICAgICAgfQogICAgICBpZiAocmVzLnNlbGVjdGlvbiA9PT0gMCkgewogICAgICAgIGNvbmZpcm1zLnB1c2goeyBnYW1lcnRhZzogcGxheWVyLm5hbWUsIGNvZGU6IHJlcS5jb2RlIH0pOwogICAgICAgIGRpcnR5ID0gdHJ1ZTsKICAgICAgfQogICAgfSkKICAgIC5jYXRjaCgoKSA9PiBwcm9tcHRlZC5kZWxldGUoaWQpKTsKfQoKYXN5bmMgZnVuY3Rpb24gc2VuZCgpIHsKICBidXN5ID0gdHJ1ZTsKICBkaXJ0eSA9IGZhbHNlOwogIGxhc3RTZW50ID0gRGF0ZS5ub3coKTsKICBjb25zdCBzZW5kaW5nID0gY29uZmlybXMuc3BsaWNlKDAsIGNvbmZpcm1zLmxlbmd0aCk7CiAgY29uc3QgYm9keSA9IHsga2V5OiBWQ19DT05GSUcua2V5LCBwbGF5ZXJzOiBPYmplY3QuZnJvbUVudHJpZXMobGF0ZXN0KSwgY29uZmlybXM6IHNlbmRpbmcgfTsKICB0cnkgewogICAgY29uc3QgcmVxID0gbmV3IEh0dHBSZXF1ZXN0KFVQREFURV9VUkwpOwogICAgcmVxLnNldE1ldGhvZChIdHRwUmVxdWVzdE1ldGhvZC5Qb3N0KTsKICAgIHJlcS5zZXRCb2R5KEpTT04uc3RyaW5naWZ5KGJvZHkpKTsKICAgIHJlcS5hZGRIZWFkZXIoIkNvbnRlbnQtVHlwZSIsICJhcHBsaWNhdGlvbi9qc29uIik7CiAgICByZXEuc2V0VGltZW91dCg4KTsKICAgIGNvbnN0IHJlcyA9IGF3YWl0IGh0dHAucmVxdWVzdChyZXEpOwogICAgbGV0IGRhdGEgPSB7fTsKICAgIHRyeSB7IGRhdGEgPSBKU09OLnBhcnNlKHJlcy5ib2R5IHx8ICJ7fSIpOyB9IGNhdGNoIChlKSB7IGRhdGEgPSB7fTsgfQogICAgaWYgKHJlcy5zdGF0dXMgIT09IDIwMCB8fCAhZGF0YS5vaykgdGhyb3cgbmV3IEVycm9yKGRhdGEuZXJyb3IgfHwgYEhUVFAgJHtyZXMuc3RhdHVzfWApOwogICAgZmFpbHVyZXMgPSAwOwogICAgaWYgKGRhdGEucmFkaXVzKSBzZXRSYWRpdXMoZGF0YS5yYWRpdXMpOwogICAgZm9yIChjb25zdCByIG9mIGRhdGEucmVzdWx0cyB8fCBbXSkgdGVsbFBsYXllcihyLmdhbWVydGFnLCByLm1lc3NhZ2UpOwogICAgZm9yIChjb25zdCByIG9mIGRhdGEubGlua1JlcXVlc3RzIHx8IFtdKSBwcm9tcHRMaW5rKHIpOwogIH0gY2F0Y2ggKGUpIHsKICAgIGNvbmZpcm1zLnVuc2hpZnQoLi4uc2VuZGluZyk7CiAgICBkaXJ0eSA9IHRydWU7CiAgICBmYWlsdXJlcysrOwogICAgY29uc29sZS53YXJuKGBb6L+R5o6lVkNdIEJvdCDjgavpgIHjgozjgb7jgZvjgpPjgafjgZfjgZ86ICR7ZX1gKTsKICAgIGlmIChmYWlsdXJlcyA9PT0gMyAmJiAhd2FybmVkKSB7CiAgICAgIHdhcm5lZCA9IHRydWU7CiAgICAgIHdvcmxkLnNlbmRNZXNzYWdlKGDCp2Nb6L+R5o6lVkNdIERpc2NvcmQg44GuIEJvdCDjgavjgaTjgarjgYzjgorjgb7jgZvjgpPvvIgke2V977yJ44CC5o6l57aa44Kt44O844GoIHBlcm1pc3Npb25zLmpzb24g44KS56K66KqN44GX44Gm44GP44Gg44GV44GE44CCYCk7CiAgICB9CiAgfSBmaW5hbGx5IHsKICAgIGJ1c3kgPSBmYWxzZTsKICB9Cn0KCmlmICghVkNfQ09ORklHLmFwaSB8fCAhVkNfQ09ORklHLmtleSkgewogIGNvbnNvbGUud2FybigiW+i/keaOpVZDXSBCb3Qg44GuIFVSTCDjgYvmjqXntprjgq3jg7zjgYznqbrjgafjgZnjgILjgrXjgqTjg4jjga7ov5HmjqVWQ+ODmuODvOOCuOOBp+OCouODieOCquODs+OCkuS9nOOCiuebtOOBl+OBpuOBj+OBoOOBleOBhOOAgiIpOwp9IGVsc2UgewogIHN0YXJ0TG9vcCgocGxheWVycywgcm9vbXMsIGNoYW5nZWQpID0+IHsKICAgIGxhdGVzdCA9IHJvb21zOwogICAgaWYgKGNoYW5nZWQpIGRpcnR5ID0gdHJ1ZTsKICAgIGNvbnN0IG5vdyA9IERhdGUubm93KCk7CiAgICBjb25zdCB3YWl0ID0gZmFpbHVyZXMgPyBNYXRoLm1pbigzMDAwMCwgMjAwMCAqIGZhaWx1cmVzKSA6IDA7IC8vIOOBpOOBquOBjOOCieOBquOBhOOBqOOBjeOBr+mWk+OCkuOBguOBkeOCiwogICAgaWYgKCFidXN5ICYmIG5vdyAtIGxhc3RTZW50ID49IHdhaXQgJiYgKGRpcnR5IHx8IG5vdyAtIGxhc3RTZW50ID4gSEVBUlRCRUFUX01TKSkgc2VuZCgpOwogIH0pOwp9Cg==",
+"PlayerCorpseVC_BP/scripts/main_world.js":"Ly8gPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09Ci8vICDov5HmjqVWQyDjgqLjg4njgqrjg7PvvIjjg6/jg7zjg6vjg4nnlKjvvIkKLy8gIOOCsOODq+ODvOODl+OBrueVquWPt+OCkuODl+ODrOOCpOODpOODvOOBruOCv+OCsOOBq+abuOOBhOOBpuOBiuOBj+OAggovLyAg44Ob44K544OI44GMIC93c3NlcnZlciDjgafjgaTjgarjgZDjgajjgIFCb3Qg44GM44K/44Kw44KS6Kqt44KT44GnIERpc2NvcmQg44GuVkPjgpLliIfjgormm7/jgYjjgovjgIIKLy8gICAgcGN2Y19vbiDigKYg6L+R5o6lVkPjga7lr77osaEKLy8gICAgcGN2Y19iMOOAnHBjdmNfYjQg4oCmIOmDqOWxi+eVquWPt++8iDLpgLLmlbDvvInjgIIzMSA9IOatu+S6oeiAhQovLyAg5Yi25L2cOiBNYVlvIChtYXlvMDEyOTcpICDkuozmrKHphY3luIPnpoHmraIKLy8gPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09CmltcG9ydCB7IHN0YXJ0TG9vcCB9IGZyb20gIi4vY29yZS5qcyI7Cgpjb25zdCBCSVRfVEFHUyA9IFsicGN2Y19iMCIsICJwY3ZjX2IxIiwgInBjdmNfYjIiLCAicGN2Y19iMyIsICJwY3ZjX2I0Il07CgpmdW5jdGlvbiBhcHBseVRhZ3MocGxheWVyLCByb29tKSB7CiAgaWYgKCFwbGF5ZXIuaGFzVGFnKCJwY3ZjX29uIikpIHBsYXllci5hZGRUYWcoInBjdmNfb24iKTsKICBCSVRfVEFHUy5mb3JFYWNoKCh0YWcsIGspID0+IHsKICAgIGNvbnN0IHdhbnQgPSAoKHJvb20gPj4gaykgJiAxKSA9PT0gMTsKICAgIGNvbnN0IGhhcyA9IHBsYXllci5oYXNUYWcodGFnKTsKICAgIGlmICh3YW50ICYmICFoYXMpIHBsYXllci5hZGRUYWcodGFnKTsKICAgIGVsc2UgaWYgKCF3YW50ICYmIGhhcykgcGxheWVyLnJlbW92ZVRhZyh0YWcpOwogIH0pOwp9CgpzdGFydExvb3AoKHBsYXllcnMsIHJvb21zKSA9PiB7CiAgZm9yIChjb25zdCBwIG9mIHBsYXllcnMpIHsKICAgIHRyeSB7CiAgICAgIGFwcGx5VGFncyhwLCByb29tcy5nZXQocC5uYW1lKSB8fCAwKTsKICAgIH0gY2F0Y2ggKGUpIHsKICAgICAgLy8g44Ot44Kw44Ki44Km44OI55u05b6M44Gq44GpCiAgICB9CiAgfQp9KTsK",
+"PlayerCorpseVC_BP/scripts/vc_config.js":"Ly8gPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09Ci8vICDov5HmjqVWQyDjga7oqK3lrpoKLy8gIOOBk+OBruODleOCoeOCpOODq+OBr+OCteOCpOODiOOBruOAjOi/keaOpVZD44CN44Oa44O844K444GM6Ieq5YuV44Gn5pu444GN5o+b44GI44G+44GZ44CCCi8vICDliLbkvZw6IE1hWW8gKG1heW8wMTI5NykgIOS6jOasoemFjeW4g+emgeatogovLyA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0KZXhwb3J0IGNvbnN0IFZDX0NPTkZJRyA9IHsKICAvKiogIndvcmxkIiA9IOOBoOOCjOOBi+OBruODr+ODvOODq+ODie+8iOODm+OCueODiOOBjCAvd3NzZXJ2ZXIg44Gn44Gk44Gq44GQ77yJIC8gImJkcyIgPSBCRFPjg7vjg6zjg7Pjgr/jg6vjgrXjg7zjg5Djg7wgKi8KICBtb2RlOiAid29ybGQiLAogIC8qKiBCRFMg55SoOiBCb3Qg44GuIFVSTO+8iOS+izogaHR0cHM6Ly9jb3Jwc2UtdmMtYm90Lnh4eHgud29ya2Vycy5kZXbvvIkgKi8KICBhcGk6ICIiLAogIC8qKiBCRFMg55SoOiDmjqXntprjgq3jg7zvvIhEaXNjb3JkIOOBriAvdmMgc2V0dXAg44Gn5Ye644Gf44KC44Gu77yJICovCiAga2V5OiAiIiwKICAvKiog5aOw44GM5bGK44GP6Led6Zui77yI44OW44Ot44OD44Kv77yJ44CCRGlzY29yZCDjga4gL3ZjIGRpc3RhbmNlIOOBp+WkieOBiOOCi+OBqOOAgeOBneOBoeOCieOBjOWEquWFiOOBleOCjOOBvuOBmSAqLwogIHJhZGl1czogMjAsCn07Cg=="
+};
+const PACK_DIR = "PlayerCorpseVC_BP";
+const STORE_KEY = "playerCorpseVC.v1";
+const KEY_RE = /^(\d{15,22})\.([A-Za-z0-9]{16,64})$/;
+const INVITE_PERMISSIONS = "17828880"; // チャンネルを見る・接続・メンバーを移動・チャンネルの管理・メッセージ送信
+const BOM = String.fromCharCode(0xFEFF);
+
+// Bot の場所: ふつうはこのサイトと同じ Worker（config.js で別の場所も指定できる）
+const CFG = window.SITE_CONFIG || {};
+const cfgBot = String(CFG.botUrl || "").replace(/\/+$/, "");
+const BOT = cfgBot && !/ここに|xxxx/i.test(cfgBot) ? cfgBot : (/^https?:$/.test(location.protocol) ? location.origin : "");
+let APP_ID = /^\d{15,22}$/.test(String(CFG.discordAppId || "")) ? String(CFG.discordAppId) : "";
+let RELAY = "";   // リレー（Google Cloud の VM・Railway など）のアドレス。Bot の /api/info から（なければ近接VC コネクターの案内）
+let configured = false;
+
+/** Bot が設定ずみか（アプリケーションID は Bot から教えてもらう） */
+async function loadInfo() {
+  if (BOT) {
+    try {
+      const res = await fetch(`${BOT}/api/info`, { cache: "no-store" });
+      const j = await res.json();
+      if (j.ok && j.appId) APP_ID = String(j.appId);
+      RELAY = j.ok && typeof j.relay === "string" && /^[a-z0-9.-]+(:\d{1,5})?$/i.test(j.relay) ? j.relay : "";
+      configured = !!(j.ok && j.configured && APP_ID);
+    } catch (e) {
+      configured = false;
+    }
+  }
+  $("configNotice").hidden = configured;
+  $("inviteBtn").href = configured
+    ? `https://discord.com/oauth2/authorize?client_id=${APP_ID}&permissions=${INVITE_PERMISSIONS}&scope=bot%20applications.commands`
+    : "#";
+  render();
+}
+
+const $ = id => document.getElementById(id);
+let state = { key: "", mode: "world", lastMinor: 0, lastPatch: 0, lastDownload: null };
+let info = null;        // /api/check の結果（つながり具合）
+let pollTimer = null;
+
+function loadState() {
+  try {
+    const s = JSON.parse(localStorage.getItem(STORE_KEY) || "null");
+    if (s && typeof s === "object") {
+      state.key = typeof s.key === "string" ? s.key : "";
+      state.mode = s.mode === "bds" ? "bds" : "world";
+      state.lastMinor = s.lastMinor | 0;
+      state.lastPatch = s.lastPatch | 0;
+      if (s.lastDownload && typeof s.lastDownload.label === "string") state.lastDownload = s.lastDownload;
+    }
+  } catch (e) { /* 使えないブラウザ */ }
+}
+function saveState() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) { /* 使えないブラウザ */ }
+}
+
+function setStatus(kind, text) {
+  const st = $("status");
+  st.className = kind;
+  st.querySelector(".dot").textContent = kind === "ok" ? "✓" : kind === "warn" ? "!" : kind === "info" ? "i" : "";
+  $("statusText").textContent = text;
+}
+window.setStatus = setStatus;
+
+const parseKey = k => KEY_RE.exec(String(k || "").trim());
+const agoText = ms => { const s = Math.max(0, Math.round(ms / 1000)); return s < 60 ? `${s}秒前` : s < 3600 ? `${Math.round(s / 60)}分前` : `${Math.round(s / 3600)}時間前`; };
+const wsHost = () => { try { return new URL(BOT).host; } catch (e) { return ""; } };
+
+// ---- 画面 ----
+function render() {
+  const key = $("keyInput").value.trim();
+  const valid = !!parseKey(key);
+  for (const r of document.querySelectorAll('input[name="mode"]')) r.checked = r.value === state.mode;
+  $("modeWorldBox").classList.toggle("sel", state.mode === "world");
+  $("modeBdsBox").classList.toggle("sel", state.mode === "bds");
+  $("panelWorld").hidden = state.mode !== "world";
+  $("panelBds").hidden = state.mode !== "bds";
+  $("dlNote").textContent = state.mode === "bds"
+    ? "BDS用は、接続キーと Bot の URL が入ったアドオンになります（ほかの人に配らないでください）。"
+    : "ワールド用は、接続キーがなくても作れます（キーは /wsserver のコマンドで使います）。";
+  const cmd = valid && configured
+    ? (info && info.shortCode ? `/wsserver ws://${wsHost()}/v/${info.shortCode}` : `/wsserver ws://${wsHost()}/ws/${key}`)
+    : "";
+  $("wsCmd").textContent = cmd || (configured ? "（接続キーを入れると、ここにコマンドが出ます）" : "（Bot の設定が終わっていません）");
+  // リレーがあるときは、Minecraft からリレーにつなぐコマンドを先に出す（コネクターは予備）
+  const relayCmd = RELAY && valid && configured
+    ? (info && info.shortCode ? `/wsserver ws://${RELAY}/v/${info.shortCode}` : `/wsserver ws://${RELAY}/ws/${key}`)
+    : "";
+  $("relayCmd").textContent = relayCmd || (configured ? "（接続キーを入れると、ここにコマンドが出ます）" : "（Bot の設定が終わっていません）");
+  $("relayBox").classList.toggle("disabled", !relayCmd);
+  $("relayCopy").disabled = !relayCmd;
+  $("worldRelay").hidden = !RELAY;
+  const wc = $("worldConnector");
+  if (wc.classList.contains("nosum") === !!RELAY) { wc.classList.toggle("nosum", !RELAY); wc.open = !RELAY; }
+  $("connectorTitle").hidden = !!RELAY;
+  for (const el of document.querySelectorAll("[data-conn]")) el.hidden = (el.dataset.conn === "relay") !== !!RELAY;
+  $("modeWorldNote").textContent = RELAY
+    ? "ホストがワールドを開いて、チャットで /wsserver を送る（チートON）。Realms では使えません。"
+    : "ホストが Windows の PC でワールドを開いて、近接VC コネクターを使う（チートON）。Realms では使えません。";
+  const checkUrl = valid && configured && info && info.shortCode ? `${BOT}/v/${info.shortCode}` : "";
+  for (const a of document.querySelectorAll("a.checkLink")) {
+    a.href = checkUrl || "#help";
+    if (checkUrl) a.target = "_blank"; else a.removeAttribute("target");
+  }
+  $("wsBox").classList.toggle("disabled", !cmd);
+  $("wsCopy").disabled = !cmd;
+  const d = state.lastDownload;
+  $("lastDl").hidden = !d;
+  if (d) $("lastDl").textContent = `最後にダウンロードしたもの：近接VC BP【${d.label}】（${d.file}）`;
+  renderProgress(valid);
+}
+
+/** 終わった手順に ✓ をつけて、つながり具合を出す */
+function renderProgress(valid) {
+  const ok = !!(valid && info && info.ok);
+  const connected = ok && !!info.mode;
+  const done = { 1: ok, 2: ok, 3: connected || !!state.lastDownload, 4: connected, 5: ok && info.linked > 0 };
+  for (const n of [1, 2, 3, 4, 5]) {
+    const el = document.querySelector(`.num[data-n="${n}"]`);
+    if (!el) continue;
+    el.classList.toggle("done", done[n]);
+    el.textContent = done[n] ? "✓" : String(n);
+    el.parentElement.classList.toggle("is-done", done[n]);
+  }
+  const live = $("liveStatus");
+  live.hidden = !ok;
+  if (ok) {
+    live.classList.toggle("on", connected);
+    const last = !connected && info.tries && info.tries[0];
+    const lastText = last ? `（最後の記録: ${agoText((info.now || Date.now()) - last.t)}「${last.text}」）` : "";
+    live.textContent = connected
+      ? `🟢 ${info.mode === "ws" ? "ワールド" : "BDS"}とつながっています（ゲームにいる人: ${info.inGame || 0}人・紐付けた人: ${info.linked}人）`
+      : "⚪ まだゲームとつながっていません。下のとおりにつなぐと、ここが緑になります。" + lastText;
+  }
+}
+
+// ---- 接続キーの確認 ----
+async function checkKey() {
+  const key = $("keyInput").value.trim();
+  const out = $("checkResult");
+  out.className = "check-result";
+  if (!parseKey(key)) { out.classList.add("ng"); out.textContent = "接続キーの形がちがいます。Discord の /vc setup（または /vc key）で出たキーを、そのまま貼り付けてください。"; return false; }
+  if (!configured) { out.classList.add("ng"); out.textContent = "まだ Bot の設定が終わっていないため、確認できません。"; return false; }
+  out.textContent = "確認しています…";
+  try {
+    const res = await fetch(`${BOT}/api/check?key=${encodeURIComponent(key)}`, { cache: "no-store" });
+    const data = await res.json();
+    if (!data.ok) { info = null; render(); out.classList.add("ng"); out.textContent = "✗ " + (data.error || "確認できませんでした。"); return false; }
+    info = data;
+    render();
+    startPolling();
+    setStatus("ok", data.mode ? "接続キーを確認しました。ゲームともつながっています！" : "接続キーを確認しました。次はアドオンを入れて、ゲームとつなぎます（④）。");
+    out.classList.add("ok");
+    const mode = data.mode === "ws" ? "ワールドとつながっています" : data.mode === "bds" ? "BDS とつながっています" : "ゲームとはまだつながっていません";
+    out.textContent = `✓ Discord サーバー「${data.guildName}」の接続キーです（紐付けた人: ${data.linked}人・声が届く距離: ${data.radius}ブロック・${mode}）`;
+    return true;
+  } catch (e) {
+    out.classList.add("ng");
+    out.textContent = "✗ Bot につながりませんでした。インターネットの接続を確認してください。";
+    return false;
+  }
+}
+
+// ---- アドオンを作る ----
+function b64ToBytes(b64) {
+  const bin = atob(b64), out = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out;
+}
+function nextVersion() {
+  // Minecraft のバージョンは各数字 0〜65535。[1, 2026/1/1からの日数, その日の分]
+  const now = new Date();
+  let minor = Math.max(1, Math.min(65535, Math.floor((now - Date.UTC(2026, 0, 1)) / 86400000) + 1));
+  let patch = now.getUTCHours() * 60 + now.getUTCMinutes();
+  let lm = state.lastMinor, lp = state.lastPatch;
+  if (lm < 1 || lm > 65535 || lp > 65535) { lm = 0; lp = 0; }
+  if (minor < lm || (minor === lm && patch <= lp)) { minor = lm; patch = lp + 1; if (patch > 65535) { minor++; patch = 0; } }
+  state.lastMinor = minor; state.lastPatch = patch;
+  return [1, minor, patch];
+}
+function makeLabel(modeName) {
+  const d = new Date(), z = n => String(n).padStart(2, "0");
+  let when = `${z(d.getMonth() + 1)}/${z(d.getDate())} ${z(d.getHours())}:${z(d.getMinutes())}`;
+  let file = `${z(d.getMonth() + 1)}-${z(d.getDate())}_${z(d.getHours())}-${z(d.getMinutes())}`;
+  const prev = state.lastDownload ? state.lastDownload.label : "";
+  if (prev.endsWith(when) || prev.includes(when + ":")) { when += `:${z(d.getSeconds())}`; file += `-${z(d.getSeconds())}`; }
+  return { label: `${modeName}・${when}版`, file };
+}
+
+function buildAddon(mode, key) {
+  const enc = new TextEncoder(), dec = new TextDecoder();
+  const files = new Map();
+  for (const [path, b64] of Object.entries(VC_TEMPLATE)) {
+    if (mode === "world" && path.endsWith("/scripts/main_bds.js")) continue;
+    if (mode === "bds" && path.endsWith("/scripts/main_world.js")) continue;
+    files.set(path, b64ToBytes(b64));
+  }
+  const cfg = { mode, api: mode === "bds" ? BOT : "", key: mode === "bds" ? key : "", radius: 20 };
+  files.set(`${PACK_DIR}/scripts/vc_config.js`, enc.encode(
+    "// このファイルはサイトの「近接VC」ページが自動で書き換えます。手で編集しないでください。\n" +
+    "// 制作: MaYo (mayo01297)  二次配布禁止\n" +
+    `export const VC_CONFIG = ${JSON.stringify(cfg, null, 2)};\n`));
+
+  const modeName = mode === "bds" ? "BDS用" : "ワールド用";
+  const { label, file } = makeLabel(modeName);
+  const v = nextVersion();
+  let text = dec.decode(files.get(`${PACK_DIR}/manifest.json`));
+  if (text.startsWith(BOM)) text = text.slice(1);
+  const m = JSON.parse(text);
+  m.header.version = v;
+  m.header.name = `${m.header.name}【${label}】`;
+  m.header.description = `【${label}】\n${m.header.description}`;
+  for (const mod of m.modules) {
+    mod.version = v;
+    if (mod.type === "script") mod.entry = mode === "bds" ? "scripts/main_bds.js" : "scripts/main_world.js";
+  }
+  if (mode === "bds") {
+    m.dependencies.push({ module_name: "@minecraft/server-net", version: "1.0.0-beta" });
+    m.dependencies.push({ module_name: "@minecraft/server-ui", version: "2.0.0" });
+  }
+  files.set(`${PACK_DIR}/manifest.json`, enc.encode(JSON.stringify(m, null, 2) + "\n"));
+  return { files, label, file: `PlayerCorpseVC_${mode}_${file}.mcaddon`, uuid: m.header.uuid, version: v };
+}
+
+// zip（無圧縮）
+const CRC_TABLE = (() => {
+  const t = new Uint32Array(256);
+  for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; }
+  return t;
+})();
+function crc32(b) { let c = 0xFFFFFFFF; for (let i = 0; i < b.length; i++) c = CRC_TABLE[(c ^ b[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+function makeZip(files) {
+  const enc = new TextEncoder(), d = new Date();
+  const dosTime = (d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1);
+  const dosDate = ((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate();
+  const parts = [], central = [];
+  let offset = 0;
+  for (const [path, data] of [...files.entries()].sort((a, b) => (a[0] < b[0] ? -1 : 1))) {
+    const name = enc.encode(path), crc = crc32(data);
+    const lh = new DataView(new ArrayBuffer(30));
+    lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true); lh.setUint16(8, 0, true);
+    lh.setUint16(10, dosTime, true); lh.setUint16(12, dosDate, true); lh.setUint32(14, crc, true);
+    lh.setUint32(18, data.length, true); lh.setUint32(22, data.length, true); lh.setUint16(26, name.length, true); lh.setUint16(28, 0, true);
+    parts.push(new Uint8Array(lh.buffer), name, data);
+    const ch = new DataView(new ArrayBuffer(46));
+    ch.setUint32(0, 0x02014b50, true); ch.setUint16(4, 20, true); ch.setUint16(6, 20, true); ch.setUint16(8, 0x0800, true); ch.setUint16(10, 0, true);
+    ch.setUint16(12, dosTime, true); ch.setUint16(14, dosDate, true); ch.setUint32(16, crc, true);
+    ch.setUint32(20, data.length, true); ch.setUint32(24, data.length, true); ch.setUint16(28, name.length, true);
+    ch.setUint16(30, 0, true); ch.setUint16(32, 0, true); ch.setUint16(34, 0, true); ch.setUint16(36, 0, true); ch.setUint32(38, 0, true);
+    ch.setUint32(42, offset, true);
+    central.push(new Uint8Array(ch.buffer), name);
+    offset += 30 + name.length + data.length;
+  }
+  const centralSize = central.reduce((n, a) => n + a.length, 0);
+  const end = new DataView(new ArrayBuffer(22));
+  end.setUint32(0, 0x06054b50, true); end.setUint16(8, files.size, true); end.setUint16(10, files.size, true);
+  end.setUint32(12, centralSize, true); end.setUint32(16, offset, true);
+  return new Blob([...parts, ...central, new Uint8Array(end.buffer)], { type: "application/octet-stream" });
+}
+function downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = filename; a.rel = "noopener";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 60000);
+}
+
+async function download() {
+  const key = $("keyInput").value.trim();
+  const mode = state.mode;
+  if (mode === "bds") {
+    if (!configured) { setStatus("warn", "まだ Bot の設定が終わっていないため、BDS用は作れません。"); return; }
+    if (!parseKey(key)) { setStatus("warn", "BDS用は接続キーが必要です。③ の欄に、/vc setup で出たキーを貼り付けてください。"); $("keyInput").focus(); return; }
+  }
+  try {
+    const r = buildAddon(mode, key);
+    downloadBlob(makeZip(r.files), r.file);
+    state.lastDownload = { label: r.label, file: r.file };
+    saveState();
+    if (mode === "bds") $("packJson").textContent = JSON.stringify([{ pack_id: r.uuid, version: r.version }], null, 2);
+    render();
+    setStatus("ok", `ダウンロードしました（近接VC BP【${r.label}】）。ひらくと Minecraft に読み込まれます。次は ④ へ。`);
+  } catch (e) {
+    console.error(e);
+    setStatus("warn", "アドオンを作れませんでした: " + (e.message || e));
+  }
+}
+
+/** つながり具合を 5秒ごとに見る（ページを見ているときだけ） */
+function startPolling() {
+  if (pollTimer) return;
+  pollTimer = setInterval(async () => {
+    if (document.visibilityState !== "visible") return;
+    const key = $("keyInput").value.trim();
+    if (!parseKey(key) || !configured) return;
+    try {
+      const res = await fetch(`${BOT}/api/check?key=${encodeURIComponent(key)}`, { cache: "no-store" });
+      const data = await res.json();
+      if (data.ok) { info = data; render(); }
+    } catch (e) { /* 次にまた */ }
+  }, 5000);
+}
+
+function copyFrom(el, btn) {
+  const text = el.textContent;
+  const done = ok => {
+    setStatus(ok ? "ok" : "warn", ok ? "コピーしました。" : "コピーできませんでした。選んでコピーしてください。");
+    btn.textContent = ok ? "コピー済み" : "失敗";
+    clearTimeout(btn._t);
+    btn._t = setTimeout(() => { btn.textContent = "コピー"; }, 1600);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(() => done(true), () => done(false));
+  else done(false);
+}
+
+// ---- はじめ ----
+loadState();
+// Discord の「サイトでくわしく見る」ボタンから来たとき（#key=…）は、接続キーを自動で入れる
+{
+  const m = /(?:^#|&)key=([^&]+)/.exec(location.hash || "");
+  if (m) {
+    const k = decodeURIComponent(m[1]).trim();
+    if (parseKey(k)) { state.key = k; saveState(); }
+    try { history.replaceState(null, "", location.pathname + location.search); } catch (e) { /* 無視 */ }
+  }
+}
+$("keyInput").value = state.key;
+$("inviteBtn").addEventListener("click", ev => { if (!configured) { ev.preventDefault(); setStatus("warn", "まだ Bot の設定が終わっていません（サイトを公開した人が、設定ページでトークンを入れてください）。"); } });
+$("keyInput").addEventListener("input", () => { state.key = $("keyInput").value.trim(); saveState(); info = null; $("checkResult").textContent = ""; render(); });
+$("checkBtn").addEventListener("click", checkKey);
+for (const r of document.querySelectorAll('input[name="mode"]'))
+  r.addEventListener("change", () => { state.mode = r.value; saveState(); render(); });
+$("downloadBtn").addEventListener("click", download);
+$("wsCopy").addEventListener("click", () => copyFrom($("wsCmd"), $("wsCopy")));
+$("relayCopy").addEventListener("click", () => copyFrom($("relayCmd"), $("relayCopy")));
+$("localCopy").addEventListener("click", () => copyFrom($("localCmd"), $("localCopy")));
+$("packCopy").addEventListener("click", () => copyFrom($("packJson"), $("packCopy")));
+$("permCopy").addEventListener("click", () => copyFrom($("permJson"), $("permCopy")));
+$("openHelp").addEventListener("click", () => { $("help").open = true; });
+render();
+loadInfo().then(() => { if (parseKey(state.key) && configured) checkKey(); });
+</script>
+</body>
+</html>

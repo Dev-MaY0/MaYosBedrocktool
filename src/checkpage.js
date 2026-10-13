@@ -7,42 +7,37 @@
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
 const STYLE = `
-:root { --bg:#f3f4f6; --card:#fff; --text:#1f2328; --sub:#5d6670; --line:#d9dde3; --green:#2e9e48; --orange:#d97a00; --red:#c93c3c; --blue:#2868ce; }
+:root { --bg:#fafafa; --card:#fff; --text:#262626; --sub:#737373; --line:#dbdbdb; --soft:#efefef; --green:#22a55b; --orange:#f39c12; --red:#ed4956; --blue:#0095f6;
+  --grad: linear-gradient(45deg,#feda75,#fa7e1e,#d62976,#962fbf,#4f5bd5); --grad-btn: linear-gradient(90deg,#f56040,#e1306c,#833ab4); }
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, "Segoe UI", "Hiragino Sans", "Yu Gothic UI", Meiryo, sans-serif; line-height: 1.6; }
-header { background: #2f3640; color: #fff; padding: 14px 16px; }
-header h1 { margin: 0; font-size: 19px; }
-header p { margin: 2px 0 0; font-size: 13px; opacity: .85; }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Noto Sans JP", "Yu Gothic UI", Meiryo, system-ui, sans-serif; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+header { background: rgba(255,255,255,.92); border-bottom: 1px solid var(--line); padding: 12px 16px; }
+header h1 { margin: 0 auto; max-width: 760px; font-size: 19px; font-weight: 800; background: var(--grad-btn); -webkit-background-clip: text; background-clip: text; color: transparent; }
+header p { margin: 2px auto 0; max-width: 760px; font-size: 12.5px; color: var(--sub); }
 main { max-width: 760px; margin: 0 auto; padding: 16px; }
-.card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px; margin: 0 0 14px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px; margin: 0 0 14px; box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 6px 20px rgba(0,0,0,.05); }
 .card h2 { margin: 0 0 10px; font-size: 16.5px; }
 .state { display: flex; gap: 12px; align-items: center; }
-.state .big { width: 42px; height: 42px; flex: none; border-radius: 50%; display: grid; place-items: center; font-size: 22px; font-weight: 700; color: #fff; background: #b2b6be; }
+.state .big { width: 46px; height: 46px; flex: none; border-radius: 50%; display: grid; place-items: center; font-size: 22px; font-weight: 700; color: #fff; background: #c7c7c7; }
 .state.ok .big { background: var(--green); } .state.ng .big { background: var(--orange); } .state.bad .big { background: var(--red); }
 .state b { font-size: 16px; } .state p { margin: 2px 0 0; color: var(--sub); font-size: 13.5px; }
-.cmd { display: flex; gap: 8px; align-items: stretch; margin: 6px 0 10px; }
-.cmd code { flex: 1; min-width: 0; overflow-wrap: anywhere; background: #1f2328; color: #e6edf3; border-radius: 6px; padding: 9px 11px; font-family: ui-monospace, Consolas, monospace; font-size: 14px; }
-.cmd button { flex: none; border: 0; border-radius: 6px; background: var(--blue); color: #fff; font-weight: 700; padding: 0 14px; cursor: pointer; font-size: 14px; }
+.cmd { display: flex; gap: 6px; align-items: center; margin: 6px 0 10px; background: #f5f5f5; border: 1px solid var(--soft); border-radius: 12px; padding: 4px 4px 4px 12px; }
+.cmd code { flex: 1; min-width: 0; overflow-wrap: anywhere; padding: 6px 0; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 13.5px; }
+.cmd button { flex: none; align-self: stretch; border: 0; border-radius: 9px; background: var(--blue); color: #fff; font-weight: 600; padding: 0 14px; cursor: pointer; font-size: 13px; }
 .label { font-size: 13.5px; color: var(--sub); margin: 8px 0 0; }
-.dl { display: inline-block; background: var(--blue); color: #fff; font-weight: 700; text-decoration: none; padding: 8px 16px; border-radius: 6px; }
+.dl { display: inline-block; background: var(--blue); color: #fff; font-weight: 600; text-decoration: none; padding: 9px 18px; border-radius: 10px; }
 ul.tries { list-style: none; margin: 0; padding: 0; font-size: 14px; }
-ul.tries li { padding: 6px 8px; border-bottom: 1px dashed var(--line); border-radius: 6px; }
+ul.tries li { padding: 7px 10px; border-bottom: 1px solid var(--soft); border-radius: 10px; }
 ul.tries li:last-child { border-bottom: 0; }
-ul.tries li.new { background: #fff7d6; }
+ul.tries li.new { background: #fff7e0; }
 ul.tries .t { color: var(--sub); font-size: 12.5px; margin-right: 6px; }
 ul.tries .d { color: var(--sub); font-size: 12px; overflow-wrap: anywhere; }
 .empty { color: var(--sub); font-size: 14px; margin: 0; }
-.hint { margin: 10px 0 0; padding: 10px 12px; border-radius: 8px; background: #eef4fd; font-size: 14px; }
-.hint.warn { background: #fff2e0; }
+.hint { margin: 10px 0 0; padding: 10px 14px; border-radius: 12px; background: #e8f3ff; font-size: 14px; }
+.hint.warn { background: #fff1db; }
 ol.check { margin: 0; padding-left: 22px; font-size: 14.5px; }
 ol.check li { margin: 6px 0; }
 footer { text-align: center; color: var(--sub); font-size: 12px; padding: 8px 0 24px; }
-@media (prefers-color-scheme: dark) {
-  :root { --bg:#16181c; --card:#1f2228; --text:#e6e8eb; --sub:#a3aab3; --line:#353a42; }
-  .cmd code { background: #0d1014; }
-  ul.tries li.new { background: #3a3420; }
-  .hint { background: #1d2a3d; } .hint.warn { background: #3a2c17; }
-}
 `;
 
 /** 接続コードがちがうとき */

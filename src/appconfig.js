@@ -90,6 +90,9 @@ export async function setupStatus(env, origin) {
     relayFrom: e.RELAY_FROM,
     relayError: isSet(env.RELAY_HOST) ? normalizeRelayHost(env.RELAY_HOST).error : "",
     turn: !!e.TURN_SECRET,
+    needSetupKey: isSet(env.SETUP_KEY),
+    // VPS に入れたとき（vps-server.sh）は "vps"。リレー・音声の中継も同じ VPS で動いている
+    server: isSet(env.MAYO_SERVER) ? String(env.MAYO_SERVER).trim() : "cloudflare",
   };
 }
 
@@ -217,4 +220,15 @@ export async function vpsCommand(env, { token, origin, host }) {
   if (!/^[A-Za-z0-9_-]{16,128}$/.test(secret)) return { ok: false, error: "Cloudflare のシークレット TURN_SECRET には、英数字と - _ だけを使ってください（16 文字以上）。" };
   const command = `curl -fsSL ${origin}/download/vps-setup.sh | sudo bash -s -- ${host} ${secret}`;
   return { ok: true, command, secretFrom: isSet(env.TURN_SECRET) ? "var" : "page" };
+}
+
+/** 管理者か（いま Bot に設定されているトークンと同じか）。だめなら error を返す */
+export async function checkAdminToken(env, token) {
+  token = String(token || "").trim().replace(/^Bot\s+/i, "");
+  if (!token) return "Bot のトークンを入れてください。";
+  const s = await loadStored(env);
+  const real = isSet(env.DISCORD_TOKEN) ? env.DISCORD_TOKEN.trim() : s.token || "";
+  if (!real) return "先に Bot の設定を終わらせてください。";
+  if (!(await sameText(token, real))) return "トークンがちがいます。";
+  return "";
 }

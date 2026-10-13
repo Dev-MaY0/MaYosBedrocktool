@@ -1,6 +1,6 @@
 {
   "name": "mayo-vc-relay",
-  "version": "1.1.0",
+  "version": "1.3.0",
   "private": true,
   "description": "近接VC リレー（Minecraft の /wsserver と Cloudflare の Worker をつなぐ中継）制作: MaYo / mayo01297・二次配布禁止",
   "type": "module",

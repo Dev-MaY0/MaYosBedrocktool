@@ -16,225 +16,615 @@
 <style>
 /* =====================================================================
    共通スタイル（全ページ）  制作: MaYo (mayo01297)  二次配布禁止
+   白ベース・角の丸いカード・グラデーションのアクセント（SNS アプリのような雰囲気）
    ===================================================================== */
 :root {
-  --back: #f0f1f4; --header: #24262b; --header-sub: #bec4ce; --panel: #ffffff; --border: #dadde3;
-  --text: #1e2024; --sub: #626770; --green: #3c8527; --green-hover: #4ea034; --green-down: #2c661c; --green-pale: #e2f1dc;
-  --blue: #2868ce; --blue-hover: #3a7ce2; --red: #cd3c32; --orange: #de8414; --preview: #e8ecf1;
-  --font: "Yu Gothic UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Meiryo", "Noto Sans JP", system-ui, sans-serif;
+  --back: #fafafa; --panel: #ffffff; --border: #dbdbdb; --border-soft: #efefef; --input: #fafafa;
+  --text: #262626; --sub: #737373; --link: #00376b;
+  --header: #ffffff; --header-sub: #737373;
+  --blue: #0095f6; --blue-hover: #1877f2; --blue-pale: #e8f3ff;
+  --green: #22a55b; --green-hover: #1d9150; --green-down: #17803f; --green-pale: #e7f7ee;
+  --red: #ed4956; --orange: #f39c12; --preview: #f2f2f2;
+  --grad: linear-gradient(45deg, #feda75 0%, #fa7e1e 25%, #d62976 50%, #962fbf 75%, #4f5bd5 100%);
+  --grad-btn: linear-gradient(90deg, #f56040 0%, #e1306c 45%, #833ab4 100%);
+  --radius: 16px;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .04), 0 6px 20px rgba(0, 0, 0, .05);
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic UI", Meiryo, system-ui, sans-serif;
 }
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html { -webkit-text-size-adjust: 100%; }
-body { margin: 0; background: var(--back); color: var(--text); font-family: var(--font); font-size: 15px; line-height: 1.6; }
-button, input { font: inherit; }
+body { margin: 0; background: var(--back); color: var(--text); font-family: var(--font); font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+button, input, select, textarea { font: inherit; color: inherit; }
+a { color: var(--link); }
 .pixel { image-rendering: pixelated; image-rendering: crisp-edges; }
 
 /* ---- header ---- */
-header { background: var(--header); color: #fff; }
-.header-in { max-width: 860px; margin: 0 auto; padding: 14px 16px; display: flex; align-items: center; gap: 14px; }
-.header-in img { width: 48px; height: 48px; flex: none; }
-.header-in h1 { margin: 0; font-size: 21px; line-height: 1.3; }
-.header-in p { margin: 2px 0 0; color: var(--header-sub); font-size: 13px; }
-.header-in .help-btn { margin-left: auto; flex: none; color: #fff; background: transparent; border: 1px solid #788290; border-radius: 6px; padding: 7px 12px; font-size: 13px; cursor: pointer; text-decoration: none; white-space: nowrap; }
-.header-in .help-btn:hover { background: #3c3f46; }
+header { background: rgba(255, 255, 255, .92); color: var(--text); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 20; -webkit-backdrop-filter: saturate(180%) blur(12px); backdrop-filter: saturate(180%) blur(12px); }
+.header-in { max-width: 920px; margin: 0 auto; padding: 10px 16px; display: flex; align-items: center; gap: 12px; }
+.header-in img { width: 42px; height: 42px; flex: none; border-radius: 12px; padding: 2px; background: var(--grad); }
+.header-in h1 { margin: 0; font-size: 20px; line-height: 1.25; font-weight: 800; letter-spacing: -.01em; background: var(--grad-btn); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.header-in p { margin: 1px 0 0; color: var(--header-sub); font-size: 12.5px; }
+.header-in .help-btn { margin-left: auto; flex: none; color: var(--text); background: #efefef; border: 0; border-radius: 10px; padding: 7px 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none; white-space: nowrap; }
+.header-in .help-btn:hover { background: #e3e3e3; }
 
-main { max-width: 860px; margin: 0 auto; padding: 16px 16px 90px; }
-.card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px 18px; margin-bottom: 14px; }
+main { max-width: 920px; margin: 0 auto; padding: 18px 16px 90px; }
+.card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
 .step { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; font-size: 17px; font-weight: 700; }
-.num { width: 28px; height: 28px; flex: none; border-radius: 50%; background: var(--green); color: #fff; display: grid; place-items: center; font-size: 15px; }
-.indent { padding-left: 38px; }
+.num { width: 30px; height: 30px; flex: none; border-radius: 50%; background: var(--grad); color: #fff; display: grid; place-items: center; font-size: 15px; font-weight: 700; box-shadow: 0 2px 8px rgba(214, 41, 118, .25); }
+.indent { padding-left: 40px; }
 
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 6px; cursor: pointer; color: #fff; font-weight: 700; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 10px; cursor: pointer; color: #fff; font-weight: 600; transition: filter .15s, transform .05s, background .15s; }
+.btn:active { transform: scale(.98); }
 .btn svg { width: 20px; height: 20px; flex: none; }
-.btn:disabled { background: #b2b6be !important; cursor: default; }
-.btn-blue { background: var(--blue); padding: 10px 18px; font-size: 16px; }
+.btn:disabled { background: #c7c7c7 !important; cursor: default; filter: none; }
+.btn-blue { background: var(--blue); padding: 10px 18px; font-size: 15.5px; }
 .btn-blue:hover { background: var(--blue-hover); }
-.btn-green { background: var(--green); padding: 14px 22px; font-size: 18px; width: 100%; max-width: 480px; }
-.btn-green:hover { background: var(--green-hover); }
-.btn-green:active { background: var(--green-down); }
+.btn-green { background: var(--grad-btn); padding: 14px 22px; font-size: 17px; width: 100%; max-width: 480px; box-shadow: 0 6px 18px rgba(225, 48, 108, .25); }
+.btn-green:hover { filter: brightness(1.06); }
 .btn-green.pulse { animation: pulse 0.5s ease-in-out 3 alternate; }
-@keyframes pulse { to { background: #6cc24a; box-shadow: 0 0 0 6px rgba(76, 160, 52, .25); } }
+@keyframes pulse { to { box-shadow: 0 0 0 7px rgba(225, 48, 108, .22); } }
 .hint { margin: 8px 0 2px; color: var(--sub); font-size: 13px; }
-.link { color: var(--blue); background: none; border: 0; padding: 0; cursor: pointer; font-size: 14px; text-align: left; }
+.link { color: var(--blue); background: none; border: 0; padding: 0; cursor: pointer; font-size: 14px; font-weight: 600; text-align: left; }
 .link:hover { text-decoration: underline; }
 .link:disabled { color: var(--sub); cursor: default; text-decoration: none; }
 .link svg { width: 15px; height: 15px; vertical-align: -2px; margin-right: 4px; }
-hr { border: 0; border-top: 1px solid var(--border); margin: 14px 0 10px; }
-.btn-outline { display: inline-flex; align-items: center; gap: 6px; background: #fff; color: var(--blue); border: 1.5px solid var(--blue); border-radius: 6px; padding: 6px 12px; font-size: 13px; font-weight: 700; cursor: pointer; }
-.btn-outline:hover { background: #eef4fd; }
+hr { border: 0; border-top: 1px solid var(--border-soft); margin: 14px 0 10px; }
+.btn-outline { display: inline-flex; align-items: center; gap: 6px; background: #efefef; color: var(--text); border: 0; border-radius: 10px; padding: 7px 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none; }
+.btn-outline:hover { background: #e3e3e3; }
 .btn-outline svg { width: 15px; height: 15px; flex: none; }
 
-.notice { background: #fff6e0; border: 1px solid #f0c36d; border-radius: 6px; padding: 10px 12px; font-size: 13px; margin: 0 0 12px; }
+.notice { background: #fff8e6; border: 1px solid #f7d58a; border-radius: 12px; padding: 10px 14px; font-size: 13px; margin: 0 0 14px; }
 .notice[hidden] { display: none; }
 
+input[type=text], input[type=password], input[type=search], input:not([type]), textarea { border-radius: 10px; }
 .settings { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 0 0 4px; }
-.settings label { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; }
-.settings select { font: inherit; font-weight: 400; font-size: 15px; padding: 5px 8px; border: 1.5px solid #9aa1ab; border-radius: 6px; background: #fff; color: var(--text); }
-.settings select:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(40, 104, 206, .2); }
-kbd { font-family: inherit; background: #eef0f3; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; font-size: 13px; }
+.settings label { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; }
+.settings select, select { font: inherit; font-size: 15px; padding: 6px 10px; border: 1px solid var(--border); border-radius: 10px; background: var(--input); color: var(--text); }
+.settings select:focus, select:focus { outline: none; border-color: #a8a8a8; }
+kbd { font-family: inherit; background: #efefef; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 6px; padding: 0 6px; font-size: 13px; }
 
 /* ---- help ---- */
-details.help { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 10px; }
-details.help summary { cursor: pointer; padding: 12px 18px; font-weight: 700; }
-details.help .help-body { padding: 0 18px 14px; font-size: 14px; }
+details.help { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 12px; box-shadow: var(--shadow); }
+details.help summary { cursor: pointer; padding: 14px 20px; font-weight: 700; }
+details.help .help-body { padding: 0 20px 16px; font-size: 14px; }
 details.help h4 { margin: 14px 0 4px; font-size: 14px; }
 details.help ol, details.help ul { margin: 4px 0; padding-left: 22px; }
-details.help code { background: #eef0f3; border-radius: 4px; padding: 1px 5px; }
-.small { color: var(--sub); font-size: 12px; text-align: center; margin-top: 18px; line-height: 1.8; }
-.small a { color: var(--blue); }
+details.help code { background: #efefef; border-radius: 6px; padding: 1px 6px; }
+.small { color: var(--sub); font-size: 12px; text-align: center; margin-top: 20px; line-height: 1.8; }
+.small a { color: var(--sub); }
 
 /* ---- 制作者について（折りたたみ） ---- */
 details.about { padding: 0; }
-details.about > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 14px 18px; border-radius: 8px; }
+details.about > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 14px 20px; border-radius: var(--radius); }
 details.about > summary::-webkit-details-marker { display: none; }
-details.about > summary:hover { background: #f7f8fa; }
-details.about > summary:focus-visible { outline: 3px solid rgba(40, 104, 206, .35); outline-offset: -3px; }
+details.about > summary:hover { background: #fafafa; }
+details.about > summary:focus-visible { outline: 3px solid rgba(0, 149, 246, .35); outline-offset: -3px; }
 details.about .sum-t { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 12px; min-width: 0; }
-details.about .ttl { font-size: 17px; font-weight: 700; }
+details.about .ttl { font-size: 16px; font-weight: 700; }
 details.about .sub { font-size: 13px; color: var(--sub); }
 details.about .sub > span { display: inline-block; white-space: nowrap; }
-details.about .sum-hint { margin-left: auto; font-size: 13px; color: var(--blue); white-space: nowrap; }
+details.about .sum-hint { margin-left: auto; font-size: 13px; color: var(--blue); font-weight: 600; white-space: nowrap; }
 details.about .h-close, details.about[open] .h-open { display: none; }
 details.about[open] .h-close { display: inline; }
-details.about .chev { width: 20px; height: 20px; flex: none; color: var(--blue); transition: transform .2s; }
+details.about .chev { width: 20px; height: 20px; flex: none; color: var(--sub); transition: transform .2s; }
 details.about[open] .chev { transform: rotate(180deg); }
-details.about[open] > summary { border-radius: 8px 8px 0 0; }
-.about-body { padding: 2px 18px 18px; }
+details.about[open] > summary { border-radius: var(--radius) var(--radius) 0 0; }
+.about-body { padding: 2px 20px 20px; }
 .num svg { width: 16px; height: 16px; }
 .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.about-box { border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px 14px; }
+.about-box { border: 1px solid var(--border-soft); border-radius: 14px; padding: 14px 16px 16px; background: #fff; }
 .about-box h3 { margin: 0 0 10px; font-size: 15px; }
 .profile { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
-.avatar { width: 72px; height: 72px; flex: none; border-radius: 12px; border: 1px solid var(--border); object-fit: cover; background: #fff5ac; }
+.avatar { width: 72px; height: 72px; flex: none; border-radius: 50%; border: 3px solid #fff; outline: 2px solid transparent; object-fit: cover; background: #fff5ac; box-shadow: 0 0 0 2px #d62976; }
 .pname { font-size: 18px; font-weight: 700; line-height: 1.3; }
 .psub { color: var(--sub); font-size: 13px; }
 .about-box p { margin: 0 0 8px; font-size: 14px; }
 .about-box .label { margin: 10px 0 6px; font-size: 13px; font-weight: 700; color: var(--sub); }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.chips span { background: #eef0f3; border-radius: 999px; padding: 2px 11px; font-size: 13px; }
+.chips span { background: #efefef; border-radius: 999px; padding: 3px 12px; font-size: 13px; }
 .chips span.more { background: none; color: var(--sub); padding: 2px 2px; }
 .links { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
-.links li { display: flex; align-items: center; gap: 10px; border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; }
-.links .ic { width: 34px; height: 34px; flex: none; border-radius: 8px; display: grid; place-items: center; color: #fff; }
+.links li { display: flex; align-items: center; gap: 10px; border: 1px solid var(--border-soft); border-radius: 12px; padding: 8px 10px; }
+.links .ic { width: 34px; height: 34px; flex: none; border-radius: 10px; display: grid; place-items: center; color: #fff; }
 .links .ic svg { width: 20px; height: 20px; }
 .links .lt { flex: 1; min-width: 0; line-height: 1.35; }
 .links .lt small { display: block; color: var(--sub); font-size: 12px; }
 .links .lt b { word-break: break-all; }
-.links a.go, .links button { flex: none; border: 1.5px solid var(--blue); color: var(--blue); background: #fff; border-radius: 6px; padding: 4px 11px; font-size: 12.5px; font-weight: 700; cursor: pointer; text-decoration: none; font-family: inherit; }
-.links a.go:hover, .links button:hover { background: #eef4fd; }
-.license { margin: 14px 0 0 38px; background: #fff3f1; border: 1px solid #efb7b0; border-radius: 6px; padding: 10px 12px; font-size: 14px; }
+.links a.go, .links button { flex: none; border: 0; color: #fff; background: var(--blue); border-radius: 8px; padding: 5px 12px; font-size: 12.5px; font-weight: 600; cursor: pointer; text-decoration: none; font-family: inherit; }
+.links a.go:hover, .links button:hover { background: var(--blue-hover); }
+.license { margin: 14px 0 0 40px; background: #fff1f2; border: 1px solid #f6c3c8; border-radius: 12px; padding: 10px 14px; font-size: 14px; }
 .license b.ng { color: var(--red); }
 .license ul { margin: 4px 0; padding-left: 20px; }
 
 /* ---- status bar & dialog ---- */
-#status { position: fixed; left: 0; right: 0; bottom: 0; background: #e4e7ec; border-top: 1px solid var(--border); padding: 9px 16px; font-size: 14px; display: flex; align-items: center; gap: 8px; min-height: 42px; z-index: 5; }
-#status .dot { width: 16px; height: 16px; border-radius: 50%; flex: none; display: grid; place-items: center; color: #fff; font-size: 11px; font-weight: 700; }
+#status { position: fixed; left: 50%; transform: translateX(-50%); bottom: 14px; width: min(680px, calc(100% - 24px)); background: rgba(38, 38, 38, .94); color: #fff; border-radius: 14px; padding: 10px 16px; font-size: 14px; display: flex; align-items: center; gap: 10px; min-height: 44px; z-index: 30; box-shadow: 0 8px 30px rgba(0, 0, 0, .2); }
+#status .dot { width: 18px; height: 18px; border-radius: 50%; flex: none; display: grid; place-items: center; color: #fff; font-size: 11px; font-weight: 700; }
 #status.ok .dot { background: var(--green); }
 #status.warn .dot { background: var(--orange); }
 #status.info .dot { background: var(--blue); }
-#status.busy .dot { border: 2px solid var(--blue); border-right-color: transparent; animation: spin .8s linear infinite; }
+#status.busy .dot { border: 2px solid #fff; border-right-color: transparent; animation: spin .8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
-dialog { border: 0; border-radius: 10px; padding: 0; max-width: 520px; width: calc(100% - 32px); box-shadow: 0 10px 40px rgba(0, 0, 0, .3); color: var(--text); }
-dialog::backdrop { background: rgba(20, 22, 26, .5); }
-.dlg-body { padding: 20px 22px 8px; }
+dialog { border: 0; border-radius: 18px; padding: 0; max-width: 520px; width: calc(100% - 32px); box-shadow: 0 20px 60px rgba(0, 0, 0, .25); color: var(--text); }
+dialog::backdrop { background: rgba(0, 0, 0, .55); }
+.dlg-body { padding: 22px 24px 8px; }
 .dlg-body h3 { margin: 0 0 8px; font-size: 17px; }
 .dlg-body p { margin: 0 0 8px; white-space: pre-line; font-size: 14px; }
-.dlg-btns { display: flex; justify-content: flex-end; gap: 8px; padding: 10px 16px 16px; flex-wrap: wrap; }
-.dlg-btns button { border-radius: 6px; padding: 8px 16px; cursor: pointer; font-weight: 700; border: 1px solid var(--border); background: #fff; color: var(--text); }
-.dlg-btns button.primary { background: var(--green); border-color: var(--green); color: #fff; }
+.dlg-btns { display: flex; justify-content: flex-end; gap: 8px; padding: 10px 18px 18px; flex-wrap: wrap; }
+.dlg-btns button { border-radius: 10px; padding: 8px 16px; cursor: pointer; font-weight: 600; border: 0; background: #efefef; color: var(--text); }
+.dlg-btns button.primary { background: var(--blue); color: #fff; }
+
+/* ---- ゲストの名前（partials/guest.js）---- */
+.gmodal { position: fixed; inset: 0; z-index: 50; background: rgba(0, 0, 0, .55); display: grid; place-items: center; padding: 16px; }
+.gmodal .gbox { width: min(400px, 100%); background: #fff; border-radius: 22px; padding: 30px 26px 24px; text-align: center; box-shadow: 0 20px 60px rgba(0, 0, 0, .3); }
+.gmodal .ring { width: 88px; height: 88px; margin: 0 auto 12px; border-radius: 50%; padding: 3px; background: var(--grad); }
+.gmodal .ring > div { width: 100%; height: 100%; border-radius: 50%; background: #fff; border: 3px solid #fff; display: grid; place-items: center; font-size: 34px; }
+.gmodal h2 { margin: 0 0 4px; font-size: 20px; }
+.gmodal p { margin: 0 0 16px; color: var(--sub); font-size: 13.5px; }
+.gmodal input { width: 100%; font-size: 16px; padding: 12px 14px; border: 1px solid var(--border); background: var(--input); border-radius: 12px; margin-bottom: 10px; }
+.gmodal input:focus { outline: none; border-color: #a8a8a8; background: #fff; }
+.gmodal button { width: 100%; }
+.gmodal .gerr { color: var(--red); font-size: 13px; min-height: 1.4em; margin: 8px 0 0; }
+.gmodal .gnote { color: var(--sub); font-size: 12px; margin: 12px 0 0; }
+.av { --c: #ccc; width: 36px; height: 36px; flex: none; border-radius: 50%; display: grid; place-items: center; color: #fff; font-weight: 700; font-size: 15px; background: var(--c); }
+.av.ring { box-shadow: 0 0 0 2px #fff, 0 0 0 4px #d62976; }
 
 @media (max-width: 640px) {
-  body { font-size: 14px; }
-  .header-in { padding: 12px; gap: 10px; }
-  .header-in img { width: 40px; height: 40px; }
+  body { font-size: 14.5px; }
+  .header-in { padding: 8px 12px; gap: 10px; }
+  .header-in img { width: 36px; height: 36px; border-radius: 10px; }
   .header-in h1 { font-size: 17px; }
   .header-in p { display: none; }
   main { padding: 12px 12px 90px; }
-  .card { padding: 14px 12px 14px; }
+  .card { padding: 16px 14px 16px; border-radius: 14px; }
   .indent { padding-left: 0; }
   .btn-blue { width: 100%; }
   .btn-green { font-size: 16px; padding: 13px 14px; }
   .wide-only { display: none; }
-  .header-in .help-btn { padding: 6px 12px; font-size: 16px; }
+  .header-in .help-btn { padding: 6px 12px; font-size: 13px; }
   .about-grid { grid-template-columns: 1fr; }
   .license { margin-left: 0; }
-  details.about > summary { padding: 12px; }
-  .about-body { padding: 2px 12px 14px; }
+  details.about > summary { padding: 12px 14px; }
+  .about-body { padding: 2px 14px 14px; }
 }
 
 /* ---- サイトのメニュー ---- */
-.sitenav { background: #2f3238; }
-.sitenav-in { max-width: 860px; margin: 0 auto; padding: 0 12px; display: flex; gap: 2px; overflow-x: auto; }
-.sitenav a { color: #d6dae1; text-decoration: none; padding: 9px 14px 7px; font-size: 14px; font-weight: 700; border-bottom: 3px solid transparent; white-space: nowrap; }
-.sitenav a:hover { color: #fff; background: #3a3e45; }
-.sitenav a[aria-current="page"] { color: #fff; border-bottom-color: #6cc24a; }
+.sitenav { background: rgba(255, 255, 255, .92); border-bottom: 1px solid var(--border-soft); position: sticky; top: 63px; z-index: 19; -webkit-backdrop-filter: saturate(180%) blur(12px); backdrop-filter: saturate(180%) blur(12px); }
+.sitenav-in { max-width: 920px; margin: 0 auto; padding: 8px 12px; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+.sitenav-in::-webkit-scrollbar { display: none; }
+.sitenav a { color: var(--text); text-decoration: none; padding: 6px 14px; font-size: 14px; font-weight: 600; border-radius: 999px; white-space: nowrap; background: #efefef; }
+.sitenav a:hover { background: #e3e3e3; }
+.sitenav a[aria-current="page"] { color: #fff; background: #262626; }
 @media (max-width: 640px) {
-  .sitenav-in { padding: 0 6px; }
-  .sitenav a { padding: 8px 10px 6px; font-size: 13px; }
+  .sitenav { top: 53px; }
+  .sitenav-in { padding: 7px 10px; gap: 5px; }
+  .sitenav a { padding: 5px 10px; font-size: 12.5px; }
 }
+
+/* ---- 共通の部品（入力・コピー欄・かんたんな流れ・チップ）---- */
+.field, .search input, .key-row input, .token-row input, .row input[type=text], .row input[type=password] { font-size: 16px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--input); color: var(--text); transition: border-color .15s, background .15s; }
+.field:focus, .search input:focus, .key-row input:focus, .token-row input:focus, .row input[type=text]:focus, .row input[type=password]:focus { outline: none; border-color: #a8a8a8; background: #fff; }
+.copybox { display: flex; align-items: center; gap: 6px; margin: 8px 0 2px; max-width: 100%; background: #f5f5f5; border: 1px solid var(--border-soft); border-radius: 12px; padding: 4px 4px 4px 12px; }
+.copybox[hidden] { display: none; }
+.copybox code, .copybox pre { flex: 1; min-width: 0; margin: 0; background: none; color: var(--text); padding: 6px 0; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 13px; overflow-x: auto; white-space: nowrap; scrollbar-width: thin; }
+.copybox pre { white-space: pre; font-size: 12.5px; }
+.copybox button { flex: none; align-self: stretch; border: 0; border-radius: 9px; background: var(--blue); color: #fff; font-weight: 600; font-size: 13px; padding: 0 14px; cursor: pointer; }
+.copybox button:hover { background: var(--blue-hover); }
+.copybox.disabled code { color: #a8a8a8; }
+.copybox.disabled button { background: #c7c7c7; cursor: default; }
+.easy, .tip { position: relative; background: linear-gradient(135deg, #fff7fb 0%, #f7f4ff 100%); border: 1px solid #f1e4f3; border-radius: var(--radius); padding: 14px 18px; margin: 0 0 16px; }
+.tip { padding: 10px 14px; margin-top: 10px; font-size: 14px; border-radius: 12px; }
+.easy b.t { display: block; font-size: 15px; margin-bottom: 4px; }
+.easy ol { margin: 0; padding-left: 22px; font-size: 14px; }
+.easy li { margin: 3px 0; }
+.chip { display: inline-flex; align-items: center; gap: 4px; font-size: 12.5px; font-weight: 600; border-radius: 999px; padding: 3px 11px; background: #efefef; color: var(--sub); vertical-align: 1px; }
+.chip:empty { display: none; }
+.chip.on { background: var(--green-pale); color: var(--green-down); }
+.chip.warn { background: #fff1db; color: #a35b00; }
+.chip.dead { background: #f1e9ff; color: #6b3fb8; }
+.cmd { display: inline-block; background: #efefef; border-radius: 6px; padding: 1px 7px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 13.5px; }
+.sub-hint { color: var(--sub); font-size: 12.5px; margin: 4px 0 0; }
+ol.steps { margin: 4px 0 0; padding-left: 22px; font-size: 14px; }
+ol.steps > li { margin: 8px 0; }
+.btn-indigo { background: #5865f2; padding: 12px 20px; font-size: 16px; text-decoration: none; }
+.btn-indigo:hover { background: #4752c4; }
+.btn-sub { background: #efefef; color: var(--text); padding: 10px 16px; font-size: 15px; text-decoration: none; }
+.btn-sub:hover { background: #e3e3e3; }
+.btn[hidden] { display: none; }
+.toast { position: fixed; left: 50%; bottom: 22px; transform: translate(-50%, 20px); opacity: 0; pointer-events: none; z-index: 60; background: rgba(38, 38, 38, .95); color: #fff; border-radius: 12px; padding: 10px 16px; font-size: 14px; max-width: calc(100% - 32px); box-shadow: 0 8px 30px rgba(0, 0, 0, .2); transition: opacity .2s, transform .2s; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+.gmodal .gcancel { text-align: center; margin-top: 10px; color: var(--sub); }
+
+/* ---- チャットの吹き出し（チャット・サイトで近接VC）---- */
+.cmsgs { overflow-y: auto; padding: 10px 14px 8px; display: flex; flex-direction: column; overscroll-behavior: contain; }
+.cm { display: flex; align-items: flex-start; gap: 8px; margin-top: 2px; }
+.cm.first { margin-top: 10px; }
+.cm > .av { width: 30px; height: 30px; font-size: 13px; }
+.cm.cont > .av { visibility: hidden; height: 0; }
+.cm .cbody { min-width: 0; max-width: min(78%, 540px); display: flex; flex-direction: column; align-items: flex-start; }
+.cm .who { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 6px; font-size: 12px; color: var(--sub); margin: 0 0 3px 12px; }
+.cm .who b { color: var(--text); font-weight: 600; }
+.cm .click { cursor: pointer; }
+.cm b.click:hover { text-decoration: underline; }
+.cm .bub { background: #efefef; color: var(--text); border-radius: 20px; padding: 8px 14px; font-size: 14.5px; line-height: 1.45; white-space: pre-wrap; overflow-wrap: anywhere; }
+.cm .bub.game { background: #e9f7ee; }
+.cm.mine { flex-direction: row-reverse; }
+.cm.mine .cbody { align-items: flex-end; }
+.cm.mine .bub { background: #3797f0; color: #fff; }
+.cm.mine .bub.game { background: #1f9d55; }
+.tagb { font-style: normal; font-size: 10.5px; font-weight: 700; border-radius: 999px; padding: 0 7px; line-height: 1.6; }
+.tagb.v { background: #e8f3ff; color: #0064c8; }
+.tagb.game { background: #e7f7ee; color: #17803f; }
+.tagb.guest { background: #efefef; color: var(--sub); }
+.tagb.p { background: #fff1e6; color: #b45309; }
+.tagb.s { background: #f1e9ff; color: #6b3fb8; }
+.cday { text-align: center; color: var(--sub); font-size: 11.5px; font-weight: 600; margin: 14px 0 2px; }
+.cempty { color: var(--sub); text-align: center; font-size: 13.5px; margin: auto 0; padding: 30px 10px; }
+.composer { display: flex; align-items: flex-end; gap: 6px; border: 1px solid var(--border); border-radius: 24px; padding: 4px 4px 4px 16px; margin: 8px 12px 12px; background: #fff; }
+.composer:focus-within { border-color: #a8a8a8; }
+.composer textarea { flex: 1; min-width: 0; border: 0; outline: none; resize: none; font-size: 15px; line-height: 1.45; padding: 7px 0; min-height: 36px; max-height: 120px; background: none; border-radius: 0; }
+.composer .cnt { font-size: 11.5px; color: var(--sub); align-self: center; white-space: nowrap; }
+.composer .cnt.over { color: var(--red); font-weight: 700; }
+.composer .send { flex: none; border: 0; background: none; color: var(--blue); font-weight: 700; font-size: 15px; padding: 7px 12px; cursor: pointer; border-radius: 18px; }
+.composer .send:hover:not(:disabled) { background: var(--blue-pale); }
+.composer .send:disabled { color: #b2dffc; cursor: default; }
 
 
 /* ===== サイトで近接VC ===== */
-.easy { background: #eef4fd; border: 1px solid #bcd3f5; border-radius: 8px; padding: 12px 16px; margin: 0 0 14px; }
-.easy b.t { display: block; font-size: 15px; margin-bottom: 4px; }
-.easy ol { margin: 0; padding-left: 22px; font-size: 14px; }
-.easy li { margin: 2px 0; }
 .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-.row input[type=text] { flex: 1 1 220px; min-width: 0; font-size: 16px; padding: 9px 12px; border: 2px solid #9aa1ab; border-radius: 6px; background: #fff; color: var(--text); }
-.row input[type=text]:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(40, 104, 206, .2); }
-.row input.code { font-family: ui-monospace, Consolas, monospace; letter-spacing: .12em; text-transform: uppercase; flex: 0 1 200px; }
-.row .btn-blue { padding: 9px 18px; font-size: 15px; }
-.msg { margin: 8px 0 0; font-size: 13.5px; min-height: 1.4em; }
+.row input[type=text] { flex: 1 1 220px; min-width: 0; }
+.row input.code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; flex: 0 1 210px; }
+.row .btn-blue { padding: 10px 20px; font-size: 15px; }
+.msg { margin: 8px 0 0; font-size: 13.5px; min-height: 1.4em; color: var(--sub); }
 .msg.ng { color: var(--red); }
 .msg.ok { color: var(--green-down); }
-.chip { display: inline-block; font-size: 12.5px; font-weight: 700; border-radius: 999px; padding: 2px 10px; background: #eceef2; color: var(--sub); vertical-align: 1px; }
-.chip.on { background: var(--green-pale); color: var(--green-down); }
-.chip.warn { background: #fff1db; color: #a35b00; }
-.chip.dead { background: #ece6f7; color: #5b3d99; }
-.roomhead { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; margin: 0 0 10px; }
-.roomhead b { font-size: 17px; }
-.roomhead .link { margin-left: auto; }
-.bigcode { display: flex; align-items: stretch; margin: 8px 0; max-width: 420px; }
-.bigcode code { flex: 1; background: #24262b; color: #e9f5e3; border-radius: 8px 0 0 8px; padding: 12px 16px; font-family: ui-monospace, Consolas, monospace; font-size: 28px; letter-spacing: .06em; }
-.bigcode button { flex: none; border: 0; border-radius: 0 8px 8px 0; background: var(--blue); color: #fff; font-weight: 700; padding: 0 16px; cursor: pointer; font-size: 14px; }
-.controls { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin: 4px 0 8px; }
-.tbtn { border: 1.5px solid var(--border); background: #fff; border-radius: 999px; padding: 7px 14px; font-weight: 700; font-size: 14px; cursor: pointer; color: var(--text); }
-.tbtn:hover { background: #f4f5f7; }
-.tbtn.off { background: #fde9e7; border-color: #f2b3ad; color: var(--red); }
+.mebar { display: flex; align-items: center; gap: 10px; background: #fff; border: 1px solid var(--border); border-radius: 999px; padding: 5px 16px 5px 5px; margin: 0 0 16px; width: fit-content; max-width: 100%; font-size: 14px; box-shadow: var(--shadow); }
+.mebar .av { width: 32px; height: 32px; font-size: 14px; }
+.mebar > span { white-space: nowrap; }
+.mebar b { overflow-wrap: anywhere; }
+.mebar .tagb { margin-left: 2px; }
+.mebar a { font-size: 13px; color: var(--blue); font-weight: 600; text-decoration: none; white-space: nowrap; margin-left: 4px; }
+.roomhead { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; margin: 0 0 12px; }
+.roomhead b { font-size: 18px; font-weight: 800; margin-right: 4px; }
+.roomhead .link { margin-left: auto; color: var(--red); }
+.bigcode { display: flex; align-items: stretch; gap: 6px; margin: 10px 0; max-width: 440px; background: #fafafa; border: 1px solid var(--border); border-radius: 18px; padding: 6px; }
+.bigcode code { flex: 1; padding: 8px 14px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 30px; font-weight: 800; letter-spacing: .06em; background: var(--grad-btn); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.bigcode button { flex: none; border: 0; border-radius: 13px; background: var(--blue); color: #fff; font-weight: 700; padding: 0 18px; cursor: pointer; font-size: 14px; }
+.bigcode button:hover { background: var(--blue-hover); }
+.controls { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; margin: 4px 0 10px; }
+.tbtn { border: 0; background: #efefef; border-radius: 999px; padding: 8px 16px; font-weight: 600; font-size: 14px; cursor: pointer; color: var(--text); }
+.tbtn:hover { background: #e3e3e3; }
+.tbtn.off { background: #ffe8ea; color: var(--red); }
 .ptt { font-size: 13.5px; display: inline-flex; align-items: center; gap: 6px; }
-.meter { width: 120px; height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden; }
-.meter > div { height: 100%; width: 0; background: var(--green); transition: width .08s; }
-ul.players { list-style: none; margin: 8px 0 0; padding: 0; }
-ul.players li { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; padding: 9px 10px; border: 1px solid var(--border); border-radius: 8px; margin: 0 0 6px; background: #fff; }
-ul.players li.me { background: #f6f9ff; border-color: #c9daf5; }
-ul.players li.talking { box-shadow: 0 0 0 3px rgba(60, 133, 39, .35); }
-ul.players .pn { font-weight: 700; font-size: 15px; overflow-wrap: anywhere; }
-ul.players .ps { color: var(--sub); font-size: 12.5px; grid-column: 1 / 2; }
-ul.players .vol { grid-row: 1 / 3; grid-column: 2; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; min-width: 140px; }
-ul.players .gbar { width: 120px; height: 6px; background: #e5e7eb; border-radius: 3px; overflow: hidden; }
-ul.players .gbar > div { height: 100%; background: var(--blue); width: 0; transition: width .25s; }
+.ptt input, input[type=range] { accent-color: #d62976; }
+.meter { width: 120px; height: 8px; background: #efefef; border-radius: 4px; overflow: hidden; }
+.meter > div { height: 100%; width: 0; background: var(--grad-btn); transition: width .08s; }
+ul.players { list-style: none; margin: 10px 0 0; padding: 0; }
+ul.players li { display: grid; grid-template-columns: auto 1fr auto; gap: 1px 12px; align-items: center; padding: 10px 12px; border: 1px solid var(--border-soft); border-radius: 16px; margin: 0 0 8px; background: #fff; transition: box-shadow .15s; }
+ul.players li.me { background: #fafafa; }
+ul.players .av { grid-row: 1 / 3; width: 42px; height: 42px; font-size: 17px; transition: box-shadow .15s; }
+ul.players li.talking .av { box-shadow: 0 0 0 2px #fff, 0 0 0 4px #22a55b; }
+ul.players .pn { grid-column: 2; font-weight: 700; font-size: 15px; overflow-wrap: anywhere; }
+ul.players .ps { grid-column: 2; color: var(--sub); font-size: 12.5px; }
+ul.players .vol { grid-row: 1 / 3; grid-column: 3; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; min-width: 140px; }
+ul.players .gbar { width: 120px; height: 6px; background: #efefef; border-radius: 3px; overflow: hidden; }
+ul.players .gbar > div { height: 100%; background: var(--grad-btn); width: 0; transition: width .25s; }
 ul.players input[type=range] { width: 120px; }
 ul.players .vl { font-size: 11.5px; color: var(--sub); }
 .empty { color: var(--sub); font-size: 13.5px; margin: 6px 0 0; }
-ol.steps { margin: 4px 0 0; padding-left: 22px; font-size: 14px; }
-ol.steps > li { margin: 8px 0; }
-.copybox { display: flex; align-items: stretch; gap: 0; margin: 6px 0 2px; max-width: 100%; }
-.copybox code { flex: 1; min-width: 0; background: #24262b; color: #e9f5e3; border-radius: 6px 0 0 6px; padding: 8px 10px; font-family: ui-monospace, Consolas, monospace; font-size: 13px; overflow-x: auto; white-space: nowrap; }
-.copybox button { flex: none; border: 0; border-radius: 0 6px 6px 0; background: var(--blue); color: #fff; font-weight: 700; font-size: 13px; padding: 0 14px; cursor: pointer; }
-.copybox button:hover { background: var(--blue-hover); }
 .hostset { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin: 12px 0 4px; font-size: 14px; }
-.hostset select { font: inherit; font-size: 15px; padding: 4px 8px; border: 1.5px solid #9aa1ab; border-radius: 6px; background: #fff; }
-details.adv { margin-top: 10px; }
-details.adv > summary { cursor: pointer; color: var(--sub); font-size: 13.5px; }
-.sub-hint { color: var(--sub); font-size: 12.5px; margin: 2px 0 0; }
-[hidden] { display: none !important; }
+details.adv { margin-top: 12px; }
+details.adv > summary { cursor: pointer; color: var(--sub); font-size: 13.5px; font-weight: 600; }
+.rchat { display: flex; flex-direction: column; border: 1px solid var(--border-soft); border-radius: 18px; background: #fff; overflow: hidden; }
+.rchat .cmsgs { height: 330px; }
+.row select { flex: 1 1 220px; min-width: 0; font-size: 16px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--input); }
+.fl { display: block; font-size: 14px; font-weight: 700; margin: 0 0 6px; }
+.admin-dlg .fl { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 0 0 12px; }
+.admin-dlg .fl select { font-size: 15px; }
+.fc { display: flex; align-items: center; gap: 8px; font-size: 14px; margin: 0 0 12px; }
+.fc input, .vrow input[type=checkbox] { accent-color: #d62976; width: 17px; height: 17px; }
+.who { margin: 0 0 10px; font-size: 14.5px; display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+.who b { font-size: 16px; }
+.vset { display: flex; flex-direction: column; gap: 8px; margin: 0 0 10px; padding: 10px 14px; background: #fafafa; border: 1px solid var(--border-soft); border-radius: 14px; }
+.vrow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font-size: 14px; }
+.vrow input[type=range] { width: 160px; }
+.vrow small { color: var(--sub); font-size: 12px; }
+.vrow .meter { display: inline-block; }
+.vrow .meter > span { display: block; height: 100%; width: 0; background: var(--grad-btn); transition: width .08s; }
+.adminlink { margin: 12px 0 0; text-align: right; }
+.adminlink .link { color: var(--sub); font-size: 13px; }
+.admin-dlg { max-width: 560px; }
+.admin-dlg .dlg-body p { white-space: normal; }
+.admin-dlg .row input { flex: 1 1 180px; }
+code.cmdline { background: #efefef; border-radius: 6px; padding: 1px 6px; font-size: 13px; overflow-wrap: anywhere; }
+#codeArea { margin: 6px 0 0; }
+#sc { flex-wrap: wrap; row-gap: 6px; }
+#sc .chip { margin-left: 4px; font-size: 12px; white-space: nowrap; }
 @media (max-width: 640px) {
-  ul.players li { grid-template-columns: 1fr; }
-  ul.players .vol { grid-row: auto; grid-column: 1; align-items: flex-start; }
-  .bigcode code { font-size: 22px; }
+  ul.players li { grid-template-columns: auto 1fr; }
+  ul.players .vol { grid-row: auto; grid-column: 1 / 3; align-items: flex-start; }
+  .bigcode code { font-size: 23px; }
+  .rchat .cmsgs { height: 300px; }
 }
 </style>
 <script src="../config.js"></script>
+<script>
+// =====================================================================
+//  ゲスト（名前#1234）… みんなのチャット・DM・サイトで近接VC で使う
+//   - 最初に名前を入れる画面を出して、サイトからゲストの ID とトークンをもらう
+//   - トークンはこのブラウザ（localStorage の "mayo-guest"）にだけ保存する
+//  制作: MaYo (mayo01297)  二次配布禁止
+// =====================================================================
+(function () {
+  "use strict";
+  const KEY = "mayo-guest";
+  const CFG = window.SITE_CONFIG || {};
+  const cfgBot = String(CFG.botUrl || "").trim().replace(/\/+$/, "");
+  const API = cfgBot && !/ここに|xxxx/i.test(cfgBot) ? cfgBot : (/^https?:$/.test(location.protocol) ? location.origin : "");
+  const load = () => {
+    try { const g = JSON.parse(localStorage.getItem(KEY) || "null"); return g && g.id && g.token ? g : null; } catch (e) { return null; }
+  };
+  const save = g => { try { localStorage.setItem(KEY, JSON.stringify(g)); } catch (e) { /* 使えないブラウザ */ } };
+  let cur = load();
+  let checked = false;
+  const COLORS = ["#f56040", "#e1306c", "#c13584", "#833ab4", "#5851db", "#405de6", "#0095f6", "#1f9d55", "#e67e22", "#d6249f"];
+
+  function color(seed) {
+    let h = 0;
+    for (const c of String(seed || "")) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+    return COLORS[h % COLORS.length];
+  }
+  function initial(name) { return ([...String(name || "?").trim()][0] || "?").toUpperCase(); }
+  /** まるいアイコン（名前の 1 文字目） */
+  function avatar(user, cls) {
+    const d = document.createElement("span");
+    d.className = "av" + (cls ? " " + cls : "");
+    d.style.setProperty("--c", color(user && (user.id || user.name)));
+    d.textContent = initial(user && user.name);
+    d.setAttribute("aria-hidden", "true");
+    return d;
+  }
+  const label = u => (u ? (u.tag ? `${u.name}#${u.tag}` : String(u.name || "")) : "");
+
+  /** 名前を入れる画面。opts: { title, text, value, button, cancel, banned } → 名前（やめたら null） */
+  function ask(opts = {}) {
+    return new Promise(resolve => {
+      const wrap = document.createElement("div");
+      wrap.className = "gmodal";
+      wrap.setAttribute("role", "dialog");
+      wrap.setAttribute("aria-modal", "true");
+      wrap.innerHTML =
+        '<form class="gbox" novalidate>' +
+        '<div class="ring"><div>👋</div></div>' +
+        '<h2></h2><p class="gtext"></p>' +
+        '<input type="text" maxlength="16" autocomplete="nickname" spellcheck="false" aria-label="名前">' +
+        '<button class="btn btn-green" type="submit">はじめる</button>' +
+        '<button class="link gcancel" type="button" hidden>やめる</button>' +
+        '<p class="gerr" aria-live="polite"></p>' +
+        '<p class="gnote">名前は、ほかの人に見えます。本名・学校・住所などは入れないでください。<br>登録やパスワードはいりません（このブラウザに保存されます）。</p>' +
+        "</form>";
+      const form = wrap.querySelector("form"), input = wrap.querySelector("input"), err = wrap.querySelector(".gerr");
+      wrap.querySelector("h2").textContent = opts.title || "ようこそ！";
+      wrap.querySelector(".gtext").textContent = opts.text || "チャットや近接VCで使う名前を決めてください（ゲストとして参加します）。";
+      wrap.querySelector("button[type=submit]").textContent = opts.button || "はじめる";
+      input.placeholder = "名前（16 文字まで）";
+      input.value = opts.value || "";
+      if (opts.banned) {
+        wrap.querySelector(".ring > div").textContent = "⛔";
+        input.hidden = true;
+        wrap.querySelector("button[type=submit]").hidden = true;
+        wrap.querySelector(".gnote").hidden = true;
+      }
+      const cancel = wrap.querySelector(".gcancel");
+      cancel.hidden = !opts.cancel;
+      const close = v => { wrap.remove(); document.removeEventListener("keydown", onKey); resolve(v); };
+      const onKey = e => { if (e.key === "Escape" && opts.cancel) close(null); };
+      document.addEventListener("keydown", onKey);
+      cancel.addEventListener("click", () => close(null));
+      form.addEventListener("submit", async e => {
+        e.preventDefault();
+        const name = input.value.replace(/\s+/g, " ").trim();
+        if (!name) { err.textContent = "名前を入れてください。"; input.focus(); return; }
+        if ([...name].length > 16) { err.textContent = "16 文字までです。"; return; }
+        if (!opts.submit) return close(name);
+        const btn = wrap.querySelector("button[type=submit]");
+        btn.disabled = true; err.textContent = "";
+        try {
+          const r = await opts.submit(name);
+          if (r && r.error) { err.textContent = r.error; btn.disabled = false; return; }
+          close(name);
+        } catch (e2) {
+          err.textContent = "サイトにつながりませんでした。もう一度押してください。";
+          btn.disabled = false;
+        }
+      });
+      document.body.appendChild(wrap);
+      setTimeout(() => input.focus(), 30);
+    });
+  }
+
+  async function create(name) {
+    const r = await fetch(`${API}/api/guest`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name }) });
+    let j = null;
+    try { j = await r.json(); } catch (e) { j = null; }
+    if (!j || !j.ok) return { error: (j && j.error) || "名前を作れませんでした。少し待ってから、もう一度押してください。" };
+    cur = { id: j.id, name: j.name, tag: j.tag, token: j.token };
+    save(cur);
+    checked = true;
+    return { ok: true };
+  }
+
+  /** サイトにたずねて、保存しているゲストがまだ使えるか確かめる。"ok" | "gone" | "banned" | "offline" */
+  async function check() {
+    if (!cur) return "gone";
+    try {
+      const r = await fetch(`${API}/api/guest/me?token=${encodeURIComponent(cur.token)}`, { cache: "no-store" });
+      if (r.status === 401) { cur = null; try { localStorage.removeItem(KEY); } catch (e) { /* 無視 */ } return "gone"; }
+      if (r.status === 403) return "banned";
+      const j = await r.json();
+      if (j && j.ok) { cur = { ...cur, name: j.name, tag: j.tag }; save(cur); }
+      return "ok";
+    } catch (e) {
+      return "offline";
+    }
+  }
+
+  /** ゲストを用意する（まだなら名前を入れる画面を出す）。BAN されているときは画面を出したまま止まる */
+  async function ensure() {
+    if (!API) throw new Error("no api");
+    if (cur && !checked) {
+      const st = await check();
+      checked = st !== "offline";
+      if (st === "banned") {
+        await ask({ title: "いまは使えません", text: "このゲストは、サイトの管理者によって止められています。しばらくしてから、もう一度ためしてください。", banned: true });
+        return new Promise(() => {});
+      }
+    }
+    if (cur) return cur;
+    await ask({ submit: create });
+    return cur;
+  }
+
+  // -------------------------------------------------------------------
+  //  チャットの表示（吹き出し）と、書く欄。みんなのチャット・DM・ゲーム中チャットで使う
+  //   メッセージ: { id, key（送った人ごとに同じ）, user:{ id, name, tag }, text, at, mine, badge: "v"|"game"|"guest"|"" }
+  // -------------------------------------------------------------------
+  const BADGES = { v: ["v", "✓ 本人確認"], p: ["p", "プレイヤー"], s: ["s", "👻 観戦者"], game: ["game", "🎮 マイクラ"], guest: ["guest", "ゲスト"] };
+  const pad = n => String(n).padStart(2, "0");
+  function when(at) {
+    const d = new Date(at), now = new Date();
+    const hm = `${d.getHours()}:${pad(d.getMinutes())}`;
+    if (d.toDateString() === now.toDateString()) return "今日 " + hm;
+    const y = new Date(now); y.setDate(now.getDate() - 1);
+    if (d.toDateString() === y.toDateString()) return "きのう " + hm;
+    return `${d.getMonth() + 1}/${d.getDate()} ${hm}`;
+  }
+  function list(el, opts = {}) {
+    let last = null;          // 最後に出したメッセージ
+    const ids = new Set();
+    const nearBottom = () => el.scrollHeight - el.scrollTop - el.clientHeight < 90;
+    function row(m) {
+      if (!m || (m.id && ids.has(m.id))) return null;
+      if (m.id) ids.add(m.id);
+      const frag = document.createDocumentFragment();
+      if (!last || m.at - last.at > 10 * 60000) {
+        const t = document.createElement("div"); t.className = "cday"; t.textContent = when(m.at);
+        frag.appendChild(t);
+      }
+      const cont = last && last.key === m.key && m.at - last.at < 5 * 60000 && !frag.childNodes.length;
+      const div = document.createElement("div");
+      div.className = "cm" + (m.mine ? " mine" : "") + (cont ? " cont" : " first");
+      if (m.id) div.dataset.id = m.id;
+      if (!m.mine) {
+        const av = avatar(m.user);
+        if (opts.onUser && m.user && m.user.id) { av.classList.add("click"); av.addEventListener("click", () => opts.onUser(m.user)); }
+        div.appendChild(av);
+      }
+      const body = document.createElement("div"); body.className = "cbody";
+      if (!m.mine && opts.names !== false && !cont) {
+        const who = document.createElement("div"); who.className = "who";
+        const b = document.createElement("b"); b.textContent = m.user ? m.user.name : "?";
+        if (opts.onUser && m.user && m.user.id) { b.classList.add("click"); b.addEventListener("click", () => opts.onUser(m.user)); }
+        who.appendChild(b);
+        if (m.user && m.user.tag) { const t = document.createElement("span"); t.textContent = "#" + m.user.tag; who.appendChild(t); }
+        if (m.badge && BADGES[m.badge]) { const t = document.createElement("i"); t.className = "tagb " + BADGES[m.badge][0]; t.textContent = BADGES[m.badge][1]; who.appendChild(t); }
+        body.appendChild(who);
+      }
+      const bub = document.createElement("div");
+      bub.className = "bub" + (m.badge === "game" ? " game" : "");
+      bub.textContent = m.text;
+      bub.title = when(m.at);
+      body.appendChild(bub);
+      div.appendChild(body);
+      frag.appendChild(div);
+      last = m;
+      return frag;
+    }
+    return {
+      set(msgs) {
+        el.textContent = ""; last = null; ids.clear();
+        const frag = document.createDocumentFragment();
+        for (const m of msgs || []) { const r = row(m); if (r) frag.appendChild(r); }
+        if (!frag.childNodes.length && opts.empty) { const p = document.createElement("p"); p.className = "cempty"; p.textContent = opts.empty; frag.appendChild(p); }
+        el.appendChild(frag);
+        el.scrollTop = el.scrollHeight;
+      },
+      add(m) {
+        const stick = nearBottom() || m.mine;
+        const emp = el.querySelector(".cempty"); if (emp) emp.remove();
+        const r = row(m);
+        if (!r) return;
+        el.appendChild(r);
+        if (stick) el.scrollTop = el.scrollHeight;
+      },
+      remove(idList) {
+        for (const id of idList || []) { const d = el.querySelector(`.cm[data-id="${CSS.escape(String(id))}"]`); if (d) d.remove(); }
+      },
+      bottom() { el.scrollTop = el.scrollHeight; },
+    };
+  }
+  /** 書く欄（form > textarea + .cnt + .send）。Enter で送る・Shift+Enter で改行・文字数・連投で待つ */
+  function composer(form, opts) {
+    const ta = form.querySelector("textarea"), cnt = form.querySelector(".cnt"), btn = form.querySelector(".send");
+    let lockUntil = 0, timer = null, max = opts.max || 200;
+    function update() {
+      // 見えていないとき（scrollHeight が 0）は高さを決めない（0 になって文字が隠れるので）
+      if (ta.scrollHeight) { ta.style.height = "auto"; ta.style.height = Math.min(120, ta.scrollHeight) + "px"; }
+      const n = [...ta.value].length;
+      const wait = Math.ceil((lockUntil - Date.now()) / 1000);
+      cnt.textContent = wait > 0 ? `あと ${wait} 秒` : (n > max * 0.7 ? `${n}/${max}` : "");
+      cnt.classList.toggle("over", n > max || wait > 0);
+      btn.disabled = !ta.value.trim() || n > max || wait > 0 || (opts.enabled && !opts.enabled());
+    }
+    function send() {
+      update();
+      if (btn.disabled) return;
+      const text = ta.value.trim();
+      if (opts.onSend(text) !== false) { ta.value = ""; update(); }
+    }
+    ta.addEventListener("input", update);
+    ta.addEventListener("keydown", e => {
+      if (e.key === "Enter" && !e.shiftKey && !e.isComposing && e.keyCode !== 229) { e.preventDefault(); send(); }
+    });
+    form.addEventListener("submit", e => { e.preventDefault(); send(); });
+    update();
+    return {
+      update,
+      setMax(n) { max = n; update(); },
+      lock(sec) {
+        if (!sec) return;
+        lockUntil = Date.now() + sec * 1000;
+        clearInterval(timer);
+        timer = setInterval(() => { update(); if (Date.now() >= lockUntil) clearInterval(timer); }, 500);
+        update();
+      },
+      focus() { ta.focus(); },
+    };
+  }
+  let toastEl = null, toastTimer = null;
+  function toast(text) {
+    if (!toastEl) { toastEl = document.createElement("div"); toastEl.className = "toast"; toastEl.setAttribute("role", "status"); document.body.appendChild(toastEl); }
+    toastEl.textContent = text;
+    toastEl.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove("show"), 3500);
+  }
+  window.ChatUI = { list, composer, toast, when };
+
+  window.Guest = {
+    api: API,
+    get: () => cur,
+    ensure,
+    check,
+    ask,
+    avatar,
+    color,
+    label,
+    /** チャットで名前を変えたとき（サイトから届いた新しい名前を保存） */
+    update(u) { if (cur && u && u.id === cur.id) { cur = { ...cur, name: u.name, tag: u.tag }; save(cur); } },
+  };
+})();
+</script>
 </head>
 <body>
 <header>
@@ -249,23 +639,23 @@ details.adv > summary { cursor: pointer; color: var(--sub); font-size: 13.5px; }
 </header>
 <nav class="sitenav" aria-label="サイトのメニュー">
   <div class="sitenav-in">
-    <a href="../" data-page="home">🏠 トップ</a>
+    <a href="../" data-page="home">🏠 ホーム</a>
     <a href="../corpse/" data-page="corpse">🪦 死体スキン</a>
-    <a href="../vc/" data-page="vc">🎙 近接VC</a>
-    <a href="../talk/" data-page="talk" aria-current="page">🎧 サイトでVC</a>
+    <a href="../vc/" data-page="vc" aria-current="page">🎙 近接VC</a>
+    <a href="../chat/" data-page="chat">💬 チャット</a>
   </div>
 </nav>
 
 <main>
-  <p class="notice" id="noApi" hidden>⚠ このページは、サイトを Cloudflare Workers で動かしているときだけ使えます。</p>
+  <p class="notice" id="noApi" hidden>⚠ このページは、サイトのサーバー（Cloudflare Workers か VPS）で動かしているときだけ使えます。</p>
+  <div class="mebar" id="meBar" hidden></div>
 
   <div class="easy" role="note">
     <b class="t">⚡ かんたんな流れ（Discord はいりません）</b>
     <ol>
-      <li><b>ホスト</b>（ワールドを開く人）が ② で部屋を作って、リンクをみんなに送る</li>
-      <li>ホストはワールドでチートをオンにして、出てきた <code>/wsserver …</code> をチャットで送る</li>
-      <li>みんな（ホストも）リンクをひらいて、出てきた <b>!vc 6けたの数字</b> を Minecraft のチャットで送る</li>
-      <li>「<b>音声をはじめる</b>」を押す → 近くの人の声が聞こえます（遠いほど小さく、左右からも）</li>
+      <li><b>ホスト</b>（ワールドを開く人）: ワールドで<b>チートをオン</b>にして、チャットで <code class="cmdline" id="easyNew">/wsserver …/new</code> を送る → ゲームに<b>6けたの部屋番号</b>が出る</li>
+      <li><b>みんな</b>: このページで部屋番号を入れて「この部屋に入る」</li>
+      <li>「<b>自分を選択</b>」で自分の名前をえらんで「<b>ボイスチャットを開始</b>」→ 近くの人の声が聞こえます（遠いほど小さく、左右からも）</li>
     </ol>
   </div>
 
@@ -275,10 +665,10 @@ details.adv > summary { cursor: pointer; color: var(--sub); font-size: 13.5px; }
     <div class="indent">
       <div id="joinForm">
         <div class="row">
-          <input type="text" class="code" id="roomInput" maxlength="6" autocomplete="off" spellcheck="false" placeholder="部屋の番号" aria-label="部屋の番号（6文字）">
-          <button class="btn btn-blue" id="joinBtn" type="button">入る</button>
+          <input type="text" class="code" id="roomInput" maxlength="7" inputmode="numeric" autocomplete="off" spellcheck="false" placeholder="部屋番号（6けた）" aria-label="部屋番号（6けた）">
+          <button class="btn btn-blue" id="joinBtn" type="button">この部屋に入る</button>
         </div>
-        <p class="msg" id="joinMsg">ホストから送られてきたリンクをひらくと、自動で入ります。</p>
+        <p class="msg" id="joinMsg">部屋番号は、ホストがマイクラで /wsserver を送ると、ゲームのチャットに出ます（マイクラのチャットで <code>!vc</code> と送っても出ます）。</p>
       </div>
 
       <div id="roomBox" hidden>
@@ -290,74 +680,116 @@ details.adv > summary { cursor: pointer; color: var(--sub); font-size: 13.5px; }
           <button class="link" id="leaveBtn" type="button">部屋を出る</button>
         </div>
 
+        <!-- 自分を選択 -->
+        <div id="pickBox" hidden>
+          <label class="fl" for="pickSel">自分を選択</label>
+          <div class="row">
+            <select id="pickSel" aria-label="自分を選択"></select>
+            <button class="btn btn-blue" id="pickBtn" type="button">これにする</button>
+          </div>
+          <p class="msg" id="pickMsg">ワールドにいる人の名前が出ます。ゲームに出ていない人は「観戦者」をえらんでください。</p>
+          <details class="adv" id="codeDetails">
+            <summary>なりすまし防止の本人確認（!vc）をする</summary>
+            <div id="codeSlot1"></div>
+          </details>
+        </div>
+
+        <!-- !vc で本人確認（部屋の設定で必須のとき） -->
         <div id="verifyBox" hidden>
-          <p style="margin:0">ワールドに入って、<b>Minecraft のチャット</b>でこれを送ってください（10 分以内）。</p>
+          <p style="margin:0">この部屋は<b>本人確認</b>が必要です。ワールドに入って、<b>Minecraft のチャット</b>でこれを送ってください（10 分以内）。</p>
+          <div id="codeSlot2"></div>
+          <p style="margin:10px 0 0"><button class="btn-outline" id="specBtn" type="button">👻 観戦者で入る（ゲームに出ていない人）</button></p>
+        </div>
+
+        <div id="codeArea">
           <div class="bigcode"><code id="codeText">!vc ------</code><button type="button" id="codeCopy">コピー</button></div>
           <p class="msg" id="verifyMsg"></p>
           <button class="link" id="newCodeBtn" type="button">番号を出し直す</button>
         </div>
 
         <div id="talkBox" hidden>
-          <button class="btn btn-green" id="startBtn" type="button">🎧 音声をはじめる（マイクを使う）</button>
+          <p class="who" id="whoLine"></p>
+          <details class="adv" id="upgradeDetails" hidden>
+            <summary>本人確認（!vc）をする（✓ が付いて、ゲーム中チャットがマイクラにも出ます）</summary>
+            <div id="codeSlot3"></div>
+          </details>
+          <button class="btn btn-green" id="startBtn" type="button">🎧 ボイスチャットを開始</button>
           <p class="sub-hint" id="startHint">ヘッドホン・イヤホンがおすすめです（スピーカーだと、自分の声が相手に返ってしまうことがあります）。</p>
           <div class="controls" id="controls" hidden>
             <button class="tbtn" id="muteBtn" type="button">🎙 マイク: オン</button>
             <button class="tbtn" id="deafBtn" type="button">🔊 音: オン</button>
-            <label class="ptt"><input type="checkbox" id="pttChk"> 押して話す（<kbd>V</kbd> キー）</label>
-            <div class="meter" title="自分の声の大きさ"><div id="micMeter"></div></div>
+            <button class="tbtn" id="reBtn" type="button">🔄 再接続</button>
+            <button class="tbtn off" id="stopBtn" type="button">ボイスチャットを退出</button>
+          </div>
+          <div class="vset" id="vset" hidden>
+            <label class="vrow">マイク音量 <input type="range" id="micVol" min="0" max="200" step="5" value="100" aria-label="マイク音量"> <span id="micVolText">100%</span>
+              <span class="meter" title="自分の声の大きさ"><span id="micMeter"></span></span></label>
+            <label class="vrow"><input type="checkbox" id="spatialChk" checked> 立体音響を有効にする（左右から聞こえる）<small>スマホはイヤホンがおすすめ</small></label>
+            <label class="vrow"><input type="checkbox" id="pttChk"> 押して話す（<kbd>V</kbd> キー）</label>
           </div>
           <p class="msg" id="talkMsg"></p>
           <ul class="players" id="players"></ul>
         </div>
+        <p class="adminlink"><button class="link" id="adminOpen" type="button">🔒 管理者設定</button></p>
       </div>
     </div>
+  </section>
+
+  <!-- ゲーム中チャット（部屋の中だけ） -->
+  <section class="card" id="chatCard" aria-labelledby="sc" hidden>
+    <h2 class="step" id="sc"><span class="num">💬</span>ゲーム中チャット<span class="chip" id="chatChip"></span></h2>
+    <div class="rchat">
+      <div class="cmsgs" id="roomMsgs" aria-live="polite"></div>
+      <form class="composer" id="roomForm">
+        <textarea rows="1" maxlength="400" placeholder="メッセージを入力…" aria-label="ゲーム中チャットに書く"></textarea>
+        <span class="cnt"></span>
+        <button class="send" type="submit">送信</button>
+      </form>
+    </div>
+    <p class="sub-hint">この部屋の人と、ワールドのマイクラのチャットが見えます。<b>本人確認（!vc）をした人</b>のメッセージは、マイクラのチャットにも出ます（ほかの人のメッセージはこのページだけ）。<br>
+      200 文字まで・10 秒に 5 回・1 分に 20 回まで。悪口・個人情報（本名・学校・住所）は書かないでください。</p>
   </section>
 
   <!-- ② 部屋を作る -->
   <section class="card" aria-labelledby="s2">
     <h2 class="step" id="s2"><span class="num">2</span>部屋を作る（ワールドを開く人 = ホスト）</h2>
     <div class="indent">
-      <div id="createForm">
-        <div class="row">
-          <input type="text" id="roomNameInput" maxlength="40" autocomplete="off" placeholder="部屋の名前（例: MaYo のサバイバル）" aria-label="部屋の名前">
-          <button class="btn btn-blue" id="createBtn" type="button">部屋を作る</button>
+      <ol class="steps">
+        <li>ワールドの設定で「<b>チートを有効にする</b>」をオン</li>
+        <li>ワールドに入って、<b>チャットでこれを送る</b>（ワールドを開くたびに）
+          <div class="copybox"><code id="newCmd">読みこみ中…</code><button type="button" data-copy="newCmd">コピー</button></div>
+          <p class="sub-hint" id="noRelayNote" hidden>⚠ このサイトにはまだリレー（中継サーバー）が設定されていないので、マイクラで部屋を作れません。下の「サイトで先に部屋を作る」を使ってください（Windows の近接VC コネクターが必要です）。</p>
+        </li>
+        <li>ゲームのチャットに出た<b>6けたの部屋番号</b>を、みんなに教える（自分も ① で入る）<br>
+          <span class="sub-hint">「<b>管理キー</b>」はあなたにだけ出ます。① の「🔒 管理者設定」で、声が届く距離・人狼・観戦者のルールを変えるのに使います。</span></li>
+      </ol>
+      <details class="adv" id="siteCreate">
+        <summary>サイトで先に部屋を作る（リンクで招待したいとき・同じ部屋をずっと使うとき）</summary>
+        <div id="createForm" style="margin-top:10px">
+          <div class="row">
+            <input type="text" id="roomNameInput" maxlength="40" autocomplete="off" placeholder="部屋の名前（例: MaYo のサバイバル）" aria-label="部屋の名前">
+            <button class="btn btn-blue" id="createBtn" type="button">部屋を作る</button>
+          </div>
+          <p class="msg" id="createMsg"></p>
         </div>
-        <p class="msg" id="createMsg"></p>
-      </div>
-      <div id="hostBox" hidden>
-        <ol class="steps">
-          <li><b>みんなにこのリンクを送る</b>（Discord・LINE など）
-            <div class="copybox"><code id="shareLink"></code><button type="button" data-copy="shareLink">コピー</button></div>
-          </li>
-          <li>ワールドの設定で「<b>チートを有効にする</b>」をオン → ワールドに入って、<b>チャットでこれを送る</b>（ワールドを開くたびに）
-            <div class="copybox"><code id="wsCmd">読みこみ中…</code><button type="button" data-copy="wsCmd">コピー</button></div>
-            <div id="connectorNote" class="sub-hint" hidden>
-              ※ このサイトにはまだリレー（中継サーバー）が設定されていません。いまは Windows の PC で
-              <a href="../download/MaYoVCConnector.zip">近接VC コネクター</a> をひらき、上のコマンドを貼り付けて「スタート」→ Minecraft では
-              <code>/wsserver ws://127.0.0.1:19131</code> を送ってください。
-            </div>
-          </li>
-          <li>自分も ① で入る（このページでは自動で入っています）</li>
-        </ol>
-        <div class="hostset">
-          <label>声が届く距離
-            <select id="radiusSel">
-              <option>8</option><option>12</option><option>16</option><option>20</option><option>24</option><option>32</option><option>48</option><option>64</option>
-            </select> ブロック</label>
-          <span class="chip" id="hostWorld">確認中…</span>
+        <div id="hostBox" hidden>
+          <ol class="steps">
+            <li><b>みんなにこのリンクを送る</b>（Discord・LINE など）
+              <div class="copybox"><code id="shareLink"></code><button type="button" data-copy="shareLink">コピー</button></div>
+            </li>
+            <li>ワールドで「チートを有効にする」をオン → <b>チャットでこれを送る</b>（この部屋専用のコマンド）
+              <div class="copybox"><code id="wsCmd">読みこみ中…</code><button type="button" data-copy="wsCmd">コピー</button></div>
+              <div id="connectorNote" class="sub-hint" hidden>
+                ※ このサイトにはまだリレー（中継サーバー）が設定されていません。いまは Windows の PC で
+                <a href="../download/MaYoVCConnector.zip">近接VC コネクター</a> をひらき、上のコマンドを貼り付けて「スタート」→ Minecraft では
+                <code>/wsserver ws://127.0.0.1:19131</code> を送ってください。
+              </div>
+            </li>
+          </ol>
+          <p class="sub-hint"><span class="chip" id="hostWorld">確認中…</span>　いま入っている人: <span id="hostMembers">-</span></p>
+          <p><button class="btn-outline" id="hostAdminBtn" type="button">🔒 管理者設定をひらく</button></p>
         </div>
-        <p class="sub-hint">いま入っている人: <span id="hostMembers">-</span></p>
-        <details class="adv">
-          <summary>ホスト用（管理）</summary>
-          <p class="sub-hint" style="margin-top:8px">管理用リンク: ブックマークしておくと、ほかの端末でもホストの操作ができます。<b>人に見せないでください。</b></p>
-          <div class="copybox"><code id="hostLink"></code><button type="button" data-copy="hostLink">コピー</button></div>
-          <p style="margin:10px 0 0">
-            <button class="btn-outline" id="newWorldCodeBtn" type="button">ワールドの接続コードを作り直す</button>
-            <a id="checkLink" href="#" target="_blank" rel="noopener" style="margin-left:10px;font-size:14px">つながらないとき（接続チェック）</a>
-          </p>
-          <p class="sub-hint">/wsserver のコマンドを人に知られて、勝手につながれたときは「作り直す」を押してください（前のコマンドは使えなくなります）。</p>
-        </details>
-      </div>
+      </details>
     </div>
   </section>
 
@@ -370,23 +802,36 @@ details.adv > summary { cursor: pointer; color: var(--sub); font-size: 13.5px; }
         <li>みんな: マイクのついたパソコンかスマホと、ブラウザ（Chrome・Edge・Safari など）。<b>ヘッドホン</b>がおすすめ</li>
         <li>Minecraft と同じ端末でも、別の端末（スマホなど）でもOK。iPhone・iPad は、ブラウザを裏に回すと音が止まることがあるので、Minecraft とは<b>別の端末</b>でひらくのがおすすめです</li>
       </ul>
+      <h4>■ 自分を選択・本人確認</h4>
+      <ul>
+        <li>「自分を選択」は、ワールドにいる人の一覧から自分の名前をえらぶだけで入れます（かんたん）。ほかの人が使っている名前はえらべません</li>
+        <li>なりすましが心配なときは、マイクラのチャットで <b>!vc 6けたの数字</b> を送る「本人確認」をしてください（✓ が付き、同じ名前で入っていた人は外れます）。管理者は「入り方」を「!vc で本人確認」にすると、全員に本人確認をしてもらえます</li>
+        <li>ゲームに出ていない人は「👻 観戦者」で入れます</li>
+      </ul>
       <h4>■ 聞こえ方</h4>
       <ul>
-        <li>近いほど大きく、離れると小さくなり、<b>声が届く距離</b>（ホストが選ぶ・最初は 20 ブロック）をこえると聞こえません</li>
-        <li>相手のいる方向（左・右）から聞こえます（ヘッドホンのとき分かりやすい）</li>
-        <li>ちがうディメンション（ネザー・エンド）の人の声は聞こえません</li>
-        <li>ゲームにいない人どうし・ワールドが閉じているときは、ロビーとして全員の声が聞こえます</li>
-        <li>死んだ人どうしだけで話すには、ワールドに <a href="../vc/">近接VCアドオン（ワールド用）</a> を入れてください（入れなくても、距離の近接VCは使えます）</li>
+        <li>近いほど大きく、離れると小さくなり、<b>声が届く距離</b>（管理者が選ぶ・最初は 20 ブロック）をこえると聞こえません</li>
+        <li>相手のいる方向（左・右）から聞こえます（「立体音響」をオフにすると、左右は変わりません）</li>
+        <li>ちがうディメンション（ネザー・エンド）の人の声は聞こえません。ワールドが閉じているときは、ロビーとして全員の声が聞こえます</li>
+        <li><b>観戦者</b>（死んだ人と、観戦者で入った人）の聞こえ方は、管理者が選べます: 「話せない」「近くだけ」「すべての観戦者と」。「観戦者は生きている人の声を聞ける」もあります</li>
+        <li><b>人狼</b>テンプレート: 死んだ人は観戦者になり、観戦者どうしだけで話せます（生きている人には聞こえない・観戦者は生きている人の声を聞ける・観戦者はゲーム中チャットに書けない）</li>
+        <li>死んだ人を見分けるには、ワールドに <a href="../vc/discord/#s3">近接VCアドオン（ワールド用）</a> を入れてください（入れなくても、距離の近接VCは使えます）</li>
       </ul>
       <h4>■ つながらないとき</h4>
       <ul>
-        <li>「!vc 数字」を送っても何も起きない: ホストの /wsserver がつながっているか（部屋の上の「ワールド」が緑か）確認。つながっていなければ、ホストは ② の「接続チェック」へ</li>
-        <li>名前の横が「つながりません」: 学校・会社の Wi-Fi などで止められていることがあります。管理者が VPS に音声の中継（TURN）を入れていると、つながりやすくなります</li>
-        <li>声が出ない: 「音声をはじめる」を押したか、マイクの許可を「許可」にしたか、「🔊 音: オン」になっているか確認</li>
+        <li>部屋番号を入れても「見つかりません」: ホストが送ったコマンドで出た番号か確認（ワールドを開くたびに新しい番号になります。同じ部屋をずっと使うときは「🔒 管理者設定」の「次からも同じ部屋を使うコマンド」を使う）</li>
+        <li>「自分を選択」に名前が出ない: ホストの /wsserver がつながっているか（部屋の上の「ワールド」が緑か）確認</li>
+        <li>名前の横が「つながりません」: 学校・会社の Wi-Fi などで止められていることがあります。「🔄 再接続」をためしてください</li>
+        <li>声が出ない: 「ボイスチャットを開始」を押したか、マイクの許可を「許可」にしたか、マイク音量が 0% でないか、「🔊 音: オン」になっているか確認</li>
         <li>ほかの人に自分の声が二重に聞こえる: スピーカーではなくヘッドホンを使ってください</li>
       </ul>
+      <h4>■ チャットとゲストの名前</h4>
+      <ul>
+        <li>はじめに入れた名前（名前#4けた）がゲストの名前です。名前は <a href="../chat/">チャット</a> のページで変えられます</li>
+        <li>ゲーム中チャットは、部屋ごとに最新 50 件だけ残ります</li>
+      </ul>
       <h4>■ データについて</h4>
-      <p>位置（座標・向き）は、この部屋に入っている人のブラウザにだけ送ります。声はブラウザどうしで直接やりとりし、つながらないときはサイトの管理者の VPS を通ります。録音・保存はしません。</p>
+      <p>位置（座標・向き）は、この部屋に入っている人のブラウザにだけ送ります。声はブラウザどうしで直接やりとりし、つながらないときはサイトの管理者のサーバー（VPS）を通ります。声の録音・保存はしません。チャットのメッセージは、上の件数だけサーバーに残ります。</p>
     </div>
   </details>
 
@@ -491,11 +936,52 @@ details.adv > summary { cursor: pointer; color: var(--sub); font-size: 13.5px; }
   <p class="small">サイトで近接VC<br>© 2026 MaYo（mayo01297）　・　二次配布禁止　・　<a href="#about">制作者について</a>　・　<a href="../setup/">管理者用の設定</a></p>
 </main>
 
+<dialog id="adminDlg" class="admin-dlg" aria-labelledby="adminTitle">
+  <div class="dlg-body">
+    <h3 id="adminTitle">⚙️ 管理者専用設定</h3>
+    <div id="akBox">
+      <p>部屋を作った人の「<b>管理キー</b>」を入れてください。マイクラで作った部屋は、作った人にだけゲームのチャットに出ています（出なかったときは、チャットで <code>!vc admin</code>）。</p>
+      <div class="row">
+        <input type="password" id="akInput" maxlength="24" autocomplete="off" spellcheck="false" placeholder="管理キー" aria-label="管理キー">
+        <button class="btn btn-blue" id="akBtn" type="button">ひらく</button>
+      </div>
+      <p class="msg" id="akMsg"></p>
+    </div>
+    <div id="setBox" hidden>
+      <label class="fl">音声の届く最大距離
+        <select id="radiusSel">
+          <option>8</option><option>12</option><option>16</option><option>20</option><option>24</option><option>32</option><option>48</option><option>64</option>
+        </select> ブロック</label>
+      <label class="fl">テンプレート
+        <select id="tplSel"><option value="none">なし</option><option value="werewolf">人狼</option></select></label>
+      <label class="fl">観戦者（死んだ人・観戦者で入った人）
+        <select id="talkSel"><option value="none">話せない</option><option value="near">近くだけ</option><option value="spectators">すべての観戦者と</option></select></label>
+      <label class="fc"><input type="checkbox" id="listenChk"> 観戦者は、生きている人の声を聞ける</label>
+      <label class="fl">入り方
+        <select id="verifySel"><option value="pick">自分をえらぶ（かんたん）</option><option value="code">!vc で本人確認（なりすまし防止）</option></select></label>
+      <p class="sub-hint" id="tplHint"></p>
+      <hr>
+      <p class="sub-hint">次からも<b>同じ部屋</b>を使うときに、ワールドで送るコマンド:</p>
+      <div class="copybox"><code id="roomCmd">…</code><button type="button" data-copy="roomCmd">コピー</button></div>
+      <p class="sub-hint">管理用リンク（ほかの端末で管理するとき。<b>人に見せないでください</b>）:</p>
+      <div class="copybox"><code id="hostLink"></code><button type="button" data-copy="hostLink">コピー</button></div>
+      <p style="margin:10px 0 0;font-size:14px"><button class="btn-outline" id="newWorldCodeBtn" type="button">ワールドの接続コードを作り直す</button>
+        <a id="checkLink" href="#" target="_blank" rel="noopener" style="margin-left:8px">つながらないとき（接続チェック）</a></p>
+      <p class="msg" id="setMsg"></p>
+    </div>
+  </div>
+  <div class="dlg-btns">
+    <button type="button" id="adminClose">閉じる</button>
+    <button type="button" class="primary" id="saveBtn" hidden>更新</button>
+  </div>
+</dialog>
+
 <script>
 "use strict";
 // =====================================================================
 //  サイトで近接VC（ブラウザ側）  制作: MaYo (mayo01297)  二次配布禁止
 //   - 部屋（Cloudflare の Durable Object）と WebSocket でつながる
+//   - 「自分を選択」（ワールドにいる人の一覧から）か、マイクラのチャットの !vc で入る
 //   - 位置を受け取って、相手ごとに音量（距離）と左右（向き）を変える（Web Audio）
 //   - 声はブラウザどうし（WebRTC）。つなぎ方の情報は部屋が中継する
 // =====================================================================
@@ -503,33 +989,42 @@ const CFG = window.SITE_CONFIG || {};
 const cfgBot = String(CFG.botUrl || "").trim().replace(/\/+$/, "");
 const BOT = cfgBot && !/ここに|xxxx/i.test(cfgBot) ? cfgBot : (/^https?:$/.test(location.protocol) ? location.origin : "");
 const WS_BASE = BOT.replace(/^http/, "ws");
-const ROOM_RE = /^[A-HJ-NP-Z2-9]{6}$/;
+const ROOM_RE = /^(?:\d{6}|[A-HJ-NP-Z2-9]{6})$/;
+const roomIdOf = v => String(v || "").replace(/[\s-]/g, "").toUpperCase();
 const $ = id => document.getElementById(id);
 const store = {
   get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 使えないブラウザ */ } },
   del(k) { try { localStorage.removeItem(k); } catch (e) { /* 無視 */ } },
 };
+const DEFAULT_RULES = { talk: "spectators", listen: false, verify: "pick", template: "none" };
 
 const S = {
-  room: "", ws: null, sid: "", name: "", verified: false, ice: null, world: false, radius: 20, roomName: "",
-  peers: new Map(), pos: {}, started: false, ctx: null, master: null, mic: null, micTrack: null, micAnalyser: null,
+  room: "", ws: null, sid: "", name: "", via: "", spec: false, verified: false, ice: null, world: false, radius: 20, roomName: "",
+  rules: { ...DEFAULT_RULES }, players: [], taken: [], codeAsked: false, reconnectAll: false,
+  peers: new Map(), pos: {}, started: false, ctx: null, master: null, mic: null, micTrack: null, sendTrack: null, micGain: null, micAnalyser: null,
   muted: false, deaf: false, ptt: false, pttDown: false, vol: store.get("vc-vol", {}), retry: 0, kicked: false, leaving: false,
+  micVol: store.get("vc-micvol", 100), spatial: store.get("vc-spatial", true),
 };
-const H = { room: "", key: "", timer: null };   // ホスト
+const H = { room: "", key: "", timer: null };   // ホスト（サイトで作った部屋）
+let GUEST = null;                                 // ゲスト（名前#1234）。partials/guest.js
+let roomChat = null, roomComposer = null;         // ゲーム中チャット
 // 調べる用: localStorage の vc-relay-only を 1 にすると、音声をかならず VPS の中継（TURN）に通す
 const RELAY_ONLY = store.get("vc-relay-only", 0) === 1;
 
 // ---------------------------------------------------------------------
-//  聞こえ方の計算（部屋の webvc.js と同じ）
+//  聞こえ方の計算（部屋の webvc.js の gainRule と同じ）
 // ---------------------------------------------------------------------
-function infoOf(name) {
+function posOf(name) {
   const v = S.pos[String(name || "").toLowerCase()];
   return v ? { x: v[0], y: v[1], z: v[2], d: v[3], r: v[4], dead: !!v[5] } : null;
 }
+/** 人の様子: { pos, dead, spec }（観戦者で入った人は、場所なし） */
+function personOf(name, spec) {
+  const pos = spec ? null : posOf(name);
+  return { pos, dead: !!(pos && pos.dead), spec: !!spec };
+}
 function gainFor(me, o, radius) {
-  if (!me || !o) return (!me && !o) ? 1 : 0;          // どちらもゲームにいない → ロビー
-  if (me.dead || o.dead) return (me.dead && o.dead) ? 1 : 0;
   if (me.d !== o.d) return 0;
   const dist = Math.hypot(me.x - o.x, me.y - o.y, me.z - o.z);
   const full = Math.min(2, radius / 4);
@@ -538,12 +1033,32 @@ function gainFor(me, o, radius) {
   const t = (dist - full) / (radius - full);
   return 0.5 * (1 + Math.cos(Math.PI * t));
 }
+const isGhost = p => !!(p.spec || (p.pos && p.dead));
+function gainRule(me, o, radius, rules, world) {
+  if (!world) return 1;                                   // ワールドがつながっていない → ロビー
+  const dist = () => (me.pos && o.pos ? gainFor(me.pos, o.pos, radius) : 0);
+  const mg = isGhost(me), og = isGhost(o);
+  if (!mg && !og) {
+    if (!me.pos && !o.pos) return 1;                      // どちらもゲームにいない → ロビー
+    return dist();
+  }
+  if (og) {
+    if (rules.talk === "none") return 0;
+    if (rules.talk === "spectators") return mg ? 1 : 0;
+    if (me.spec && o.spec) return 1;
+    return me.spec || o.spec ? 0 : dist();
+  }
+  if (rules.listen && o.pos && !o.dead) return 1;
+  if (rules.talk === "near" && !me.spec) return dist();
+  return 0;
+}
 /** 左右（-1 = 左, +1 = 右）。Minecraft の向き yRot: 0 = 南(+Z), 90 = 西(-X) */
 function panFor(me, o) {
-  if (!me || !o || me.dead || o.dead || me.d !== o.d) return 0;
-  const dx = o.x - me.x, dz = o.z - me.z, len = Math.hypot(dx, dz);
+  if (!S.spatial || !me.pos || !o.pos || me.pos.d !== o.pos.d) return 0;
+  if (isGhost(me) && !isGhost(o) && S.rules.listen) return 0;   // 観戦者が生きている人を聞くときは、まんなか
+  const dx = o.pos.x - me.pos.x, dz = o.pos.z - me.pos.z, len = Math.hypot(dx, dz);
   if (len < 0.5) return 0;
-  const th = me.r * Math.PI / 180;
+  const th = me.pos.r * Math.PI / 180;
   const rx = -Math.cos(th), rz = -Math.sin(th);   // 右手の方向
   return Math.max(-1, Math.min(1, (dx * rx + dz * rz) / len)) * 0.85;
 }
@@ -556,24 +1071,61 @@ function setConn(text, kind = "") { $("connChip").textContent = text; $("connChi
 function setWorld() {
   $("worldChip").textContent = S.world ? "🟢 ワールドとつながっています" : "⚪ ワールドがつながっていません";
   $("worldChip").className = "chip " + (S.world ? "on" : "");
+  $("chatChip").textContent = S.world ? "🎮 マイクラとつながっています" : "サイトの中だけ";
+  $("chatChip").className = "chip " + (S.world ? "on" : "");
 }
 function send(o) { if (S.ws && S.ws.readyState === 1) S.ws.send(JSON.stringify(o)); }
+/** 上の「あなた」の表示 */
+function renderMe() {
+  const bar = $("meBar");
+  if (!GUEST) { bar.hidden = true; return; }
+  bar.textContent = "";
+  bar.appendChild(Guest.avatar(GUEST));
+  const t = document.createElement("span");
+  const b = document.createElement("b"); b.textContent = GUEST.name;
+  t.append(b, "#" + GUEST.tag);
+  bar.appendChild(t);
+  if (S.verified && S.name && !S.spec) {
+    const v = document.createElement("i"); v.className = "tagb " + (S.via === "code" ? "v" : "p");
+    v.textContent = (S.via === "code" ? "✓ マイクラ: " : "🎮 ") + S.name;
+    bar.appendChild(v);
+  } else if (S.verified && S.spec) {
+    const v = document.createElement("i"); v.className = "tagb s"; v.textContent = "👻 観戦者";
+    bar.appendChild(v);
+  }
+  const a = document.createElement("a"); a.href = "../chat/"; a.textContent = "名前を変える・DM";
+  bar.appendChild(a);
+  bar.hidden = false;
+}
+/** 部屋のチャットのメッセージ → 表示用 */
+function normChat(m) {
+  const f = m.f || {};
+  const badge = f.game ? "game" : f.v ? "v" : f.p ? "p" : f.s ? "s" : "guest";
+  const lower = String(f.name || "").toLowerCase();
+  const mc = !!(f.game || f.v || f.p);
+  const mine = mc ? !!(S.verified && !S.spec && lower === S.name.toLowerCase()) : !!(GUEST && f.name === GUEST.name && f.tag === GUEST.tag);
+  return { id: m.id, key: badge + ":" + lower + "#" + (f.tag || ""), user: { id: mc ? "mc:" + lower : "", name: f.name, tag: mc ? "" : f.tag }, text: f.game ? String(m.x).replace(/§./gu, "") : m.x, at: m.at, mine, badge };
+}
 
 async function joinRoom(id) {
-  id = String(id || "").trim().toUpperCase();
-  if (!ROOM_RE.test(id)) { $("joinMsg").textContent = "部屋の番号は 6 文字です（ホストから送られてきたリンクを確認してください）。"; $("joinMsg").className = "msg ng"; return; }
+  if (!GUEST) return;
+  id = roomIdOf(id);
+  if (!ROOM_RE.test(id)) { $("joinMsg").textContent = "部屋番号は 6 けたの数字です（ホストのゲームのチャットに出ています）。"; $("joinMsg").className = "msg ng"; return; }
   if (!BOT) { $("noApi").hidden = false; return; }
   $("joinMsg").textContent = "確認しています…"; $("joinMsg").className = "msg";
-  let info;
-  try { info = await (await fetch(`${BOT}/api/web/room?r=${id}`, { cache: "no-store" })).json(); } catch (e) { info = null; }
-  if (!info || !info.ok) { $("joinMsg").textContent = info ? "この番号の部屋は見つかりません。" : "サイトにつながりません。"; $("joinMsg").className = "msg ng"; return; }
+  let info, status = 0;
+  try { const r = await fetch(`${BOT}/api/web/room?r=${id}`, { cache: "no-store" }); status = r.status; info = await r.json(); } catch (e) { info = null; }
+  if (!info || !info.ok) {
+    $("joinMsg").textContent = !info ? "サイトにつながりません。" : status === 429 ? info.error : "この番号の部屋は見つかりません（番号をもう一度確認してください）。";
+    $("joinMsg").className = "msg ng"; return;
+  }
   leaveRoom(true);
   S.room = id; S.kicked = false; S.leaving = false;
-  S.roomName = info.name; S.radius = info.radius; S.world = info.world;
+  S.roomName = info.name; S.radius = info.radius; S.world = info.world; S.rules = { ...DEFAULT_RULES, ...(info.rules || {}) };
   if (location.hash.indexOf("r=" + id) < 0) history.replaceState(null, "", "#r=" + id);
   $("joinForm").hidden = true; $("roomBox").hidden = false;
   $("roomName").textContent = info.name;
-  $("roomChip").textContent = "部屋 " + id;
+  $("roomChip").textContent = "部屋番号 " + id;
   setWorld();
   connectWs();
   if (store.get("vc-hosts", {})[id]) showHost(id, store.get("vc-hosts", {})[id]);
@@ -582,7 +1134,7 @@ async function joinRoom(id) {
 function connectWs() {
   if (!S.room || S.leaving) return;
   setConn("つないでいます…");
-  const ws = new WebSocket(`${WS_BASE}/api/web/socket?r=${S.room}`);
+  const ws = new WebSocket(`${WS_BASE}/api/web/socket?r=${S.room}&g=${encodeURIComponent(GUEST ? GUEST.token : "")}`);
   S.ws = ws;
   ws.onopen = () => { S.retry = 0; ws.send(JSON.stringify({ t: "hello", sid: store.get("vc-sid-" + S.room, "") })); };
   ws.onmessage = e => {
@@ -600,38 +1152,71 @@ function connectWs() {
 }
 setInterval(() => { if (S.ws && S.ws.readyState === 1) S.ws.send("ping"); }, 30000);
 
+function setMember(m) {
+  S.name = m.name; S.via = m.via || "code"; S.spec = S.via === "spec"; S.verified = true; S.ice = m.ice;
+}
 async function onMsg(m) {
   switch (m.t) {
     case "welcome":
       S.sid = m.sid; store.set("vc-sid-" + S.room, m.sid);
       S.world = m.world; S.radius = m.room.radius; S.roomName = m.room.name; $("roomName").textContent = m.room.name;
+      S.rules = { ...DEFAULT_RULES, ...(m.room.rules || {}) };
+      S.players = m.players || []; S.taken = m.taken || [];
       setWorld(); setConn("🟢 サイトとつながっています", "on");
+      $("chatCard").hidden = false;
+      if (Array.isArray(m.chat)) roomChat.set(m.chat.map(normChat));
+      // ゲストの情報がサイトになかった（消えた・止められた）とき → 確かめて、名前を入れ直す
+      if (!m.guest && GUEST) Guest.check().then(async st => {
+        if (st === "gone" || st === "banned") { GUEST = await Guest.ensure(); renderMe(); try { S.ws && S.ws.close(); } catch (e) { /* つなぎ直す */ } }
+      });
+      S.codeAsked = false;
       if (m.verified) {
-        S.name = m.name; S.verified = true; S.ice = m.ice; onPeers(m.peers); showTalk();
-        // つなぎ直したとき: とぎれている相手だけ、つなぎ直す（つながっている声は止めない）
-        if (S.started) for (const p of S.peers.values()) if (!p.pc || /failed|disconnected|closed/.test(p.state)) connectPeer(p, true);
-      }
-      else { S.verified = false; showVerify(); send({ t: "code" }); }
+        setMember(m); onPeers(m.peers);
+        // つなぎ直したとき: とぎれている相手（「再接続」のときは全員）を、つなぎ直す
+        if (S.started) for (const p of S.peers.values()) if (S.reconnectAll || !p.pc || /failed|disconnected|closed/.test(p.state)) connectPeer(p, true);
+      } else { S.verified = false; S.name = ""; S.via = ""; S.spec = false; }
+      S.reconnectAll = false;
+      showState(); renderMe();
       break;
     case "code":
       $("codeText").textContent = "!vc " + m.code;
-      $("verifyMsg").textContent = m.world ? "Minecraft とつながっています。チャットで送ってください。" : "⚠ まだホストのワールドがつながっていません。ホストが /wsserver を送ったあとに、チャットで送ってください。";
+      $("verifyMsg").textContent = m.world ? "Minecraft のチャットで送ってください。" : "⚠ まだホストのワールドがつながっていません。ホストが /wsserver を送ったあとに、チャットで送ってください。";
       $("verifyMsg").className = "msg " + (m.world ? "ok" : "ng");
       break;
-    case "verified":
-      S.name = m.name; S.verified = true; S.ice = m.ice;
-      onPeers(m.peers); showTalk();
+    case "verified": {
+      const wasMember = S.verified;
+      setMember(m); onPeers(m.peers);
+      if (S.started && !wasMember) for (const p of S.peers.values()) connectPeer(p, true);
+      S.codeAsked = false;
+      showState(); renderMe(); updateAudio();
       break;
+    }
+    case "unverified":
+      stopAudio();
+      S.verified = false; S.name = ""; S.via = ""; S.spec = false; S.codeAsked = false;
+      for (const p of S.peers.values()) closePeer(p);
+      S.peers.clear(); rows.forEach(li => li.remove()); rows.clear();
+      if (m.text) { $("pickMsg").textContent = "⚠ " + m.text; $("pickMsg").className = "msg ng"; }
+      showState(); renderMe();
+      break;
+    case "pickfail": $("pickMsg").textContent = "⚠ " + m.text; $("pickMsg").className = "msg ng"; break;
+    case "players": S.players = m.list || []; S.taken = m.taken || []; renderPick(); break;
+    case "rules": S.rules = { ...DEFAULT_RULES, ...(m.rules || {}) }; S.codeAsked = false; showState(); updateAudio(); break;
     case "peers": onPeers(m.peers); break;
     case "pos": S.pos = m.p || {}; updateAudio(); break;
     case "world":
-      S.world = !!m.connected; if (!S.world) S.pos = {};
-      setWorld(); updateAudio();
-      if (!S.verified && S.world) $("verifyMsg").textContent = "Minecraft とつながりました。チャットで送ってください。", $("verifyMsg").className = "msg ok";
+      S.world = !!m.connected; if (!S.world) { S.pos = {}; S.players = []; }
+      setWorld(); updateAudio(); renderPick();
+      if (!S.verified && S.world && $("verifyMsg").textContent) { $("verifyMsg").textContent = "Minecraft とつながりました。チャットで送ってください。"; $("verifyMsg").className = "msg ok"; }
       break;
     case "radius": S.radius = m.radius; updateAudio(); break;
     case "room": S.roomName = m.name; $("roomName").textContent = m.name; break;
     case "signal": await onSignal(m.from, m.data || {}); break;
+    case "chat": if (m.m) roomChat.add(normChat(m.m)); break;
+    case "limit":
+      ChatUI.toast("⚠ " + m.text + (m.wait ? `（あと ${m.wait} 秒）` : ""));
+      if (m.wait) roomComposer.lock(m.wait);
+      break;
     case "kick":
       S.kicked = true; stopAudio(); setConn("ほかの端末で入り直しました", "warn");
       $("talkMsg").textContent = "⚠ " + m.text + "。こちらで続けるときは、ページを読みこみ直してください。"; $("talkMsg").className = "msg ng";
@@ -639,11 +1224,55 @@ async function onMsg(m) {
   }
 }
 
-function showVerify() { $("verifyBox").hidden = false; $("talkBox").hidden = true; }
-function showTalk() {
-  $("verifyBox").hidden = true; $("talkBox").hidden = false;
-  $("startBtn").hidden = S.started; $("startHint").hidden = S.started; $("controls").hidden = !S.started;
+/** 本人確認のコード（!vc 123456）の欄を、いまの画面の場所に動かす */
+function placeCode(slot) {
+  const area = $("codeArea");
+  if (!slot) { area.hidden = true; return; }
+  if (area.parentNode !== slot) slot.appendChild(area);
+  area.hidden = false;
+  if (!S.codeAsked) { S.codeAsked = true; send({ t: "code" }); }
+}
+/** 入る前（自分を選択・本人確認）／入ったあと（ボイスチャット）の表示 */
+function showState() {
+  const needCode = S.rules.verify === "code";
+  if (!S.verified) {
+    $("talkBox").hidden = true;
+    $("pickBox").hidden = needCode;
+    $("verifyBox").hidden = !needCode;
+    if (needCode) placeCode($("codeSlot2"));
+    else if ($("codeDetails").open) placeCode($("codeSlot1"));
+    else placeCode(null);
+    renderPick();
+    return;
+  }
+  $("pickBox").hidden = true; $("verifyBox").hidden = true;
+  $("talkBox").hidden = false;
+  const who = $("whoLine"); who.textContent = "あなた: ";
+  const b = document.createElement("b"); b.textContent = S.spec ? "👻 観戦者（" + S.name + "）" : S.name; who.appendChild(b);
+  if (!S.spec) { const t = document.createElement("i"); t.className = "tagb " + (S.via === "code" ? "v" : "p"); t.textContent = S.via === "code" ? "✓ 本人確認ずみ" : "えらんで入った"; who.append(" ", t); }
+  if (S.via !== "code") {
+    const c = document.createElement("button"); c.className = "link"; c.type = "button"; c.textContent = "えらびなおす";
+    c.addEventListener("click", () => send({ t: "unpick" }));
+    who.append("　", c);
+  }
+  $("upgradeDetails").hidden = S.via === "code" || S.spec;
+  if (!$("upgradeDetails").hidden && $("upgradeDetails").open) placeCode($("codeSlot3"));
+  else placeCode(null);
+  $("startBtn").hidden = S.started; $("startHint").hidden = S.started; $("controls").hidden = !S.started; $("vset").hidden = !S.started;
   renderPlayers();
+}
+/** 「自分を選択」の一覧 */
+function renderPick() {
+  const sel = $("pickSel");
+  if (!sel) return;
+  const keep = sel.value;
+  sel.textContent = "";
+  const add = (value, text, disabled) => { const o = document.createElement("option"); o.value = value; o.textContent = text; o.disabled = !!disabled; sel.appendChild(o); };
+  const taken = new Set(S.taken.map(n => n.toLowerCase()));
+  add("", S.players.length ? "— 名前をえらんでください —" : (S.world ? "— ワールドに人がいません —" : "— ワールドがつながると、名前が出ます —"));
+  for (const n of S.players) add(n, taken.has(n.toLowerCase()) ? `${n}（使用中）` : n, taken.has(n.toLowerCase()));
+  add("__spec", "👻 観戦者（ゲームに出ていない人）");
+  if ([...sel.options].some(o => o.value === keep && !o.disabled)) sel.value = keep;
 }
 
 function leaveRoom(silent) {
@@ -653,10 +1282,12 @@ function leaveRoom(silent) {
   try { S.ws && S.ws.close(); } catch (e) { /* 無視 */ }
   S.ws = null;
   stopAudio();
-  S.peers.clear(); S.pos = {}; S.verified = false; S.name = ""; S.room = "";
-  $("players").textContent = "";
+  S.peers.clear(); S.pos = {}; S.verified = false; S.name = ""; S.via = ""; S.spec = false; S.room = ""; S.players = []; S.taken = [];
+  $("players").textContent = ""; rows.clear();
+  $("chatCard").hidden = true; roomChat.set([]);
   $("roomBox").hidden = true; $("joinForm").hidden = false;
   $("joinMsg").textContent = silent ? "" : "部屋を出ました。"; $("joinMsg").className = "msg";
+  renderMe();
 }
 
 // ---------------------------------------------------------------------
@@ -672,36 +1303,41 @@ async function startAudio() {
   try {
     S.mic = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }, video: false });
     S.micTrack = S.mic.getAudioTracks()[0];
+    // マイク → 音量（マイク音量）→ 相手に送る音・メーター
     const src = S.ctx.createMediaStreamSource(S.mic);
+    S.micGain = S.ctx.createGain(); S.micGain.gain.value = S.micVol / 100;
     S.micAnalyser = S.ctx.createAnalyser(); S.micAnalyser.fftSize = 512;
-    src.connect(S.micAnalyser);
+    const dest = S.ctx.createMediaStreamDestination();
+    src.connect(S.micGain); S.micGain.connect(S.micAnalyser); S.micGain.connect(dest);
+    S.sendTrack = dest.stream.getAudioTracks()[0] || S.micTrack;
     $("talkMsg").textContent = ""; $("talkMsg").className = "msg";
   } catch (e) {
-    S.micTrack = null;
+    S.micTrack = null; S.sendTrack = null;
     $("talkMsg").textContent = "⚠ マイクが使えないので、聞くだけで参加します（ブラウザのマイクの許可を確認してください）。"; $("talkMsg").className = "msg ng";
   }
   S.started = true;
   applyMic();
-  showTalk();
+  showState();
   for (const p of S.peers.values()) connectPeer(p, true);
   updateAudio();
 }
 function stopAudio() {
   for (const p of S.peers.values()) closePeer(p);
   if (S.mic) for (const t of S.mic.getTracks()) t.stop();
+  if (S.sendTrack) { try { S.sendTrack.stop(); } catch (e) { /* 無視 */ } }
   if (S.ctx) S.ctx.close().catch(() => {});
-  S.mic = null; S.micTrack = null; S.ctx = null; S.master = null; S.started = false;
+  S.mic = null; S.micTrack = null; S.sendTrack = null; S.micGain = null; S.ctx = null; S.master = null; S.started = false;
 }
 function applyMic() {
-  if (S.micTrack) S.micTrack.enabled = !S.muted && (!S.ptt || S.pttDown);
-  $("muteBtn").textContent = S.muted ? "🎙 マイク: オフ" : "🎙 マイク: オン";
+  if (S.sendTrack) S.sendTrack.enabled = !S.muted && (!S.ptt || S.pttDown);
+  $("muteBtn").textContent = S.muted ? "🎙 マイク: ミュート中" : "🎙 マイク: オン";
   $("muteBtn").classList.toggle("off", S.muted);
   $("deafBtn").textContent = S.deaf ? "🔇 音: オフ" : "🔊 音: オン";
   $("deafBtn").classList.toggle("off", S.deaf);
 }
 
-function newPeer(sid, name) {
-  return { sid, name, remoteMuted: false, pc: null, cid: "", tr: null, cands: [], audioEl: null, src: null, gain: null, pan: null, analyser: null, sendOn: false, stopTimer: null, g: 0, state: "", level: 0, discTimer: null };
+function newPeer(sid, name, spec) {
+  return { sid, name, spec: !!spec, via: "", remoteMuted: false, pc: null, cid: "", tr: null, cands: [], audioEl: null, src: null, gain: null, pan: null, analyser: null, sendOn: false, stopTimer: null, g: 0, gOut: 0, state: "", level: 0, discTimer: null };
 }
 const amOfferer = p => S.sid < p.sid;   // sid の小さいほうが、つなぎにいく
 function sig(to, data) { send({ t: "signal", to, data }); }
@@ -712,8 +1348,9 @@ function onPeers(list) {
     if (x.sid === S.sid) continue;
     seen.add(x.sid);
     let p = S.peers.get(x.sid);
-    if (!p) { p = newPeer(x.sid, x.name); S.peers.set(x.sid, p); if (S.started) connectPeer(p, false); }
-    p.name = x.name; p.remoteMuted = !!x.muted;
+    if (!p) { p = newPeer(x.sid, x.name, x.spec); S.peers.set(x.sid, p); if (S.started) connectPeer(p, false); }
+    if (p.name !== x.name) { const li = rows.get(p.sid); if (li) { li.remove(); rows.delete(p.sid); } }
+    p.name = x.name; p.remoteMuted = !!x.muted; p.spec = !!x.spec; p.via = x.via || "";
   }
   for (const [sid, p] of S.peers) if (!seen.has(sid)) { closePeer(p); S.peers.delete(sid); }
   updateAudio();
@@ -814,22 +1451,23 @@ function attachRemote(p, stream) {
   p.audioEl.play().catch(() => {});
   updateAudio();
 }
-/** 遠い人には声を送らない（通信を減らす）。近づいたらすぐ送り、離れたら 1.5 秒後に止める */
+/** 自分の声が届かない相手には、声を送らない（通信を減らす）。届くようになったらすぐ送り、届かなくなったら 1.5 秒後に止める */
 function setSending(p, on) {
   if (!p.tr || !p.tr.sender) return;
   if (on) {
     clearTimeout(p.stopTimer); p.stopTimer = null;
-    if (!p.sendOn && S.micTrack) { p.sendOn = true; p.tr.sender.replaceTrack(S.micTrack).catch(() => { p.sendOn = false; }); }
+    if (!p.sendOn && S.sendTrack) { p.sendOn = true; p.tr.sender.replaceTrack(S.sendTrack).catch(() => { p.sendOn = false; }); }
   } else if (p.sendOn && !p.stopTimer) {
     p.stopTimer = setTimeout(() => { p.stopTimer = null; if (p.tr) { p.sendOn = false; p.tr.sender.replaceTrack(null).catch(() => {}); } }, 1500);
   }
 }
 function updateAudio() {
-  const me = infoOf(S.name);
+  const me = personOf(S.name, S.spec);
   const now = S.ctx ? S.ctx.currentTime : 0;
   for (const p of S.peers.values()) {
-    const o = infoOf(p.name);
-    p.g = gainFor(me, o, S.radius);
+    const o = personOf(p.name, p.spec);
+    p.g = gainRule(me, o, S.radius, S.rules, S.world);        // 自分が相手の声を聞く大きさ
+    p.gOut = gainRule(o, me, S.radius, S.rules, S.world);     // 相手が自分の声を聞く大きさ
     const pan = panFor(me, o);
     const out = S.deaf ? 0 : p.g * (S.vol[p.name.toLowerCase()] ?? 1);
     if (p.gain && S.ctx) {
@@ -838,7 +1476,7 @@ function updateAudio() {
     } else if (p.audioEl && p.useElement) {
       try { p.audioEl.volume = Math.min(1, out); } catch (e) { /* iPhone は変えられない */ }
     }
-    setSending(p, p.g > 0);
+    setSending(p, p.gOut > 0);
   }
   renderPlayers();
 }
@@ -848,12 +1486,13 @@ function updateAudio() {
 // ---------------------------------------------------------------------
 const rows = new Map();
 function stateText(p, me, o) {
-  if (!S.world || (!me && !o)) return "ロビー（全員の声が聞こえる）";
-  if (!o) return "ゲームにいない";
-  if (o.dead) return me && me.dead ? "💀 死亡中（死んだ人どうしで話せる）" : "💀 死亡中";
-  if (!me) return `ゲーム中（${dimName(o.d)}）`;
-  if (me.d !== o.d) return `${dimName(o.d)}にいる`;
-  const dist = Math.hypot(me.x - o.x, me.y - o.y, me.z - o.z);
+  if (!S.world || (!me.pos && !o.pos && !me.spec && !o.spec)) return "ロビー（全員の声が聞こえる）";
+  if (o.spec) return "👻 観戦者";
+  if (!o.pos) return "ゲームにいない";
+  if (o.dead) return "💀 死亡中（観戦者）";
+  if (!me.pos) return `ゲーム中（${dimName(o.pos.d)}）`;
+  if (me.pos.d !== o.pos.d) return `${dimName(o.pos.d)}にいる`;
+  const dist = Math.hypot(me.pos.x - o.pos.x, me.pos.y - o.pos.y, me.pos.z - o.pos.z);
   return `${Math.round(dist)} ブロック`;
 }
 function connText(p) {
@@ -863,12 +1502,12 @@ function connText(p) {
 function renderPlayers() {
   const ul = $("players");
   if (!S.verified) return;
-  const me = infoOf(S.name);
-  const meText = !S.world ? "ロビー（ワールドがつながっていません）" : !me ? "ゲームにいない（ロビー）" : me.dead ? "💀 死亡中" : `${dimName(me.d)}  ${Math.round(me.x)}, ${Math.round(me.y)}, ${Math.round(me.z)}`;
-  const want = [{ key: "me", name: S.name + "（あなた）", st: meText, me: true }];
+  const me = personOf(S.name, S.spec);
+  const meText = !S.world ? "ロビー（ワールドがつながっていません）" : S.spec ? "👻 観戦者" : !me.pos ? "ゲームにいない（ロビー）" : me.dead ? "💀 死亡中（観戦者）" : `${dimName(me.pos.d)}  ${Math.round(me.pos.x)}, ${Math.round(me.pos.y)}, ${Math.round(me.pos.z)}`;
+  const want = [{ key: "me", name: (S.spec ? "👻 " : "") + S.name + "（あなた）", st: meText, me: true }];
   for (const p of S.peers.values()) {
-    const o = infoOf(p.name);
-    want.push({ key: p.sid, p, name: p.name + (p.remoteMuted ? " 🔇" : ""), st: stateText(p, me, o) + connText(p) });
+    const o = personOf(p.name, p.spec);
+    want.push({ key: p.sid, p, name: (p.spec ? "👻 " : "") + p.name + (p.via === "code" ? " ✓" : "") + (p.remoteMuted ? " 🔇" : ""), st: stateText(p, me, o) + (S.started && p.gOut === 0 && p.g > 0 ? "・あなたの声はとどきません" : "") + connText(p) });
   }
   for (const [k, li] of rows) if (!want.some(w => w.key === k)) { li.remove(); rows.delete(k); }
   for (const w of want) {
@@ -876,6 +1515,8 @@ function renderPlayers() {
     if (!li) {
       li = document.createElement("li");
       li.innerHTML = '<span class="pn"></span><span class="ps"></span>';
+      const who = w.me ? S.name : w.p.name;
+      li.prepend(Guest.avatar({ id: "mc:" + String(who).toLowerCase(), name: who }));
       if (!w.me) {
         const v = document.createElement("div"); v.className = "vol";
         v.innerHTML = '<div class="gbar" title="いまの音量（距離）"><div></div></div><input type="range" min="0" max="200" step="10" aria-label="この人の音量"><span class="vl"></span>';
@@ -916,7 +1557,7 @@ function level(an) {
 }
 setInterval(() => {
   if (!S.started) return;
-  const ml = S.micTrack && S.micTrack.enabled ? level(S.micAnalyser) : 0;
+  const ml = S.sendTrack && S.sendTrack.enabled ? level(S.micAnalyser) : 0;
   $("micMeter").style.width = Math.min(100, Math.round(ml * 400)) + "%";
   const meRow = rows.get("me");
   if (meRow) meRow.classList.toggle("talking", ml > 0.04);
@@ -927,17 +1568,18 @@ setInterval(() => {
 }, 100);
 
 // ---------------------------------------------------------------------
-//  ホスト（部屋を作った人）
+//  ホスト（サイトで作った部屋）
 // ---------------------------------------------------------------------
 async function createRoom() {
   if (!BOT) { $("noApi").hidden = false; return; }
+  if (!GUEST) return;
   $("createBtn").disabled = true; $("createMsg").textContent = "作っています…"; $("createMsg").className = "msg";
   try {
     const r = await fetch(`${BOT}/api/web/rooms`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: $("roomNameInput").value.trim() }) });
     const j = await r.json();
     if (!j.ok) throw new Error(j.error || "部屋を作れませんでした。");
     const hosts = store.get("vc-hosts", {}); hosts[j.roomId] = j.hostKey; store.set("vc-hosts", hosts);
-    $("createMsg").textContent = "部屋を作りました！"; $("createMsg").className = "msg ok";
+    $("createMsg").textContent = `部屋を作りました！（部屋番号 ${j.roomId}）`; $("createMsg").className = "msg ok";
     history.replaceState(null, "", "#r=" + j.roomId);
     await joinRoom(j.roomId);
     showHost(j.roomId, j.hostKey);
@@ -946,51 +1588,131 @@ async function createRoom() {
   }
   $("createBtn").disabled = false;
 }
-async function hostCall(action, extra = {}) {
-  const r = await fetch(`${BOT}/api/web/host`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ r: H.room, hostKey: H.key, action, ...extra }) });
+async function hostCall(room, key, action, extra = {}) {
+  const r = await fetch(`${BOT}/api/web/host`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ r: room, hostKey: key, action, ...extra }) });
   return r.json();
 }
 function renderHost(j) {
   if (!j || !j.ok) { $("hostWorld").textContent = (j && j.error) || "確認できませんでした"; $("hostWorld").className = "chip warn"; return; }
   const base = location.origin + location.pathname;
   $("shareLink").textContent = `${base}#r=${H.room}`;
-  $("hostLink").textContent = `${base}#r=${H.room}&host=${H.key}`;
   $("wsCmd").textContent = j.relayCommand || j.connectorCommand;
   $("connectorNote").hidden = !!j.relayCommand;
-  $("checkLink").href = j.checkUrl || "#";
-  if (document.activeElement !== $("radiusSel")) $("radiusSel").value = String(j.radius);
   $("hostWorld").textContent = j.world ? "🟢 ワールドとつながっています" : "⚪ ワールドがつながっていません";
   $("hostWorld").className = "chip " + (j.world ? "on" : "");
   $("hostMembers").textContent = j.members.length ? j.members.join("、") : "まだいません";
 }
 function showHost(room, key) {
   H.room = room; H.key = key;
+  $("siteCreate").open = true;
   $("createForm").hidden = true; $("hostBox").hidden = false;
-  const tick = async () => { try { renderHost(await hostCall("get")); } catch (e) { /* 次でためす */ } };
+  const tick = async () => { try { renderHost(await hostCall(H.room, H.key, "get")); } catch (e) { /* 次でためす */ } };
   tick();
   clearInterval(H.timer);
   H.timer = setInterval(() => { if (!document.hidden) tick(); }, 5000);
 }
 
 // ---------------------------------------------------------------------
+//  🔒 管理者設定（管理キーで、距離・テンプレート・観戦者のルール・入り方）
+// ---------------------------------------------------------------------
+const A = { room: "", key: "" };
+const TPL = { none: { talk: "spectators", listen: false }, werewolf: { talk: "spectators", listen: true } };
+function tplHint() {
+  $("tplHint").textContent = $("tplSel").value === "werewolf"
+    ? "人狼: 死んだ人は観戦者になり、観戦者どうしだけで話せます。生きている人には聞こえません。観戦者は生きている人の声を聞けます。観戦者はゲーム中チャットに書けません。"
+    : "観戦者 = 死んだ人（近接VCアドオンを入れたワールド）と、サイトで「観戦者」をえらんだ人。";
+}
+function renderSettings(j) {
+  const rules = { ...DEFAULT_RULES, ...(j.rules || {}) };
+  if (document.activeElement !== $("radiusSel")) $("radiusSel").value = String(j.radius);
+  if (![...$("radiusSel").options].some(o => o.value === String(j.radius))) { const o = document.createElement("option"); o.textContent = String(j.radius); $("radiusSel").appendChild(o); $("radiusSel").value = String(j.radius); }
+  $("tplSel").value = rules.template; $("talkSel").value = rules.talk; $("listenChk").checked = !!rules.listen; $("verifySel").value = rules.verify;
+  tplHint();
+  $("roomCmd").textContent = j.relayCommand || j.connectorCommand || "…";
+  $("hostLink").textContent = `${location.origin}${location.pathname}#r=${A.room}&host=${A.key}`;
+  $("checkLink").href = j.checkUrl || "#";
+  $("akBox").hidden = true; $("setBox").hidden = false; $("saveBtn").hidden = false;
+}
+async function openAdmin(room) {
+  A.room = room || S.room; A.key = store.get("vc-hosts", {})[A.room] || "";
+  $("akBox").hidden = false; $("setBox").hidden = true; $("saveBtn").hidden = true;
+  $("akMsg").textContent = ""; $("setMsg").textContent = ""; $("akInput").value = "";
+  $("adminDlg").showModal();
+  if (A.key) {
+    try { const j = await hostCall(A.room, A.key, "get"); if (j.ok) return renderSettings(j); } catch (e) { /* キーを入れてもらう */ }
+  }
+  setTimeout(() => $("akInput").focus(), 30);
+}
+$("adminOpen").addEventListener("click", () => openAdmin(S.room));
+$("hostAdminBtn").addEventListener("click", () => openAdmin(H.room));
+$("adminClose").addEventListener("click", () => $("adminDlg").close());
+async function tryKey() {
+  const key = $("akInput").value.trim();
+  if (!key) { $("akInput").focus(); return; }
+  $("akBtn").disabled = true; $("akMsg").textContent = "確認しています…"; $("akMsg").className = "msg";
+  try {
+    const j = await hostCall(A.room, key, "get");
+    if (!j.ok) { $("akMsg").textContent = "⚠ " + (j.error || "管理キーがちがいます"); $("akMsg").className = "msg ng"; }
+    else { A.key = key; const hosts = store.get("vc-hosts", {}); hosts[A.room] = key; store.set("vc-hosts", hosts); renderSettings(j); }
+  } catch (e) { $("akMsg").textContent = "⚠ サイトにつながりません"; $("akMsg").className = "msg ng"; }
+  $("akBtn").disabled = false;
+}
+$("akBtn").addEventListener("click", tryKey);
+$("akInput").addEventListener("keydown", e => { if (e.key === "Enter" && !e.isComposing) tryKey(); });
+$("tplSel").addEventListener("change", () => { const t = TPL[$("tplSel").value]; if (t) { $("talkSel").value = t.talk; $("listenChk").checked = t.listen; } tplHint(); });
+$("saveBtn").addEventListener("click", async () => {
+  $("saveBtn").disabled = true; $("setMsg").textContent = "更新しています…"; $("setMsg").className = "msg";
+  try {
+    const j = await hostCall(A.room, A.key, "rules", { radius: Number($("radiusSel").value),
+      rules: { template: $("tplSel").value, talk: $("talkSel").value, listen: $("listenChk").checked, verify: $("verifySel").value } });
+    if (!j.ok) throw new Error(j.error || "更新できませんでした");
+    renderSettings(j);
+    $("setMsg").textContent = "✓ 更新しました（部屋の全員に反映されます）"; $("setMsg").className = "msg ok";
+  } catch (e) { $("setMsg").textContent = "⚠ " + e.message; $("setMsg").className = "msg ng"; }
+  $("saveBtn").disabled = false;
+});
+$("newWorldCodeBtn").addEventListener("click", async () => {
+  if (!confirm("ワールドの接続コードを作り直しますか？（前の /wsserver のコマンドは使えなくなります）")) return;
+  try { const j = await hostCall(A.room, A.key, "newcode"); if (j.ok) renderSettings(j); } catch (e) { /* 無視 */ }
+});
+
+// ---------------------------------------------------------------------
 //  ボタン
 // ---------------------------------------------------------------------
 $("joinBtn").addEventListener("click", () => joinRoom($("roomInput").value));
-$("roomInput").addEventListener("keydown", e => { if (e.key === "Enter") joinRoom($("roomInput").value); });
+$("roomInput").addEventListener("keydown", e => { if (e.key === "Enter" && !e.isComposing) joinRoom($("roomInput").value); });
 $("leaveBtn").addEventListener("click", () => { leaveRoom(false); history.replaceState(null, "", location.pathname); });
+$("pickBtn").addEventListener("click", () => {
+  const v = $("pickSel").value;
+  if (!v) { $("pickMsg").textContent = "名前をえらんでください。"; $("pickMsg").className = "msg ng"; return; }
+  $("pickMsg").textContent = ""; $("pickMsg").className = "msg";
+  send(v === "__spec" ? { t: "pick", spec: true } : { t: "pick", name: v });
+});
+$("specBtn").addEventListener("click", () => send({ t: "pick", spec: true }));
+$("codeDetails").addEventListener("toggle", () => { if ($("codeDetails").open) placeCode($("codeSlot1")); });
+$("upgradeDetails").addEventListener("toggle", () => { if ($("upgradeDetails").open) placeCode($("codeSlot3")); });
 $("newCodeBtn").addEventListener("click", () => send({ t: "code" }));
 $("startBtn").addEventListener("click", () => startAudio());
+$("stopBtn").addEventListener("click", () => { stopAudio(); showState(); });
+$("reBtn").addEventListener("click", () => {
+  S.reconnectAll = true;
+  setConn("つなぎ直しています…", "warn");
+  if (S.ws) { try { S.ws.close(); } catch (e) { connectWs(); } } else connectWs();
+});
 $("muteBtn").addEventListener("click", () => { S.muted = !S.muted; applyMic(); send({ t: "mute", on: S.muted }); });
 $("deafBtn").addEventListener("click", () => { S.deaf = !S.deaf; applyMic(); updateAudio(); });
 $("pttChk").addEventListener("change", () => { S.ptt = $("pttChk").checked; applyMic(); });
+$("micVol").value = String(S.micVol); $("micVolText").textContent = S.micVol + "%";
+$("micVol").addEventListener("input", () => {
+  S.micVol = Number($("micVol").value); store.set("vc-micvol", S.micVol);
+  $("micVolText").textContent = S.micVol + "%";
+  if (S.micGain && S.ctx) S.micGain.gain.setTargetAtTime(S.micVol / 100, S.ctx.currentTime, 0.03);
+});
+$("spatialChk").checked = !!S.spatial;
+$("spatialChk").addEventListener("change", () => { S.spatial = $("spatialChk").checked; store.set("vc-spatial", S.spatial); updateAudio(); });
 document.addEventListener("keydown", e => { if (S.ptt && (e.key === "v" || e.key === "V") && !/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) { S.pttDown = true; applyMic(); } });
 document.addEventListener("keyup", e => { if (S.ptt && (e.key === "v" || e.key === "V")) { S.pttDown = false; applyMic(); } });
 $("createBtn").addEventListener("click", createRoom);
-$("radiusSel").addEventListener("change", async () => { try { renderHost(await hostCall("radius", { radius: Number($("radiusSel").value) })); } catch (e) { /* 無視 */ } });
-$("newWorldCodeBtn").addEventListener("click", async () => {
-  if (!confirm("ワールドの接続コードを作り直しますか？（前の /wsserver のコマンドは使えなくなります）")) return;
-  try { renderHost(await hostCall("newcode")); } catch (e) { /* 無視 */ }
-});
 function copyText(text, btn) {
   const done = ok => { const t = btn.textContent; btn.textContent = ok ? "コピー済み" : "失敗"; setTimeout(() => { btn.textContent = t; }, 1500); };
   if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(() => done(true), () => done(false)); else done(false);
@@ -999,18 +1721,36 @@ for (const b of document.querySelectorAll("button[data-copy]")) b.addEventListen
 $("codeCopy").addEventListener("click", () => copyText($("codeText").textContent, $("codeCopy")));
 
 // ---------------------------------------------------------------------
-//  はじめ（#r=部屋 &host=管理用キー）
+//  はじめ（#r=部屋 &host=管理キー）
 // ---------------------------------------------------------------------
-(function init() {
+roomChat = ChatUI.list($("roomMsgs"), { empty: "まだメッセージはありません。最初のひとことをどうぞ！" });
+roomComposer = ChatUI.composer($("roomForm"), {
+  max: 200,
+  enabled: () => !!(S.ws && S.ws.readyState === 1),
+  onSend: text => { if (!S.ws || S.ws.readyState !== 1) return false; send({ t: "chat", text }); },
+});
+renderPick();
+(async function init() {
   if (!BOT) { $("noApi").hidden = false; return; }
+  // マイクラで部屋を作るコマンド（リレーのアドレスから）
+  fetch(`${BOT}/api/info`, { cache: "no-store" }).then(r => r.json()).then(j => {
+    const cmd = j && j.relay ? `/wsserver ws://${j.relay}/new` : "";
+    $("newCmd").textContent = cmd || "（リレーがないので使えません）";
+    $("easyNew").textContent = cmd || "/wsserver …/new";
+    $("noRelayNote").hidden = !!cmd;
+  }).catch(() => { $("newCmd").textContent = "（読みこめませんでした）"; });
   const q = new URLSearchParams(location.hash.slice(1));
-  const r = String(q.get("r") || "").toUpperCase();
+  const r = roomIdOf(q.get("r"));
   const key = q.get("host");
-  if (ROOM_RE.test(r) && key && /^[A-Za-z0-9]{24}$/.test(key)) {
+  if (ROOM_RE.test(r) && key && /^[A-Za-z0-9]{6,24}$/.test(key)) {
     const hosts = store.get("vc-hosts", {}); hosts[r] = key; store.set("vc-hosts", hosts);
-    history.replaceState(null, "", "#r=" + r);   // 管理用キーはアドレスから消す（画面を共有しても見えないように）
+    history.replaceState(null, "", "#r=" + r);   // 管理キーはアドレスから消す（画面を共有しても見えないように）
   }
-  if (ROOM_RE.test(r)) { $("roomInput").value = r; joinRoom(r); }
+  if (ROOM_RE.test(r)) $("roomInput").value = r;
+  // さいしょに名前を入れる（ゲスト）
+  try { GUEST = await Guest.ensure(); } catch (e) { $("noApi").hidden = false; return; }
+  renderMe();
+  if (ROOM_RE.test(r)) joinRoom(r);
 })();
 </script>
 </body>

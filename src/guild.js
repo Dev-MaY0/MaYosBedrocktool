@@ -12,10 +12,12 @@ import { buildVcAddon, hasAddonTemplate } from "./addon.js";
 import { resolveEnv } from "./appconfig.js";
 import { WS_ENCRYPT_PROTOCOL, beginKeyExchange, finishKeyExchange, newCipherState, encryptText, decryptBytes } from "./mcenc.js";
 import { webMethods } from "./webvc.js";
+import { chatMethods, CHAT_TAG } from "./chat.js";
 
 export const DEAD_ROOM = 31;
 const MAX_ROOM = 30;
 const POLL_MS = 1500;             // ワールド用: 位置のグループを読む間隔
+const WEB_IDLE_MS = 30000;        // サイトの部屋: サイトにだれもいないあいだは、ゆっくり（無料プランの節約）
 const VERIFY_MS = 15000;          // 正しいVCにいる人も、この間隔で確認し直す
 const RECHECK_MS = 5000;          // VCに入っていない人・ほかのVCにいる人を確認し直す間隔
 const MOVE_COOLDOWN_MS = 2000;    // 同じ人を続けて移動しない時間
@@ -217,6 +219,15 @@ export class GuildRoom {
         return this.webHost(await request.json());
       case "/web/socket":
         return this.webAccept(request);
+      // ---- ゲストのチャット（chat.js。"__chat__" という名前の部屋だけが使う）----
+      case "/chat/guest/new":
+        return this.chatGuestNew(await request.json());
+      case "/chat/guest/check":
+        return this.chatGuestCheck(url.searchParams.get("token"));
+      case "/chat/socket":
+        return this.chatAccept(request);
+      case "/chat/admin":
+        return this.chatAdmin(await request.json());
       case "/check":
         return this.onCheck(url.searchParams.get("secret"));
       default:
@@ -419,8 +430,7 @@ export class GuildRoom {
   initSocket(ws) {
     this.mcSend(ws, "subscribe", { eventName: "PlayerMessage" });
     this.sendConfig(ws);
-    if (this.isWebRoom())
-      this.tell(ws, null, `§a[近接VC] サイトの部屋「${this.cfg.guildName}」とつながりました（声が届く距離: ${this.radius}ブロック）。サイトに出た「!vc 6けたの数字」をチャットで送ると、サイトのVCに入れます`);
+    if (this.isWebRoom()) this.webAnnounce(ws);
     else
       this.tell(ws, null, `§a[近接VC] Discord「${this.cfg?.guildName || "サーバー"}」とつながりました（声が届く距離: ${this.radius}ブロック）`);
   }
@@ -432,6 +442,7 @@ export class GuildRoom {
   }
 
   async webSocketMessage(ws, message) {
+    if (this.isChatSocket(ws)) return this.onChatMessage(ws, message);
     if (this.isWebSocket(ws)) return this.onWebMessage(ws, message);
     // 暗号化は順番どおりに復号しないといけないので、await より前にやる
     let text;
@@ -495,7 +506,7 @@ export class GuildRoom {
 
   async onChat(ws, body) {
     const sender = String(body.sender || "").trim();
-    if (this.isWebRoom()) return this.webOnChat(ws, sender, body.message);
+    if (this.isWebRoom()) return this.webOnChat(ws, sender, body.message, String(body.type || "chat"));
     const m = /^!vc\s+(\d{4})$/i.exec(String(body.message || "").trim());
     if (!m || !sender) return;
     const r = await this.confirmLink(sender, m[1]);
@@ -506,12 +517,14 @@ export class GuildRoom {
   async webSocketClose(ws, code, reason) {
     // 返事の close は、正しい範囲のコードでしか送れない（範囲外だと例外になる）
     try { ws.close(code >= 1000 && code <= 4999 && code !== 1005 && code !== 1006 ? code : 1000, "bye"); } catch (e) { /* 無視 */ }
+    if (this.isChatSocket(ws)) return this.onChatClose(ws);
     if (this.isWebSocket(ws)) return this.onWebClose(ws);
     await this.noteClose(ws, code, reason);
     await this.onSocketGone(ws);
   }
 
   async webSocketError(ws, error) {
+    if (this.isChatSocket(ws)) return this.onChatClose(ws);
     if (this.isWebSocket(ws)) return this.onWebClose(ws);
     await this.noteClose(ws, "error", String((error && error.message) || error || ""));
     await this.onSocketGone(ws);
@@ -572,6 +585,12 @@ export class GuildRoom {
           return;
         }
         await this.startSession(ws);
+      }
+      // サイト内VC: サイトにだれもいないときは、位置もグループも読まない（30 秒ごとに、つながっているかだけ確かめる）
+      if (this.isWebRoom() && !this.webSockets().length) {
+        try { this.mcCommand(ws, "testfor @a"); } catch (e) { /* 無視 */ }   // 何も流れないと、リレーが 10 分で切るので
+        await this.storage.setAlarm(now + WEB_IDLE_MS);
+        return;
       }
       if (!this.poll || now - this.poll.at > 6000) this.startPoll(ws);
       // サイト内VC: 位置を読むのが止まっていたら、やり直す（部屋がメモリから消えたあとなど）
@@ -854,7 +873,7 @@ export class GuildRoom {
 
   siteButton(label = "サイトでくわしく見る（接続キー入力ずみ）") {
     const site = (this.env.SITE_URL || "").replace(/\/$/, "");
-    return { label, url: `${site}/vc/#key=${this.key}` };
+    return { label, url: `${site}/vc/discord/#key=${this.key}` };
   }
 
   /** つながらないときに、どこで止まっているかを見るページ */
@@ -1155,3 +1174,7 @@ export class GuildRoom {
 
 // サイト内の近接VC（webvc.js）のメソッドを足す
 Object.assign(GuildRoom.prototype, webMethods);
+// ゲストのチャット（chat.js）
+Object.assign(GuildRoom.prototype, chatMethods, {
+  isChatSocket(ws) { try { return this.ctx.getTags(ws).includes(CHAT_TAG); } catch (e) { return false; } },
+});

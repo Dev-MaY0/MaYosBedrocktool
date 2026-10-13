@@ -5,8 +5,12 @@
 //   - 部屋（Durable Object "web:<部屋ID>"）は GuildRoom と同じクラスで、cfg.kind = "web"
 //   - Minecraft はこれまでと同じ /wsserver（ワールドの接続コード）で部屋につながる
 //   - 部屋は querytarget で、みんなの位置（座標・向き・ディメンション）を 1 秒に約 3 回読む
+//   - 部屋は 2 通りで作れる: サイトで作る（/api/web/rooms）／マイクラで /wsserver ws://<リレー>/new を送る
+//     マイクラで作ったときは、部屋番号（6 けた）をゲームに出し、管理キーは送った人（@s）にだけ出す
 //   - ブラウザは /api/web/socket で部屋につながり、
-//       ・マイクラのチャットで「!vc 123456」を送って本人確認（だれの声かをまちがえないように）
+//       ・ワールドにいる人の一覧から「自分を選択」して入る（かんたん。部屋の設定で !vc を必須にもできる）
+//       ・マイクラのチャットで「!vc 123456」を送ると本人確認（✓）。ゲーム中チャットがマイクラにも出る
+//       ・「観戦者」でも入れる（死んだ人と同じあつかい。部屋のルールで、話せる相手が決まる）
 //       ・位置を受け取って、相手との距離で音量、向きで左右を決める（音声はブラウザどうしの WebRTC）
 //       ・WebRTC のつなぎ方（シグナリング）は、この部屋が中継する
 //   - 死亡: 近接VC アドオンが入っていれば、死んだ人（グループ 31）は死んだ人どうしだけ聞こえる
@@ -27,6 +31,25 @@ const MAX_MSG = 32768;
 const TURN_TTL_S = 12 * 3600;
 const DEAD_ROOM = 31;
 const NAME_BAD = /["\\@\n\r\t]/;
+const LIST_MS = 2500;               // ワールドにいる人の一覧（testfor @a）を読む間隔
+const ADMIN_SHOW_MS = 10 * 60000;   // マイクラで作った部屋の管理キーを、!vc admin で出せる時間
+// 部屋のルール（管理者設定）
+//   talk   … 観戦者（死んだ人・サイトで観戦者をえらんだ人）の声: none 話せない / near 近くだけ / spectators 観戦者どうし
+//   listen … 観戦者は、生きている人の声を（距離に関係なく）聞ける
+//   verify … 入り方: pick 自分をえらぶ / code マイクラのチャットで !vc（なりすまし防止）
+//   template … none / werewolf（人狼: 観戦者どうしで話せて、生きている人の声も聞ける）
+export const DEFAULT_RULES = { talk: "spectators", listen: false, verify: "pick", template: "none" };
+export function cleanRules(r) {
+  r = r || {};
+  return {
+    talk: ["none", "near", "spectators"].includes(r.talk) ? r.talk : DEFAULT_RULES.talk,
+    listen: !!r.listen,
+    verify: r.verify === "code" ? "code" : "pick",
+    template: r.template === "werewolf" ? "werewolf" : "none",
+  };
+}
+// ゲーム中チャット（部屋のチャット）の上限
+const ROOM_CHAT_MAX = 200, ROOM_CHAT_KEEP = 50, ROOM_PER10S = 5, ROOM_PERMIN = 20;
 
 const json = (data, status = 200) =>
   new Response(JSON.stringify(data), { status, headers: { "Content-Type": "application/json; charset=utf-8" } });
@@ -85,6 +108,32 @@ export function gainFor(me, other, radius) {
   return 0.5 * (1 + Math.cos(Math.PI * t));
 }
 
+/**
+ * ルールつきの聞こえ方（ブラウザと同じ計算）。me が other の声をどれだけの大きさで聞くか（0〜1）
+ *   p = { pos: { x, y, z, d } | null, dead: 死んでいる, spec: サイトの観戦者 }
+ */
+export function gainRule(me, other, radius, rules, world = true) {
+  rules = rules || DEFAULT_RULES;
+  if (!world) return 1;                                   // ワールドがつながっていない → ロビー
+  const ghost = p => !!(p.spec || (p.pos && p.dead));
+  const dist = () => (me.pos && other.pos ? gainFor(me.pos, other.pos, radius) : 0);
+  const mg = ghost(me), og = ghost(other);
+  if (!mg && !og) {
+    if (!me.pos && !other.pos) return 1;                  // どちらもゲームにいない → ロビー
+    return dist();
+  }
+  if (og) {                                               // 相手が観戦者
+    if (rules.talk === "none") return 0;
+    if (rules.talk === "spectators") return mg ? 1 : 0;
+    if (me.spec && other.spec) return 1;                  // 近くだけ: サイトの観戦者どうし
+    return me.spec || other.spec ? 0 : dist();            // 近くだけ: 場所があれば距離で
+  }
+  // 自分が観戦者・相手は生きている人
+  if (rules.listen && other.pos && !other.dead) return 1;
+  if (rules.talk === "near" && !me.spec) return dist();
+  return 0;
+}
+
 // ---------------------------------------------------------------------
 //  GuildRoom に足すメソッド（Object.assign(GuildRoom.prototype, webMethods)）
 // ---------------------------------------------------------------------
@@ -133,7 +182,8 @@ export const webMethods = {
   async webCreate(body) {
     if (this.cfg) return json({ ok: false, conflict: true }, 409);
     const roomId = String(body.roomId || "");
-    if (!/^[A-HJ-NP-Z2-9]{6}$/.test(roomId)) return json({ ok: false, error: "bad room id" }, 400);
+    if (!/^(?:\d{6}|[A-HJ-NP-Z2-9]{6})$/.test(roomId)) return json({ ok: false, error: "bad room id" }, 400);
+    const showKey = String(body.showKey || "");
     this.cfg = {
       kind: "web",
       roomId,
@@ -143,6 +193,10 @@ export const webMethods = {
       radius: 20,
       createdAt: Date.now(),
       rooms: {},
+      rules: { ...DEFAULT_RULES },
+      // マイクラで作った部屋: 管理キーを、ワールドで作った人に出す（出したら消す）
+      fromGame: !!body.fromGame,
+      adminShow: /^[A-Za-z0-9]{6,24}$/.test(showKey) ? { key: showKey, until: Date.now() + ADMIN_SHOW_MS, fallback: false } : null,
     };
     await this.saveCfg();
     await this.ensureShortCode();
@@ -152,7 +206,7 @@ export const webMethods = {
   async webInfo() {
     if (!this.isWebRoom()) return json({ ok: false, error: "部屋が見つかりません" }, 404);
     const members = this.webSockets().filter(s => this.att(s).verified).length;
-    return json({ ok: true, name: this.cfg.guildName, radius: this.radius, world: !!this.socket(), members });
+    return json({ ok: true, name: this.cfg.guildName, radius: this.radius, world: !!this.socket(), members, rules: this.webRules() });
   },
 
   /** ホスト（部屋を作った人）の操作。hostKey で確かめる */
@@ -172,6 +226,29 @@ export const webMethods = {
       this.cfg.guildName = String(body.name || "").trim().slice(0, 40) || this.cfg.guildName;
       await this.saveCfg();
       this.webBroadcast({ t: "room", name: this.cfg.guildName }, false);
+    } else if (action === "rules") {
+      const before = this.webRules();
+      const rules = cleanRules({ ...before, ...(body.rules || {}) });
+      this.cfg.rules = rules;
+      if (body.radius != null) this.cfg.radius = Math.max(4, Math.min(128, Number(body.radius) || this.radius));
+      await this.saveCfg();
+      const ws = this.socket();
+      if (ws) { this.sendConfig(ws); this.tell(ws, null, `§a[近接VC] 部屋の設定を変えました（声が届く距離: ${this.radius}ブロック・${rules.verify === "code" ? "!vc で本人確認" : "サイトで自分をえらぶ"}${rules.template === "werewolf" ? "・人狼" : ""}）`); }
+      // !vc が必須になったら、えらんで入った人は入り直し
+      if (rules.verify === "code" && before.verify !== "code") {
+        for (const s of this.webSockets()) {
+          const b = this.att(s);
+          if (b.verified && b.via === "pick") {
+            b.verified = false; b.via = ""; b.name = "";
+            this.setAtt(s, b);
+            this.webSend(s, { t: "unverified", text: "この部屋は、マイクラのチャットで !vc を送って本人確認することになりました" });
+          }
+        }
+        this.webBroadcast({ t: "peers", peers: this.webPeers() });
+      }
+      this.webBroadcast({ t: "radius", radius: this.radius }, false);
+      this.webBroadcast({ t: "rules", rules }, false);
+      this.webSendPlayers();
     } else if (action === "newcode") {
       await this.ensureShortCode(true);
       for (const ws of this.ctx.getWebSockets("mc")) {
@@ -181,7 +258,7 @@ export const webMethods = {
     const members = this.webSockets().filter(s => this.att(s).verified).map(s => this.att(s).name);
     return json({
       ok: true, name: this.cfg.guildName, radius: this.radius, worldCode: this.cfg.shortCode,
-      world: !!this.socket(), members, tries: this.diagInfo().tries, now: Date.now(),
+      world: !!this.socket(), members, tries: this.diagInfo().tries, now: Date.now(), rules: this.webRules(),
     });
   },
 
@@ -192,7 +269,11 @@ export const webMethods = {
     const pair = new WebSocketPair();
     const [client, server] = Object.values(pair);
     this.ctx.acceptWebSocket(server, [WEB_TAG]);
-    server.serializeAttachment({ web: true, sid: "", name: "", verified: false, muted: false, since: Date.now() });
+    // ゲスト（名前#1234）は、入口の index.js がトークンを確かめてから X-Guest で渡してくる
+    let guest = null;
+    try { guest = JSON.parse(request.headers.get("X-Guest") || "null"); } catch (e) { guest = null; }
+    server.serializeAttachment({ web: true, sid: "", name: "", verified: false, muted: false, since: Date.now(),
+      gid: guest && guest.id || "", gname: guest && guest.name || "", gtag: guest && guest.tag || "" });
     return new Response(null, { status: 101, webSocket: client });
   },
 
@@ -205,6 +286,8 @@ export const webMethods = {
     switch (m.t) {
       case "hello": return this.webHello(ws, m);
       case "code": return this.webNewCode(ws);
+      case "pick": return this.webPick(ws, m);
+      case "unpick": return this.webUnpick(ws);
       case "signal": {
         if (!a.verified) return;
         const to = String(m.to || "");
@@ -219,6 +302,7 @@ export const webMethods = {
         this.webBroadcast({ t: "peers", peers: this.webPeers() });
         return;
       }
+      case "chat": return this.webRoomChat(ws, m.text);
       case "leave": {
         const w = await this.webLoad();
         if (a.sid && w.sessions[a.sid]) { delete w.sessions[a.sid]; await this.webSave("sessions"); }
@@ -235,33 +319,133 @@ export const webMethods = {
     const w = await this.webLoad();
     const a = this.att(ws);
     let sid = String(m.sid || "");
-    const s = /^[A-Za-z0-9]{24}$/.test(sid) ? w.sessions[sid] : null;
+    let s = /^[A-Za-z0-9]{24}$/.test(sid) ? w.sessions[sid] : null;
+    const rules = this.webRules();
+    const via = s ? (s.via || "code") : "";
+    // えらんで入った人: !vc が必須になった・その名前をほかの人が使っている → 入り直し
+    if (s && via === "pick" && (rules.verify === "code" || this.webTaken(s.name, ws))) s = null;
     if (s && Date.now() - s.at < SESSION_TTL_MS) {
-      a.sid = sid; a.name = s.name; a.verified = true;
+      a.sid = sid; a.name = s.name; a.verified = true; a.via = via; a.spec = via === "spec";
       s.at = Date.now();
       await this.webSave("sessions");
-      this.webKickOthers(ws, s.name);
+      if (via === "code") this.webKickOthers(ws, s.name);
     } else {
-      a.sid = randomId(24); a.name = ""; a.verified = false;
+      a.sid = /^[A-Za-z0-9]{24}$/.test(sid) ? sid : randomId(24); a.name = ""; a.verified = false; a.via = ""; a.spec = false;
     }
     this.setAtt(ws, a);
     this.webSend(ws, {
-      t: "welcome", sid: a.sid, name: a.name, verified: a.verified,
-      room: { id: this.cfg.roomId, name: this.cfg.guildName, radius: this.radius },
+      t: "welcome", sid: a.sid, name: a.name, verified: a.verified, via: a.via || "",
+      room: { id: this.cfg.roomId, name: this.cfg.guildName, radius: this.radius, rules: this.webRules(), fromGame: !!this.cfg.fromGame },
+      players: this.webPlayers(), taken: this.webTakenList(),
       world: !!this.socket(),
       ice: a.verified ? await this.webIce(a.sid) : null,
       peers: a.verified ? this.webPeers() : [],
+      chat: ((await this.storage.get("webChat")) || []).slice(-ROOM_CHAT_KEEP),
+      guest: a.gid ? { id: a.gid, name: a.gname, tag: a.gtag } : null,
     });
     if (a.verified) {
       this.webBroadcast({ t: "peers", peers: this.webPeers() });
       this.webSendPositions(true);
+      this.webSendPlayers();
     }
+    this.webWake();
+  },
+  /** サイトにだれもいなくて休んでいたら、位置・一覧・グループを読みはじめる */
+  webWake() {
+    const mc = this.socket();
+    if (!mc || !this.att(mc).init) return;
+    if (!this.webPos) this.webStartPos();
+    else if (this.webPos.idle || (!this.webPos.timer && !this.webPos.pending.size)) { this.webPos.listAt = 0; this.webPosTick().catch(() => {}); }
+    this.storage.setAlarm(Date.now() + 200).catch(() => {});
+  },
+
+  webRules() { return cleanRules(this.cfg && this.cfg.rules); },
+  /** ワールドにいる人（testfor @a で読んだ名前） */
+  webPlayers() { return (this.webPos && this.webPos.players) || []; },
+  /** サイトで使われている名前 */
+  webTakenList() {
+    return [...new Set(this.webSockets().filter(s => this.att(s).verified && !this.att(s).spec).map(s => this.att(s).name))];
+  },
+  webTaken(name, except) {
+    const lower = String(name || "").toLowerCase();
+    return this.webSockets().some(s => s !== except && this.att(s).verified && !this.att(s).spec && this.att(s).name.toLowerCase() === lower);
+  },
+  webSendPlayers() {
+    this.webBroadcast({ t: "players", list: this.webPlayers(), taken: this.webTakenList() }, false);
+  },
+
+  /** 「自分を選択」: ワールドにいる人の名前をえらんで入る。spec なら観戦者 */
+  async webPick(ws, m) {
+    const a = this.att(ws);
+    if (!a.sid) return;
+    const deny = text => this.webSend(ws, { t: "pickfail", text });
+    const rules = this.webRules();
+    let name, via;
+    if (m.spec) {
+      name = `${a.gname || "ゲスト"}#${a.gtag || a.sid.slice(0, 4)}`;   // マイクラの名前には # が入らないので、かぶらない
+      via = "spec";
+    } else {
+      if (rules.verify === "code") return deny("この部屋は、マイクラのチャットで !vc を送って本人確認してください");
+      const want = String(m.name || "").toLowerCase();
+      name = this.webPlayers().find(n => n.toLowerCase() === want);
+      if (!name) return deny("その名前の人は、いまワールドにいません");
+      if (this.webTaken(name, ws)) return deny("その名前は、ほかの人が使っています");
+      via = "pick";
+    }
+    if (a.verified && a.via === "code" && via === "pick") return;   // 本人確認ずみなら、そのまま
+    const w = await this.webLoad();
+    a.name = name; a.verified = true; a.via = via; a.spec = via === "spec";
+    this.setAtt(ws, a);
+    w.sessions[a.sid] = { name, at: Date.now(), via };
+    await this.webSave("sessions");
+    this.webSend(ws, { t: "verified", name, via, ice: await this.webIce(a.sid), peers: this.webPeers() });
+    this.webBroadcast({ t: "peers", peers: this.webPeers() });
+    this.webSendPlayers();
+    this.webSendPositions(true);
+    if (via === "pick") { const mc = this.socket(); if (mc) this.tell(mc, null, `§a[近接VC] ${name} さんがサイトの近接VCに入りました`); }
+  },
+  /** えらびなおす（名前・観戦者をやめる） */
+  async webUnpick(ws) {
+    const a = this.att(ws);
+    if (!a.verified || a.via === "code") return;
+    const w = await this.webLoad();
+    if (w.sessions[a.sid]) { delete w.sessions[a.sid]; await this.webSave("sessions"); }
+    a.verified = false; a.via = ""; a.spec = false; a.name = "";
+    this.setAtt(ws, a);
+    this.webSend(ws, { t: "unverified", text: "" });
+    this.webBroadcast({ t: "peers", peers: this.webPeers() });
+    this.webSendPlayers();
+  },
+
+  /** マイクラとつながったときの案内（部屋番号。マイクラで作った部屋は、管理キーを送った人だけに） */
+  webAnnounce(ws) {
+    const site = String(this.env.SITE_URL || "").replace(/\/$/, "");
+    const rules = this.webRules();
+    const how = rules.verify === "code" ? "サイトに出た「!vc 6けたの数字」をチャットで送ってね" : "自分の名前をえらんでね";
+    this.tell(ws, null, `§a[近接VC] サイトの部屋とつながりました！ 部屋番号: §e§l${this.cfg.roomId}§r§a　${site ? `${site}/talk/ をひらいて` : "サイトで"}部屋番号を入れて、${how}（声が届く距離: ${this.radius}ブロック）`);
+    const show = this.cfg.adminShow;
+    if (show && Date.now() < show.until) {
+      const text = `§7[近接VC] 管理キー（人に見せないでね）: §f§l${show.key}§r§7　サイトの「🔒 管理者設定」で、距離や人狼などの設定に使います`;
+      this.webAdminReq = this.mcCommand(ws, `tellraw @s ${JSON.stringify({ rawtext: [{ text }] })}`);
+    }
+  },
+  /** tellraw @s の返事。@s に出せなかったら、チャットの !vc admin で出せるようにする */
+  async webOnAdminShown(body) {
+    const show = this.cfg && this.cfg.adminShow;
+    if (!show) return;
+    if (body && body.statusCode === 0) { this.cfg.adminShow = null; }
+    else {
+      show.fallback = true;
+      const ws = this.socket();
+      if (ws) this.tell(ws, null, "§e[近接VC] 管理キーを出せませんでした。ワールドで部屋を作った人は、チャットで「!vc admin」と送ってください（最初の 1 人にだけ出ます）");
+    }
+    await this.saveCfg();
   },
 
   /** 本人確認のコード（6けた）を出す */
   async webNewCode(ws) {
     const a = this.att(ws);
-    if (!a.sid || a.verified) return;
+    if (!a.sid || (a.verified && a.via === "code")) return;
     const w = await this.webLoad();
     const now = Date.now();
     for (const [c, p] of Object.entries(w.pending)) if (!p || p.expires < now || p.sid === a.sid) delete w.pending[c];
@@ -273,9 +457,31 @@ export const webMethods = {
   },
 
   /** マイクラのチャット「!vc 123456」→ そのコードを出したブラウザを、送った人として確認ずみにする */
-  async webOnChat(mcws, sender, text) {
+  async webOnChat(mcws, sender, text, type = "chat") {
     const m = /^!vc\s+(\d{6})$/i.exec(String(text || "").trim());
-    if (!m || !sender || NAME_BAD.test(sender) || sender.length > 32) return;
+    if (!sender || NAME_BAD.test(sender) || sender.length > 32) return;
+    const cmd = String(text || "").trim().toLowerCase();
+    if (cmd === "!vc") {
+      const site = String(this.env.SITE_URL || "").replace(/\/$/, "");
+      this.tell(mcws, sender, `§a[近接VC] 部屋番号: §e§l${this.cfg.roomId}§r§a　${site ? site + "/talk/ " : "サイト"}で番号を入れてね`);
+      return;
+    }
+    if (cmd === "!vc admin") {
+      const show = this.cfg.adminShow;
+      if (show && show.fallback && Date.now() < show.until) {
+        this.cfg.adminShow = null;
+        await this.saveCfg();
+        this.tell(mcws, sender, `§7[近接VC] 管理キー（人に見せないでね）: §f§l${show.key}§r§7　サイトの「🔒 管理者設定」で使います`);
+      } else {
+        this.tell(mcws, sender, "§c[近接VC] 管理キーは、もう出せません（部屋を作ったときに出たものを使ってください）");
+      }
+      return;
+    }
+    if (!m) {
+      // ふつうのチャット → サイトの「ゲーム中チャット」にも出す（ささやき /tell は出さない）
+      if (type === "chat" || type === "say") await this.webRoomPost({ name: sender, game: 1 }, String(text || ""), false);
+      return;
+    }
     const w = await this.webLoad();
     const lower = sender.toLowerCase(), now = Date.now();
     const f = w.fails[lower];
@@ -291,17 +497,18 @@ export const webMethods = {
     const ws = this.webSockets().find(s => this.att(s).sid === p.sid);
     if (!ws) { this.tell(mcws, sender, "§c[近接VC] サイトのページが閉じられています。ページをひらいて、もう一度コードを出してください"); return; }
     const a = this.att(ws);
-    a.name = sender; a.verified = true;
+    a.name = sender; a.verified = true; a.via = "code"; a.spec = false;
     this.setAtt(ws, a);
-    w.sessions[a.sid] = { name: sender, at: now };
+    w.sessions[a.sid] = { name: sender, at: now, via: "code" };
     // 古いものを消す
     const list = Object.entries(w.sessions).filter(([, s]) => now - s.at < SESSION_TTL_MS).sort((x, y) => y[1].at - x[1].at).slice(0, MAX_SESSIONS);
     w.sessions = Object.fromEntries(list);
     this.webKickOthers(ws, sender);
     await this.webSave("sessions");
-    this.webSend(ws, { t: "verified", name: sender, ice: await this.webIce(a.sid), peers: this.webPeers() });
+    this.webSend(ws, { t: "verified", name: sender, via: "code", ice: await this.webIce(a.sid), peers: this.webPeers() });
     this.webBroadcast({ t: "peers", peers: this.webPeers() });
-    this.tell(mcws, null, `§a[近接VC] ${sender} さんがサイトの近接VCに入りました`);
+    this.webSendPlayers();
+    this.tell(mcws, null, `§a[近接VC] ${sender} さんがサイトの近接VCに入りました（✓ 本人確認）`);
     this.webPos && this.webPos.retry && this.webPos.retry.delete(lower);
     this.webSendPositions(true);
   },
@@ -321,9 +528,57 @@ export const webMethods = {
     }
   },
 
+  // ---- ゲーム中チャット（この部屋だけのチャット。マイクラのチャットともつながる）----
+  async webRoomChat(ws, raw) {
+    const a = this.att(ws);
+    const deny = (text, wait = 0) => this.webSend(ws, { t: "limit", text, wait });
+    if (!a.gid && !a.verified) return deny("名前を決めてから書けます");
+    if (a.spec && this.webRules().template === "werewolf") return deny("人狼の部屋では、観戦者はゲーム中チャットに書けません");
+    let text = String(raw || "").replace(/\r\n?/g, "\n").replace(/[\u0000-\u0009\u000b-\u001f\u007f-\u009f\u202a-\u202e\u2066-\u2069]/g, "").replace(/\n{3,}/g, "\n\n").trim();
+    if (!text) return;
+    if ([...text].length > ROOM_CHAT_MAX) return deny(`${ROOM_CHAT_MAX} 文字までです`);
+    const now = Date.now();
+    const key = a.gid || "mc:" + a.name.toLowerCase();
+    if (!this.webRates) this.webRates = new Map();
+    const r = this.webRates.get(key) || { times: [], last: "", lastAt: 0 };
+    const from = a.verified && a.via === "code" ? { name: a.name, v: 1 }
+      : a.verified && a.via === "pick" ? { name: a.name, p: 1 }
+      : { name: a.gname, tag: a.gtag, v: 0, ...(a.spec ? { s: 1 } : {}) };
+    // 同じ文のくり返し（部屋が休んでメモリが消えても分かるように、保存したチャットでも確かめる）
+    const saved = (await this.storage.get("webChat")) || [];
+    let mine = null;
+    for (let i = saved.length - 1; i >= 0; i--) {
+      const f = saved[i].f || {};
+      if (!f.game && f.name === from.name && (f.v || f.p ? (!!f.v === !!from.v && !!f.p === !!from.p) : (!from.v && !from.p && f.tag === from.tag))) { mine = saved[i]; break; }
+    }
+    if ((r.last === text && now - r.lastAt < 30000) || (mine && mine.x === text && now - mine.at < 30000)) return deny("同じメッセージは、続けて送れません");
+    const t10 = r.times.filter(t => now - t < 10000), t60 = r.times.filter(t => now - t < 60000);
+    if (t10.length >= ROOM_PER10S) return deny("送りすぎです。少し待ってください", Math.ceil((10000 - (now - t10[0])) / 1000));
+    if (t60.length >= ROOM_PERMIN) return deny("送りすぎです。少し待ってください", Math.ceil((60000 - (now - t60[0])) / 1000));
+    r.times = [...t60, now]; r.last = text; r.lastAt = now;
+    this.webRates.set(key, r);
+    if (this.webRates.size > 2000) this.webRates.clear();
+    // マイクラに送るのは、!vc で本人確認した人だけ（知らない人・えらんだだけの人がワールドに書きこめないように）
+    await this.webRoomPost(from, text, !!(a.verified && a.via === "code"));
+  },
+  async webRoomPost(from, text, toGame) {
+    text = String(text).slice(0, 400);
+    const msg = { id: randomId(8), f: from, x: text, at: Date.now() };
+    const list = ((await this.storage.get("webChat")) || []);
+    list.push(msg);
+    await this.storage.put("webChat", list.slice(-ROOM_CHAT_KEEP));
+    this.webBroadcast({ t: "chat", m: msg }, false);
+    const ws = toGame ? this.socket() : null;
+    if (ws) {
+      // § の色コードは消してから送る
+      const line = `§b[サイト] §f${from.name}: ${text.replace(/§./gu, "").replace(/§/g, "").replace(/\n/g, " ")}`;
+      try { this.mcCommand(ws, `tellraw @a ${JSON.stringify({ rawtext: [{ text: line }] })}`); } catch (e) { /* 無視 */ }
+    }
+  },
+
   webPeers() {
     return this.webSockets().filter(s => this.att(s).verified)
-      .map(s => { const b = this.att(s); return { sid: b.sid, name: b.name, muted: !!b.muted }; });
+      .map(s => { const b = this.att(s); return { sid: b.sid, name: b.name, muted: !!b.muted, via: b.via || "code", spec: !!b.spec }; });
   },
 
   async onWebClose(ws) {
@@ -331,7 +586,10 @@ export const webMethods = {
     if (a.closed) return;
     a.closed = true;
     this.setAtt(ws, a);
-    if (a.verified) this.webBroadcast({ t: "peers", peers: this.webPeers().filter(p => p.sid !== a.sid) });
+    if (a.verified) {
+      this.webBroadcast({ t: "peers", peers: this.webPeers().filter(p => p.sid !== a.sid) });
+      this.webBroadcast({ t: "players", list: this.webPlayers(), taken: this.webTakenList().filter(n => a.spec || n !== a.name) }, false);
+    }
   },
 
   /** 音声をつなぐためのサーバー（STUN と、VPS の TURN）。TURN のパスワードは 12 時間で切れる */
@@ -356,12 +614,13 @@ export const webMethods = {
     if (!connected) {
       this.webStopPos();
       this.webBroadcast({ t: "pos", at: Date.now(), p: {} });
+      this.webSendPlayers();
     }
   },
 
   // ---- 位置を読む（querytarget）----
   webStartPos() {
-    if (!this.webPos) this.webPos = { pending: new Map(), sentAt: 0, timer: null, pos: {}, retry: new Map(), perName: false, lastSend: 0 };
+    if (!this.webPos) this.webPos = { pending: new Map(), sentAt: 0, timer: null, pos: {}, retry: new Map(), perName: false, lastSend: 0, players: [], listAt: 0 };
     this.webPosTick();
   },
   webStopPos() {
@@ -382,8 +641,21 @@ export const webMethods = {
     if (p.pending.size && now - p.sentAt < POS_STALL_MS) return;
     p.pending.clear();
     const w = await this.webLoad();
-    const members = [...new Set(this.webSockets().filter(s => this.att(s).verified).map(s => this.att(s).name))];
-    if (!members.length) { p.pos = {}; this.webSchedule(1000); return; }  // だれもいないときは、ゆっくり
+    const socks = this.webSockets();
+    // サイトにだれもいない → 休む（だれかが来たら webHello が起こす）
+    if (!socks.length) { p.pos = {}; p.idle = true; return; }
+    p.idle = false;
+    // ワールドにいる人の一覧（「自分を選択」用）
+    if (socks.length && now - p.listAt >= LIST_MS) {
+      p.listAt = now;
+      p.pending.set(this.mcCommand(ws, "testfor @a"), { kind: "list" });
+    }
+    const members = [...new Set(socks.filter(s => this.att(s).verified && !this.att(s).spec).map(s => this.att(s).name))];
+    if (!members.length) {
+      p.pos = {};
+      if (p.pending.size) { p.sentAt = now; return; }                      // 一覧の返事を待つ
+      this.webSchedule(1000); return;                                     // だれもいないときは、ゆっくり
+    }
     // ID（uniqueId）が分からない人は、名前で 1 人ずつ読む（ゲームにいなかった人は 5 秒おき）
     let n = 0;
     for (const name of members) {
@@ -401,10 +673,23 @@ export const webMethods = {
   },
   /** querytarget の返事。位置のときは true を返す */
   async webOnResponse(requestId, body) {
+    if (this.webAdminReq && requestId === this.webAdminReq) {
+      this.webAdminReq = null;
+      await this.webOnAdminShown(body);
+      return true;
+    }
     const p = this.webPos;
     const job = p && p.pending.get(requestId);
     if (!job) return false;
     p.pending.delete(requestId);
+    if (job.kind === "list") {
+      const names = body && body.statusCode === 0 && Array.isArray(body.victim)
+        ? [...new Set(body.victim.map(String).filter(n => n && n.length <= 32 && !NAME_BAD.test(n)))].sort((x, y) => x.localeCompare(y)).slice(0, 100)
+        : [];
+      if (names.join("\n") !== p.players.join("\n")) { p.players = names; this.webSendPlayers(); }
+      if (!p.pending.size) { this.webSendPositions(); this.webSchedule(); }
+      return true;
+    }
     const w = await this.webLoad();
     const list = parseQueryTarget(body);
     const at = Date.now();

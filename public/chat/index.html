@@ -1,0 +1,1113 @@
+<!doctype html>
+<!--
+  チャット（ゲストで話せる「みんなのチャット」と DM）
+  制作: MaYo (mayo01297)  https://github.com/Dev-MaY0
+  このサイトとアドオンの二次配布（再アップロード・改変しての配布・自作発言）は禁止です。
+-->
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="author" content="MaYo (mayo01297)">
+<meta name="copyright" content="© 2026 MaYo (mayo01297) 二次配布禁止">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>チャット</title>
+<meta name="description" content="名前を入れるだけで使えるチャット。サイトに来ている人みんなと話せる「みんなのチャット」と、1 対 1 の DM。制作: MaYo (mayo01297)">
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAACjUlEQVR42u2bPUwUQRiG3zEYG0KLpbEQOI0o0cRwWBAiojmD+NOoUBgbCgv5CYeJFQUSwMbWigMafhovglhcg8TExAQKEygulppY2liNxd0YdnK7s8Pt3jF379ftfjt7O/s+837f7t0JGOLcxQcSDsfB3qoIyp9AnYfwV/6+rKWJHuytCRIQhoCWGlNej32NBBLwX/n2e7KeJr6/uy5IAADR6rjyOx9HPNudN99YjScBrZcGnCRgZ3M0MN/ZN08CQhHQFjMBk+OPA/PTs0tW5/tsUF6PpIGEuiegASJaACbHnpRFyPTcYsSMSxIQeH8Sl+9GgkDaUnlTvDaQsL0xFpjvujXHKhCOgI7+sghIjw6GOi77PgsASN1J2ZEwnwkm4cO4V/nbs+wEraqAcO2FhRbXNcVt50MCjjpwIuTaLzfU58wYvOCoQQJExJ2gcnvbfOL8hWAvEJIEHCsP8Au/Om/qA/L5H1W5ASQgrrUVeT9AD+AS4A2gB5AAB/qAqOJld1bbjvb8V140kgCnPCAuTyEBrlxo4lF5zwrfl8+wCtAD6AFV9ADb7wP4LFAxD3DsgrffjVgd3/Ws9G+GBAlQHuBIFVDKN994DgBoH1wBAGwN/fQc17twGgCwm3lYHKcy6xoCrAKlPeDs0F8AQH7hVKj9lY5fn94WlS+dV0So43z7AHqA5gFNPb8BACvDXwuZYZ8Rxf2Z5bWqXviX7LfA/LVUh6EVpAd4PSA3VVC++9XVUAOftqWreuFGhU3PAvQAtRKklDbKVyq2+hpjPf/JZI4EqKdBtRzq7cUA/zGivw84ViT0bv6JVflcklXAozqKxeBwNZC1OFfV7wghSICHAJ2Ew7tqaY5KebATLMQ/lnufS6vEI9gAAAAASUVORK5CYII=">
+<style>
+/* =====================================================================
+   共通スタイル（全ページ）  制作: MaYo (mayo01297)  二次配布禁止
+   白ベース・角の丸いカード・グラデーションのアクセント（SNS アプリのような雰囲気）
+   ===================================================================== */
+:root {
+  --back: #fafafa; --panel: #ffffff; --border: #dbdbdb; --border-soft: #efefef; --input: #fafafa;
+  --text: #262626; --sub: #737373; --link: #00376b;
+  --header: #ffffff; --header-sub: #737373;
+  --blue: #0095f6; --blue-hover: #1877f2; --blue-pale: #e8f3ff;
+  --green: #22a55b; --green-hover: #1d9150; --green-down: #17803f; --green-pale: #e7f7ee;
+  --red: #ed4956; --orange: #f39c12; --preview: #f2f2f2;
+  --grad: linear-gradient(45deg, #feda75 0%, #fa7e1e 25%, #d62976 50%, #962fbf 75%, #4f5bd5 100%);
+  --grad-btn: linear-gradient(90deg, #f56040 0%, #e1306c 45%, #833ab4 100%);
+  --radius: 16px;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .04), 0 6px 20px rgba(0, 0, 0, .05);
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic UI", Meiryo, system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--back); color: var(--text); font-family: var(--font); font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+button, input, select, textarea { font: inherit; color: inherit; }
+a { color: var(--link); }
+.pixel { image-rendering: pixelated; image-rendering: crisp-edges; }
+
+/* ---- header ---- */
+header { background: rgba(255, 255, 255, .92); color: var(--text); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 20; -webkit-backdrop-filter: saturate(180%) blur(12px); backdrop-filter: saturate(180%) blur(12px); }
+.header-in { max-width: 920px; margin: 0 auto; padding: 10px 16px; display: flex; align-items: center; gap: 12px; }
+.header-in img { width: 42px; height: 42px; flex: none; border-radius: 12px; padding: 2px; background: var(--grad); }
+.header-in h1 { margin: 0; font-size: 20px; line-height: 1.25; font-weight: 800; letter-spacing: -.01em; background: var(--grad-btn); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.header-in p { margin: 1px 0 0; color: var(--header-sub); font-size: 12.5px; }
+.header-in .help-btn { margin-left: auto; flex: none; color: var(--text); background: #efefef; border: 0; border-radius: 10px; padding: 7px 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none; white-space: nowrap; }
+.header-in .help-btn:hover { background: #e3e3e3; }
+
+main { max-width: 920px; margin: 0 auto; padding: 18px 16px 90px; }
+.card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+.step { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; font-size: 17px; font-weight: 700; }
+.num { width: 30px; height: 30px; flex: none; border-radius: 50%; background: var(--grad); color: #fff; display: grid; place-items: center; font-size: 15px; font-weight: 700; box-shadow: 0 2px 8px rgba(214, 41, 118, .25); }
+.indent { padding-left: 40px; }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 10px; cursor: pointer; color: #fff; font-weight: 600; transition: filter .15s, transform .05s, background .15s; }
+.btn:active { transform: scale(.98); }
+.btn svg { width: 20px; height: 20px; flex: none; }
+.btn:disabled { background: #c7c7c7 !important; cursor: default; filter: none; }
+.btn-blue { background: var(--blue); padding: 10px 18px; font-size: 15.5px; }
+.btn-blue:hover { background: var(--blue-hover); }
+.btn-green { background: var(--grad-btn); padding: 14px 22px; font-size: 17px; width: 100%; max-width: 480px; box-shadow: 0 6px 18px rgba(225, 48, 108, .25); }
+.btn-green:hover { filter: brightness(1.06); }
+.btn-green.pulse { animation: pulse 0.5s ease-in-out 3 alternate; }
+@keyframes pulse { to { box-shadow: 0 0 0 7px rgba(225, 48, 108, .22); } }
+.hint { margin: 8px 0 2px; color: var(--sub); font-size: 13px; }
+.link { color: var(--blue); background: none; border: 0; padding: 0; cursor: pointer; font-size: 14px; font-weight: 600; text-align: left; }
+.link:hover { text-decoration: underline; }
+.link:disabled { color: var(--sub); cursor: default; text-decoration: none; }
+.link svg { width: 15px; height: 15px; vertical-align: -2px; margin-right: 4px; }
+hr { border: 0; border-top: 1px solid var(--border-soft); margin: 14px 0 10px; }
+.btn-outline { display: inline-flex; align-items: center; gap: 6px; background: #efefef; color: var(--text); border: 0; border-radius: 10px; padding: 7px 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none; }
+.btn-outline:hover { background: #e3e3e3; }
+.btn-outline svg { width: 15px; height: 15px; flex: none; }
+
+.notice { background: #fff8e6; border: 1px solid #f7d58a; border-radius: 12px; padding: 10px 14px; font-size: 13px; margin: 0 0 14px; }
+.notice[hidden] { display: none; }
+
+input[type=text], input[type=password], input[type=search], input:not([type]), textarea { border-radius: 10px; }
+.settings { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 0 0 4px; }
+.settings label { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; }
+.settings select, select { font: inherit; font-size: 15px; padding: 6px 10px; border: 1px solid var(--border); border-radius: 10px; background: var(--input); color: var(--text); }
+.settings select:focus, select:focus { outline: none; border-color: #a8a8a8; }
+kbd { font-family: inherit; background: #efefef; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 6px; padding: 0 6px; font-size: 13px; }
+
+/* ---- help ---- */
+details.help { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 12px; box-shadow: var(--shadow); }
+details.help summary { cursor: pointer; padding: 14px 20px; font-weight: 700; }
+details.help .help-body { padding: 0 20px 16px; font-size: 14px; }
+details.help h4 { margin: 14px 0 4px; font-size: 14px; }
+details.help ol, details.help ul { margin: 4px 0; padding-left: 22px; }
+details.help code { background: #efefef; border-radius: 6px; padding: 1px 6px; }
+.small { color: var(--sub); font-size: 12px; text-align: center; margin-top: 20px; line-height: 1.8; }
+.small a { color: var(--sub); }
+
+/* ---- 制作者について（折りたたみ） ---- */
+details.about { padding: 0; }
+details.about > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 14px 20px; border-radius: var(--radius); }
+details.about > summary::-webkit-details-marker { display: none; }
+details.about > summary:hover { background: #fafafa; }
+details.about > summary:focus-visible { outline: 3px solid rgba(0, 149, 246, .35); outline-offset: -3px; }
+details.about .sum-t { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 12px; min-width: 0; }
+details.about .ttl { font-size: 16px; font-weight: 700; }
+details.about .sub { font-size: 13px; color: var(--sub); }
+details.about .sub > span { display: inline-block; white-space: nowrap; }
+details.about .sum-hint { margin-left: auto; font-size: 13px; color: var(--blue); font-weight: 600; white-space: nowrap; }
+details.about .h-close, details.about[open] .h-open { display: none; }
+details.about[open] .h-close { display: inline; }
+details.about .chev { width: 20px; height: 20px; flex: none; color: var(--sub); transition: transform .2s; }
+details.about[open] .chev { transform: rotate(180deg); }
+details.about[open] > summary { border-radius: var(--radius) var(--radius) 0 0; }
+.about-body { padding: 2px 20px 20px; }
+.num svg { width: 16px; height: 16px; }
+.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.about-box { border: 1px solid var(--border-soft); border-radius: 14px; padding: 14px 16px 16px; background: #fff; }
+.about-box h3 { margin: 0 0 10px; font-size: 15px; }
+.profile { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.avatar { width: 72px; height: 72px; flex: none; border-radius: 50%; border: 3px solid #fff; outline: 2px solid transparent; object-fit: cover; background: #fff5ac; box-shadow: 0 0 0 2px #d62976; }
+.pname { font-size: 18px; font-weight: 700; line-height: 1.3; }
+.psub { color: var(--sub); font-size: 13px; }
+.about-box p { margin: 0 0 8px; font-size: 14px; }
+.about-box .label { margin: 10px 0 6px; font-size: 13px; font-weight: 700; color: var(--sub); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chips span { background: #efefef; border-radius: 999px; padding: 3px 12px; font-size: 13px; }
+.chips span.more { background: none; color: var(--sub); padding: 2px 2px; }
+.links { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.links li { display: flex; align-items: center; gap: 10px; border: 1px solid var(--border-soft); border-radius: 12px; padding: 8px 10px; }
+.links .ic { width: 34px; height: 34px; flex: none; border-radius: 10px; display: grid; place-items: center; color: #fff; }
+.links .ic svg { width: 20px; height: 20px; }
+.links .lt { flex: 1; min-width: 0; line-height: 1.35; }
+.links .lt small { display: block; color: var(--sub); font-size: 12px; }
+.links .lt b { word-break: break-all; }
+.links a.go, .links button { flex: none; border: 0; color: #fff; background: var(--blue); border-radius: 8px; padding: 5px 12px; font-size: 12.5px; font-weight: 600; cursor: pointer; text-decoration: none; font-family: inherit; }
+.links a.go:hover, .links button:hover { background: var(--blue-hover); }
+.license { margin: 14px 0 0 40px; background: #fff1f2; border: 1px solid #f6c3c8; border-radius: 12px; padding: 10px 14px; font-size: 14px; }
+.license b.ng { color: var(--red); }
+.license ul { margin: 4px 0; padding-left: 20px; }
+
+/* ---- status bar & dialog ---- */
+#status { position: fixed; left: 50%; transform: translateX(-50%); bottom: 14px; width: min(680px, calc(100% - 24px)); background: rgba(38, 38, 38, .94); color: #fff; border-radius: 14px; padding: 10px 16px; font-size: 14px; display: flex; align-items: center; gap: 10px; min-height: 44px; z-index: 30; box-shadow: 0 8px 30px rgba(0, 0, 0, .2); }
+#status .dot { width: 18px; height: 18px; border-radius: 50%; flex: none; display: grid; place-items: center; color: #fff; font-size: 11px; font-weight: 700; }
+#status.ok .dot { background: var(--green); }
+#status.warn .dot { background: var(--orange); }
+#status.info .dot { background: var(--blue); }
+#status.busy .dot { border: 2px solid #fff; border-right-color: transparent; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+dialog { border: 0; border-radius: 18px; padding: 0; max-width: 520px; width: calc(100% - 32px); box-shadow: 0 20px 60px rgba(0, 0, 0, .25); color: var(--text); }
+dialog::backdrop { background: rgba(0, 0, 0, .55); }
+.dlg-body { padding: 22px 24px 8px; }
+.dlg-body h3 { margin: 0 0 8px; font-size: 17px; }
+.dlg-body p { margin: 0 0 8px; white-space: pre-line; font-size: 14px; }
+.dlg-btns { display: flex; justify-content: flex-end; gap: 8px; padding: 10px 18px 18px; flex-wrap: wrap; }
+.dlg-btns button { border-radius: 10px; padding: 8px 16px; cursor: pointer; font-weight: 600; border: 0; background: #efefef; color: var(--text); }
+.dlg-btns button.primary { background: var(--blue); color: #fff; }
+
+/* ---- ゲストの名前（partials/guest.js）---- */
+.gmodal { position: fixed; inset: 0; z-index: 50; background: rgba(0, 0, 0, .55); display: grid; place-items: center; padding: 16px; }
+.gmodal .gbox { width: min(400px, 100%); background: #fff; border-radius: 22px; padding: 30px 26px 24px; text-align: center; box-shadow: 0 20px 60px rgba(0, 0, 0, .3); }
+.gmodal .ring { width: 88px; height: 88px; margin: 0 auto 12px; border-radius: 50%; padding: 3px; background: var(--grad); }
+.gmodal .ring > div { width: 100%; height: 100%; border-radius: 50%; background: #fff; border: 3px solid #fff; display: grid; place-items: center; font-size: 34px; }
+.gmodal h2 { margin: 0 0 4px; font-size: 20px; }
+.gmodal p { margin: 0 0 16px; color: var(--sub); font-size: 13.5px; }
+.gmodal input { width: 100%; font-size: 16px; padding: 12px 14px; border: 1px solid var(--border); background: var(--input); border-radius: 12px; margin-bottom: 10px; }
+.gmodal input:focus { outline: none; border-color: #a8a8a8; background: #fff; }
+.gmodal button { width: 100%; }
+.gmodal .gerr { color: var(--red); font-size: 13px; min-height: 1.4em; margin: 8px 0 0; }
+.gmodal .gnote { color: var(--sub); font-size: 12px; margin: 12px 0 0; }
+.av { --c: #ccc; width: 36px; height: 36px; flex: none; border-radius: 50%; display: grid; place-items: center; color: #fff; font-weight: 700; font-size: 15px; background: var(--c); }
+.av.ring { box-shadow: 0 0 0 2px #fff, 0 0 0 4px #d62976; }
+
+@media (max-width: 640px) {
+  body { font-size: 14.5px; }
+  .header-in { padding: 8px 12px; gap: 10px; }
+  .header-in img { width: 36px; height: 36px; border-radius: 10px; }
+  .header-in h1 { font-size: 17px; }
+  .header-in p { display: none; }
+  main { padding: 12px 12px 90px; }
+  .card { padding: 16px 14px 16px; border-radius: 14px; }
+  .indent { padding-left: 0; }
+  .btn-blue { width: 100%; }
+  .btn-green { font-size: 16px; padding: 13px 14px; }
+  .wide-only { display: none; }
+  .header-in .help-btn { padding: 6px 12px; font-size: 13px; }
+  .about-grid { grid-template-columns: 1fr; }
+  .license { margin-left: 0; }
+  details.about > summary { padding: 12px 14px; }
+  .about-body { padding: 2px 14px 14px; }
+}
+
+/* ---- サイトのメニュー ---- */
+.sitenav { background: rgba(255, 255, 255, .92); border-bottom: 1px solid var(--border-soft); position: sticky; top: 63px; z-index: 19; -webkit-backdrop-filter: saturate(180%) blur(12px); backdrop-filter: saturate(180%) blur(12px); }
+.sitenav-in { max-width: 920px; margin: 0 auto; padding: 8px 12px; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+.sitenav-in::-webkit-scrollbar { display: none; }
+.sitenav a { color: var(--text); text-decoration: none; padding: 6px 14px; font-size: 14px; font-weight: 600; border-radius: 999px; white-space: nowrap; background: #efefef; }
+.sitenav a:hover { background: #e3e3e3; }
+.sitenav a[aria-current="page"] { color: #fff; background: #262626; }
+@media (max-width: 640px) {
+  .sitenav { top: 53px; }
+  .sitenav-in { padding: 7px 10px; gap: 5px; }
+  .sitenav a { padding: 5px 10px; font-size: 12.5px; }
+}
+
+/* ---- 共通の部品（入力・コピー欄・かんたんな流れ・チップ）---- */
+.field, .search input, .key-row input, .token-row input, .row input[type=text], .row input[type=password] { font-size: 16px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--input); color: var(--text); transition: border-color .15s, background .15s; }
+.field:focus, .search input:focus, .key-row input:focus, .token-row input:focus, .row input[type=text]:focus, .row input[type=password]:focus { outline: none; border-color: #a8a8a8; background: #fff; }
+.copybox { display: flex; align-items: center; gap: 6px; margin: 8px 0 2px; max-width: 100%; background: #f5f5f5; border: 1px solid var(--border-soft); border-radius: 12px; padding: 4px 4px 4px 12px; }
+.copybox[hidden] { display: none; }
+.copybox code, .copybox pre { flex: 1; min-width: 0; margin: 0; background: none; color: var(--text); padding: 6px 0; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 13px; overflow-x: auto; white-space: nowrap; scrollbar-width: thin; }
+.copybox pre { white-space: pre; font-size: 12.5px; }
+.copybox button { flex: none; align-self: stretch; border: 0; border-radius: 9px; background: var(--blue); color: #fff; font-weight: 600; font-size: 13px; padding: 0 14px; cursor: pointer; }
+.copybox button:hover { background: var(--blue-hover); }
+.copybox.disabled code { color: #a8a8a8; }
+.copybox.disabled button { background: #c7c7c7; cursor: default; }
+.easy, .tip { position: relative; background: linear-gradient(135deg, #fff7fb 0%, #f7f4ff 100%); border: 1px solid #f1e4f3; border-radius: var(--radius); padding: 14px 18px; margin: 0 0 16px; }
+.tip { padding: 10px 14px; margin-top: 10px; font-size: 14px; border-radius: 12px; }
+.easy b.t { display: block; font-size: 15px; margin-bottom: 4px; }
+.easy ol { margin: 0; padding-left: 22px; font-size: 14px; }
+.easy li { margin: 3px 0; }
+.chip { display: inline-flex; align-items: center; gap: 4px; font-size: 12.5px; font-weight: 600; border-radius: 999px; padding: 3px 11px; background: #efefef; color: var(--sub); vertical-align: 1px; }
+.chip:empty { display: none; }
+.chip.on { background: var(--green-pale); color: var(--green-down); }
+.chip.warn { background: #fff1db; color: #a35b00; }
+.chip.dead { background: #f1e9ff; color: #6b3fb8; }
+.cmd { display: inline-block; background: #efefef; border-radius: 6px; padding: 1px 7px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 13.5px; }
+.sub-hint { color: var(--sub); font-size: 12.5px; margin: 4px 0 0; }
+ol.steps { margin: 4px 0 0; padding-left: 22px; font-size: 14px; }
+ol.steps > li { margin: 8px 0; }
+.btn-indigo { background: #5865f2; padding: 12px 20px; font-size: 16px; text-decoration: none; }
+.btn-indigo:hover { background: #4752c4; }
+.btn-sub { background: #efefef; color: var(--text); padding: 10px 16px; font-size: 15px; text-decoration: none; }
+.btn-sub:hover { background: #e3e3e3; }
+.btn[hidden] { display: none; }
+.toast { position: fixed; left: 50%; bottom: 22px; transform: translate(-50%, 20px); opacity: 0; pointer-events: none; z-index: 60; background: rgba(38, 38, 38, .95); color: #fff; border-radius: 12px; padding: 10px 16px; font-size: 14px; max-width: calc(100% - 32px); box-shadow: 0 8px 30px rgba(0, 0, 0, .2); transition: opacity .2s, transform .2s; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+.gmodal .gcancel { text-align: center; margin-top: 10px; color: var(--sub); }
+
+/* ---- チャットの吹き出し（チャット・サイトで近接VC）---- */
+.cmsgs { overflow-y: auto; padding: 10px 14px 8px; display: flex; flex-direction: column; overscroll-behavior: contain; }
+.cm { display: flex; align-items: flex-start; gap: 8px; margin-top: 2px; }
+.cm.first { margin-top: 10px; }
+.cm > .av { width: 30px; height: 30px; font-size: 13px; }
+.cm.cont > .av { visibility: hidden; height: 0; }
+.cm .cbody { min-width: 0; max-width: min(78%, 540px); display: flex; flex-direction: column; align-items: flex-start; }
+.cm .who { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 6px; font-size: 12px; color: var(--sub); margin: 0 0 3px 12px; }
+.cm .who b { color: var(--text); font-weight: 600; }
+.cm .click { cursor: pointer; }
+.cm b.click:hover { text-decoration: underline; }
+.cm .bub { background: #efefef; color: var(--text); border-radius: 20px; padding: 8px 14px; font-size: 14.5px; line-height: 1.45; white-space: pre-wrap; overflow-wrap: anywhere; }
+.cm .bub.game { background: #e9f7ee; }
+.cm.mine { flex-direction: row-reverse; }
+.cm.mine .cbody { align-items: flex-end; }
+.cm.mine .bub { background: #3797f0; color: #fff; }
+.cm.mine .bub.game { background: #1f9d55; }
+.tagb { font-style: normal; font-size: 10.5px; font-weight: 700; border-radius: 999px; padding: 0 7px; line-height: 1.6; }
+.tagb.v { background: #e8f3ff; color: #0064c8; }
+.tagb.game { background: #e7f7ee; color: #17803f; }
+.tagb.guest { background: #efefef; color: var(--sub); }
+.tagb.p { background: #fff1e6; color: #b45309; }
+.tagb.s { background: #f1e9ff; color: #6b3fb8; }
+.cday { text-align: center; color: var(--sub); font-size: 11.5px; font-weight: 600; margin: 14px 0 2px; }
+.cempty { color: var(--sub); text-align: center; font-size: 13.5px; margin: auto 0; padding: 30px 10px; }
+.composer { display: flex; align-items: flex-end; gap: 6px; border: 1px solid var(--border); border-radius: 24px; padding: 4px 4px 4px 16px; margin: 8px 12px 12px; background: #fff; }
+.composer:focus-within { border-color: #a8a8a8; }
+.composer textarea { flex: 1; min-width: 0; border: 0; outline: none; resize: none; font-size: 15px; line-height: 1.45; padding: 7px 0; min-height: 36px; max-height: 120px; background: none; border-radius: 0; }
+.composer .cnt { font-size: 11.5px; color: var(--sub); align-self: center; white-space: nowrap; }
+.composer .cnt.over { color: var(--red); font-weight: 700; }
+.composer .send { flex: none; border: 0; background: none; color: var(--blue); font-weight: 700; font-size: 15px; padding: 7px 12px; cursor: pointer; border-radius: 18px; }
+.composer .send:hover:not(:disabled) { background: var(--blue-pale); }
+.composer .send:disabled { color: #b2dffc; cursor: default; }
+
+
+/* ===== チャット ===== */
+main { padding-bottom: 40px; }
+.app { display: grid; grid-template-columns: 330px 1fr; height: calc(100vh - 170px); height: calc(100dvh - 170px); min-height: 480px; max-height: 820px; background: var(--panel); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; box-shadow: var(--shadow); margin-bottom: 16px; }
+.side { display: flex; flex-direction: column; border-right: 1px solid var(--border); min-height: 0; }
+.side-head { display: flex; align-items: center; gap: 10px; padding: 14px 14px 10px; }
+.side-head .av { width: 40px; height: 40px; font-size: 17px; }
+.me-t { flex: 1; min-width: 0; line-height: 1.3; }
+.me-t b { display: block; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.me-t small { color: var(--sub); font-size: 12px; }
+.me-t small.on::before { content: "● "; color: var(--green); }
+.me-t small.off::before { content: "● "; color: #c7c7c7; }
+.side-head .btn-outline { padding: 6px 12px; font-size: 12.5px; }
+.online { padding: 2px 0 8px; border-bottom: 1px solid var(--border-soft); }
+.online-h { font-size: 12.5px; font-weight: 700; color: var(--sub); padding: 0 14px 6px; }
+.ostories { display: flex; gap: 10px; overflow-x: auto; padding: 2px 14px 4px; scrollbar-width: none; min-height: 84px; }
+.ostories::-webkit-scrollbar { display: none; }
+.ost { flex: none; width: 62px; display: flex; flex-direction: column; align-items: center; gap: 4px; border: 0; background: none; padding: 0; cursor: pointer; font-size: 11.5px; color: var(--text); }
+.ost .ring { width: 56px; height: 56px; border-radius: 50%; padding: 2.5px; background: var(--grad); }
+.ost .ring .av { width: 100%; height: 100%; border: 2.5px solid #fff; font-size: 19px; }
+.ost span.n { max-width: 62px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ost-empty { color: var(--sub); font-size: 12.5px; padding: 18px 0; }
+.convs { flex: 1; overflow-y: auto; padding: 6px 0 10px; }
+.convs-h { font-size: 12.5px; font-weight: 700; color: var(--sub); padding: 12px 14px 4px; }
+.conv { display: flex; align-items: center; gap: 12px; width: 100%; border: 0; background: none; text-align: left; padding: 9px 14px; cursor: pointer; color: var(--text); text-decoration: none; }
+.conv:hover { background: #fafafa; }
+.conv.active { background: #efefef; }
+.conv .av { width: 48px; height: 48px; font-size: 19px; }
+.conv .bigic { width: 48px; height: 48px; flex: none; border-radius: 50%; display: grid; place-items: center; font-size: 22px; background: var(--grad-btn); }
+.conv .bigic.game { background: #e7f7ee; }
+.conv .ct { flex: 1; min-width: 0; line-height: 1.35; }
+.conv .ct b { display: block; font-size: 14.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.conv .ct small { display: block; color: var(--sub); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.conv.unread .ct b, .conv.unread .ct small { font-weight: 700; color: var(--text); }
+.conv .dot { width: 9px; height: 9px; flex: none; border-radius: 50%; background: var(--blue); }
+.conv:not(.unread) .dot { display: none; }
+.conv .blk { font-size: 11px; color: var(--red); font-weight: 700; }
+.dm-empty { color: var(--sub); font-size: 13px; padding: 4px 14px 8px; }
+.pane { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+.pane-head { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+.pane-head .av, .pane-head .bigic { width: 40px; height: 40px; flex: none; font-size: 17px; }
+.pane-head .bigic { border-radius: 50%; display: grid; place-items: center; background: var(--grad-btn); font-size: 19px; }
+.pane-head .pt { flex: 1; min-width: 0; line-height: 1.3; }
+.pane-head .pt b { display: block; font-size: 15.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pane-head .pt small { color: var(--sub); font-size: 12.5px; }
+.pane-head .back { display: none; border: 0; background: none; font-size: 30px; line-height: 1; padding: 0 6px 4px 0; cursor: pointer; color: var(--text); }
+.pane-head .btn-outline { padding: 6px 12px; font-size: 12.5px; }
+.pin { margin: 10px 14px 0; background: #fafafa; border: 1px solid var(--border-soft); border-radius: 14px; padding: 8px 12px; font-size: 12.5px; color: var(--sub); }
+.pin b { color: var(--text); }
+.pane .cmsgs { flex: 1; min-height: 0; }
+.blocked-note { text-align: center; color: var(--sub); font-size: 13px; margin: 8px 12px 14px; }
+.profile-dlg .dlg-body { text-align: center; padding-top: 26px; }
+.profile-dlg .ring { width: 92px; height: 92px; margin: 0 auto 10px; border-radius: 50%; padding: 3px; background: var(--grad); }
+.profile-dlg .ring .av { width: 100%; height: 100%; border: 3px solid #fff; font-size: 34px; }
+.profile-dlg h3 { margin: 0; font-size: 19px; }
+.profile-dlg .pid { color: var(--sub); font-size: 13px; margin: 2px 0 8px; }
+.profile-dlg .dlg-btns { flex-direction: column; align-items: stretch; padding: 4px 22px 22px; }
+.profile-dlg .dlg-btns button { padding: 11px 16px; }
+.profile-dlg .dlg-btns button.danger { color: var(--red); background: #fff1f2; }
+@media (max-width: 760px) {
+  main { padding: 0 0 20px; }
+  .app { grid-template-columns: 1fr; border-radius: 0; border-left: 0; border-right: 0; height: calc(100vh - 106px); height: calc(100dvh - 106px); max-height: none; min-height: 420px; box-shadow: none; }
+  .side { border-right: 0; }
+  .app.open .side { display: none; }
+  .app:not(.open) .pane { display: none; }
+  .pane-head .back { display: block; }
+  details.help, details.about, .small { margin-left: 12px; margin-right: 12px; }
+}
+</style>
+<script src="../config.js"></script>
+<script>
+// =====================================================================
+//  ゲスト（名前#1234）… みんなのチャット・DM・サイトで近接VC で使う
+//   - 最初に名前を入れる画面を出して、サイトからゲストの ID とトークンをもらう
+//   - トークンはこのブラウザ（localStorage の "mayo-guest"）にだけ保存する
+//  制作: MaYo (mayo01297)  二次配布禁止
+// =====================================================================
+(function () {
+  "use strict";
+  const KEY = "mayo-guest";
+  const CFG = window.SITE_CONFIG || {};
+  const cfgBot = String(CFG.botUrl || "").trim().replace(/\/+$/, "");
+  const API = cfgBot && !/ここに|xxxx/i.test(cfgBot) ? cfgBot : (/^https?:$/.test(location.protocol) ? location.origin : "");
+  const load = () => {
+    try { const g = JSON.parse(localStorage.getItem(KEY) || "null"); return g && g.id && g.token ? g : null; } catch (e) { return null; }
+  };
+  const save = g => { try { localStorage.setItem(KEY, JSON.stringify(g)); } catch (e) { /* 使えないブラウザ */ } };
+  let cur = load();
+  let checked = false;
+  const COLORS = ["#f56040", "#e1306c", "#c13584", "#833ab4", "#5851db", "#405de6", "#0095f6", "#1f9d55", "#e67e22", "#d6249f"];
+
+  function color(seed) {
+    let h = 0;
+    for (const c of String(seed || "")) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+    return COLORS[h % COLORS.length];
+  }
+  function initial(name) { return ([...String(name || "?").trim()][0] || "?").toUpperCase(); }
+  /** まるいアイコン（名前の 1 文字目） */
+  function avatar(user, cls) {
+    const d = document.createElement("span");
+    d.className = "av" + (cls ? " " + cls : "");
+    d.style.setProperty("--c", color(user && (user.id || user.name)));
+    d.textContent = initial(user && user.name);
+    d.setAttribute("aria-hidden", "true");
+    return d;
+  }
+  const label = u => (u ? (u.tag ? `${u.name}#${u.tag}` : String(u.name || "")) : "");
+
+  /** 名前を入れる画面。opts: { title, text, value, button, cancel, banned } → 名前（やめたら null） */
+  function ask(opts = {}) {
+    return new Promise(resolve => {
+      const wrap = document.createElement("div");
+      wrap.className = "gmodal";
+      wrap.setAttribute("role", "dialog");
+      wrap.setAttribute("aria-modal", "true");
+      wrap.innerHTML =
+        '<form class="gbox" novalidate>' +
+        '<div class="ring"><div>👋</div></div>' +
+        '<h2></h2><p class="gtext"></p>' +
+        '<input type="text" maxlength="16" autocomplete="nickname" spellcheck="false" aria-label="名前">' +
+        '<button class="btn btn-green" type="submit">はじめる</button>' +
+        '<button class="link gcancel" type="button" hidden>やめる</button>' +
+        '<p class="gerr" aria-live="polite"></p>' +
+        '<p class="gnote">名前は、ほかの人に見えます。本名・学校・住所などは入れないでください。<br>登録やパスワードはいりません（このブラウザに保存されます）。</p>' +
+        "</form>";
+      const form = wrap.querySelector("form"), input = wrap.querySelector("input"), err = wrap.querySelector(".gerr");
+      wrap.querySelector("h2").textContent = opts.title || "ようこそ！";
+      wrap.querySelector(".gtext").textContent = opts.text || "チャットや近接VCで使う名前を決めてください（ゲストとして参加します）。";
+      wrap.querySelector("button[type=submit]").textContent = opts.button || "はじめる";
+      input.placeholder = "名前（16 文字まで）";
+      input.value = opts.value || "";
+      if (opts.banned) {
+        wrap.querySelector(".ring > div").textContent = "⛔";
+        input.hidden = true;
+        wrap.querySelector("button[type=submit]").hidden = true;
+        wrap.querySelector(".gnote").hidden = true;
+      }
+      const cancel = wrap.querySelector(".gcancel");
+      cancel.hidden = !opts.cancel;
+      const close = v => { wrap.remove(); document.removeEventListener("keydown", onKey); resolve(v); };
+      const onKey = e => { if (e.key === "Escape" && opts.cancel) close(null); };
+      document.addEventListener("keydown", onKey);
+      cancel.addEventListener("click", () => close(null));
+      form.addEventListener("submit", async e => {
+        e.preventDefault();
+        const name = input.value.replace(/\s+/g, " ").trim();
+        if (!name) { err.textContent = "名前を入れてください。"; input.focus(); return; }
+        if ([...name].length > 16) { err.textContent = "16 文字までです。"; return; }
+        if (!opts.submit) return close(name);
+        const btn = wrap.querySelector("button[type=submit]");
+        btn.disabled = true; err.textContent = "";
+        try {
+          const r = await opts.submit(name);
+          if (r && r.error) { err.textContent = r.error; btn.disabled = false; return; }
+          close(name);
+        } catch (e2) {
+          err.textContent = "サイトにつながりませんでした。もう一度押してください。";
+          btn.disabled = false;
+        }
+      });
+      document.body.appendChild(wrap);
+      setTimeout(() => input.focus(), 30);
+    });
+  }
+
+  async function create(name) {
+    const r = await fetch(`${API}/api/guest`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name }) });
+    let j = null;
+    try { j = await r.json(); } catch (e) { j = null; }
+    if (!j || !j.ok) return { error: (j && j.error) || "名前を作れませんでした。少し待ってから、もう一度押してください。" };
+    cur = { id: j.id, name: j.name, tag: j.tag, token: j.token };
+    save(cur);
+    checked = true;
+    return { ok: true };
+  }
+
+  /** サイトにたずねて、保存しているゲストがまだ使えるか確かめる。"ok" | "gone" | "banned" | "offline" */
+  async function check() {
+    if (!cur) return "gone";
+    try {
+      const r = await fetch(`${API}/api/guest/me?token=${encodeURIComponent(cur.token)}`, { cache: "no-store" });
+      if (r.status === 401) { cur = null; try { localStorage.removeItem(KEY); } catch (e) { /* 無視 */ } return "gone"; }
+      if (r.status === 403) return "banned";
+      const j = await r.json();
+      if (j && j.ok) { cur = { ...cur, name: j.name, tag: j.tag }; save(cur); }
+      return "ok";
+    } catch (e) {
+      return "offline";
+    }
+  }
+
+  /** ゲストを用意する（まだなら名前を入れる画面を出す）。BAN されているときは画面を出したまま止まる */
+  async function ensure() {
+    if (!API) throw new Error("no api");
+    if (cur && !checked) {
+      const st = await check();
+      checked = st !== "offline";
+      if (st === "banned") {
+        await ask({ title: "いまは使えません", text: "このゲストは、サイトの管理者によって止められています。しばらくしてから、もう一度ためしてください。", banned: true });
+        return new Promise(() => {});
+      }
+    }
+    if (cur) return cur;
+    await ask({ submit: create });
+    return cur;
+  }
+
+  // -------------------------------------------------------------------
+  //  チャットの表示（吹き出し）と、書く欄。みんなのチャット・DM・ゲーム中チャットで使う
+  //   メッセージ: { id, key（送った人ごとに同じ）, user:{ id, name, tag }, text, at, mine, badge: "v"|"game"|"guest"|"" }
+  // -------------------------------------------------------------------
+  const BADGES = { v: ["v", "✓ 本人確認"], p: ["p", "プレイヤー"], s: ["s", "👻 観戦者"], game: ["game", "🎮 マイクラ"], guest: ["guest", "ゲスト"] };
+  const pad = n => String(n).padStart(2, "0");
+  function when(at) {
+    const d = new Date(at), now = new Date();
+    const hm = `${d.getHours()}:${pad(d.getMinutes())}`;
+    if (d.toDateString() === now.toDateString()) return "今日 " + hm;
+    const y = new Date(now); y.setDate(now.getDate() - 1);
+    if (d.toDateString() === y.toDateString()) return "きのう " + hm;
+    return `${d.getMonth() + 1}/${d.getDate()} ${hm}`;
+  }
+  function list(el, opts = {}) {
+    let last = null;          // 最後に出したメッセージ
+    const ids = new Set();
+    const nearBottom = () => el.scrollHeight - el.scrollTop - el.clientHeight < 90;
+    function row(m) {
+      if (!m || (m.id && ids.has(m.id))) return null;
+      if (m.id) ids.add(m.id);
+      const frag = document.createDocumentFragment();
+      if (!last || m.at - last.at > 10 * 60000) {
+        const t = document.createElement("div"); t.className = "cday"; t.textContent = when(m.at);
+        frag.appendChild(t);
+      }
+      const cont = last && last.key === m.key && m.at - last.at < 5 * 60000 && !frag.childNodes.length;
+      const div = document.createElement("div");
+      div.className = "cm" + (m.mine ? " mine" : "") + (cont ? " cont" : " first");
+      if (m.id) div.dataset.id = m.id;
+      if (!m.mine) {
+        const av = avatar(m.user);
+        if (opts.onUser && m.user && m.user.id) { av.classList.add("click"); av.addEventListener("click", () => opts.onUser(m.user)); }
+        div.appendChild(av);
+      }
+      const body = document.createElement("div"); body.className = "cbody";
+      if (!m.mine && opts.names !== false && !cont) {
+        const who = document.createElement("div"); who.className = "who";
+        const b = document.createElement("b"); b.textContent = m.user ? m.user.name : "?";
+        if (opts.onUser && m.user && m.user.id) { b.classList.add("click"); b.addEventListener("click", () => opts.onUser(m.user)); }
+        who.appendChild(b);
+        if (m.user && m.user.tag) { const t = document.createElement("span"); t.textContent = "#" + m.user.tag; who.appendChild(t); }
+        if (m.badge && BADGES[m.badge]) { const t = document.createElement("i"); t.className = "tagb " + BADGES[m.badge][0]; t.textContent = BADGES[m.badge][1]; who.appendChild(t); }
+        body.appendChild(who);
+      }
+      const bub = document.createElement("div");
+      bub.className = "bub" + (m.badge === "game" ? " game" : "");
+      bub.textContent = m.text;
+      bub.title = when(m.at);
+      body.appendChild(bub);
+      div.appendChild(body);
+      frag.appendChild(div);
+      last = m;
+      return frag;
+    }
+    return {
+      set(msgs) {
+        el.textContent = ""; last = null; ids.clear();
+        const frag = document.createDocumentFragment();
+        for (const m of msgs || []) { const r = row(m); if (r) frag.appendChild(r); }
+        if (!frag.childNodes.length && opts.empty) { const p = document.createElement("p"); p.className = "cempty"; p.textContent = opts.empty; frag.appendChild(p); }
+        el.appendChild(frag);
+        el.scrollTop = el.scrollHeight;
+      },
+      add(m) {
+        const stick = nearBottom() || m.mine;
+        const emp = el.querySelector(".cempty"); if (emp) emp.remove();
+        const r = row(m);
+        if (!r) return;
+        el.appendChild(r);
+        if (stick) el.scrollTop = el.scrollHeight;
+      },
+      remove(idList) {
+        for (const id of idList || []) { const d = el.querySelector(`.cm[data-id="${CSS.escape(String(id))}"]`); if (d) d.remove(); }
+      },
+      bottom() { el.scrollTop = el.scrollHeight; },
+    };
+  }
+  /** 書く欄（form > textarea + .cnt + .send）。Enter で送る・Shift+Enter で改行・文字数・連投で待つ */
+  function composer(form, opts) {
+    const ta = form.querySelector("textarea"), cnt = form.querySelector(".cnt"), btn = form.querySelector(".send");
+    let lockUntil = 0, timer = null, max = opts.max || 200;
+    function update() {
+      // 見えていないとき（scrollHeight が 0）は高さを決めない（0 になって文字が隠れるので）
+      if (ta.scrollHeight) { ta.style.height = "auto"; ta.style.height = Math.min(120, ta.scrollHeight) + "px"; }
+      const n = [...ta.value].length;
+      const wait = Math.ceil((lockUntil - Date.now()) / 1000);
+      cnt.textContent = wait > 0 ? `あと ${wait} 秒` : (n > max * 0.7 ? `${n}/${max}` : "");
+      cnt.classList.toggle("over", n > max || wait > 0);
+      btn.disabled = !ta.value.trim() || n > max || wait > 0 || (opts.enabled && !opts.enabled());
+    }
+    function send() {
+      update();
+      if (btn.disabled) return;
+      const text = ta.value.trim();
+      if (opts.onSend(text) !== false) { ta.value = ""; update(); }
+    }
+    ta.addEventListener("input", update);
+    ta.addEventListener("keydown", e => {
+      if (e.key === "Enter" && !e.shiftKey && !e.isComposing && e.keyCode !== 229) { e.preventDefault(); send(); }
+    });
+    form.addEventListener("submit", e => { e.preventDefault(); send(); });
+    update();
+    return {
+      update,
+      setMax(n) { max = n; update(); },
+      lock(sec) {
+        if (!sec) return;
+        lockUntil = Date.now() + sec * 1000;
+        clearInterval(timer);
+        timer = setInterval(() => { update(); if (Date.now() >= lockUntil) clearInterval(timer); }, 500);
+        update();
+      },
+      focus() { ta.focus(); },
+    };
+  }
+  let toastEl = null, toastTimer = null;
+  function toast(text) {
+    if (!toastEl) { toastEl = document.createElement("div"); toastEl.className = "toast"; toastEl.setAttribute("role", "status"); document.body.appendChild(toastEl); }
+    toastEl.textContent = text;
+    toastEl.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove("show"), 3500);
+  }
+  window.ChatUI = { list, composer, toast, when };
+
+  window.Guest = {
+    api: API,
+    get: () => cur,
+    ensure,
+    check,
+    ask,
+    avatar,
+    color,
+    label,
+    /** チャットで名前を変えたとき（サイトから届いた新しい名前を保存） */
+    update(u) { if (cur && u && u.id === cur.id) { cur = { ...cur, name: u.name, tag: u.tag }; save(cur); } },
+  };
+})();
+</script>
+</head>
+<body>
+<header>
+  <div class="header-in">
+    <img class="pixel" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAACjUlEQVR42u2bPUwUQRiG3zEYG0KLpbEQOI0o0cRwWBAiojmD+NOoUBgbCgv5CYeJFQUSwMbWigMafhovglhcg8TExAQKEygulppY2liNxd0YdnK7s8Pt3jF379ftfjt7O/s+837f7t0JGOLcxQcSDsfB3qoIyp9AnYfwV/6+rKWJHuytCRIQhoCWGlNej32NBBLwX/n2e7KeJr6/uy5IAADR6rjyOx9HPNudN99YjScBrZcGnCRgZ3M0MN/ZN08CQhHQFjMBk+OPA/PTs0tW5/tsUF6PpIGEuiegASJaACbHnpRFyPTcYsSMSxIQeH8Sl+9GgkDaUnlTvDaQsL0xFpjvujXHKhCOgI7+sghIjw6GOi77PgsASN1J2ZEwnwkm4cO4V/nbs+wEraqAcO2FhRbXNcVt50MCjjpwIuTaLzfU58wYvOCoQQJExJ2gcnvbfOL8hWAvEJIEHCsP8Au/Om/qA/L5H1W5ASQgrrUVeT9AD+AS4A2gB5AAB/qAqOJld1bbjvb8V140kgCnPCAuTyEBrlxo4lF5zwrfl8+wCtAD6AFV9ADb7wP4LFAxD3DsgrffjVgd3/Ws9G+GBAlQHuBIFVDKN994DgBoH1wBAGwN/fQc17twGgCwm3lYHKcy6xoCrAKlPeDs0F8AQH7hVKj9lY5fn94WlS+dV0So43z7AHqA5gFNPb8BACvDXwuZYZ8Rxf2Z5bWqXviX7LfA/LVUh6EVpAd4PSA3VVC++9XVUAOftqWreuFGhU3PAvQAtRKklDbKVyq2+hpjPf/JZI4EqKdBtRzq7cUA/zGivw84ViT0bv6JVflcklXAozqKxeBwNZC1OFfV7wghSICHAJ2Ew7tqaY5KebATLMQ/lnufS6vEI9gAAAAASUVORK5CYII=">
+    <div>
+      <h1>チャット</h1>
+      <p>名前を入れるだけ。みんなのチャットと DM　｜　制作: MaYo（mayo01297）</p>
+    </div>
+    <a class="help-btn" href="#help">？ ルール</a>
+  </div>
+</header>
+<nav class="sitenav" aria-label="サイトのメニュー">
+  <div class="sitenav-in">
+    <a href="../" data-page="home">🏠 ホーム</a>
+    <a href="../corpse/" data-page="corpse">🪦 死体スキン</a>
+    <a href="../vc/" data-page="vc">🎙 近接VC</a>
+    <a href="../chat/" data-page="chat" aria-current="page">💬 チャット</a>
+  </div>
+</nav>
+
+<main>
+  <p class="notice" id="noApi" hidden>⚠ このページは、サイトのサーバー（Cloudflare Workers か VPS）で動かしているときだけ使えます。</p>
+
+  <div class="app" id="app">
+    <aside class="side" aria-label="会話の一覧">
+      <div class="side-head">
+        <span id="meAv" class="av">?</span>
+        <div class="me-t"><b id="meName">…</b><small id="connText" class="off">つないでいます…</small></div>
+        <button class="btn-outline" id="renameBtn" type="button">名前を変える</button>
+      </div>
+      <div class="online">
+        <div class="online-h">いまいる人 <span id="onlineCount">0</span> 人</div>
+        <div class="ostories" id="onlineList"><span class="ost-empty">…</span></div>
+      </div>
+      <div class="convs">
+        <button class="conv" type="button" id="lobbyConv">
+          <span class="bigic" aria-hidden="true">🌏</span>
+          <span class="ct"><b>みんなのチャット</b><small id="lobbyPrev">サイトに来ている人みんなで話せます</small></span>
+          <span class="dot"></span>
+        </button>
+        <a class="conv" href="../talk/">
+          <span class="bigic game" aria-hidden="true">🎮</span>
+          <span class="ct"><b>ゲーム中チャット</b><small>サイト版の近接VC の部屋の中にあります</small></span>
+        </a>
+        <div class="convs-h">メッセージ（DM）</div>
+        <div id="dmList"></div>
+      </div>
+    </aside>
+
+    <section class="pane" aria-label="会話">
+      <div class="pane-head">
+        <button class="back" id="backBtn" type="button" aria-label="一覧にもどる">‹</button>
+        <span id="paneIcon" class="bigic" aria-hidden="true">🌏</span>
+        <div class="pt"><b id="paneTitle">みんなのチャット</b><small id="paneSub">サイトに来ている人みんなで話せます</small></div>
+        <button class="btn-outline" id="paneUser" type="button" hidden>プロフィール</button>
+      </div>
+      <p class="pin" id="pin"></p>
+      <div class="cmsgs" id="msgs" aria-live="polite"></div>
+      <p class="blocked-note" id="blockedNote" hidden>この人をブロックしています。プロフィールから解除すると、メッセージを送れます。</p>
+      <form class="composer" id="form">
+        <textarea rows="1" maxlength="1000" placeholder="メッセージを入力…" aria-label="メッセージ"></textarea>
+        <span class="cnt"></span>
+        <button class="send" type="submit">送信</button>
+      </form>
+    </section>
+  </div>
+
+  <details class="help" id="help">
+    <summary>？ ルール・上限・ブロック</summary>
+    <div class="help-body">
+      <h4>■ ルール</h4>
+      <ul>
+        <li>悪口・いやがらせ・こわがらせることは書かない</li>
+        <li>個人情報（本名・住所・学校・電話番号・SNS のアカウントなど）は、自分のものも人のものも書かない</li>
+        <li>宣伝・同じ文のくり返し・意味のない連投はしない</li>
+        <li>守らない人は、サイトの管理者が止める（しばらく使えなくする）ことがあります</li>
+      </ul>
+      <h4>■ 上限（スパム対策）</h4>
+      <ul>
+        <li>みんなのチャット: <b>200 文字</b>まで・<b>10 秒に 3 回</b>・<b>1 分に 15 回</b>まで。名前を決めてから 10 秒は書けません</li>
+        <li>DM: <b>500 文字</b>まで・10 秒に 6 回・1 分に 30 回まで。<b>新しい相手</b>に送れるのは 1 日 20 人まで</li>
+        <li>同じメッセージは続けて送れません。人が多いときは「ゆっくりモード」（10 秒に 1 回）になります</li>
+        <li>名前を変えられるのは 1 時間に 3 回まで</li>
+        <li>画像やファイルは送れません（文字だけ）</li>
+      </ul>
+      <h4>■ ブロック</h4>
+      <p>名前やアイコンを押して「ブロックする」と、その人のメッセージがこの端末に出なくなります（相手には伝わりません）。</p>
+      <h4>■ データについて</h4>
+      <ul>
+        <li>ゲストの名前とトークン（合言葉）は、このブラウザに保存されます。ブラウザのデータを消すと、新しいゲストになります（前の DM は見られなくなります）</li>
+        <li>みんなのチャットは最新 100 件、DM は会話ごとに最新 60 件を、サイトのサーバーに 7 日まで（みんなのチャットは件数まで）保存します</li>
+        <li>DM は相手とあなたにだけ表示されますが、暗号化はしていません。サーバーの管理者は技術的に見られるので、ひみつの話は書かないでください</li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- 制作者について（全ページ共通: partials/about.html） -->
+  <details class="card about" id="about">
+    <summary>
+      <span class="num"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4.2"/><path d="M3.5 21c.8-4.6 4.2-7 8.5-7s7.7 2.4 8.5 7z"/></svg></span>
+      <span class="sum-t"><span class="ttl">制作者について</span><span class="sub"><span>MaYo（mayo01297）</span><span>・二次配布禁止</span></span></span>
+      <span class="sum-hint"><span class="h-open">ひらく</span><span class="h-close">とじる</span></span>
+      <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+    </summary>
+    <div class="about-body">
+    <div class="about-grid indent">
+      <div class="about-box">
+        <h3>自己紹介</h3>
+        <div class="profile">
+          <img class="avatar" src="data:image/png;base64,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" alt="MaYo のアイコン" width="72" height="72">
+          <div>
+            <div class="pname">MaYo</div>
+            <div class="psub">高校1年生</div>
+          </div>
+        </div>
+        <p>普段は、マインクラフトの PvP クライアントを作ったり、Roblox でゲームを作ったり、アドオンを作ったり、マインクラフトのマップを作ったりしています。</p>
+        <p class="label">好きなゲーム</p>
+        <div class="chips">
+          <span>マインクラフト</span><span>第五人格</span><span>崩壊：スターレイル</span><span>Roblox</span><span>Dead by Daylight</span><span class="more">など</span>
+        </div>
+      </div>
+      <div class="about-box">
+        <h3>関連リンク</h3>
+        <ul class="links">
+          <li>
+            <span class="ic" style="background:#24292f"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M13.5 4.5l-3 15"/></svg></span>
+            <span class="lt"><small>GitHub</small><b>Dev-MaY0</b></span>
+            <a class="go" href="https://github.com/Dev-MaY0" target="_blank" rel="noopener noreferrer">ひらく</a>
+          </li>
+          <li>
+            <span class="ic" style="background:#5865f2"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-9l-5 4v-4H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><circle cx="8.5" cy="11" r="1.5" fill="#5865f2"/><circle cx="15.5" cy="11" r="1.5" fill="#5865f2"/></svg></span>
+            <span class="lt"><small>Discord</small><b>mayokun_k</b></span>
+            <button type="button" data-copy="mayokun_k">コピー</button>
+          </li>
+          <li>
+            <span class="ic" style="background:#3c8527"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 2.5l8.5 4.5v10L12 21.5 3.5 17V7z"/><path d="M3.5 7L12 11.5 20.5 7M12 11.5v10"/></svg></span>
+            <span class="lt"><small>Minecraft</small><b>mayo01297</b></span>
+            <button type="button" data-copy="mayo01297">コピー</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="license">
+      <b>クレジット・二次配布について</b><br>
+      このスキン登録ページと「プレイヤーの死体アドオン」は、<b>MaYo（mayo01297）</b>が制作しました。<br>
+      <b class="ng">二次配布は禁止です。</b>次のことはしないでください。
+      <ul>
+        <li>このページのファイルやアドオンを、ほかのサイト・SNS・Discord サーバーなどにアップロードして配ること</li>
+        <li>改変して配ること</li>
+        <li>自分が作ったと言うこと（自作発言）</li>
+      </ul>
+      紹介するときは、このページのURLを共有してください。
+    </div>
+    </div>
+  </details>
+<script>
+// ---- 制作者について（名前のコピー・リンクで開く） 制作: MaYo (mayo01297) ----
+(function () {
+  var about = document.getElementById("about");
+  function copyText(text, btn) {
+    function done(ok) {
+      if (typeof window.setStatus === "function")
+        window.setStatus(ok ? "ok" : "warn", ok ? "「" + text + "」をコピーしました。" : "コピーできませんでした。「" + text + "」を手で入力してください。");
+      if (btn) {
+        btn.textContent = ok ? "コピー済み" : "失敗";
+        clearTimeout(btn._t);
+        btn._t = setTimeout(function () { btn.textContent = "コピー"; }, 1600);
+      }
+    }
+    function fallback() {
+      var t = document.createElement("textarea");
+      t.value = text; t.setAttribute("readonly", ""); t.style.position = "fixed"; t.style.opacity = "0";
+      document.body.appendChild(t); t.select();
+      var ok = false;
+      try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+      t.remove();
+      done(ok);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(function () { done(true); }, fallback);
+    else fallback();
+  }
+  Array.prototype.forEach.call(document.querySelectorAll("#about [data-copy]"), function (b) {
+    b.addEventListener("click", function () { copyText(b.getAttribute("data-copy"), b); });
+  });
+  // ページのどこにある「制作者について」リンクでも開く（あとから読み込まれるフッターも）
+  document.addEventListener("click", function (ev) {
+    var a = ev.target && ev.target.closest ? ev.target.closest('a[href="#about"]') : null;
+    if (a) about.open = true;
+  });
+  window.addEventListener("hashchange", function () { if (location.hash === "#about") about.open = true; });
+  if (location.hash === "#about") about.open = true;
+})();
+</script>
+
+  <p class="small">チャット<br>© 2026 MaYo（mayo01297）　・　二次配布禁止　・　<a href="#about">制作者について</a>　・　<a href="../setup/">管理者用の設定</a></p>
+</main>
+
+<dialog class="profile-dlg" id="userDlg">
+  <div class="dlg-body">
+    <div class="ring" id="udAv"></div>
+    <h3 id="udName"></h3>
+    <p class="pid" id="udSub"></p>
+  </div>
+  <div class="dlg-btns">
+    <button type="button" class="primary" id="udDm">メッセージを送る</button>
+    <button type="button" class="danger" id="udBlock">ブロックする</button>
+    <button type="button" id="udClose">閉じる</button>
+  </div>
+</dialog>
+
+<script>
+"use strict";
+// =====================================================================
+//  チャット（ブラウザ側）  制作: MaYo (mayo01297)  二次配布禁止
+//   - "__chat__" の部屋と WebSocket でつながる（/api/chat/socket）
+//   - みんなのチャット（lobby）と DM。上限はサイト側で見張る（ここでも先に止める）
+// =====================================================================
+const $ = id => document.getElementById(id);
+const API = Guest.api;
+const WS_BASE = API.replace(/^http/, "ws");
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 使えないブラウザ */ } },
+};
+const C = {
+  me: null, ws: null, retry: 0, limits: { lobbyMax: 200, dmMax: 500 },
+  lobby: [], convs: new Map(), online: [], view: "lobby",
+  block: store.get("mayo-chat-block", {}), read: store.get("mayo-chat-read", {}), lobbyRead: store.get("mayo-chat-lobby-read", 0),
+};
+let GUEST = null;
+const view = ChatUI.list($("msgs"), { onUser: u => openUser(u), empty: "まだメッセージはありません。最初のひとことをどうぞ！" });
+const composer = ChatUI.composer($("form"), {
+  max: 200,
+  enabled: () => !!(C.ws && C.ws.readyState === 1) && !(C.view !== "lobby" && C.block[C.view]),
+  onSend: text => {
+    if (!C.ws || C.ws.readyState !== 1) return false;
+    if (C.view === "lobby") send({ t: "say", text });
+    else send({ t: "dm", to: C.view, text });
+  },
+});
+const isMobile = () => matchMedia("(max-width: 760px)").matches;
+function send(o) { if (C.ws && C.ws.readyState === 1) C.ws.send(JSON.stringify(o)); }
+const short = (s, n = 40) => { const a = [...String(s || "").replace(/\s+/g, " ")]; return a.length > n ? a.slice(0, n).join("") + "…" : a.join(""); };
+function hm(at) {
+  const d = new Date(at), now = new Date();
+  if (d.toDateString() === now.toDateString()) return `${d.getHours()}:${String(d.getMinutes()).padStart(2, "0")}`;
+  return `${d.getMonth() + 1}/${d.getDate()}`;
+}
+function norm(m) {
+  return { id: m.id, key: m.f.id, user: m.f, text: m.x, at: m.at, mine: !!(C.me && m.f.id === C.me.id), badge: "" };
+}
+
+// ---------------------------------------------------------------------
+//  つなぐ
+// ---------------------------------------------------------------------
+function setConn(on, text) { $("connText").textContent = text; $("connText").className = on ? "on" : "off"; composer.update(); }
+function connect() {
+  setConn(false, "つないでいます…");
+  const ws = new WebSocket(`${WS_BASE}/api/chat/socket?token=${encodeURIComponent(GUEST.token)}`);
+  C.ws = ws;
+  let opened = false;
+  ws.onopen = () => { opened = true; C.retry = 0; ws.send(JSON.stringify({ t: "hello" })); setConn(true, "オンライン"); };
+  ws.onmessage = e => {
+    if (e.data === "pong") return;
+    let m; try { m = JSON.parse(e.data); } catch (err) { return; }
+    onMsg(m);
+  };
+  ws.onclose = async ev => {
+    if (C.ws !== ws) return;
+    C.ws = null;
+    setConn(false, "つなぎ直しています…");
+    if (ev.code === 4004) return banned();
+    if (!opened) {
+      const st = await Guest.check();
+      if (st === "banned") return banned();
+      if (st === "gone") { GUEST = await Guest.ensure(); }
+    }
+    setTimeout(connect, Math.min(15000, 1000 * 2 ** C.retry++));
+  };
+}
+setInterval(() => { if (C.ws && C.ws.readyState === 1) C.ws.send("ping"); }, 30000);
+async function banned() {
+  setConn(false, "使えません");
+  await Guest.ask({ title: "いまは使えません", text: "このゲストは、サイトの管理者によって止められています。しばらくしてから、もう一度ためしてください。", banned: true });
+}
+
+function onMsg(m) {
+  switch (m.t) {
+    case "welcome":
+      C.me = m.me; Guest.update(m.me);
+      C.limits = m.limits || C.limits;
+      C.lobby = m.lobby || [];
+      for (const c of m.convs || []) {
+        const old = C.convs.get(c.peer.id);
+        C.convs.set(c.peer.id, { peer: c.peer, last: c.last, msgs: old ? old.msgs : null });
+      }
+      C.online = m.online || [];
+      renderMe(); renderOnline(m.onlineCount); renderConvs(); show(C.view, true);
+      break;
+    case "me": C.me = m.me; Guest.update(m.me); GUEST = Guest.get(); renderMe(); ChatUI.toast("名前を変えました"); break;
+    case "online": C.online = m.list || []; renderOnline(m.count); break;
+    case "lobby":
+      C.lobby.push(m.m); if (C.lobby.length > 150) C.lobby.splice(0, C.lobby.length - 100);
+      if (C.block[m.m.f.id]) break;
+      if (C.view === "lobby") { view.add(norm(m.m)); markRead(); }
+      renderConvs();
+      break;
+    case "dm": {
+      const peer = m.peer;
+      let c = C.convs.get(peer.id);
+      if (!c) { c = { peer, last: null, msgs: null }; C.convs.set(peer.id, c); }
+      c.peer = peer; c.last = m.m;
+      if (c.msgs) c.msgs.push(m.m);
+      if (C.view === peer.id && !C.block[peer.id]) { view.add(norm(m.m)); markRead(); }
+      renderConvs();
+      break;
+    }
+    case "history": {
+      const c = C.convs.get(m.peer.id) || { peer: m.peer, last: null, msgs: null };
+      c.peer = m.peer; c.msgs = m.msgs || [];
+      if (c.msgs.length) c.last = c.msgs[c.msgs.length - 1];
+      C.convs.set(m.peer.id, c);
+      if (C.view === m.peer.id) show(m.peer.id, true);
+      renderConvs();
+      break;
+    }
+    case "limit":
+      ChatUI.toast("⚠ " + m.text + (m.wait ? `（あと ${m.wait} 秒）` : ""));
+      if (m.wait) composer.lock(m.wait);
+      break;
+    case "removed": {
+      const ids = new Set(m.ids || []);
+      C.lobby = C.lobby.filter(x => !ids.has(x.id));
+      view.remove(m.ids);
+      renderConvs();
+      break;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------
+//  表示
+// ---------------------------------------------------------------------
+function renderMe() {
+  if (!C.me) return;
+  const av = Guest.avatar(C.me);
+  av.id = "meAv";
+  $("meAv").replaceWith(av);
+  $("meName").textContent = Guest.label(C.me);
+}
+function renderOnline(count) {
+  const box = $("onlineList");
+  box.textContent = "";
+  const others = C.online.filter(u => !C.me || u.id !== C.me.id);
+  $("onlineCount").textContent = String(count ?? C.online.length);
+  if (C.view === "lobby") $("paneSub").textContent = `サイトに来ている人みんなで話せます（いま ${count ?? C.online.length} 人）`;
+  if (!others.length) { const s = document.createElement("span"); s.className = "ost-empty"; s.textContent = "ほかにはまだだれもいません"; box.appendChild(s); return; }
+  for (const u of others.slice(0, 60)) {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "ost"; b.title = Guest.label(u);
+    const r = document.createElement("span"); r.className = "ring"; r.appendChild(Guest.avatar(u));
+    const n = document.createElement("span"); n.className = "n"; n.textContent = u.name;
+    b.append(r, n);
+    b.addEventListener("click", () => openUser(u));
+    box.appendChild(b);
+  }
+}
+function markRead() {
+  if (C.view === "lobby") { const l = C.lobby[C.lobby.length - 1]; C.lobbyRead = l ? l.at : Date.now(); store.set("mayo-chat-lobby-read", C.lobbyRead); }
+  else { C.read[C.view] = Date.now(); store.set("mayo-chat-read", C.read); }
+  renderConvs();
+}
+function renderConvs() {
+  // みんなのチャット
+  const lv = C.lobby.filter(x => !C.block[x.f.id]);
+  const ll = lv[lv.length - 1];
+  $("lobbyPrev").textContent = ll ? `${ll.f.name}: ${short(ll.x)}` : "サイトに来ている人みんなで話せます";
+  $("lobbyConv").classList.toggle("active", C.view === "lobby");
+  $("lobbyConv").classList.toggle("unread", !!(ll && C.me && ll.f.id !== C.me.id && ll.at > C.lobbyRead && C.view !== "lobby"));
+  // DM
+  const box = $("dmList");
+  box.textContent = "";
+  const list = [...C.convs.values()].sort((a, b) => ((b.last && b.last.at) || 0) - ((a.last && a.last.at) || 0));
+  let unread = 0;
+  for (const c of list) {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "conv" + (C.view === c.peer.id ? " active" : "");
+    const isUnread = !C.block[c.peer.id] && c.last && C.me && c.last.f.id !== C.me.id && c.last.at > (C.read[c.peer.id] || 0) && C.view !== c.peer.id;
+    if (isUnread) { b.classList.add("unread"); unread++; }
+    b.appendChild(Guest.avatar(c.peer));
+    const ct = document.createElement("span"); ct.className = "ct";
+    const t = document.createElement("b"); t.textContent = Guest.label(c.peer);
+    const s = document.createElement("small");
+    s.textContent = C.block[c.peer.id] ? "ブロック中" : c.last ? `${c.last.f.id === (C.me && C.me.id) ? "あなた: " : ""}${short(c.last.x, 30)}・${hm(c.last.at)}` : "まだメッセージはありません";
+    ct.append(t, s);
+    const d = document.createElement("span"); d.className = "dot";
+    b.append(ct, d);
+    b.addEventListener("click", () => show(c.peer.id));
+    box.appendChild(b);
+  }
+  if (!list.length) { const p = document.createElement("p"); p.className = "dm-empty"; p.textContent = "「いまいる人」やメッセージの名前を押すと、DM を送れます。"; box.appendChild(p); }
+  document.title = unread ? `(${unread}) チャット` : "チャット";
+}
+/** 会話をひらく（"lobby" か、相手の ID） */
+function show(v, keep) {
+  C.view = v;
+  const dm = v !== "lobby";
+  const c = dm ? C.convs.get(v) : null;
+  const icon = $("paneIcon");
+  if (dm && c) {
+    const av = Guest.avatar(c.peer); av.id = "paneIcon"; icon.replaceWith(av);
+    $("paneTitle").textContent = Guest.label(c.peer);
+    const on = C.online.some(u => u.id === v);
+    $("paneSub").textContent = on ? "🟢 いまサイトにいます" : "オフライン（送ったメッセージは、あとで届きます）";
+    $("pin").innerHTML = "🔒 <b>DM</b> は相手とあなたにだけ表示されます（7 日で消えます）。500 文字まで。";
+  } else {
+    const ic = document.createElement("span"); ic.id = "paneIcon"; ic.className = "bigic"; ic.textContent = "🌏"; icon.replaceWith(ic);
+    $("paneTitle").textContent = "みんなのチャット";
+    $("paneSub").textContent = `サイトに来ている人みんなで話せます（いま ${C.online.length} 人）`;
+    $("pin").innerHTML = "📌 <b>ルール</b>: 悪口・個人情報・宣伝はダメ。200 文字まで・10 秒に 3 回まで。いやな人は名前を押して「ブロック」できます。";
+  }
+  $("paneUser").hidden = !dm;
+  const blocked = dm && !!C.block[v];
+  $("blockedNote").hidden = !blocked;
+  $("form").hidden = blocked;
+  composer.setMax(dm ? C.limits.dmMax : C.limits.lobbyMax);
+  if (dm) {
+    if (!c || !c.msgs) { view.set([]); send({ t: "open", with: v }); }
+    else view.set(blocked ? [] : c.msgs.map(norm));
+  } else {
+    view.set(C.lobby.filter(x => !C.block[x.f.id]).map(norm));
+  }
+  $("app").classList.toggle("open", !keep || $("app").classList.contains("open"));
+  markRead();
+  if (!keep && !isMobile()) composer.focus();
+}
+function startDm(u) {
+  if (!C.convs.has(u.id)) C.convs.set(u.id, { peer: u, last: null, msgs: null });
+  show(u.id);
+}
+
+// ---------------------------------------------------------------------
+//  プロフィール（DM・ブロック）
+// ---------------------------------------------------------------------
+let dlgUser = null;
+function openUser(u) {
+  if (!u || !u.id) return;
+  dlgUser = u;
+  const ring = $("udAv"); ring.textContent = ""; ring.appendChild(Guest.avatar(u));
+  $("udName").textContent = u.name;
+  const isMe = C.me && u.id === C.me.id;
+  $("udSub").textContent = "#" + u.tag + (isMe ? "（あなた）" : C.online.some(x => x.id === u.id) ? "・🟢 いまサイトにいます" : "");
+  $("udDm").hidden = isMe;
+  $("udBlock").hidden = isMe;
+  $("udBlock").textContent = C.block[u.id] ? "ブロックを解除する" : "ブロックする";
+  $("userDlg").showModal();
+}
+$("udClose").addEventListener("click", () => $("userDlg").close());
+$("udDm").addEventListener("click", () => { $("userDlg").close(); startDm(dlgUser); });
+$("udBlock").addEventListener("click", () => {
+  const u = dlgUser;
+  if (C.block[u.id]) delete C.block[u.id];
+  else C.block[u.id] = Guest.label(u);
+  store.set("mayo-chat-block", C.block);
+  $("userDlg").close();
+  ChatUI.toast(C.block[u.id] ? `${Guest.label(u)} をブロックしました` : `${Guest.label(u)} のブロックを解除しました`);
+  show(C.view, true);
+  renderConvs();
+});
+$("paneUser").addEventListener("click", () => { const c = C.convs.get(C.view); if (c) openUser(c.peer); });
+$("lobbyConv").addEventListener("click", () => show("lobby"));
+$("backBtn").addEventListener("click", () => { $("app").classList.remove("open"); renderConvs(); });
+$("renameBtn").addEventListener("click", async () => {
+  const name = await Guest.ask({ title: "名前を変える", text: "新しい名前を入れてください（1 時間に 3 回まで）。#のあとの数字は変わりません。", value: C.me ? C.me.name : "", button: "変える", cancel: true });
+  if (name) send({ t: "rename", name });
+});
+
+// ---------------------------------------------------------------------
+//  はじめ
+// ---------------------------------------------------------------------
+(async function init() {
+  if (!API) { $("noApi").hidden = false; return; }
+  try { GUEST = await Guest.ensure(); } catch (e) { $("noApi").hidden = false; return; }
+  C.me = { id: GUEST.id, name: GUEST.name, tag: GUEST.tag };
+  renderMe();
+  const q = new URLSearchParams(location.hash.slice(1));
+  const dm = q.get("dm");
+  show("lobby", true);
+  if (dm && /^[A-Za-z0-9]{10}$/.test(dm) && dm !== GUEST.id) { C.convs.set(dm, { peer: { id: dm, name: "…", tag: "" }, last: null, msgs: null }); C.view = dm; }
+  connect();
+})();
+</script>
+</body>
+</html>

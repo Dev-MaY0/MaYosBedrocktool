@@ -118,6 +118,10 @@ cat > "$APP/relay.mjs.new" <<'MAYO_RELAY_EOF'
 //    PER_IP_MAX  … 同じ IP からの同時接続の上限（ふつうは 8。0 で無効）
 //    PER_IP_RATE … 同じ IP からの、1 分あたりの新しい接続の上限（ふつうは 30。0 で無効）
 //                  ※ Railway の TCP Proxy の後ろでは、全員が同じ IP に見えるので、自動で無効になる
+//    HTTPS_REDIRECT_HOST … 入れると、ブラウザでひらいたとき（/health 以外）に https://<この名前>/… へ移動させる
+//                  （VPS でサイトも動かすとき。サイトは Caddy が 443 で出す）
+//    TARGET_LABEL … /setup/ の「リレーをためす」に見せる中継先の名前（VPS で、中継先が 127.0.0.1 のとき）
+//    UPSTREAM_NAME … Minecraft に出すエラーの「Bot（…）」の名前（ふつうは Cloudflare）
 //
 //  動いているかの確認: ブラウザで http://<リレーのアドレス>/ をひらくと「MaYoVCRelay … OK」
 //
@@ -127,7 +131,7 @@ import net from "node:net";
 import tls from "node:tls";
 import crypto from "node:crypto";
 
-const VERSION = "1.1.0";
+const VERSION = "1.3.0";
 const env = process.env;
 const PORT = Number(env.RAILWAY_TCP_APPLICATION_PORT) || Number(env.PORT) || 8080;
 // 外から見たアドレス（ログと確認ページに出すだけ）。Railway の TCP Proxy なら Railway が自動で入れる変数から
@@ -158,9 +162,14 @@ if (!m) {
 const WORKER_HOSTNAME = m[1];
 const WORKER_PORT = Number(m[2]) || (USE_TLS ? 443 : 80);
 const WORKER_HOST_HEADER = m[2] ? `${m[1]}:${m[2]}` : m[1];
+const HOST_RE = /^[A-Za-z0-9.-]{1,200}(?::\d{1,5})?$/;
+const REDIRECT_HOST = HOST_RE.test(env.HTTPS_REDIRECT_HOST || "") ? env.HTTPS_REDIRECT_HOST : "";
+const TARGET = HOST_RE.test(env.TARGET_LABEL || "") ? env.TARGET_LABEL : WORKER_HOST_HEADER;
+const UPSTREAM = /^[^\r\n"\\]{1,40}$/.test(env.UPSTREAM_NAME || "") ? env.UPSTREAM_NAME : "Cloudflare";
 
 // 受け付ける URL（/v/<接続コード8文字>、/vc/ /connect/ も同じ。接続キーそのままの /ws/<キー> も）
-const PATH_RE = /^\/(?:(?:v|vc|connect)\/[A-Za-z0-9]{8}|ws\/\d{15,22}\.[A-Za-z0-9]{16,64})\/?$/;
+//  サイトの部屋をマイクラで作る /new（/v/new）も
+const PATH_RE = /^\/(?:(?:v|vc|connect)\/[A-Za-z0-9]{8}|ws\/\d{15,22}\.[A-Za-z0-9]{16,64}|(?:v\/)?new)\/?$/;
 
 let active = 0, total = 0;
 const started = Date.now();
@@ -293,7 +302,7 @@ function rejectInGame(sock, key, text, code = 1008, protocol = "") {
 function plainResponse(sock, status, text) {
   const body = Buffer.from(text + "\n", "utf8");
   const head = [`HTTP/1.1 ${status}`, "Content-Type: text/plain; charset=utf-8", `Content-Length: ${body.length}`,
-    "Cache-Control: no-store", `X-VC-Relay: ${VERSION}`, `X-VC-Relay-Target: ${WORKER_HOST_HEADER}`, "Connection: close"];
+    "Cache-Control: no-store", `X-VC-Relay: ${VERSION}`, `X-VC-Relay-Target: ${TARGET}`, "Connection: close"];
   sock.end(Buffer.concat([Buffer.from(head.join("\r\n") + "\r\n\r\n", "latin1"), body]));
 }
 
@@ -337,8 +346,14 @@ async function onClient(mc) {
 
   // ブラウザなどからの、ふつうの HTTP（動いているかの確認用）
   if (!isWs) {
+    // VPS でサイトも動かしているとき: ブラウザは https のサイトへ（/health は確認用にそのまま）
+    if (REDIRECT_HOST && path !== "/health" && (method === "GET" || method === "HEAD")) {
+      const to = /^\/[\x21-\x7e]{0,1000}$/.test(rawPath) ? rawPath : "/";
+      const head = ["HTTP/1.1 301 Moved Permanently", `Location: https://${REDIRECT_HOST}${to}`, "Content-Length: 0", "Cache-Control: no-store", `X-VC-Relay: ${VERSION}`, "Connection: close"];
+      return mc.end(Buffer.from(head.join("\r\n") + "\r\n\r\n", "latin1"));
+    }
     if (method === "GET" && (path === "/" || path === "/health"))
-      return plainResponse(mc, "200 OK", `MaYoVCRelay ${VERSION} OK（中継先: ${WORKER_HOST_HEADER}・接続中: ${active - 1}・起動から ${Math.round((Date.now() - started) / 60000)} 分）` +
+      return plainResponse(mc, "200 OK", `MaYoVCRelay ${VERSION} OK（中継先: ${TARGET}・接続中: ${active - 1}・起動から ${Math.round((Date.now() - started) / 60000)} 分）` +
         (PUBLIC ? `\nMinecraft で送るコマンド: /wsserver ws://${PUBLIC}/v/<接続コード>（Discord の /vc key で確認）` : ""));
     return plainResponse(mc, "404 Not Found", "Minecraft のチャットで /wsserver ws://<このリレー>/v/<接続コード> を送ってください");
   }
@@ -365,7 +380,7 @@ async function onClient(mc) {
     up.once(USE_TLS ? "secureConnect" : "connect", () => { clearTimeout(t); resolve(true); });
     up.once("error", () => { clearTimeout(t); resolve(false); });
   });
-  if (!ready) return rejectInGame(mc, key, "Bot（Cloudflare）につながりませんでした。少し待ってから、もう一度ためしてください。", 1011, protocol);
+  if (!ready) return rejectInGame(mc, key, `Bot（${UPSTREAM}）につながりませんでした。少し待ってから、もう一度ためしてください。`, 1011, protocol);
 
   // 圧縮（Sec-WebSocket-Extensions）の希望は送らない（そのまま流すので、圧縮しない約束にしておく）
   const lines = [
@@ -378,19 +393,21 @@ async function onClient(mc) {
     ...(protocol ? [`Sec-WebSocket-Protocol: ${protocol}`] : []),
     `User-Agent: MaYoVCRelay/${VERSION}`,
     `X-VC-Relay: ${VERSION}`,
+    // Minecraft の IP（/new で部屋を作りすぎないように数えるだけ。ログには出さない）
+    `X-VC-Client: ${ip.replace(/[^0-9a-fA-F:.]/g, "").slice(0, 45)}`,
   ];
   up.write(lines.join("\r\n") + "\r\n\r\n");
 
   const res = await readHead(up, UPSTREAM_TIMEOUT_MS, 32768);
-  if (!res) { up.destroy(); return rejectInGame(mc, key, "Bot（Cloudflare）から返事がありませんでした。", 1011, protocol); }
+  if (!res) { up.destroy(); return rejectInGame(mc, key, `Bot（${UPSTREAM}）から返事がありませんでした。`, 1011, protocol); }
   const r = parseHead(res.head);
   const status = Number((r.first.split(" ")[1]) || 0);
   if (status !== 101) {
     up.destroy();
     log(`upstream ${status} ${mask(path).slice(0, 40)}`);
-    const why = status === 404 ? "接続コードがちがいます。Discord の /vc key で、新しいコマンドを確認してください。"
+    const why = status === 404 ? "接続コードがちがいます。Discord の /vc key（サイトの部屋なら、部屋の画面）で、新しいコマンドを確認してください。"
       : status === 403 ? "接続キーがちがいます。Discord の /vc key で確認してください。"
-      : `Bot（Cloudflare）でエラーになりました（${status}）。`;
+      : `Bot（${UPSTREAM}）でエラーになりました（${status}）。`;
     return rejectInGame(mc, key, why, 1008, protocol);
   }
   const accept = r.headers["sec-websocket-accept"] || "";
@@ -429,7 +446,7 @@ server.on("error", (e) => {
 });
 const listen = () => server.listen({ port: PORT, host, ipv6Only: false });
 server.once("listening", () => {
-  console.log(`MaYoVCRelay ${VERSION} 起動: ${host === "::" ? "[::]" : host}:${PORT} → ${USE_TLS ? "wss" : "ws"}://${WORKER_HOST_HEADER}`);
+  console.log(`MaYoVCRelay ${VERSION} 起動: ${host === "::" ? "[::]" : host}:${PORT} → ${USE_TLS ? "wss" : "ws"}://${WORKER_HOST_HEADER}${REDIRECT_HOST ? `（ブラウザは https://${REDIRECT_HOST}/ へ）` : ""}`);
   console.log(PUBLIC ? `公開アドレス: ${PUBLIC}（これをサイトの /setup/ の「リレーのアドレス」に入れる）`
     : `公開アドレス: 不明（Google Cloud なら VM の外部 IP、Railway なら TCP Proxy のアドレス。ポート ${PORT} で待っています）`);
   console.log(PER_IP_MAX || PER_IP_RATE ? `同じ IP からの上限: 同時 ${PER_IP_MAX || "なし"}・1分に ${PER_IP_RATE || "なし"} 回` : `同じ IP からの上限: なし（${BEHIND_PROXY ? "手前にプロキシがあるため" : "PER_IP_MAX・PER_IP_RATE が 0"}）`);
