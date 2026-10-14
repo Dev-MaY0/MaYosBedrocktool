@@ -14,6 +14,15 @@
 import { isSet } from "./appconfig.js";
 
 export const SESSION_MS = 12 * 3600 * 1000;
+
+// あらかじめ決めておく /setup/ のパスワード。
+// サーバーにシークレット SETUP_KEY が登録されていないときだけ、これが使われる（登録されていれば、そちらが優先）
+export const PRESET_SETUP_KEY = "Kouchantoridayo119k";
+
+/** SETUP_KEY が未登録なら、あらかじめ決めたパスワードを入れた env を返す（それ以外の設定はそのまま） */
+export function withSetupKey(env) {
+  return isSet(env && env.SETUP_KEY) ? env : { ...env, SETUP_KEY: PRESET_SETUP_KEY };
+}
 const enc = new TextEncoder();
 
 const hex = buf => [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");

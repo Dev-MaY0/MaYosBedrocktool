@@ -19,7 +19,7 @@ import { resolveEnv, runSetup, setupStatus, isSet, loadStored, saveStored, invit
 import { sha256hex } from "./webvc.js";
 import { checkPage, badCodePage } from "./checkpage.js";
 import { testRelay } from "./relaycheck.js";
-import { gatePage, isSetupAuthed, sessionCookie, sameHash } from "./setupgate.js";
+import { gatePage, isSetupAuthed, sessionCookie, sameHash, withSetupKey } from "./setupgate.js";
 
 export { GuildRoom };
 
@@ -150,6 +150,7 @@ async function markTried(env) {
 
 export default {
   async fetch(request, env, ctx) {
+    env = withSetupKey(env);   // SETUP_KEY が未登録なら、あらかじめ決めたパスワードを使う
     const url = new URL(request.url);
     const path = url.pathname.replace(/\/+$/, "") || "/";
 
