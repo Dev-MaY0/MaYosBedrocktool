@@ -39,7 +39,7 @@ DISCORD_API = "https://discord.com/api/v10"
 # リレー（中継サーバー）のアドレス。ふつうはサイトの /setup/ で入れるので、ここは書かなくてOK。
 # ここに書くと /setup/ で保存したものより優先されます
 #   例: "34.82.1.2"（Google Cloud の VM の外部 IP・ポート 80）／ "vc.example.com"（独自ドメイン）／ "shuttle.proxy.rlwy.net:15140"（Railway）
-# RELAY_HOST = ""
+RELAY_HOST = "160.251.200.68"
 
 # 管理者用の設定ページ（/setup/）のパスワードは、ここには書かず「シークレット」で入れます:
 #   npx wrangler secret put SETUP_KEY      （または Cloudflare の「設定」→「変数とシークレット」→ 種類は「シークレット」）
