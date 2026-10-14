@@ -1,5 +1,7 @@
 // =====================================================================
 //  近接VC Bot（入口）… サイト（public/）と同じ Worker で動く
+//  - /setup/       … 設定ページ。パスワード（SETUP_KEY）を入れるまでは、パスワードの窓だけを返す（src/setupgate.js）
+//  - /api/setup/auth … 設定ページのパスワードを確かめて、12 時間の入室の印（Cookie）を渡す
 //  - /api/setup    … 設定ページ（/setup/）から、Bot のトークンを登録する
 //  - /api/setup/relay … 設定ページから、リレー（中継サーバー）のアドレスを保存する・ためす
 //  - /interactions … Discord のスラッシュコマンド
@@ -17,6 +19,7 @@ import { resolveEnv, runSetup, setupStatus, isSet, loadStored, saveStored, invit
 import { sha256hex } from "./webvc.js";
 import { checkPage, badCodePage } from "./checkpage.js";
 import { testRelay } from "./relaycheck.js";
+import { gatePage, isSetupAuthed, sessionCookie, sameHash } from "./setupgate.js";
 
 export { GuildRoom };
 
@@ -56,15 +59,24 @@ function randomText(n, abc) {
 }
 const webRoomId = v => { const r = String(v || "").replace(/[\s-]/g, "").toUpperCase(); return ROOM_RE.test(r) ? r : ""; };
 const HOST_ABC = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
-/** 部屋を作る（番号は 100000〜999999 のどれか。使われていたら作り直す） */
+/**
+ * 部屋を作る。
+ *  ・内部の ID: 32 文字のランダムな文字（UUID）… 世界中で同時に作っても被らない。Durable Object の名前になる
+ *  ・部屋番号: 人が打つ 6 けた（100000〜999999）… 名簿で 1 つの部屋にだけ割り当てる（使われていたら作り直す）
+ */
 async function createWebRoom(env, { name, hostKey, fromGame = false, showKey = "" }) {
-  for (let i = 0; i < 8; i++) {
+  const dir = directory(env);
+  for (let i = 0; i < 12; i++) {
     const roomId = String(100000 + (crypto.getRandomValues(new Uint32Array(1))[0] % 900000));
-    const r = await webRoom(env, roomId).fetch("https://room/web/create", { method: "POST",
-      body: JSON.stringify({ roomId, name, hostKeyHash: await sha256hex(hostKey), fromGame, showKey }) });
-    if (r.status === 409) continue;
-    const j = await r.json();
-    return j.ok ? { roomId, worldCode: j.worldCode } : null;
+    const uid = crypto.randomUUID().replace(/-/g, "");
+    const got = await (await dir.fetch("https://room/dir/room/put", { method: "POST", body: JSON.stringify({ code: roomId, uid }) })).json();
+    if (!got.ok) continue;   // その番号は使われている → 別の番号で
+    const r = await webRoom(env, uid).fetch("https://room/web/create", { method: "POST",
+      body: JSON.stringify({ roomId, uid, name, hostKeyHash: await sha256hex(hostKey), fromGame, showKey }) });
+    const j = r.status === 409 ? { ok: false } : await r.json().catch(() => ({ ok: false }));
+    if (j.ok) return { roomId, uid, worldCode: j.worldCode };
+    await dir.fetch("https://room/dir/room/del", { method: "POST", body: JSON.stringify({ code: roomId, uid }) });   // 作れなかった → 番号を返す
+    if (r.status !== 409) return null;
   }
   return null;
 }
@@ -73,7 +85,14 @@ async function underRate(env, k, max) {
   const r = await directory(env).fetch("https://room/dir/rate", { method: "POST", body: JSON.stringify({ k, max }) });
   return !!(await r.json()).ok;
 }
-const webRoom = (env, id) => room(env, "web:" + id);
+// 部屋（Durable Object）の名前は、内部の長いランダム ID（32 文字）。人が打つ 6 けたの部屋番号は、名簿でこの ID につなぐ
+const webRoom = (env, uid) => room(env, "web:" + uid);
+/** 部屋番号（6 けた）→ 部屋。番号が名簿になければ null（前の版で作った部屋は、番号がそのまま名前なので、そちらも探す） */
+async function webRoomByCode(env, code) {
+  const r = await (await directory(env).fetch("https://room/dir/room/get?code=" + encodeURIComponent(code))).json();
+  if (r.uid) return webRoom(env, r.uid);
+  return webRoom(env, code);
+}
 const chatRoom = env => room(env, "__chat__");
 
 /**
@@ -117,6 +136,9 @@ function sameKey(a, b) {
   return d === 0;
 }
 
+// パスワード（入室の印）が必要な API
+const ADMIN_API = new Set(["/api/setup/status", "/api/setup", "/api/setup/relay", "/api/setup/relay/test", "/api/setup/vps", "/api/admin/chat"]);
+
 // 設定ボタンの連打よけ（3秒）
 async function recentlyTried(env) {
   const s = await loadStored(env);
@@ -137,6 +159,37 @@ export default {
       return new Response("近接VC Bot は動いています（制作: MaYo / mayo01297）", { headers: { "Content-Type": "text/plain; charset=utf-8" } });
     }
 
+    // ---- 管理者用の設定ページ（/setup/）のパスワードロック ----
+    // 設定ページの本体は public/_admin/setup/ にあり、ここを通らないと外からは見られない（パスワードが合った人にだけ返す）
+    if (path === "/_admin" || path.startsWith("/_admin/") || (path.startsWith("/setup/") && path !== "/setup")) {
+      return new Response("Not Found", { status: 404, headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" } });
+    }
+    if (path === "/setup") {
+      if (request.method !== "GET" && request.method !== "HEAD") return new Response("Method Not Allowed", { status: 405, headers: { Allow: "GET, HEAD" } });
+      const pageHeaders = { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store", "X-Robots-Tag": "noindex, nofollow", "X-Frame-Options": "DENY", "Referrer-Policy": "no-referrer" };
+      if (!isSet(env.SETUP_KEY)) return new Response(gatePage({ keyMissing: true }), { status: 200, headers: pageHeaders });
+      if (!(await isSetupAuthed(request, env))) return new Response(gatePage(), { status: 200, headers: pageHeaders });
+      const inner = env.ASSETS ? await env.ASSETS.fetch(new Request(url.origin + "/_admin/setup/", { method: "GET" })) : null;
+      if (!inner || !inner.ok) return new Response("Not Found", { status: 404 });
+      return new Response(request.method === "HEAD" ? null : inner.body, { status: 200, headers: pageHeaders });
+    }
+    // パスワードを確かめる（合えば 12 時間の入室の印を渡す）。総当たりよけ: 同じ IP から 1 時間に 10 回まで
+    if (path === "/api/setup/auth" && request.method === "POST") {
+      const noStore = { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" };
+      if (!isSet(env.SETUP_KEY)) return new Response(JSON.stringify({ ok: false, error: "このサーバーには SETUP_KEY が登録されていません。" }), { status: 503, headers: noStore });
+      if (!await underRate(env, "setupauth" + await ipKeyOf(request), 10))
+        return new Response(JSON.stringify({ ok: false, error: "何回もまちがえました。1 時間ほど待ってから、もう一度入れてください。" }), { status: 429, headers: noStore });
+      let body = {};
+      try { body = await request.json(); } catch (e) { body = {}; }
+      if (!(await sameHash(String(body.key || "").trim(), String(env.SETUP_KEY).trim())))
+        return new Response(JSON.stringify({ ok: false, error: "パスワードがちがいます。" }), { status: 403, headers: noStore });
+      return new Response(JSON.stringify({ ok: true }), { status: 200, headers: { ...noStore, "Set-Cookie": await sessionCookie(request, env) } });
+    }
+    // 設定のための API は、入室の印がないと何も返さない（設定の中身・Bot の様子・トークンの確認など）
+    const adminAuthed = ADMIN_API.has(path) ? await isSetupAuthed(request, env) : false;
+    if (ADMIN_API.has(path) && !adminAuthed)
+      return new Response(JSON.stringify({ ok: false, needAuth: true, error: "ログインが必要です。/setup/ でパスワードを入れてください。" }), { status: 401, headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" } });
+
     // ---- 設定ページ（/setup/）から ----
     if (path === "/api/setup/status") {
       const origin = url.origin;
@@ -147,7 +200,8 @@ export default {
         await runSetup(env, { token: "", origin });
         st = await setupStatus(env, origin);
       }
-      return json(st);
+      // パスワードはもう入れてある（入室の印がある）ので、フォームで「設定用のキー」をもう一度聞かない
+      return json({ ...st, needSetupKey: false });
     }
     if (path === "/api/setup" && request.method === "POST") {
       let body = {};
@@ -155,7 +209,7 @@ export default {
       if (await recentlyTried(env)) return json({ ok: false, error: "少し待ってから、もう一度押してください。" }, 429);
       await markTried(env);
       // VPS で公開しているとき: インストールのときに出た「設定用のキー」がないと設定できない（知らない人に先に設定されないように）
-      if (isSet(env.SETUP_KEY) && !sameKey(String(body.setupKey || "").trim(), env.SETUP_KEY.trim()))
+      if (isSet(env.SETUP_KEY) && !adminAuthed && !sameKey(String(body.setupKey || "").trim(), env.SETUP_KEY.trim()))
         return json({ ok: false, needSetupKey: true, error: "設定用のキーがちがいます（VPS にインストールしたときに表示されたキーを入れてください）。" }, 403);
       const r = await runSetup(env, { token: String(body.token || ""), origin: url.origin });
       return json(r, r.ok ? 200 : 400);
@@ -209,14 +263,18 @@ export default {
       // 番号をかたっぱしからためされないように: 同じ IP から 1 時間に 60 回まで
       if (!await underRate(env, "look" + await ipKeyOf(request), 60))
         return json({ ok: false, error: "部屋番号を何回もためしすぎです。1 時間ほど待ってください。" }, 429);
-      return webRoom(env, id).fetch("https://room/web/info");
+      const stub = await webRoomByCode(env, id);
+      if (!stub) return json({ ok: false, error: "部屋が見つかりません" }, 404);
+      return stub.fetch("https://room/web/info");
     }
     if (path === "/api/web/host" && request.method === "POST") {
       let body = {};
       try { body = await request.json(); } catch (e) { body = {}; }
       const id = webRoomId(body.r);
       if (!id) return json({ ok: false, error: "部屋の番号の形がちがいます" }, 400);
-      const r = await webRoom(env, id).fetch("https://room/web/host", { method: "POST", body: JSON.stringify(body) });
+      const stub = await webRoomByCode(env, id);
+      if (!stub) return json({ ok: false, error: "部屋が見つかりません" }, 404);
+      const r = await stub.fetch("https://room/web/host", { method: "POST", body: JSON.stringify(body) });
       const j = await r.json();
       if (j.ok && j.worldCode) {
         const e = await resolveEnv(env);
@@ -239,7 +297,9 @@ export default {
       const headers = new Headers(inner.headers);
       headers.delete("X-Guest");
       if (guest) headers.set("X-Guest", JSON.stringify(guest));
-      return webRoom(env, id).fetch(new Request(inner, { headers }));
+      const stub = await webRoomByCode(env, id);
+      if (!stub) return new Response("部屋が見つかりません", { status: 404 });
+      return stub.fetch(new Request(inner, { headers }));
     }
 
     // ---- ゲストとチャット ----
@@ -323,7 +383,7 @@ export default {
       const inner = new URL("https://room/ws");
       inner.searchParams.set("code", made.worldCode);
       inner.searchParams.set("scheme", url.protocol.replace(":", ""));
-      return wsToRoom(webRoom(env, made.roomId), request, inner);
+      return wsToRoom(webRoom(env, made.uid), request, inner);
     }
 
     // ---- ワールド用: 短い接続コード（/wsserver ws://…/v/ABCD2345） ----

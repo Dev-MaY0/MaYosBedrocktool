@@ -1,0 +1,803 @@
+<!doctype html>
+<!--
+  近接VC の設定（管理者用）
+  制作: MaYo (mayo01297)  https://github.com/Dev-MaY0
+  このサイトとアドオンの二次配布（再アップロード・改変しての配布・自作発言）は禁止です。
+-->
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="author" content="MaYo (mayo01297)">
+<meta name="copyright" content="© 2026 MaYo (mayo01297) 二次配布禁止">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>近接VC の設定</title>
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAB40lEQVR4nO3dsU3DQBiAUYJo2SJESGnTUNGzAQ0lKzADK7AAc6RKwwBIjAE9bJAUxjrD915rWb7i0y/5fJJX6832+4ys89ELYCwBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIE4AcQKIE0CcAOIuRi+AeV0/Xx29bgLECSBOAHECiBNAnADiBBA3eR9gd3v4jXVkfd09HL3+/vQx6/NNgDgBxAkgTgBxAogTQJwA4pwHGOzUe/6p7/lT9wlMgDgBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIE4AcQKIE0CcAOIWfx7g9eXy6PX7x89F3790JkCcAOIEECeAOAHECSBOAHECiBNAnADiBBAngDgBxAkgTgBxiz8PMPV7++j7l84EiBNAnADiBBAngDgBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIG7x5wH+u7n/B3CKCRAngDgBxAkgTgBxAogTQNzkfYC3/c2k+3e3h6lLOGrq+ma3H/t4EyBOAHECiBNAnADiBBAngLg/fx5g8e/5g506T2ACxAkgTgBxAogTQJwA4gQQt/h9AO/58zIB4gQQJ4A4AcQJIE4AcQKIW6032+/Ri2AcEyBOAHECiBNAnADiBBAngDgBxAkgTgBxAogTQJwA4gQQJ4C4Hz5iK0yQ/79HAAAAAElFTkSuQmCC">
+<style>
+/* =====================================================================
+   共通スタイル（全ページ）  制作: MaYo (mayo01297)  二次配布禁止
+   白ベース・角の丸いカード・グラデーションのアクセント（SNS アプリのような雰囲気）
+   ===================================================================== */
+:root {
+  --back: #fafafa; --panel: #ffffff; --border: #dbdbdb; --border-soft: #efefef; --input: #fafafa;
+  --text: #262626; --sub: #737373; --link: #00376b;
+  --header: #ffffff; --header-sub: #737373;
+  --blue: #0095f6; --blue-hover: #1877f2; --blue-pale: #e8f3ff;
+  --green: #22a55b; --green-hover: #1d9150; --green-down: #17803f; --green-pale: #e7f7ee;
+  --red: #ed4956; --orange: #f39c12; --preview: #f2f2f2;
+  --grad: linear-gradient(45deg, #feda75 0%, #fa7e1e 25%, #d62976 50%, #962fbf 75%, #4f5bd5 100%);
+  --grad-btn: linear-gradient(90deg, #f56040 0%, #e1306c 45%, #833ab4 100%);
+  --radius: 16px;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .04), 0 6px 20px rgba(0, 0, 0, .05);
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic UI", Meiryo, system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--back); color: var(--text); font-family: var(--font); font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+button, input, select, textarea { font: inherit; color: inherit; }
+a { color: var(--link); }
+.pixel { image-rendering: pixelated; image-rendering: crisp-edges; }
+
+/* ---- header ---- */
+header { background: rgba(255, 255, 255, .92); color: var(--text); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 20; -webkit-backdrop-filter: saturate(180%) blur(12px); backdrop-filter: saturate(180%) blur(12px); }
+.header-in { max-width: 920px; margin: 0 auto; padding: 10px 16px; display: flex; align-items: center; gap: 12px; }
+.header-in img { width: 42px; height: 42px; flex: none; border-radius: 12px; padding: 2px; background: var(--grad); }
+.header-in h1 { margin: 0; font-size: 20px; line-height: 1.25; font-weight: 800; letter-spacing: -.01em; background: var(--grad-btn); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.header-in p { margin: 1px 0 0; color: var(--header-sub); font-size: 12.5px; }
+.header-in .help-btn { margin-left: auto; flex: none; color: var(--text); background: #efefef; border: 0; border-radius: 10px; padding: 7px 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none; white-space: nowrap; }
+.header-in .help-btn:hover { background: #e3e3e3; }
+
+main { max-width: 920px; margin: 0 auto; padding: 18px 16px 90px; }
+.card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+.step { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; font-size: 17px; font-weight: 700; }
+.num { width: 30px; height: 30px; flex: none; border-radius: 50%; background: var(--grad); color: #fff; display: grid; place-items: center; font-size: 15px; font-weight: 700; box-shadow: 0 2px 8px rgba(214, 41, 118, .25); }
+.indent { padding-left: 40px; }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 10px; cursor: pointer; color: #fff; font-weight: 600; transition: filter .15s, transform .05s, background .15s; }
+.btn:active { transform: scale(.98); }
+.btn svg { width: 20px; height: 20px; flex: none; }
+.btn:disabled { background: #c7c7c7 !important; cursor: default; filter: none; }
+.btn-blue { background: var(--blue); padding: 10px 18px; font-size: 15.5px; }
+.btn-blue:hover { background: var(--blue-hover); }
+.btn-green { background: var(--grad-btn); padding: 14px 22px; font-size: 17px; width: 100%; max-width: 480px; box-shadow: 0 6px 18px rgba(225, 48, 108, .25); }
+.btn-green:hover { filter: brightness(1.06); }
+.btn-green.pulse { animation: pulse 0.5s ease-in-out 3 alternate; }
+@keyframes pulse { to { box-shadow: 0 0 0 7px rgba(225, 48, 108, .22); } }
+.hint { margin: 8px 0 2px; color: var(--sub); font-size: 13px; }
+.link { color: var(--blue); background: none; border: 0; padding: 0; cursor: pointer; font-size: 14px; font-weight: 600; text-align: left; }
+.link:hover { text-decoration: underline; }
+.link:disabled { color: var(--sub); cursor: default; text-decoration: none; }
+.link svg { width: 15px; height: 15px; vertical-align: -2px; margin-right: 4px; }
+hr { border: 0; border-top: 1px solid var(--border-soft); margin: 14px 0 10px; }
+.btn-outline { display: inline-flex; align-items: center; gap: 6px; background: #efefef; color: var(--text); border: 0; border-radius: 10px; padding: 7px 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none; }
+.btn-outline:hover { background: #e3e3e3; }
+.btn-outline svg { width: 15px; height: 15px; flex: none; }
+
+.notice { background: #fff8e6; border: 1px solid #f7d58a; border-radius: 12px; padding: 10px 14px; font-size: 13px; margin: 0 0 14px; }
+.notice[hidden] { display: none; }
+
+input[type=text], input[type=password], input[type=search], input:not([type]), textarea { border-radius: 10px; }
+.settings { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 0 0 4px; }
+.settings label { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; }
+.settings select, select { font: inherit; font-size: 15px; padding: 6px 10px; border: 1px solid var(--border); border-radius: 10px; background: var(--input); color: var(--text); }
+.settings select:focus, select:focus { outline: none; border-color: #a8a8a8; }
+kbd { font-family: inherit; background: #efefef; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 6px; padding: 0 6px; font-size: 13px; }
+
+/* ---- help ---- */
+details.help { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 12px; box-shadow: var(--shadow); }
+details.help summary { cursor: pointer; padding: 14px 20px; font-weight: 700; }
+details.help .help-body { padding: 0 20px 16px; font-size: 14px; }
+details.help h4 { margin: 14px 0 4px; font-size: 14px; }
+details.help ol, details.help ul { margin: 4px 0; padding-left: 22px; }
+details.help code { background: #efefef; border-radius: 6px; padding: 1px 6px; }
+.small { color: var(--sub); font-size: 12px; text-align: center; margin-top: 20px; line-height: 1.8; }
+.small a { color: var(--sub); }
+
+/* ---- 制作者について（折りたたみ） ---- */
+details.about { padding: 0; }
+details.about > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 14px 20px; border-radius: var(--radius); }
+details.about > summary::-webkit-details-marker { display: none; }
+details.about > summary:hover { background: #fafafa; }
+details.about > summary:focus-visible { outline: 3px solid rgba(0, 149, 246, .35); outline-offset: -3px; }
+details.about .sum-t { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 12px; min-width: 0; }
+details.about .ttl { font-size: 16px; font-weight: 700; }
+details.about .sub { font-size: 13px; color: var(--sub); }
+details.about .sub > span { display: inline-block; white-space: nowrap; }
+details.about .sum-hint { margin-left: auto; font-size: 13px; color: var(--blue); font-weight: 600; white-space: nowrap; }
+details.about .h-close, details.about[open] .h-open { display: none; }
+details.about[open] .h-close { display: inline; }
+details.about .chev { width: 20px; height: 20px; flex: none; color: var(--sub); transition: transform .2s; }
+details.about[open] .chev { transform: rotate(180deg); }
+details.about[open] > summary { border-radius: var(--radius) var(--radius) 0 0; }
+.about-body { padding: 2px 20px 20px; }
+.num svg { width: 16px; height: 16px; }
+.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.about-box { border: 1px solid var(--border-soft); border-radius: 14px; padding: 14px 16px 16px; background: #fff; }
+.about-box h3 { margin: 0 0 10px; font-size: 15px; }
+.profile { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.avatar { width: 72px; height: 72px; flex: none; border-radius: 50%; border: 3px solid #fff; outline: 2px solid transparent; object-fit: cover; background: #fff5ac; box-shadow: 0 0 0 2px #d62976; }
+.pname { font-size: 18px; font-weight: 700; line-height: 1.3; }
+.psub { color: var(--sub); font-size: 13px; }
+.about-box p { margin: 0 0 8px; font-size: 14px; }
+.about-box .label { margin: 10px 0 6px; font-size: 13px; font-weight: 700; color: var(--sub); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chips span { background: #efefef; border-radius: 999px; padding: 3px 12px; font-size: 13px; }
+.chips span.more { background: none; color: var(--sub); padding: 2px 2px; }
+.links { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.links li { display: flex; align-items: center; gap: 10px; border: 1px solid var(--border-soft); border-radius: 12px; padding: 8px 10px; }
+.links .ic { width: 34px; height: 34px; flex: none; border-radius: 10px; display: grid; place-items: center; color: #fff; }
+.links .ic svg { width: 20px; height: 20px; }
+.links .lt { flex: 1; min-width: 0; line-height: 1.35; }
+.links .lt small { display: block; color: var(--sub); font-size: 12px; }
+.links .lt b { word-break: break-all; }
+.links a.go, .links button { flex: none; border: 0; color: #fff; background: var(--blue); border-radius: 8px; padding: 5px 12px; font-size: 12.5px; font-weight: 600; cursor: pointer; text-decoration: none; font-family: inherit; }
+.links a.go:hover, .links button:hover { background: var(--blue-hover); }
+.license { margin: 14px 0 0 40px; background: #fff1f2; border: 1px solid #f6c3c8; border-radius: 12px; padding: 10px 14px; font-size: 14px; }
+.license b.ng { color: var(--red); }
+.license ul { margin: 4px 0; padding-left: 20px; }
+
+/* ---- status bar & dialog ---- */
+#status { position: fixed; left: 50%; transform: translateX(-50%); bottom: 14px; width: min(680px, calc(100% - 24px)); background: rgba(38, 38, 38, .94); color: #fff; border-radius: 14px; padding: 10px 16px; font-size: 14px; display: flex; align-items: center; gap: 10px; min-height: 44px; z-index: 30; box-shadow: 0 8px 30px rgba(0, 0, 0, .2); }
+#status .dot { width: 18px; height: 18px; border-radius: 50%; flex: none; display: grid; place-items: center; color: #fff; font-size: 11px; font-weight: 700; }
+#status.ok .dot { background: var(--green); }
+#status.warn .dot { background: var(--orange); }
+#status.info .dot { background: var(--blue); }
+#status.busy .dot { border: 2px solid #fff; border-right-color: transparent; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+dialog { border: 0; border-radius: 18px; padding: 0; max-width: 520px; width: calc(100% - 32px); box-shadow: 0 20px 60px rgba(0, 0, 0, .25); color: var(--text); }
+dialog::backdrop { background: rgba(0, 0, 0, .55); }
+.dlg-body { padding: 22px 24px 8px; }
+.dlg-body h3 { margin: 0 0 8px; font-size: 17px; }
+.dlg-body p { margin: 0 0 8px; white-space: pre-line; font-size: 14px; }
+.dlg-btns { display: flex; justify-content: flex-end; gap: 8px; padding: 10px 18px 18px; flex-wrap: wrap; }
+.dlg-btns button { border-radius: 10px; padding: 8px 16px; cursor: pointer; font-weight: 600; border: 0; background: #efefef; color: var(--text); }
+.dlg-btns button.primary { background: var(--blue); color: #fff; }
+
+/* ---- ゲストの名前（partials/guest.js）---- */
+.gmodal { position: fixed; inset: 0; z-index: 50; background: rgba(0, 0, 0, .55); display: grid; place-items: center; padding: 16px; }
+.gmodal .gbox { width: min(400px, 100%); background: #fff; border-radius: 22px; padding: 30px 26px 24px; text-align: center; box-shadow: 0 20px 60px rgba(0, 0, 0, .3); }
+.gmodal .ring { width: 88px; height: 88px; margin: 0 auto 12px; border-radius: 50%; padding: 3px; background: var(--grad); }
+.gmodal .ring > div { width: 100%; height: 100%; border-radius: 50%; background: #fff; border: 3px solid #fff; display: grid; place-items: center; font-size: 34px; }
+.gmodal h2 { margin: 0 0 4px; font-size: 20px; }
+.gmodal p { margin: 0 0 16px; color: var(--sub); font-size: 13.5px; }
+.gmodal input { width: 100%; font-size: 16px; padding: 12px 14px; border: 1px solid var(--border); background: var(--input); border-radius: 12px; margin-bottom: 10px; }
+.gmodal input:focus { outline: none; border-color: #a8a8a8; background: #fff; }
+.gmodal button { width: 100%; }
+.gmodal .gerr { color: var(--red); font-size: 13px; min-height: 1.4em; margin: 8px 0 0; }
+.gmodal .gnote { color: var(--sub); font-size: 12px; margin: 12px 0 0; }
+.av { --c: #ccc; width: 36px; height: 36px; flex: none; border-radius: 50%; display: grid; place-items: center; color: #fff; font-weight: 700; font-size: 15px; background: var(--c); }
+.av.ring { box-shadow: 0 0 0 2px #fff, 0 0 0 4px #d62976; }
+
+@media (max-width: 640px) {
+  body { font-size: 14.5px; }
+  .header-in { padding: 8px 12px; gap: 10px; }
+  .header-in img { width: 36px; height: 36px; border-radius: 10px; }
+  .header-in h1 { font-size: 17px; }
+  .header-in p { display: none; }
+  main { padding: 12px 12px 90px; }
+  .card { padding: 16px 14px 16px; border-radius: 14px; }
+  .indent { padding-left: 0; }
+  .btn-blue { width: 100%; }
+  .btn-green { font-size: 16px; padding: 13px 14px; }
+  .wide-only { display: none; }
+  .header-in .help-btn { padding: 6px 12px; font-size: 13px; }
+  .about-grid { grid-template-columns: 1fr; }
+  .license { margin-left: 0; }
+  details.about > summary { padding: 12px 14px; }
+  .about-body { padding: 2px 14px 14px; }
+}
+
+/* ---- サイトのメニュー ---- */
+.sitenav { background: rgba(255, 255, 255, .92); border-bottom: 1px solid var(--border-soft); position: sticky; top: 63px; z-index: 19; -webkit-backdrop-filter: saturate(180%) blur(12px); backdrop-filter: saturate(180%) blur(12px); }
+.sitenav-in { max-width: 920px; margin: 0 auto; padding: 8px 12px; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+.sitenav-in::-webkit-scrollbar { display: none; }
+.sitenav a { color: var(--text); text-decoration: none; padding: 6px 14px; font-size: 14px; font-weight: 600; border-radius: 999px; white-space: nowrap; background: #efefef; }
+.sitenav a:hover { background: #e3e3e3; }
+.sitenav a[aria-current="page"] { color: #fff; background: #262626; }
+@media (max-width: 640px) {
+  .sitenav { top: 53px; }
+  .sitenav-in { padding: 7px 10px; gap: 5px; }
+  .sitenav a { padding: 5px 10px; font-size: 12.5px; }
+}
+
+/* ---- 共通の部品（入力・コピー欄・かんたんな流れ・チップ）---- */
+.field, .search input, .key-row input, .token-row input, .row input[type=text], .row input[type=password] { font-size: 16px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--input); color: var(--text); transition: border-color .15s, background .15s; }
+.field:focus, .search input:focus, .key-row input:focus, .token-row input:focus, .row input[type=text]:focus, .row input[type=password]:focus { outline: none; border-color: #a8a8a8; background: #fff; }
+.copybox { display: flex; align-items: center; gap: 6px; margin: 8px 0 2px; max-width: 100%; background: #f5f5f5; border: 1px solid var(--border-soft); border-radius: 12px; padding: 4px 4px 4px 12px; }
+.copybox[hidden] { display: none; }
+.copybox code, .copybox pre { flex: 1; min-width: 0; margin: 0; background: none; color: var(--text); padding: 6px 0; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 13px; overflow-x: auto; white-space: nowrap; scrollbar-width: thin; }
+.copybox pre { white-space: pre; font-size: 12.5px; }
+.copybox button { flex: none; align-self: stretch; border: 0; border-radius: 9px; background: var(--blue); color: #fff; font-weight: 600; font-size: 13px; padding: 0 14px; cursor: pointer; }
+.copybox button:hover { background: var(--blue-hover); }
+.copybox.disabled code { color: #a8a8a8; }
+.copybox.disabled button { background: #c7c7c7; cursor: default; }
+.easy, .tip { position: relative; background: linear-gradient(135deg, #fff7fb 0%, #f7f4ff 100%); border: 1px solid #f1e4f3; border-radius: var(--radius); padding: 14px 18px; margin: 0 0 16px; }
+.tip { padding: 10px 14px; margin-top: 10px; font-size: 14px; border-radius: 12px; }
+.easy b.t { display: block; font-size: 15px; margin-bottom: 4px; }
+.easy ol { margin: 0; padding-left: 22px; font-size: 14px; }
+.easy li { margin: 3px 0; }
+.chip { display: inline-flex; align-items: center; gap: 4px; font-size: 12.5px; font-weight: 600; border-radius: 999px; padding: 3px 11px; background: #efefef; color: var(--sub); vertical-align: 1px; }
+.chip:empty { display: none; }
+.chip.on { background: var(--green-pale); color: var(--green-down); }
+.chip.warn { background: #fff1db; color: #a35b00; }
+.chip.dead { background: #f1e9ff; color: #6b3fb8; }
+.cmd { display: inline-block; background: #efefef; border-radius: 6px; padding: 1px 7px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 13.5px; }
+.sub-hint { color: var(--sub); font-size: 12.5px; margin: 4px 0 0; }
+ol.steps { margin: 4px 0 0; padding-left: 22px; font-size: 14px; }
+ol.steps > li { margin: 8px 0; }
+.btn-indigo { background: #5865f2; padding: 12px 20px; font-size: 16px; text-decoration: none; }
+.btn-indigo:hover { background: #4752c4; }
+.btn-sub { background: #efefef; color: var(--text); padding: 10px 16px; font-size: 15px; text-decoration: none; }
+.btn-sub:hover { background: #e3e3e3; }
+.btn[hidden] { display: none; }
+.toast { position: fixed; left: 50%; bottom: 22px; transform: translate(-50%, 20px); opacity: 0; pointer-events: none; z-index: 60; background: rgba(38, 38, 38, .95); color: #fff; border-radius: 12px; padding: 10px 16px; font-size: 14px; max-width: calc(100% - 32px); box-shadow: 0 8px 30px rgba(0, 0, 0, .2); transition: opacity .2s, transform .2s; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+.gmodal .gcancel { text-align: center; margin-top: 10px; color: var(--sub); }
+
+/* ---- チャットの吹き出し（チャット・サイトで近接VC）---- */
+.cmsgs { overflow-y: auto; padding: 10px 14px 8px; display: flex; flex-direction: column; overscroll-behavior: contain; }
+.cm { display: flex; align-items: flex-start; gap: 8px; margin-top: 2px; }
+.cm.first { margin-top: 10px; }
+.cm > .av { width: 30px; height: 30px; font-size: 13px; }
+.cm.cont > .av { visibility: hidden; height: 0; }
+.cm .cbody { min-width: 0; max-width: min(78%, 540px); display: flex; flex-direction: column; align-items: flex-start; }
+.cm .who { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 6px; font-size: 12px; color: var(--sub); margin: 0 0 3px 12px; }
+.cm .who b { color: var(--text); font-weight: 600; }
+.cm .click { cursor: pointer; }
+.cm b.click:hover { text-decoration: underline; }
+.cm .bub { background: #efefef; color: var(--text); border-radius: 20px; padding: 8px 14px; font-size: 14.5px; line-height: 1.45; white-space: pre-wrap; overflow-wrap: anywhere; }
+.cm .bub.game { background: #e9f7ee; }
+.cm.mine { flex-direction: row-reverse; }
+.cm.mine .cbody { align-items: flex-end; }
+.cm.mine .bub { background: #3797f0; color: #fff; }
+.cm.mine .bub.game { background: #1f9d55; }
+.tagb { font-style: normal; font-size: 10.5px; font-weight: 700; border-radius: 999px; padding: 0 7px; line-height: 1.6; }
+.tagb.v { background: #e8f3ff; color: #0064c8; }
+.tagb.game { background: #e7f7ee; color: #17803f; }
+.tagb.guest { background: #efefef; color: var(--sub); }
+.tagb.p { background: #fff1e6; color: #b45309; }
+.tagb.s { background: #f1e9ff; color: #6b3fb8; }
+.cday { text-align: center; color: var(--sub); font-size: 11.5px; font-weight: 600; margin: 14px 0 2px; }
+.cempty { color: var(--sub); text-align: center; font-size: 13.5px; margin: auto 0; padding: 30px 10px; }
+.composer { display: flex; align-items: flex-end; gap: 6px; border: 1px solid var(--border); border-radius: 24px; padding: 4px 4px 4px 16px; margin: 8px 12px 12px; background: #fff; }
+.composer:focus-within { border-color: #a8a8a8; }
+.composer textarea { flex: 1; min-width: 0; border: 0; outline: none; resize: none; font-size: 15px; line-height: 1.45; padding: 7px 0; min-height: 36px; max-height: 120px; background: none; border-radius: 0; }
+.composer .cnt { font-size: 11.5px; color: var(--sub); align-self: center; white-space: nowrap; }
+.composer .cnt.over { color: var(--red); font-weight: 700; }
+.composer .send { flex: none; border: 0; background: none; color: var(--blue); font-weight: 700; font-size: 15px; padding: 7px 12px; cursor: pointer; border-radius: 18px; }
+.composer .send:hover:not(:disabled) { background: var(--blue-pale); }
+.composer .send:disabled { color: #b2dffc; cursor: default; }
+
+
+/* ===== 設定ページ ===== */
+.state { display: flex; gap: 14px; align-items: center; }
+.state .big { width: 48px; height: 48px; flex: none; border-radius: 50%; display: grid; place-items: center; font-size: 24px; font-weight: 700; color: #fff; background: #c7c7c7; }
+.state.ok .big { background: var(--green); }
+.state.ng .big { background: var(--orange); }
+.state h3 { margin: 0; font-size: 17px; }
+.state p { margin: 2px 0 0; color: var(--sub); font-size: 13.5px; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.actions[hidden] { display: none; }
+ol.how { margin: 0 0 12px; padding-left: 22px; font-size: 14.5px; }
+ol.how li { margin: 4px 0; }
+.token-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.token-row input { flex: 1 1 280px; min-width: 0; font-size: 15px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+.token-row .btn-green { width: auto; max-width: none; padding: 10px 22px; font-size: 16px; }
+ul.result { list-style: none; margin: 12px 0 0; padding: 0; font-size: 14px; }
+ul.result li { margin: 4px 0; }
+ul.result li.ok::before { content: "✓ "; color: var(--green); font-weight: 700; }
+ul.result li.ng { color: var(--red); }
+ul.result li.ng::before { content: "✗ "; font-weight: 700; }
+.small-note { color: var(--sub); font-size: 12.5px; margin: 10px 0 0; }
+.small-note code { background: #efefef; border-radius: 6px; padding: 1px 6px; }
+.relay-now { margin: 0 0 10px; font-size: 14.5px; }
+.relay-now b { font-family: ui-monospace, Consolas, monospace; overflow-wrap: anywhere; }
+.relay-row { margin-top: 8px; }
+ul.result li.warn { color: var(--orange); }
+ul.adminlist { list-style: none; margin: 10px 0 0; padding: 0; max-height: 460px; overflow-y: auto; border: 1px solid var(--border-soft); border-radius: 14px; }
+ul.adminlist li { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; padding: 10px 12px; border-bottom: 1px solid var(--border-soft); font-size: 14px; }
+ul.adminlist li:last-child { border-bottom: 0; }
+ul.adminlist .am { color: var(--sub); font-size: 12px; }
+ul.adminlist .ax { grid-column: 1; overflow-wrap: anywhere; white-space: pre-wrap; }
+ul.adminlist .ab { grid-row: 1 / 3; grid-column: 2; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+ul.adminlist .ab button { border: 0; border-radius: 8px; padding: 5px 10px; font-size: 12.5px; font-weight: 600; cursor: pointer; background: #efefef; }
+ul.adminlist .ab button.ban { background: #fff1f2; color: var(--red); }
+ul.adminlist .empty { color: var(--sub); text-align: center; display: block; }
+ul.result li.warn::before { content: "! "; font-weight: 700; }
+</style>
+</head>
+<body>
+<header>
+  <div class="header-in">
+    <img class="pixel" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAB40lEQVR4nO3dsU3DQBiAUYJo2SJESGnTUNGzAQ0lKzADK7AAc6RKwwBIjAE9bJAUxjrD915rWb7i0y/5fJJX6832+4ys89ELYCwBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIE4AcQKIE0CcAOIuRi+AeV0/Xx29bgLECSBOAHECiBNAnADiBBA3eR9gd3v4jXVkfd09HL3+/vQx6/NNgDgBxAkgTgBxAogTQJwA4pwHGOzUe/6p7/lT9wlMgDgBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIE4AcQKIE0CcAOIWfx7g9eXy6PX7x89F3790JkCcAOIEECeAOAHECSBOAHECiBNAnADiBBAngDgBxAkgTgBxiz8PMPV7++j7l84EiBNAnADiBBAngDgBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIG7x5wH+u7n/B3CKCRAngDgBxAkgTgBxAogTQNzkfYC3/c2k+3e3h6lLOGrq+ma3H/t4EyBOAHECiBNAnADiBBAngLg/fx5g8e/5g506T2ACxAkgTgBxAogTQJwA4gQQt/h9AO/58zIB4gQQJ4A4AcQJIE4AcQKIW6032+/Ri2AcEyBOAHECiBNAnADiBBAngDgBxAkgTgBxAogTQJwA4gQQJ4C4Hz5iK0yQ/79HAAAAAElFTkSuQmCC">
+    <div>
+      <h1>近接VC の設定</h1>
+      <p>サイトを公開した人（管理者）用のページ　｜　制作: MaYo（mayo01297）</p>
+    </div>
+  </div>
+</header>
+<nav class="sitenav" aria-label="サイトのメニュー">
+  <div class="sitenav-in">
+    <a href="../" data-page="home">🏠 ホーム</a>
+    <a href="../corpse/" data-page="corpse">🪦 死体スキン</a>
+    <a href="../vc/" data-page="vc">🎙 近接VC</a>
+    <a href="../chat/" data-page="chat">💬 チャット</a>
+  </div>
+</nav>
+
+<main>
+  <p class="notice" id="noApi" hidden>⚠ この設定ページは、サイトを Cloudflare Workers か VPS（mayo-vc）で動かしているときだけ使えます（ファイルを直接ひらいたときや、ほかの場所に置いたときは使えません）。</p>
+
+  <!-- 今の様子 -->
+  <section class="card" aria-live="polite">
+    <div class="state" id="state">
+      <div class="big" id="stateIcon">…</div>
+      <div>
+        <h3 id="stateTitle">確認しています…</h3>
+        <p id="stateText"></p>
+      </div>
+    </div>
+    <div class="actions" id="doneActions" hidden>
+      <a class="btn btn-indigo" id="inviteBtn" href="#" target="_blank" rel="noopener noreferrer">Bot を Discord サーバーに招待する</a>
+      <a class="btn btn-sub" href="../vc/discord/">近接VC（Discord 版）のページへ</a>
+    </div>
+  </section>
+
+  <!-- トークン -->
+  <section class="card" aria-labelledby="t1">
+    <h2 class="step" id="t1"><span class="num">🔑</span><span id="tokenTitle">Discord の Bot のトークンを入れる</span></h2>
+    <div class="indent">
+      <ol class="how">
+        <li><b>トークンを取る:</b> <a href="https://discord.com/developers/applications" target="_blank" rel="noopener noreferrer">Discord Developer Portal</a> をひらいて、右上の「<b>New Application</b>」→ 名前（例: <b>近接VC</b>）を入れて「Create」</li>
+        <li>左のメニューの「<b>Bot</b>」→「<b>Reset Token</b>」→「Yes, do it!」→「<b>Copy</b>」（このトークンは次の ⑤ で使います）</li>
+        <li><b>Public Bot をオンにする:</b> 同じ「<b>Bot</b>」の画面にある「<b>Public Bot</b>」のスイッチを<b>オン</b>にする（世界中の人が、自分のサーバーにこの Bot を呼べるようになります。オフだと、あなたしか招待できません）</li>
+        <li><b>インテントを許可する（大事）:</b> 同じ「<b>Bot</b>」の画面の「<b>Privileged Gateway Intents</b>」にある、次の <b>3 つのスイッチをすべてオン</b>にして、下に出る「<b>Save Changes</b>」を押す
+          <ul>
+            <li><b>PRESENCE INTENT</b></li>
+            <li><b>SERVER MEMBERS INTENT</b></li>
+            <li><b>MESSAGE CONTENT INTENT</b></li>
+          </ul>
+        </li>
+        <li>②でコピーしたトークンを下に貼り付けて「<b>設定する</b>」を押す（Bot の URL の登録や、/vc コマンドの登録は自動でやります）</li>
+      </ol>
+      <div class="token-row relay-row" id="setupKeyRow" hidden>
+        <input id="setupKeyInput" type="password" autocomplete="off" spellcheck="false" placeholder="設定用のキー（VPS にインストールしたときに出たもの）" aria-label="設定用のキー">
+      </div>
+      <div class="token-row relay-row">
+        <input id="tokenInput" type="password" autocomplete="off" spellcheck="false" placeholder="ここに Bot のトークンを貼り付け" aria-label="Bot のトークン">
+        <button class="btn btn-green" id="setupBtn" type="button">設定する</button>
+      </div>
+      <ul class="result" id="result"></ul>
+      <ol class="how" start="6">
+        <li><b>招待用の URL を作って、サーバーに入れる:</b> Developer Portal の左のメニュー「<b>OAuth2</b>」→「<b>URL Generator</b>」をひらく
+          <ul>
+            <li>「SCOPES」で <b>bot</b> と <b>applications.commands</b> の両方にチェックを入れる</li>
+            <li>「BOT PERMISSIONS」で、必要な権限にチェックを入れる: <b>View Channels</b>（チャンネルを見る）・<b>Send Messages</b>（メッセージを送信）・<b>Connect</b>（接続）・<b>Move Members</b>（メンバーを移動）・<b>Manage Channels</b>（チャンネルの管理）</li>
+            <li>いちばん下の「GENERATED URL」に出た URL を「<b>Copy</b>」→ ブラウザでひらいて、Bot を入れたい Discord サーバーを選んで「はい」。（設定が終わると、上の「Bot を Discord サーバーに招待する」ボタンでも、同じ招待ができます）</li>
+          </ul>
+        </li>
+      </ol>
+      <p class="small-note" id="setupKeyNote" hidden>このサイトは「設定用のキー」で守られています。VPS にインストールしたときに最後に出たキー（<code>/etc/mayo-vc/env</code> の <code>SETUP_KEY</code>）を入れてください。ほかの人が先に Bot を登録してしまうのを防ぎます。</p>
+      <p class="small-note">トークンは、このサイトのサーバー（Cloudflare の Worker か、あなたの VPS）の中にだけ保存されます。ほかの人には見せないでください。<br>
+        世界中の人が自分の Discord サーバーに入れられるようにするには、Developer Portal の「Bot」で「<b>Public Bot</b>」をオンにしてください（オフだと、あなたしか招待できません）。<br>
+        Bot を作り直したときや、トークンを Reset したときは、新しいトークンをもう一度入れてください。<br>
+        上級者向け: Cloudflare の「設定」→「変数とシークレット」に <code>DISCORD_TOKEN</code>（シークレット）を入れておくと、このページを開くだけで自動で設定されます。</p>
+    </div>
+  </section>
+
+  <!-- VPS で動いているとき -->
+  <section class="card" id="vpsHere" aria-labelledby="t0" hidden>
+    <h2 class="step" id="t0"><span class="num">🖥</span><span>このサイトは VPS で動いています</span></h2>
+    <div class="indent">
+      <p style="margin:0 0 6px;font-size:14.5px">サイト・Bot・<b>近接VC リレー</b>（/wsserver 用）・<b>音声の中継（TURN）</b>が、同じ VPS で動いています。リレーの設定はいりません。</p>
+      <p class="relay-now" id="vpsHereRelay"></p>
+      <p class="small-note">更新するとき: VPS に SSH でログインして <code>sudo mayo-vc update</code>（新しいサイトのファイルを入れ直します）。<br>
+        ようすを見る: <code>sudo mayo-vc status</code>　・　ログ: <code>sudo journalctl -u mayo-vc -n 50</code></p>
+    </div>
+  </section>
+
+  <!-- VPS -->
+  <section class="card" id="vpsCard" aria-labelledby="t3">
+    <h2 class="step" id="t3"><span class="num">🖥</span><span>VPS（ConoHa など）にリレーと音声の中継を入れる（おすすめ）</span></h2>
+    <div class="indent">
+      <p style="margin:0 0 8px;font-size:14.5px">月額が決まっている VPS（Ubuntu）に、<b>近接VC リレー</b>（Minecraft の /wsserver 用）と、<b>音声の中継（TURN）</b>（サイトで近接VC の声がつながりにくい人用）を、コマンド 1 つで入れます。</p>
+      <ol class="how">
+        <li>下にトークンを入れて「<b>VPS に貼るコマンドを作る</b>」</li>
+        <li>VPS に SSH でログインして（例: Windows の PowerShell で <code>ssh root@VPSのIP</code>）、出てきたコマンドを貼り付けて Enter</li>
+        <li>最後に出る「リレーのアドレス」（VPS の IP）を、下の 📡 に入れて「保存してためす」</li>
+      </ol>
+      <div class="token-row">
+        <input id="vpsToken" type="password" autocomplete="off" spellcheck="false" placeholder="確認のため Bot のトークン（上で入れたもの）" aria-label="確認用の Bot のトークン（VPS）">
+        <button class="btn btn-green" id="vpsBtn" type="button">VPS に貼るコマンドを作る</button>
+      </div>
+      <ul class="result" id="vpsResult"></ul>
+      <div class="copybox" id="vpsBox" hidden><code id="vpsCmd"></code><button type="button" id="vpsCopy">コピー</button></div>
+      <p class="small-note">コマンドには、音声の中継の合言葉が入っています。<b>人に見せないでください</b>（見られたときは、Cloudflare のシークレット <code>TURN_SECRET</code> に新しい合言葉を入れて、コマンドを作り直して VPS で動かし直します）。<span id="turnNow"></span></p>
+    </div>
+  </section>
+
+  <!-- リレー -->
+  <section class="card" id="relayCard" aria-labelledby="t2">
+    <h2 class="step" id="t2"><span class="num">📡</span><span>リレー（中継サーバー）のアドレスを入れる</span></h2>
+    <div class="indent">
+      <p style="margin:0 0 8px;font-size:14.5px">Minecraft の /wsserver は、Cloudflare の Bot に直接つなぐと、すぐ切れてしまいます（Minecraft が求める返事の形と、Cloudflare の返事の形がちがうため）。
+        VPS（ConoHa など）・Google Cloud・Railway に置いた「<b>近接VC リレー</b>」を通すと、PC のアプリなしでつなげます。<br>
+        ここにリレーのアドレスを入れると、Discord の <b>/vc key</b> や「サイトで近接VC」で出るコマンドが <code>/wsserver ws://リレーのアドレス/v/接続コード</code> に変わります。</p>
+      <p class="relay-now" id="relayNow">いまの設定: 確認しています…</p>
+      <div class="token-row">
+        <input id="relayInput" type="text" autocomplete="off" spellcheck="false" placeholder="例: 160.251.1.2 ／ vc.example.com ／ xxx.proxy.rlwy.net:15140" aria-label="リレーのアドレス">
+      </div>
+      <div class="token-row relay-row">
+        <input id="relayToken" type="password" autocomplete="off" spellcheck="false" placeholder="確認のため Bot のトークン（上で入れたもの）" aria-label="確認用の Bot のトークン">
+        <button class="btn btn-green" id="relayBtn" type="button">保存してためす</button>
+      </div>
+      <div class="actions"><button class="btn btn-sub" id="relayTestBtn" type="button" hidden>いまのリレーがつながるか、ためす</button></div>
+      <ul class="result" id="relayResult"></ul>
+      <p class="small-note"><b>VPS（ConoHa など）</b>: VPS の IP アドレス（例: <code>160.251.1.2</code>）。上の 🖥 のコマンドで入れたときは、ポート番号はいりません。<br>
+        <b>Google Cloud の VM</b>: VM の外部 IP（例: <code>34.82.1.2</code>）か、それに向けた独自ドメイン（例: <code>vc.example.com</code>）。ポート 80 で動かしているときは、ポート番号はいりません。<br>
+        <b>Railway</b>: 「Settings」→「Networking」→「TCP Proxy」に出るアドレス（<code>〜.proxy.rlwy.net:12345</code>）を、<b>: のあとのポート番号まで</b>。独自ドメインなら <code>vc.example.com:12345</code>（Railway のポート番号）。<br>
+        空にして保存すると、リレーを使わない案内（近接VC コネクター）に戻ります。トークンは確認に使うだけで、ここでは保存しません。<br>
+        上級者向け: Cloudflare の変数 <code>RELAY_HOST</code>（wrangler.toml の [vars]）に入れると、そちらが優先されます。</p>
+    </div>
+  </section>
+
+  <!-- VPS でサイトごと動かす -->
+  <section class="card" id="vpsServerCard" aria-labelledby="t5">
+    <h2 class="step" id="t5"><span class="num">🌏</span><span>（上級者向け）VPS でサイトごと動かす（自分のドメインを持っているとき）</span></h2>
+    <div class="indent">
+      <p style="margin:0 0 8px;font-size:14.5px">ふつうは使いません（このサイトは Cloudflare のまま、上の 🖥 でリレーと音声の中継だけ VPS に入れれば十分です）。<br>
+        Cloudflare の無料プランの上限が足りなくなったときに、<b>このサイト・Discord Bot・リレー・音声の中継</b>をまとめて VPS に引っ越すためのものです。
+        自分のドメイン（例: <code>vc.example.com</code>）を VPS の IP に向けてから使ってください（https の証明書は自動・無料）。</p>
+      <div class="token-row relay-row"><input id="serverHost" type="text" autocomplete="off" spellcheck="false" placeholder="自分のドメイン（例: vc.example.com）" aria-label="自分のドメイン"></div>
+      <ol class="how">
+        <li>VPS の会社の「セキュリティグループ」で、22・80・443/TCP、3478/TCP・UDP、49160-49200/UDP をあける</li>
+        <li>VPS に SSH でログインして（例: Windows の PowerShell で <code>ssh root@VPSのIP</code>）、下のコマンドを貼り付けて Enter（5 分くらい）</li>
+        <li>最後に出る「サイトの URL」の <b>/setup/</b> をひらいて、出てきた「設定用のキー」と Bot のトークンを入れる</li>
+      </ol>
+      <div class="copybox"><code id="serverCmd">…</code><button type="button" id="serverCopy">コピー</button></div>
+      <p class="small-note">コマンドに合言葉は入っていません（そのまま人に見せても大丈夫です）。新しい版にするときは、VPS で <code>sudo mayo-vc update</code>。<br>
+        VPS で Bot を設定すると、Discord の Bot は VPS のほうで動きます（Cloudflare のほうの Discord の設定・紐付けは引きつがれないので、Discord で <code>/vc setup</code> をやり直してください）。</p>
+    </div>
+  </section>
+
+  <!-- チャットの管理 -->
+  <section class="card" aria-labelledby="t4">
+    <h2 class="step" id="t4"><span class="num">💬</span><span>チャットの管理（みんなのチャット）</span></h2>
+    <div class="indent">
+      <p style="margin:0 0 8px;font-size:14.5px">みんなのチャットの最新 50 件を見て、ルールを守らない人を<b>止める（BAN）</b>・メッセージを<b>消す</b>ことができます。BAN すると、その人のメッセージも消え、同じネットワークからは新しい名前も作れなくなります。</p>
+      <div class="token-row">
+        <input id="adminToken" type="password" autocomplete="off" spellcheck="false" placeholder="確認のため Bot のトークン（上で入れたもの）" aria-label="確認用の Bot のトークン（チャットの管理）">
+        <button class="btn btn-green" id="adminLoad" type="button">ひらく</button>
+      </div>
+      <ul class="result" id="adminResult"></ul>
+      <div id="adminBox" hidden>
+        <p class="small-note">いまサイトのチャットにいる人: <b id="adminOnline">0</b> 人　<button class="link" id="adminReload" type="button">↻ 読みこみ直す</button></p>
+        <ul class="adminlist" id="adminList"></ul>
+        <div class="token-row relay-row">
+          <input id="unbanId" type="text" autocomplete="off" spellcheck="false" placeholder="BAN を解除するゲストの ID（10 文字）" aria-label="BAN を解除するゲストの ID">
+          <button class="btn btn-sub" id="unbanBtn" type="button">BAN を解除</button>
+        </div>
+        <p class="small-note">トークンはこのページを閉じるまで、このページの中だけで使います（保存しません）。DM の中身は、このページでは見られません。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 制作者について（全ページ共通: partials/about.html） -->
+  <details class="card about" id="about">
+    <summary>
+      <span class="num"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4.2"/><path d="M3.5 21c.8-4.6 4.2-7 8.5-7s7.7 2.4 8.5 7z"/></svg></span>
+      <span class="sum-t"><span class="ttl">制作者について</span><span class="sub"><span>MaYo（mayo01297）</span><span>・二次配布禁止</span></span></span>
+      <span class="sum-hint"><span class="h-open">ひらく</span><span class="h-close">とじる</span></span>
+      <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+    </summary>
+    <div class="about-body">
+    <div class="about-grid indent">
+      <div class="about-box">
+        <h3>自己紹介</h3>
+        <div class="profile">
+          <img class="avatar" src="data:image/png;base64,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" alt="MaYo のアイコン" width="72" height="72">
+          <div>
+            <div class="pname">MaYo</div>
+            <div class="psub">高校1年生</div>
+          </div>
+        </div>
+        <p>普段は、マインクラフトの PvP クライアントを作ったり、Roblox でゲームを作ったり、アドオンを作ったり、マインクラフトのマップを作ったりしています。</p>
+        <p class="label">好きなゲーム</p>
+        <div class="chips">
+          <span>マインクラフト</span><span>第五人格</span><span>崩壊：スターレイル</span><span>Roblox</span><span>Dead by Daylight</span><span class="more">など</span>
+        </div>
+      </div>
+      <div class="about-box">
+        <h3>関連リンク</h3>
+        <ul class="links">
+          <li>
+            <span class="ic" style="background:#24292f"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M13.5 4.5l-3 15"/></svg></span>
+            <span class="lt"><small>GitHub</small><b>Dev-MaY0</b></span>
+            <a class="go" href="https://github.com/Dev-MaY0" target="_blank" rel="noopener noreferrer">ひらく</a>
+          </li>
+          <li>
+            <span class="ic" style="background:#5865f2"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-9l-5 4v-4H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><circle cx="8.5" cy="11" r="1.5" fill="#5865f2"/><circle cx="15.5" cy="11" r="1.5" fill="#5865f2"/></svg></span>
+            <span class="lt"><small>Discord</small><b>mayokun_k</b></span>
+            <button type="button" data-copy="mayokun_k">コピー</button>
+          </li>
+          <li>
+            <span class="ic" style="background:#3c8527"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 2.5l8.5 4.5v10L12 21.5 3.5 17V7z"/><path d="M3.5 7L12 11.5 20.5 7M12 11.5v10"/></svg></span>
+            <span class="lt"><small>Minecraft</small><b>mayo01297</b></span>
+            <button type="button" data-copy="mayo01297">コピー</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="license">
+      <b>クレジット・二次配布について</b><br>
+      このスキン登録ページと「プレイヤーの死体アドオン」は、<b>MaYo（mayo01297）</b>が制作しました。<br>
+      <b class="ng">二次配布は禁止です。</b>次のことはしないでください。
+      <ul>
+        <li>このページのファイルやアドオンを、ほかのサイト・SNS・Discord サーバーなどにアップロードして配ること</li>
+        <li>改変して配ること</li>
+        <li>自分が作ったと言うこと（自作発言）</li>
+      </ul>
+      紹介するときは、このページのURLを共有してください。
+    </div>
+    </div>
+  </details>
+<script>
+// ---- 制作者について（名前のコピー・リンクで開く） 制作: MaYo (mayo01297) ----
+(function () {
+  var about = document.getElementById("about");
+  function copyText(text, btn) {
+    function done(ok) {
+      if (typeof window.setStatus === "function")
+        window.setStatus(ok ? "ok" : "warn", ok ? "「" + text + "」をコピーしました。" : "コピーできませんでした。「" + text + "」を手で入力してください。");
+      if (btn) {
+        btn.textContent = ok ? "コピー済み" : "失敗";
+        clearTimeout(btn._t);
+        btn._t = setTimeout(function () { btn.textContent = "コピー"; }, 1600);
+      }
+    }
+    function fallback() {
+      var t = document.createElement("textarea");
+      t.value = text; t.setAttribute("readonly", ""); t.style.position = "fixed"; t.style.opacity = "0";
+      document.body.appendChild(t); t.select();
+      var ok = false;
+      try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+      t.remove();
+      done(ok);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(function () { done(true); }, fallback);
+    else fallback();
+  }
+  Array.prototype.forEach.call(document.querySelectorAll("#about [data-copy]"), function (b) {
+    b.addEventListener("click", function () { copyText(b.getAttribute("data-copy"), b); });
+  });
+  // ページのどこにある「制作者について」リンクでも開く（あとから読み込まれるフッターも）
+  document.addEventListener("click", function (ev) {
+    var a = ev.target && ev.target.closest ? ev.target.closest('a[href="#about"]') : null;
+    if (a) about.open = true;
+  });
+  window.addEventListener("hashchange", function () { if (location.hash === "#about") about.open = true; });
+  if (location.hash === "#about") about.open = true;
+})();
+</script>
+
+  <p class="small">近接VC の設定（管理者用）<br>© 2026 MaYo（mayo01297）　・　二次配布禁止　・　<a href="#about">制作者について</a></p>
+</main>
+
+<script>
+"use strict";
+// 近接VC の設定ページ  制作: MaYo (mayo01297)  二次配布禁止
+const $ = id => document.getElementById(id);
+
+// 入室の印（12 時間）が切れたら、パスワードの窓に戻る
+(function () {
+  const f = window.fetch;
+  window.fetch = async function () {
+    const r = await f.apply(this, arguments);
+    if (r.status === 401) { try { const j = await r.clone().json(); if (j && j.needAuth) location.reload(); } catch (e) { /* 無視 */ } }
+    return r;
+  };
+})();
+
+function showState(kind, title, text) {
+  $("state").className = "state " + kind;
+  $("stateIcon").textContent = kind === "ok" ? "✓" : kind === "ng" ? "!" : "…";
+  $("stateTitle").textContent = title;
+  $("stateText").textContent = text || "";
+}
+
+async function refresh() {
+  let st;
+  try {
+    const res = await fetch("../api/setup/status", { cache: "no-store" });
+    st = await res.json();
+  } catch (e) {
+    $("noApi").hidden = false;
+    showState("ng", "設定ページにつながりません", "サイトを Cloudflare Workers か VPS で動かしているか確認してください。");
+    return;
+  }
+  showRelay(st);
+  const onVps = st.server === "vps";
+  $("vpsHere").hidden = !onVps; $("vpsCard").hidden = onVps; $("relayCard").hidden = onVps; $("vpsServerCard").hidden = onVps;
+  if (onVps) $("vpsHereRelay").textContent = `リレー: ${st.relay || "（なし）"}　・　音声の中継: ${st.turn ? "あり" : "なし"}`;
+  $("setupKeyRow").hidden = !st.needSetupKey || (st.configured && st.setupOk);
+  $("setupKeyNote").hidden = $("setupKeyRow").hidden;
+  $("turnNow").textContent = st.turn ? "　いま: 音声の中継の合言葉は作成ずみです。" : "";
+  if (st.configured && st.setupOk) {
+    showState("ok", `設定ずみです（Bot「${st.appName}」）`, "あとは Bot を Discord サーバーに招待して、Discord で /vc setup を送るだけです。");
+    $("inviteBtn").href = st.invite;
+    $("doneActions").hidden = false;
+    $("tokenTitle").textContent = "トークンを入れ直す（Bot を作り直したとき・Reset したとき）";
+  } else if (st.configured) {
+    showState("ng", `もう少しです（Bot「${st.appName}」）`, st.error || "「設定する」をもう一度押してください。");
+    $("doneActions").hidden = true;
+  } else {
+    showState("ng", "まだ設定されていません", "下の手順で、Discord の Bot のトークンを入れてください（1分くらいで終わります）。");
+    $("doneActions").hidden = true;
+  }
+}
+
+// ---- リレー ----
+let relayNow = "";
+function relayLine(kind, text) {
+  const li = document.createElement("li"); li.className = kind; li.textContent = text; $("relayResult").appendChild(li);
+}
+function showTest(t) {
+  if (!t) return;
+  if (t.ok) relayLine("ok", `リレーが動いています（MaYoVCRelay v${t.version}${t.target ? "・中継先: " + t.target : ""}）`);
+  else relayLine("ng", t.error || "リレーにつながりませんでした。");
+  if (t.warn) relayLine("warn", t.warn);
+}
+function showRelay(st) {
+  relayNow = st.relay || "";
+  const el = $("relayNow"); el.textContent = "いまの設定: ";
+  if (relayNow) {
+    const b = document.createElement("b"); b.textContent = relayNow; el.appendChild(b);
+    el.append(st.relayFrom === "var" ? "（Cloudflare の変数 RELAY_HOST）" : "（このページで保存）");
+    if (!$("relayInput").value) $("relayInput").value = relayNow;
+  } else {
+    el.append("なし（Discord では「近接VC コネクター」を使う案内になります）");
+  }
+  if (st.relayError) { const w = document.createElement("div"); w.style.color = "var(--red)"; w.textContent = "Cloudflare の変数 RELAY_HOST がまちがっています: " + st.relayError; el.appendChild(w); }
+  if (st.relayFrom === "var") { const w = document.createElement("div"); w.className = "small-note"; w.style.margin = "4px 0 0"; w.textContent = "※ Cloudflare の変数 RELAY_HOST が入っているので、ここで保存しても、そちらが使われます。"; el.appendChild(w); }
+  $("relayTestBtn").hidden = !relayNow;
+}
+async function saveRelay() {
+  const relay = $("relayInput").value.trim(), token = $("relayToken").value.trim();
+  $("relayResult").textContent = "";
+  if (!token) { $("relayToken").focus(); relayLine("ng", "確認のため、Bot のトークンを入れてください。"); return; }
+  if (/\.rlwy\.net$/i.test(relay.replace(/^[a-z]+:\/\//i, "").replace(/[/?#].*$/, ""))) relayLine("warn", "ポート番号がありません。Railway の TCP Proxy なら「:12345」のような番号がつきます（ないとつながりません）。");
+  $("relayBtn").disabled = true; $("relayBtn").textContent = "保存しています…";
+  try {
+    const res = await fetch("../api/setup/relay", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token, relay }) });
+    const r = await res.json();
+    if (!r.ok) relayLine("ng", r.error || "保存できませんでした。");
+    else {
+      $("relayToken").value = "";
+      relayLine("ok", r.saved ? `保存しました（${r.saved}）。/vc key で出るコマンドが変わります（反映まで 30 秒くらいかかることがあります）。` : "リレーを使わない設定にしました。");
+      showTest(r.test);
+    }
+  } catch (e) { relayLine("ng", "つながりませんでした。もう一度ためしてください。"); }
+  $("relayBtn").disabled = false; $("relayBtn").textContent = "保存してためす";
+  await refresh();
+}
+async function testRelay() {
+  $("relayResult").textContent = "";
+  $("relayTestBtn").disabled = true;
+  try {
+    const res = await fetch("../api/setup/relay/test", { method: "POST" });
+    const r = await res.json();
+    showTest(r);
+  } catch (e) { relayLine("ng", "つながりませんでした。もう一度ためしてください。"); }
+  $("relayTestBtn").disabled = false;
+}
+$("relayBtn").addEventListener("click", saveRelay);
+async function makeVps() {
+  const token = $("vpsToken").value.trim();
+  $("vpsResult").textContent = "";
+  const line = (kind, text) => { const li = document.createElement("li"); li.className = kind; li.textContent = text; $("vpsResult").appendChild(li); };
+  if (!token) { $("vpsToken").focus(); line("ng", "確認のため、Bot のトークンを入れてください。"); return; }
+  $("vpsBtn").disabled = true;
+  try {
+    const r = await (await fetch("../api/setup/vps", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token }) })).json();
+    if (!r.ok) line("ng", r.error || "作れませんでした。");
+    else {
+      $("vpsToken").value = "";
+      $("vpsCmd").textContent = r.command; $("vpsBox").hidden = false;
+      line("ok", "コマンドを作りました。VPS に SSH でログインして、貼り付けて Enter を押してください。");
+    }
+  } catch (e) { line("ng", "つながりませんでした。もう一度ためしてください。"); }
+  $("vpsBtn").disabled = false;
+  await refresh();
+}
+$("vpsBtn").addEventListener("click", makeVps);
+$("vpsCopy").addEventListener("click", () => {
+  const b = $("vpsCopy");
+  const done = ok => { b.textContent = ok ? "コピー済み" : "失敗"; setTimeout(() => { b.textContent = "コピー"; }, 1500); };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText($("vpsCmd").textContent).then(() => done(true), () => done(false)); else done(false);
+});
+$("relayTestBtn").addEventListener("click", testRelay);
+function serverCmd() {
+  const host = $("serverHost").value.trim().toLowerCase().replace(/^[a-z]+:\/\//, "").replace(/[\/:?#].*$/, "").replace(/[^a-z0-9.-]/g, "");
+  $("serverCmd").textContent = `curl -fsSL ${location.origin}/download/vps-server.sh | sudo bash -s -- ${location.origin}${host ? " " + host : " <自分のドメイン>"}`;
+}
+serverCmd();
+$("serverHost").addEventListener("input", serverCmd);
+$("serverCopy").addEventListener("click", () => {
+  const b = $("serverCopy");
+  const done = ok => { b.textContent = ok ? "コピー済み" : "失敗"; setTimeout(() => { b.textContent = "コピー"; }, 1500); };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText($("serverCmd").textContent).then(() => done(true), () => done(false)); else done(false);
+});
+
+async function setup() {
+  const token = $("tokenInput").value.trim();
+  const out = $("result");
+  out.textContent = "";
+  if (!token) { $("tokenInput").focus(); return; }
+  $("setupBtn").disabled = true;
+  $("setupBtn").textContent = "設定しています…";
+  try {
+    const setupKey = $("setupKeyInput").value.trim();
+    const res = await fetch("../api/setup", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token, setupKey }) });
+    const r = await res.json();
+    if (r.needSetupKey) { $("setupKeyRow").hidden = false; $("setupKeyNote").hidden = false; $("setupKeyInput").focus(); }
+    for (const s of r.steps || []) { const li = document.createElement("li"); li.className = "ok"; li.textContent = s.text; out.appendChild(li); }
+    if (!r.ok) { const li = document.createElement("li"); li.className = "ng"; li.textContent = r.error || "うまくいきませんでした。"; out.appendChild(li); }
+    else { $("tokenInput").value = ""; const li = document.createElement("li"); li.className = "ok"; li.textContent = "設定が終わりました！"; out.appendChild(li); }
+  } catch (e) {
+    const li = document.createElement("li"); li.className = "ng"; li.textContent = "つながりませんでした。もう一度ためしてください。"; out.appendChild(li);
+  }
+  $("setupBtn").disabled = false;
+  $("setupBtn").textContent = "設定する";
+  await refresh();
+}
+
+$("setupBtn").addEventListener("click", setup);
+
+// ---- チャットの管理 ----
+async function admin(action, extra = {}) {
+  const token = $("adminToken").value.trim();
+  const out = $("adminResult");
+  out.textContent = "";
+  const line = (kind, text) => { const li = document.createElement("li"); li.className = kind; li.textContent = text; out.appendChild(li); };
+  if (!token) { $("adminToken").focus(); line("ng", "確認のため、Bot のトークンを入れてください。"); return null; }
+  try {
+    const r = await (await fetch("../api/admin/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token, action, ...extra }) })).json();
+    if (!r.ok) { line("ng", r.error || "できませんでした。"); return null; }
+    renderAdmin(r);
+    return r;
+  } catch (e) { line("ng", "つながりませんでした。もう一度ためしてください。"); return null; }
+}
+function renderAdmin(r) {
+  $("adminBox").hidden = false;
+  $("adminOnline").textContent = String(r.online || 0);
+  const ul = $("adminList"); ul.textContent = "";
+  const list = (r.lobby || []).slice().reverse();
+  if (!list.length) { const li = document.createElement("li"); li.innerHTML = '<span class="empty">メッセージはありません</span>'; ul.appendChild(li); return; }
+  for (const m of list) {
+    const li = document.createElement("li");
+    const meta = document.createElement("span"); meta.className = "am";
+    const d = new Date(m.at);
+    meta.textContent = `${d.getMonth() + 1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2, "0")}　${m.f.name}#${m.f.tag}　ID: ${m.f.id}`;
+    const x = document.createElement("span"); x.className = "ax"; x.textContent = m.x;
+    const ab = document.createElement("span"); ab.className = "ab";
+    const mk = (text, cls, fn) => { const b = document.createElement("button"); b.type = "button"; b.textContent = text; if (cls) b.className = cls; b.addEventListener("click", fn); ab.appendChild(b); };
+    mk("消す", "", () => admin("delete", { ids: [m.id] }));
+    mk("1日 BAN", "ban", () => { if (confirm(`${m.f.name}#${m.f.tag} を 1 日止めますか？（この人のメッセージも消えます）`)) admin("ban", { id: m.f.id, hours: 24 }); });
+    mk("7日 BAN", "ban", () => { if (confirm(`${m.f.name}#${m.f.tag} を 7 日止めますか？（この人のメッセージも消えます）`)) admin("ban", { id: m.f.id, hours: 168 }); });
+    li.append(meta, ab, x);
+    ul.appendChild(li);
+  }
+}
+$("adminLoad").addEventListener("click", () => admin("list"));
+$("adminReload").addEventListener("click", () => admin("list"));
+$("unbanBtn").addEventListener("click", async () => {
+  const id = $("unbanId").value.trim();
+  if (!/^[A-Za-z0-9]{10}$/.test(id)) { $("unbanId").focus(); return; }
+  if (await admin("unban", { id })) { $("unbanId").value = ""; const li = document.createElement("li"); li.className = "ok"; li.textContent = "BAN を解除しました。"; $("adminResult").appendChild(li); }
+});
+$("tokenInput").addEventListener("keydown", ev => { if (ev.key === "Enter") setup(); });
+refresh();
+</script>
+</body>
+</html>

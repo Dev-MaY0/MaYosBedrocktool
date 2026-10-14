@@ -29,7 +29,9 @@ binding = "ASSETS"
 #   /new          … マイクラの /wsserver で、サイトの近接VC の部屋を作る
 #   /api/…        … 設定ページ・BDS アドオン・サイトから
 #   /interactions … Discord のスラッシュコマンド
-run_worker_first = ["/v/*", "/ws/*", "/connect/*", "/api/*", "/interactions", "/health", "/new"]
+#   /setup        … 管理者用の設定ページ。パスワード（シークレット SETUP_KEY）を入れた人にだけ、本体（public/_admin/setup/）を返す
+#   /_admin/*     … 設定ページの本体の置き場。外から直接は見せない（いつも 404）
+run_worker_first = ["/v/*", "/ws/*", "/connect/*", "/api/*", "/interactions", "/health", "/new", "/setup", "/setup/*", "/_admin/*"]
 
 [vars]
 # ふつうは変えない
@@ -38,6 +40,10 @@ DISCORD_API = "https://discord.com/api/v10"
 # ここに書くと /setup/ で保存したものより優先されます
 #   例: "34.82.1.2"（Google Cloud の VM の外部 IP・ポート 80）／ "vc.example.com"（独自ドメイン）／ "shuttle.proxy.rlwy.net:15140"（Railway）
 # RELAY_HOST = ""
+
+# 管理者用の設定ページ（/setup/）のパスワードは、ここには書かず「シークレット」で入れます:
+#   npx wrangler secret put SETUP_KEY      （または Cloudflare の「設定」→「変数とシークレット」→ 種類は「シークレット」）
+# 長くてランダムな文字（20 文字以上）にしてください。入れないと、/setup/ はだれも開けません。
 
 # Discord サーバー（ギルド）ごとに 1 つずつ作られる部屋
 [[durable_objects.bindings]]

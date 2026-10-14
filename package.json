@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
-    "test": "node test/ws-handshake.test.mjs"
+    "test": "node test/ws-handshake.test.mjs && node test/setup-gate.test.mjs"
   },
   "devDependencies": {
     "wrangler": "^4.0.0"

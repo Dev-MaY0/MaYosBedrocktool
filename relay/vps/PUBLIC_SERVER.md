@@ -79,12 +79,12 @@ Discord ───────https://<IP>.sslip.io/interactions──▶ Caddy �
         → https://203-0-113-10.sslip.io/setup/ をひらいて、このキーと Discord の Bot のトークンを入れる
    ==================================================
    ```
-   - **設定用のキー**は、あとで `sudo mayo-vc key` でも見られます。人に見せないでください（ほかの人が先に Bot を登録してしまうのを防ぐためのキーです）
+   - **設定用のキー**は、あとで `sudo mayo-vc key` でも見られます。人に見せないでください（`/setup/` を開くための**パスワード**です。入れるまで、`/setup/` にはパスワードの窓だけが出ます）
 
 ## 3. サイトで Bot を設定する
 
 1. ブラウザで **`https://203-0-113-10.sslip.io/setup/`** をひらく（自分の IP の `.` を `-` にしたもの）
-2. 「設定用のキー」と「Bot のトークン」を入れて「**設定する**」
+2. パスワードの窓に「設定用のキー」を入れて入り、「Bot のトークン」を入れて「**設定する**」（入室は 12 時間有効）
    - Discord に「Bot の URL」（`https://…sslip.io/interactions`）と `/vc` コマンドが自動で登録されます
 3. Discord Developer Portal →「**Bot**」→「**Public Bot**」を**オン**にする
    - オフのままだと、あなた（Bot を作った人）しか Bot をサーバーに入れられません（[Discord の公式ドキュメント](https://docs.discord.com/developers/topics/oauth2)）
@@ -137,7 +137,7 @@ Discord ───────https://<IP>.sslip.io/interactions──▶ Caddy �
 ## 困ったとき
 
 - **最後に「✗ https の証明書がまだとれていません」** → 1 の TCP **443** をあけたか・「ネットワーク情報」にグループを付けたかを確認して、1〜2 分後に `sudo mayo-vc status`。それでもだめなら `sudo mayo-vc logs` の Caddy の行を見てください
-- **`/setup/` で「設定用のキーがちがいます」** → `sudo mayo-vc key` で出るキーを、そのまま貼る
+- **`/setup/` の窓で「パスワードがちがいます」** → `sudo mayo-vc key` で出るキーを、そのまま貼る（まちがえすぎると、同じ IP からは 1 時間ほど入れません）
 - **Discord で `/vc` コマンドが出ない・「アプリケーションが応答しませんでした」** → `/setup/` でトークンを入れ直す（`https://…/interactions` が Discord に登録されます）。`sudo mayo-vc status` で ✓ が 2 つ出ているか確認
 - **Minecraft で「サーバーに接続できませんでした」** → TCP 80 があいているか。ブラウザで `http://203.0.113.10/health` をひらいて「MaYoVCRelay … OK」と出るか
 - **サイト版の VC で「つながりません」** → UDP 3478 と 49160-49200 があいているか

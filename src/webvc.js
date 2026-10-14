@@ -2,7 +2,7 @@
 //  サイト内の近接VC（ブラウザどうしで話す）… Discord を使わない部屋
 //
 //  しくみ
-//   - 部屋（Durable Object "web:<部屋ID>"）は GuildRoom と同じクラスで、cfg.kind = "web"
+//   - 部屋（Durable Object "web:<内部ID>"。内部 ID は 32 文字のランダムな文字。人が打つ 6 けたの部屋番号は、名簿（__directory__）で内部 ID につなぐ）は GuildRoom と同じクラスで、cfg.kind = "web"
 //   - Minecraft はこれまでと同じ /wsserver（ワールドの接続コード）で部屋につながる
 //   - 部屋は querytarget で、みんなの位置（座標・向き・ディメンション）を 1 秒に約 3 回読む
 //   - 部屋は 2 通りで作れる: サイトで作る（/api/web/rooms）／マイクラで /wsserver ws://<リレー>/new を送る
@@ -181,13 +181,15 @@ export const webMethods = {
   // ---- 部屋を作る（入口の index.js から）----
   async webCreate(body) {
     if (this.cfg) return json({ ok: false, conflict: true }, 409);
-    const roomId = String(body.roomId || "");
+    const roomId = String(body.roomId || "");     // 人が打つ部屋番号（6 けた）
     if (!/^(?:\d{6}|[A-HJ-NP-Z2-9]{6})$/.test(roomId)) return json({ ok: false, error: "bad room id" }, 400);
+    // 内部の ID（長いランダムな文字。Durable Object の名前になる）。ないとき（前の版）は部屋番号をそのまま使う
+    const uid = /^[0-9a-f]{32}$/.test(String(body.uid || "")) ? String(body.uid) : roomId;
     const showKey = String(body.showKey || "");
     this.cfg = {
       kind: "web",
       roomId,
-      guildId: "web:" + roomId,               // 接続コードの登録に使う（Discord の ID ではない）
+      guildId: "web:" + uid,                  // 接続コードの登録に使う（Discord の ID ではない）。部屋の名前（Durable Object）と同じ
       guildName: String(body.name || "").slice(0, 40) || "近接VC",
       hostKeyHash: String(body.hostKeyHash || ""),
       radius: 20,

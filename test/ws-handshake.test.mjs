@@ -97,7 +97,8 @@ ${mods.filter(f => f !== "index.js").map(f => `    (name = "${f}", esModule = em
   durableObjectStorage = (inMemory = void),
   globalOutbound = "net",
   bindings = [ (name = "GUILD", durableObjectNamespace = (className = "GuildRoom")), (name = "ASSETS", service = "assets"),
-               (name = "DISCORD_API", text = "http://127.0.0.1:${MOCK_PORT}/api/v10"), (name = "SITE_URL", text = "https://example.workers.dev") ],
+               (name = "DISCORD_API", text = "http://127.0.0.1:${MOCK_PORT}/api/v10"), (name = "SITE_URL", text = "https://example.workers.dev"),
+               (name = "SETUP_KEY", text = "test-setup-key-0123456789") ],
 );
 const a :Workerd.Worker = ( modules = [ (name = "assets.js", esModule = embed "assets.js") ], compatibilityDate = "${compatDate}" );
 `);
@@ -113,7 +114,11 @@ try {
   // ---- HTTP のルート ----
   const h = await fetch(BASE + "/health");
   check(h.ok && (await h.text()).includes("近接VC Bot"), "HTTP: /health");
-  const su = await (await fetch(BASE + "/api/setup", { method: "POST", body: JSON.stringify({ token: "test-token" }), headers: { "Content-Type": "application/json" } })).json();
+  // /setup/ の設定は、パスワード（SETUP_KEY）で入ってからでないとできない
+  const login = await fetch(BASE + "/api/setup/auth", { method: "POST", body: JSON.stringify({ key: "test-setup-key-0123456789" }), headers: { "Content-Type": "application/json" } });
+  const adminCookie = (login.headers.get("set-cookie") || "").split(";")[0];
+  check(login.ok && !!adminCookie, "HTTP: /api/setup/auth でパスワードを確かめて、入室の印をもらう");
+  const su = await (await fetch(BASE + "/api/setup", { method: "POST", body: JSON.stringify({ token: "test-token" }), headers: { "Content-Type": "application/json", Cookie: adminCookie } })).json();
   check(su.ok, "HTTP: /api/setup でトークンを登録 " + (su.error || ""));
 
   // ---- Discord の /vc setup（部屋と接続コードを作る）----

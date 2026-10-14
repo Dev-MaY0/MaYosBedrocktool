@@ -199,6 +199,26 @@ export class GuildRoom {
         await this.storage.put("rate", r);
         return json({ ok: true });
       }
+      case "/dir/room/get": {
+        // サイトの部屋: 6 けたの部屋番号 → 内部の長いランダム ID（"__directory__" だけが使う）
+        const code = String(url.searchParams.get("code") || "");
+        const uid = /^\d{6}$|^[A-HJ-NP-Z2-9]{6}$/.test(code) ? await this.storage.get("room:" + code) : null;
+        return json({ uid: uid || null });
+      }
+      case "/dir/room/put": {
+        // 部屋番号を 1 つの部屋にだけ割り当てる（すでに使われていたら conflict。ここが 1 か所なので、同時に作っても番号は被らない）
+        const b = await request.json();
+        if (!/^(?:\d{6}|[A-HJ-NP-Z2-9]{6})$/.test(String(b.code)) || !/^[0-9a-f]{32}$/.test(String(b.uid))) return json({ ok: false }, 400);
+        if (await this.storage.get("room:" + b.code)) return json({ ok: false, conflict: true });
+        await this.storage.put("room:" + b.code, b.uid);
+        return json({ ok: true });
+      }
+      case "/dir/room/del": {
+        // 部屋を作りそこねたときに、割り当てを取り消す（割り当てたときの ID と同じときだけ）
+        const b = await request.json();
+        if ((await this.storage.get("room:" + b.code)) === b.uid) await this.storage.delete("room:" + b.code);
+        return json({ ok: true });
+      }
       case "/dir/put": {
         const b = await request.json();
         const cur = await this.storage.get("dir:" + b.code);
