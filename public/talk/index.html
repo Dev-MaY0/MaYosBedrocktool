@@ -957,6 +957,7 @@ code.cmdline { background: #efefef; border-radius: 6px; padding: 1px 6px; font-s
       <label class="fl">観戦者（死んだ人・観戦者で入った人）
         <select id="talkSel"><option value="none">話せない</option><option value="near">近くだけ</option><option value="spectators">すべての観戦者と</option></select></label>
       <label class="fc"><input type="checkbox" id="listenChk"> 観戦者は、生きている人の声を聞ける</label>
+      <label class="fc"><input type="checkbox" id="showInfoChk"> ほかの人との距離・ディメンションをサイトに表示する</label>
       <label class="fl">入り方
         <select id="verifySel"><option value="pick">自分をえらぶ（かんたん）</option><option value="code">!vc で本人確認（なりすまし防止）</option></select></label>
       <p class="sub-hint" id="tplHint"></p>
@@ -997,7 +998,7 @@ const store = {
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 使えないブラウザ */ } },
   del(k) { try { localStorage.removeItem(k); } catch (e) { /* 無視 */ } },
 };
-const DEFAULT_RULES = { talk: "spectators", listen: false, verify: "pick", template: "none" };
+const DEFAULT_RULES = { talk: "spectators", listen: false, verify: "pick", template: "none", showInfo: true };
 
 const S = {
   room: "", ws: null, sid: "", name: "", via: "", spec: false, verified: false, ice: null, world: false, radius: 20, roomName: "",
@@ -1485,11 +1486,13 @@ function updateAudio() {
 //  表示
 // ---------------------------------------------------------------------
 const rows = new Map();
+const showInfoOn = () => S.rules.showInfo !== false;   // 部屋の設定: 距離・ディメンションを見せるか
 function stateText(p, me, o) {
   if (!S.world || (!me.pos && !o.pos && !me.spec && !o.spec)) return "ロビー（全員の声が聞こえる）";
   if (o.spec) return "👻 観戦者";
   if (!o.pos) return "ゲームにいない";
   if (o.dead) return "💀 死亡中（観戦者）";
+  if (!showInfoOn()) return "ゲーム中";
   if (!me.pos) return `ゲーム中（${dimName(o.pos.d)}）`;
   if (me.pos.d !== o.pos.d) return `${dimName(o.pos.d)}にいる`;
   const dist = Math.hypot(me.pos.x - o.pos.x, me.pos.y - o.pos.y, me.pos.z - o.pos.z);
@@ -1507,7 +1510,7 @@ function renderPlayers() {
   const want = [{ key: "me", name: (S.spec ? "👻 " : "") + S.name + "（あなた）", st: meText, me: true }];
   for (const p of S.peers.values()) {
     const o = personOf(p.name, p.spec);
-    want.push({ key: p.sid, p, name: (p.spec ? "👻 " : "") + p.name + (p.via === "code" ? " ✓" : "") + (p.remoteMuted ? " 🔇" : ""), st: stateText(p, me, o) + (S.started && p.gOut === 0 && p.g > 0 ? "・あなたの声はとどきません" : "") + connText(p) });
+    want.push({ key: p.sid, p, name: (p.spec ? "👻 " : "") + p.name + (p.via === "code" ? " ✓" : "") + (p.remoteMuted ? " 🔇" : ""), st: stateText(p, me, o) + (showInfoOn() && S.started && p.gOut === 0 && p.g > 0 ? "・あなたの声はとどきません" : "") + connText(p) });
   }
   for (const [k, li] of rows) if (!want.some(w => w.key === k)) { li.remove(); rows.delete(k); }
   for (const w of want) {
@@ -1536,6 +1539,7 @@ function renderPlayers() {
     li.querySelector(".pn").textContent = w.name;
     li.querySelector(".ps").textContent = w.st;
     if (!w.me) {
+      li.querySelector(".gbar").style.display = showInfoOn() ? "" : "none";
       li.querySelector(".gbar > div").style.width = Math.round((w.p.g || 0) * 100) + "%";
       const r = li.querySelector("input");
       const pct = Math.round((S.vol[w.p.name.toLowerCase()] ?? 1) * 100);
@@ -1626,7 +1630,7 @@ function renderSettings(j) {
   const rules = { ...DEFAULT_RULES, ...(j.rules || {}) };
   if (document.activeElement !== $("radiusSel")) $("radiusSel").value = String(j.radius);
   if (![...$("radiusSel").options].some(o => o.value === String(j.radius))) { const o = document.createElement("option"); o.textContent = String(j.radius); $("radiusSel").appendChild(o); $("radiusSel").value = String(j.radius); }
-  $("tplSel").value = rules.template; $("talkSel").value = rules.talk; $("listenChk").checked = !!rules.listen; $("verifySel").value = rules.verify;
+  $("tplSel").value = rules.template; $("talkSel").value = rules.talk; $("listenChk").checked = !!rules.listen; $("showInfoChk").checked = rules.showInfo !== false; $("verifySel").value = rules.verify;
   tplHint();
   $("roomCmd").textContent = j.relayCommand || j.connectorCommand || "…";
   $("hostLink").textContent = `${location.origin}${location.pathname}#r=${A.room}&host=${A.key}`;
@@ -1664,7 +1668,7 @@ $("saveBtn").addEventListener("click", async () => {
   $("saveBtn").disabled = true; $("setMsg").textContent = "更新しています…"; $("setMsg").className = "msg";
   try {
     const j = await hostCall(A.room, A.key, "rules", { radius: Number($("radiusSel").value),
-      rules: { template: $("tplSel").value, talk: $("talkSel").value, listen: $("listenChk").checked, verify: $("verifySel").value } });
+      rules: { template: $("tplSel").value, talk: $("talkSel").value, listen: $("listenChk").checked, showInfo: $("showInfoChk").checked, verify: $("verifySel").value } });
     if (!j.ok) throw new Error(j.error || "更新できませんでした");
     renderSettings(j);
     $("setMsg").textContent = "✓ 更新しました（部屋の全員に反映されます）"; $("setMsg").className = "msg ok";

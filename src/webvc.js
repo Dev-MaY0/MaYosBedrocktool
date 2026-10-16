@@ -38,7 +38,8 @@ const ADMIN_SHOW_MS = 10 * 60000;   // マイクラで作った部屋の管理�
 //   listen … 観戦者は、生きている人の声を（距離に関係なく）聞ける
 //   verify … 入り方: pick 自分をえらぶ / code マイクラのチャットで !vc（なりすまし防止）
 //   template … none / werewolf（人狼: 観戦者どうしで話せて、生きている人の声も聞ける）
-export const DEFAULT_RULES = { talk: "spectators", listen: false, verify: "pick", template: "none" };
+//   showInfo … サイトの一覧に、ほかの人との距離・ディメンションを表示するか（true 表示 / false 非表示）
+export const DEFAULT_RULES = { talk: "spectators", listen: false, verify: "pick", template: "none", showInfo: true };
 export function cleanRules(r) {
   r = r || {};
   return {
@@ -46,6 +47,7 @@ export function cleanRules(r) {
     listen: !!r.listen,
     verify: r.verify === "code" ? "code" : "pick",
     template: r.template === "werewolf" ? "werewolf" : "none",
+    showInfo: r.showInfo !== false,
   };
 }
 // ゲーム中チャット（部屋のチャット）の上限
