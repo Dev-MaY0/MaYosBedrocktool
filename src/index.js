@@ -11,6 +11,8 @@
 //  - /api/check    … サイトから接続キーを確認する
 //  - /api/web/…    … サイト内の近接VC（部屋を作る・ブラウザの WebSocket・ホストの操作）
 //  - /api/guest・/api/chat/… … ゲスト（名前#1234）と、みんなのチャット・DM
+//  - /api/news     … ホームに出すお知らせ（だれでも読める・公開したものだけ）
+//  - /api/admin/news … お知らせを書く・直す・消す（/setup/ にログインした管理者だけ）
 //  制作: MaYo (mayo01297)  二次配布禁止
 // =====================================================================
 import { GuildRoom, CODE_RE } from "./guild.js";
@@ -94,6 +96,11 @@ async function webRoomByCode(env, code) {
   return webRoom(env, code);
 }
 const chatRoom = env => room(env, "__chat__");
+// お知らせは設定の部屋（"__config__"）に保存する
+const newsRoom = env => room(env, "__config__");
+// お知らせの読み出しを少しだけ覚えておく（みんながホームをひらくたびに部屋を起こさないように）
+const NEWS_CACHE_MS = 15000;
+let newsCache = null, newsCacheAt = 0;
 
 /**
  * 使っている人の IP（いたずら防止の数え方にだけ使う。そのままは保存しない）
@@ -137,7 +144,7 @@ function sameKey(a, b) {
 }
 
 // パスワード（入室の印）が必要な API
-const ADMIN_API = new Set(["/api/setup/status", "/api/setup", "/api/setup/relay", "/api/setup/relay/test", "/api/setup/vps", "/api/admin/chat"]);
+const ADMIN_API = new Set(["/api/setup/status", "/api/setup", "/api/setup/relay", "/api/setup/relay/test", "/api/setup/vps", "/api/admin/chat", "/api/admin/news"]);
 
 // 設定ボタンの連打よけ（3秒）
 async function recentlyTried(env) {
@@ -242,6 +249,34 @@ export default {
       await markTried(env);
       const r = await vpsCommand(env, { token: String(body.token || ""), origin: url.origin, host: url.host });
       return json(r, r.ok ? 200 : 400);
+    }
+
+    // ---- お知らせ（ホームに出す） ----
+    if (path === "/api/news") {
+      if (request.method !== "GET" && request.method !== "HEAD") return new Response("Method Not Allowed", { status: 405, headers: { Allow: "GET, HEAD" } });
+      const now = Date.now();
+      if (!newsCache || now - newsCacheAt > NEWS_CACHE_MS) {
+        try {
+          const j = await (await newsRoom(env).fetch("https://room/news/list")).json();
+          newsCache = Array.isArray(j.items) ? j.items : []; newsCacheAt = now;
+        } catch (e) {
+          if (!newsCache) return cors(json({ ok: false, error: "お知らせを読みこめませんでした。" }, 503));
+        }
+      }
+      return cors(new Response(request.method === "HEAD" ? null : JSON.stringify({ ok: true, now, items: newsCache }), {
+        status: 200, headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "public, max-age=15" } }));
+    }
+    // お知らせを書く・直す・消す（ログインした管理者だけ。上の ADMIN_API で確認ずみ）
+    if (path === "/api/admin/news" && request.method === "POST") {
+      const noStore = { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" };
+      // フォームからの送信（ほかのサイトからのなりすまし）を受け付けない
+      if (!/^application\/json\b/i.test(request.headers.get("Content-Type") || ""))
+        return new Response(JSON.stringify({ ok: false, error: "JSON で送ってください。" }), { status: 415, headers: noStore });
+      const text = await request.text();
+      if (text.length > 20000) return new Response(JSON.stringify({ ok: false, error: "長すぎます。" }), { status: 413, headers: noStore });
+      const r = await newsRoom(env).fetch("https://room/news/op", { method: "POST", body: text });
+      newsCache = null;   // このサーバーでは、すぐ新しい内容を出す（ほかの場所のサーバーも 15 秒以内に変わる）
+      return new Response(r.body, { status: r.status, headers: noStore });
     }
 
     // ---- サイト内の近接VC ----

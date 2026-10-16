@@ -340,6 +340,35 @@ code.cmdline { background: #efefef; border-radius: 6px; padding: 1px 6px; font-s
 #codeArea { margin: 6px 0 0; }
 #sc { flex-wrap: wrap; row-gap: 6px; }
 #sc .chip { margin-left: 4px; font-size: 12px; white-space: nowrap; }
+/* ---- 📱 バックグラウンドモード ---- */
+.bgbox { margin: 0 0 12px; padding: 12px 14px; border-radius: 14px; background: linear-gradient(135deg, #f2f6ff 0%, #fff7fb 100%); border: 1px solid #e3e6f5; }
+.bghead { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 0 0 8px; }
+.bghead b { font-size: 15px; }
+.bgrow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.bglead { margin: 0 0 8px; font-size: 14px; }
+.bgpip { width: auto !important; max-width: none !important; padding: 12px 20px !important; font-size: 16px !important; margin: 0 0 8px; }
+.bgbox .only-ios, .bgbox .only-android { display: none; }
+.bgbox.ios .only-ios, .bgbox.android .only-android { display: list-item; }
+.inapp { background: #fff1f2; border: 1px solid #f6c3c8; border-radius: 16px; padding: 14px 16px; margin: 0 0 16px; font-size: 14px; }
+.inapp b { display: block; font-size: 15px; color: #9b1c2e; margin-bottom: 4px; }
+.inapp p { margin: 0 0 10px; }
+.inapp-btns { display: flex; flex-wrap: wrap; gap: 8px; }
+.inapp-btns .btn { width: auto; max-width: none; padding: 10px 18px; font-size: 15px; text-decoration: none; }
+.bgwarn { margin: 0 0 6px; font-size: 13px; background: #fff8e6; border: 1px solid #f7d58a; border-radius: 10px; padding: 6px 10px; }
+.bgwarn.ng { background: #fff1f2; border-color: #f6c3c8; color: #9b1c2e; }
+.bgprev { display: flex; align-items: center; gap: 10px; margin: 10px 0 0; }
+.bgprev video { width: 160px; height: 90px; border-radius: 10px; background: #262626; flex: none; object-fit: cover; }
+.bgprev video[hidden] { display: none; }
+.bgprev .sub-hint { margin: 0; }
+ul.bgsteps { margin: 4px 0 8px; padding-left: 20px; font-size: 13px; color: var(--sub); }
+ul.bgsteps li { margin: 2px 0; }
+.bgbox details { margin-top: 8px; font-size: 13.5px; }
+.bgbox details > summary { cursor: pointer; color: var(--sub); font-weight: 600; }
+.bgbox details ul { margin: 6px 0 0; padding-left: 20px; }
+.chip.bg-ok { background: var(--green-pale); color: var(--green-down); }
+.chip.bg-warn { background: #fff1db; color: #a35b00; }
+.mobile-note { margin: 8px 0 0; font-size: 13.5px; background: #fff; border: 1px solid #f1e4f3; border-radius: 12px; padding: 8px 12px; }
+.mobile-note[hidden] { display: none; }
 @media (max-width: 640px) {
   ul.players li { grid-template-columns: auto 1fr; }
   ul.players .vol { grid-row: auto; grid-column: 1 / 3; align-items: flex-start; }
@@ -648,6 +677,13 @@ code.cmdline { background: #efefef; border-radius: 6px; padding: 1px 6px; font-s
 
 <main>
   <p class="notice" id="noApi" hidden>⚠ このページは、サイトのサーバー（Cloudflare Workers か VPS）で動かしているときだけ使えます。</p>
+  <div class="inapp" id="inApp" hidden>
+    <b id="inAppTitle">⚠ アプリの中のブラウザでひらいています</b>
+    <p>このままだと、マイクラに切りかえたときに声が止まります。<span id="inAppWhich"></span>でひらき直してください。</p>
+    <div class="inapp-btns"><a class="btn btn-green" id="inAppOpen" href="#">ひらき直す</a><button class="btn btn-sub" id="inAppCopy" type="button">URL をコピー</button></div>
+    <p class="sub-hint" id="inAppHint"></p>
+    <p style="margin:8px 0 0"><button class="link" id="inAppStay" type="button">このまま使う（マイクラに切りかえない人）</button></p>
+  </div>
   <div class="mebar" id="meBar" hidden></div>
 
   <div class="easy" role="note">
@@ -657,6 +693,7 @@ code.cmdline { background: #efefef; border-radius: 6px; padding: 1px 6px; font-s
       <li><b>みんな</b>: このページで部屋番号を入れて「この部屋に入る」</li>
       <li>「<b>自分を選択</b>」で自分の名前をえらんで「<b>ボイスチャットを開始</b>」→ 近くの人の声が聞こえます（遠いほど小さく、左右からも）</li>
     </ol>
+    <p class="mobile-note" id="mobileNote" hidden>📱 <b>スマホ 1 台でマイクラもするとき</b>: ボイスチャットを開始したら、このページは<b>ひらいたまま</b>ホームに戻って、マイクラをひらくだけ。ブラウザをスワイプして閉じなければ、マイクラの中でも話せます（<a href="#help-bg">くわしく</a>）。</p>
   </div>
 
   <!-- ① 部屋に入る -->
@@ -714,7 +751,7 @@ code.cmdline { background: #efefef; border-radius: 6px; padding: 1px 6px; font-s
             <div id="codeSlot3"></div>
           </details>
           <button class="btn btn-green" id="startBtn" type="button">🎧 ボイスチャットを開始</button>
-          <p class="sub-hint" id="startHint">ヘッドホン・イヤホンがおすすめです（スピーカーだと、自分の声が相手に返ってしまうことがあります）。</p>
+          <p class="sub-hint" id="startHint">ヘッドホン・イヤホンがおすすめです（スピーカーだと、自分の声が相手に返ってしまうことがあります）。<span id="startHintMobile" hidden><br>📱 開始したら、このページはひらいたままマイクラに切りかえてOK（ブラウザをスワイプして閉じると止まります）。</span></p>
           <div class="controls" id="controls" hidden>
             <button class="tbtn" id="muteBtn" type="button">🎙 マイク: オン</button>
             <button class="tbtn" id="deafBtn" type="button">🔊 音: オン</button>
@@ -726,6 +763,29 @@ code.cmdline { background: #efefef; border-radius: 6px; padding: 1px 6px; font-s
               <span class="meter" title="自分の声の大きさ"><span id="micMeter"></span></span></label>
             <label class="vrow"><input type="checkbox" id="spatialChk" checked> 立体音響を有効にする（左右から聞こえる）<small>スマホはイヤホンがおすすめ</small></label>
             <label class="vrow"><input type="checkbox" id="pttChk"> 押して話す（<kbd>V</kbd> キー）</label>
+          </div>
+          <div class="bgbox" id="bgBox" hidden>
+            <div class="bghead"><b>📱 マイクラに切りかえても話せます</b><span class="chip" id="bgChip"></span></div>
+            <p class="bglead" id="bgLead"></p>
+            <div class="bgrow"><button class="btn btn-green bgpip" id="pipBtn" type="button" hidden>🎮 マイクラへ（小窓にする）</button></div>
+            <p class="bgwarn" id="bgNote" hidden></p>
+            <ul class="bgsteps" id="bgSteps"></ul>
+            <div class="bgprev" id="bgPrev" hidden>
+              <video id="pipVideo" muted playsinline aria-label="小窓の表示"></video>
+              <p class="sub-hint">これが小窓（ピクチャー・イン・ピクチャー）に出ます。マイクラの上に出たままになり、だれが話しているか見えます。</p>
+            </div>
+            <details>
+              <summary>マイクラに切りかえると声が止まるとき</summary>
+              <ul id="bgTrouble">
+                <li>ブラウザを、アプリの切りかえ画面で<b>上にスワイプして閉じていない</b>か確認してください（閉じると止まります。もしページが読みこみ直されても、自動でボイスチャットを再開します）</li>
+                <li class="only-android">Android: 「<b>🎮 マイクラへ（小窓にする）</b>」を使っていますか？ 小窓にしないと、Android の仕組みで <b>約 1 分でマイクが止まります</b>（聞くことはできます）</li>
+                <li class="only-android">Android: 設定 → アプリ → Chrome → バッテリー を「<b>制限なし</b>」に。小窓が出ないときは、同じ画面の「ピクチャー イン ピクチャー」を許可</li>
+                <li>マイクラの「設定 → オーディオ」で「<b>音楽</b>」を 0 にしてみてください（マイクラの音楽が流れはじめるときに、ほかのアプリの音を止めることがあります）</li>
+                <li class="only-ios">iPhone: <b>Safari</b> で使う・<b>iOS を最新</b>にする（17.5 以上）・低電力モードをオフにする</li>
+                <li>LINE・X・Instagram などのアプリの中でひらいたページだと、裏で止まります。Safari・Chrome でひらいてください</li>
+                <li>それでもだめなときは <a href="../vc/discord/">Discord 版の近接VC</a> を使ってください（Discord のアプリは、裏でも止まりません）</li>
+              </ul>
+            </details>
           </div>
           <p class="msg" id="talkMsg"></p>
           <ul class="players" id="players"></ul>
@@ -800,7 +860,17 @@ code.cmdline { background: #efefef; border-radius: 6px; padding: 1px 6px; font-s
       <ul>
         <li>ホスト: ワールドの設定で<b>チートをオン</b>（/wsserver と、位置を読むコマンドを使うため）</li>
         <li>みんな: マイクのついたパソコンかスマホと、ブラウザ（Chrome・Edge・Safari など）。<b>ヘッドホン</b>がおすすめ</li>
-        <li>Minecraft と同じ端末でも、別の端末（スマホなど）でもOK。iPhone・iPad は、ブラウザを裏に回すと音が止まることがあるので、Minecraft とは<b>別の端末</b>でひらくのがおすすめです</li>
+        <li>Minecraft と同じ端末でも、別の端末（スマホなど）でもOK。スマホ 1 台で両方使うときは、下の「<a href="#help-bg">スマホ 1 台で、マイクラと同時に使う</a>」を見てください</li>
+      </ul>
+      <h4 id="help-bg">■ スマホ 1 台で、マイクラと同時に使う</h4>
+      <ul>
+        <li>「ボイスチャットを開始」したら、このページは<b>ひらいたまま</b>マイクラに切りかえます。ブラウザを<b>スワイプして閉じない</b>かぎり、マイクラの中でも聞こえて、話せます</li>
+        <li><b>iPhone・iPad</b>（iOS 17.5 以上の Safari）: ホームに戻ってマイクラをひらくだけ。マイクラ中も、立体音響・距離での音量・マイク音量はそのままです。iOS 17.4 以下や Safari 以外のブラウザでは、マイクラ中は立体音響がお休みになり、音量は「聞こえる／聞こえない」になります</li>
+        <li><b>Android</b>: 「<b>🎮 マイクラへ（小窓にする）</b>」を押して、小窓にしてからマイクラをひらきます。Android は、ブラウザが小窓になっていないと、<b>約 1 分でマイクを止めてしまう</b>仕組みです（Chrome の仕様）。小窓にはだれが話しているかが出ます</li>
+        <li>通知（Android）・ロック画面（iPhone）の ⏸ / ▶ で、マイクのミュートを切りかえられます</li>
+        <li>このページに戻ると、切れていたところ（部屋・音・マイク・相手とのつながり）を自動でつなぎ直します。スマホがページを読みこみ直していても、ボイスチャットを自動で再開します（音が出ないときは画面をタップ）</li>
+        <li>LINE・X・Instagram などのアプリの中でひらくと、裏で止まります。ページの上の案内から Safari・Chrome でひらき直してください（LINE は自動でひらき直します）</li>
+        <li>それでも止まるときは <a href="../vc/discord/">Discord 版</a>（Discord のアプリは裏でも動きます）か、別の端末でこのページをひらいてください</li>
       </ul>
       <h4>■ 自分を選択・本人確認</h4>
       <ul>
@@ -1006,6 +1076,7 @@ const S = {
   peers: new Map(), pos: {}, started: false, ctx: null, master: null, mic: null, micTrack: null, sendTrack: null, micGain: null, micAnalyser: null,
   muted: false, deaf: false, ptt: false, pttDown: false, vol: store.get("vc-vol", {}), retry: 0, kicked: false, leaving: false,
   micVol: store.get("vc-micvol", 100), spatial: store.get("vc-spatial", true),
+  micSrc: null, elemOut: false, rawSend: false, reTimer: null, lastMsgAt: 0, gone: new Map(),
 };
 const H = { room: "", key: "", timer: null };   // ホスト（サイトで作った部屋）
 let GUEST = null;                                 // ゲスト（名前#1234）。partials/guest.js
@@ -1134,11 +1205,14 @@ async function joinRoom(id) {
 
 function connectWs() {
   if (!S.room || S.leaving) return;
+  if (S.ws && S.ws.readyState <= 1) return;   // もうつないでいる（つなぎ直しの予約と、復帰のつなぎ直しが重ならないように）
+  clearTimeout(S.reTimer); S.reTimer = null;
   setConn("つないでいます…");
   const ws = new WebSocket(`${WS_BASE}/api/web/socket?r=${S.room}&g=${encodeURIComponent(GUEST ? GUEST.token : "")}`);
   S.ws = ws;
-  ws.onopen = () => { S.retry = 0; ws.send(JSON.stringify({ t: "hello", sid: store.get("vc-sid-" + S.room, "") })); };
+  ws.onopen = () => { S.retry = 0; S.lastMsgAt = Date.now(); ws.send(JSON.stringify({ t: "hello", sid: store.get("vc-sid-" + S.room, "") })); };
   ws.onmessage = e => {
+    S.lastMsgAt = Date.now();
     if (e.data === "pong") return;
     let m; try { m = JSON.parse(e.data); } catch (err) { return; }
     onMsg(m).catch(err => console.warn(err));
@@ -1148,8 +1222,18 @@ function connectWs() {
     S.ws = null;
     if (S.kicked || S.leaving) return;
     setConn("つなぎ直しています…", "warn");
-    setTimeout(connectWs, Math.min(15000, 1000 * 2 ** S.retry++));
+    clearTimeout(S.reTimer);
+    // 裏に回っているあいだは、すぐにつなぎ直す（ためすたびに待ち時間を長くすると、戻ったときに何十秒も待つことになる）
+    S.reTimer = setTimeout(connectWs, document.hidden ? Math.min(5000, 1000 * (S.retry++ + 1)) : Math.min(15000, 1000 * 2 ** S.retry++));
   };
+}
+/** 返事がない（切れているのに気づいていない）接続を捨てて、すぐつなぎ直す */
+function forceReconnect() {
+  const old = S.ws;
+  if (old) { old.onclose = null; old.onmessage = null; old.onerror = null; try { old.close(); } catch (e) { /* 無視 */ } }
+  S.ws = null; S.retry = 0;
+  clearTimeout(S.reTimer); S.reTimer = null;
+  if (S.room && !S.leaving && !S.kicked) { setConn("つなぎ直しています…", "warn"); connectWs(); }
 }
 setInterval(() => { if (S.ws && S.ws.readyState === 1) S.ws.send("ping"); }, 30000);
 
@@ -1178,6 +1262,7 @@ async function onMsg(m) {
       } else { S.verified = false; S.name = ""; S.via = ""; S.spec = false; }
       S.reconnectAll = false;
       showState(); renderMe();
+      maybeAutoResume();
       break;
     case "code":
       $("codeText").textContent = "!vc " + m.code;
@@ -1190,6 +1275,7 @@ async function onMsg(m) {
       if (S.started && !wasMember) for (const p of S.peers.values()) connectPeer(p, true);
       S.codeAsked = false;
       showState(); renderMe(); updateAudio();
+      maybeAutoResume();
       break;
     }
     case "unverified":
@@ -1219,7 +1305,7 @@ async function onMsg(m) {
       if (m.wait) roomComposer.lock(m.wait);
       break;
     case "kick":
-      S.kicked = true; stopAudio(); setConn("ほかの端末で入り直しました", "warn");
+      S.kicked = true; clearResume(); stopAudio(); setConn("ほかの端末で入り直しました", "warn");
       $("talkMsg").textContent = "⚠ " + m.text + "。こちらで続けるときは、ページを読みこみ直してください。"; $("talkMsg").className = "msg ng";
       break;
   }
@@ -1260,6 +1346,7 @@ function showState() {
   if (!$("upgradeDetails").hidden && $("upgradeDetails").open) placeCode($("codeSlot3"));
   else placeCode(null);
   $("startBtn").hidden = S.started; $("startHint").hidden = S.started; $("controls").hidden = !S.started; $("vset").hidden = !S.started;
+  $("bgBox").hidden = !S.started;
   renderPlayers();
 }
 /** 「自分を選択」の一覧 */
@@ -1279,9 +1366,9 @@ function renderPick() {
 function leaveRoom(silent) {
   if (!S.room) return;
   S.leaving = true;
-  if (!silent) { send({ t: "leave" }); store.del("vc-sid-" + S.room); }
+  if (!silent) { send({ t: "leave" }); store.del("vc-sid-" + S.room); clearResume(); }
   try { S.ws && S.ws.close(); } catch (e) { /* 無視 */ }
-  S.ws = null;
+  S.ws = null; clearTimeout(S.reTimer); S.reTimer = null;
   stopAudio();
   S.peers.clear(); S.pos = {}; S.verified = false; S.name = ""; S.via = ""; S.spec = false; S.room = ""; S.players = []; S.taken = [];
   $("players").textContent = ""; rows.clear();
@@ -1294,23 +1381,31 @@ function leaveRoom(silent) {
 // ---------------------------------------------------------------------
 //  音声（Web Audio と WebRTC）
 // ---------------------------------------------------------------------
+const MIC_OPTS = { audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }, video: false };
 async function startAudio() {
   const AC = window.AudioContext || window.webkitAudioContext;
   if (!AC || !window.RTCPeerConnection) { $("talkMsg").textContent = "このブラウザでは使えません（Chrome・Edge・Safari の新しいものを使ってください）。"; $("talkMsg").className = "msg ng"; return; }
+  bgPrime();   // 押した直後（ボタンを押した扱いのうち）に、裏で動き続けるための音を準備する
+  // iPhone（iOS 17.5 以上）: 「録音と再生」の音声にしておくと、裏に回っても Web Audio が止まらない（立体音響のまま）
+  BG.audioSession = setAudioSession("play-and-record");
   S.ctx = new AC();
-  try { await S.ctx.resume(); } catch (e) { /* 無視 */ }
+  // 自動で再開したとき（ボタンを押していない）は、resume が「画面をさわるまで」待ちつづけるので、少しだけ待つ
+  try { await Promise.race([S.ctx.resume(), new Promise(r => setTimeout(r, 800))]); } catch (e) { /* 無視 */ }
+  S.ctx.onstatechange = onCtxState;
   S.master = S.ctx.createGain();
   S.master.connect(S.ctx.destination);
   try {
-    S.mic = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }, video: false });
+    S.mic = await navigator.mediaDevices.getUserMedia(MIC_OPTS);
     S.micTrack = S.mic.getAudioTracks()[0];
     // マイク → 音量（マイク音量）→ 相手に送る音・メーター
-    const src = S.ctx.createMediaStreamSource(S.mic);
+    // （マイクが止められたときは、マイクの入口だけを入れかえる。相手に送る音 sendTrack はそのまま）
+    S.micSrc = S.ctx.createMediaStreamSource(S.mic);
     S.micGain = S.ctx.createGain(); S.micGain.gain.value = S.micVol / 100;
     S.micAnalyser = S.ctx.createAnalyser(); S.micAnalyser.fftSize = 512;
     const dest = S.ctx.createMediaStreamDestination();
-    src.connect(S.micGain); S.micGain.connect(S.micAnalyser); S.micGain.connect(dest);
+    S.micSrc.connect(S.micGain); S.micGain.connect(S.micAnalyser); S.micGain.connect(dest);
     S.sendTrack = dest.stream.getAudioTracks()[0] || S.micTrack;
+    watchMic();
     $("talkMsg").textContent = ""; $("talkMsg").className = "msg";
   } catch (e) {
     S.micTrack = null; S.sendTrack = null;
@@ -1321,20 +1416,61 @@ async function startAudio() {
   showState();
   for (const p of S.peers.values()) connectPeer(p, true);
   updateAudio();
+  bgStart();
+  syncAudioMode();
+  saveResume();
 }
 function stopAudio() {
+  bgStop();
   for (const p of S.peers.values()) closePeer(p);
-  if (S.mic) for (const t of S.mic.getTracks()) t.stop();
+  if (S.mic) for (const t of S.mic.getTracks()) { t.onended = null; t.stop(); }
   if (S.sendTrack) { try { S.sendTrack.stop(); } catch (e) { /* 無視 */ } }
-  if (S.ctx) S.ctx.close().catch(() => {});
-  S.mic = null; S.micTrack = null; S.sendTrack = null; S.micGain = null; S.ctx = null; S.master = null; S.started = false;
+  if (S.ctx) { S.ctx.onstatechange = null; S.ctx.close().catch(() => {}); }
+  S.mic = null; S.micTrack = null; S.micSrc = null; S.sendTrack = null; S.micGain = null; S.ctx = null; S.master = null; S.started = false; S.elemOut = false; S.rawSend = false;
+  if (BG.audioSession) { setAudioSession("auto"); BG.audioSession = false; }
+}
+/** マイクが止められていないか見張る（ほかのアプリが使った・裏に回された など） */
+function watchMic() {
+  const t = S.micTrack;
+  if (!t) return;
+  t.onended = () => { if (S.micTrack !== t) return; if (!document.hidden) reMic(); else BG.needMic = true; bgStatus(); };
+  t.onmute = () => { if (S.micTrack === t && document.hidden) BG.micMutedAway = true; bgStatus(); };
+  t.onunmute = () => bgStatus();
+}
+/** マイクを取りなおして、マイクの入口だけ入れかえる（相手とのつながりはそのまま） */
+async function reMic() {
+  if (BG.reMicBusy || !S.started || !S.ctx || !S.micGain || document.hidden) return;
+  BG.reMicBusy = true; BG.needMic = false;
+  try {
+    const mic = await navigator.mediaDevices.getUserMedia(MIC_OPTS);
+    if (!S.started || !S.ctx) { for (const t of mic.getTracks()) t.stop(); return; }
+    if (S.mic) for (const t of S.mic.getTracks()) { t.onended = null; try { t.stop(); } catch (e) { /* 無視 */ } }
+    if (S.micSrc) { try { S.micSrc.disconnect(); } catch (e) { /* 無視 */ } }
+    S.mic = mic; S.micTrack = mic.getAudioTracks()[0];
+    S.micSrc = S.ctx.createMediaStreamSource(mic); S.micSrc.connect(S.micGain);
+    watchMic(); applyMic();
+    // マイクの音をそのまま送っているときは、相手に送る音も新しいマイクに入れかえる
+    if (S.rawSend) for (const p of S.peers.values()) if (p.sendOn && p.tr && p.tr.sender) p.tr.sender.replaceTrack(curSendTrack()).catch(() => {});
+    ChatUI.toast("🎙 マイクをつなぎ直しました");
+  } catch (e) {
+    $("talkMsg").textContent = "⚠ マイクをつなぎ直せませんでした。「ボイスチャットを退出」→「開始」をためしてください。"; $("talkMsg").className = "msg ng";
+  } finally { BG.reMicBusy = false; bgStatus(); }
 }
 function applyMic() {
-  if (S.sendTrack) S.sendTrack.enabled = !S.muted && (!S.ptt || S.pttDown);
+  const live = !S.muted && (!S.ptt || S.pttDown);
+  if (S.sendTrack) S.sendTrack.enabled = live;
+  // マイクの音をそのまま送っているとき（マイクラに切りかえているあいだ）は、マイクそのものでミュートする
+  if (S.micTrack && S.micTrack.readyState === "live") S.micTrack.enabled = S.rawSend ? live : true;
   $("muteBtn").textContent = S.muted ? "🎙 マイク: ミュート中" : "🎙 マイク: オン";
   $("muteBtn").classList.toggle("off", S.muted);
   $("deafBtn").textContent = S.deaf ? "🔇 音: オフ" : "🔊 音: オン";
   $("deafBtn").classList.toggle("off", S.deaf);
+  bgMeta(true);
+}
+/** マイクのミュート（ボタン・通知の ⏸▶・小窓のマイクボタンから） */
+function setMute(on) {
+  if (S.muted === !!on) { bgMeta(true); return; }
+  S.muted = !!on; applyMic(); send({ t: "mute", on: S.muted });
 }
 
 function newPeer(sid, name, spec) {
@@ -1349,11 +1485,18 @@ function onPeers(list) {
     if (x.sid === S.sid) continue;
     seen.add(x.sid);
     let p = S.peers.get(x.sid);
-    if (!p) { p = newPeer(x.sid, x.name, x.spec); S.peers.set(x.sid, p); if (S.started) connectPeer(p, false); }
+    if (!p) {
+      p = newPeer(x.sid, x.name, x.spec); S.peers.set(x.sid, p);
+      // さっきいなくなった人がすぐ戻ってきた（スマホで裏に回って、つなぎ直した など）→ 向こうがつなぎ直したと思っていなくても、こちらから声をかける
+      const back = S.gone.has(x.sid) && Date.now() - S.gone.get(x.sid) < 120000;
+      S.gone.delete(x.sid);
+      if (S.started) connectPeer(p, back);
+    }
     if (p.name !== x.name) { const li = rows.get(p.sid); if (li) { li.remove(); rows.delete(p.sid); } }
     p.name = x.name; p.remoteMuted = !!x.muted; p.spec = !!x.spec; p.via = x.via || "";
   }
-  for (const [sid, p] of S.peers) if (!seen.has(sid)) { closePeer(p); S.peers.delete(sid); }
+  for (const [sid, p] of S.peers) if (!seen.has(sid)) { closePeer(p); S.peers.delete(sid); S.gone.set(sid, Date.now()); }
+  if (S.gone.size > 50) S.gone.clear();
   updateAudio();
 }
 /** つなぐ。自分が入り直したとき（announce）は、相手に「つなぎ直して」と伝える */
@@ -1431,11 +1574,15 @@ async function onSignal(from, data) {
 }
 /** 相手の声を Web Audio につなぐ（音量と左右を変えられるように） */
 function attachRemote(p, stream) {
-  if (!p.audioEl) { p.audioEl = new Audio(); p.audioEl.autoplay = true; p.audioEl.setAttribute("playsinline", ""); }
+  if (!p.audioEl) {
+    const el = p.audioEl = new Audio(); el.autoplay = true; el.setAttribute("playsinline", "");
+    // ブラウザに止められた（裏に回したとき・ほかのアプリが音を使ったとき）→ 再開して、audio 要素から直接出す
+    el.addEventListener("pause", () => onElPause(p, el));
+  }
   p.audioEl.srcObject = stream;
   try {
     if (!S.ctx) throw new Error("no ctx");
-    p.audioEl.muted = true;   // 音は Web Audio から出す（Chrome は audio 要素にもつないでおかないと音が来ない）
+    sinkEl(p);   // 音は Web Audio から出す（Chrome は audio 要素でも再生しておかないと音が来ない）
     if (p.src) { try { p.src.disconnect(); } catch (e) { /* 無視 */ } }
     if (!p.gain) {
       p.gain = S.ctx.createGain(); p.gain.gain.value = 0;
@@ -1457,7 +1604,7 @@ function setSending(p, on) {
   if (!p.tr || !p.tr.sender) return;
   if (on) {
     clearTimeout(p.stopTimer); p.stopTimer = null;
-    if (!p.sendOn && S.sendTrack) { p.sendOn = true; p.tr.sender.replaceTrack(S.sendTrack).catch(() => { p.sendOn = false; }); }
+    if (!p.sendOn && curSendTrack()) { p.sendOn = true; p.tr.sender.replaceTrack(curSendTrack()).catch(() => { p.sendOn = false; }); }
   } else if (p.sendOn && !p.stopTimer) {
     p.stopTimer = setTimeout(() => { p.stopTimer = null; if (p.tr) { p.sendOn = false; p.tr.sender.replaceTrack(null).catch(() => {}); } }, 1500);
   }
@@ -1474,8 +1621,13 @@ function updateAudio() {
     if (p.gain && S.ctx) {
       p.gain.gain.setTargetAtTime(out, now, 0.08);
       if (p.pan) p.pan.pan.setTargetAtTime(pan, now, 0.1);
-    } else if (p.audioEl && p.useElement) {
+    }
+    if (p.audioEl && (p.useElement || S.elemOut)) {
+      // Web Audio が止められているあいだ（iPhone で裏に回したときなど）は、audio 要素から直接出す。
+      // iPhone は音量を変えられないので、届く距離なら出す・届かないなら消す
+      if (S.elemOut) p.audioEl.muted = out < (IS_IOS ? 0.08 : 0.02);
       try { p.audioEl.volume = Math.min(1, out); } catch (e) { /* iPhone は変えられない */ }
+      if (S.elemOut && !p.audioEl.muted && p.audioEl.paused) p.audioEl.play().catch(() => {});
     }
     setSending(p, p.gOut > 0);
   }
@@ -1566,10 +1718,582 @@ setInterval(() => {
   const meRow = rows.get("me");
   if (meRow) meRow.classList.toggle("talking", ml > 0.04);
   for (const p of S.peers.values()) {
+    p.talking = level(p.analyser) > 0.03 && p.g > 0 && !S.deaf;
     const li = rows.get(p.sid);
-    if (li) li.classList.toggle("talking", level(p.analyser) > 0.03 && p.g > 0 && !S.deaf);
+    if (li) li.classList.toggle("talking", p.talking);
   }
+  bgMeta(false);
 }, 100);
+
+// ---------------------------------------------------------------------
+//  📱 マイクラに切りかえても話せるように（スマホ 1 台で使うとき）
+//   ブラウザをスワイプして閉じないかぎり、マイクラの中でも聞こえて話せるようにする。
+//   調べてわかった、スマホのブラウザのしくみと対策:
+//   ・iPhone（iOS 17.5 以上の Safari）: navigator.audioSession.type を "play-and-record" にすると、
+//     裏に回っても Web Audio が止まらない（WebKit 275558@main）→ 立体音響・距離の音量・マイク音量のまま
+//     それより古い iOS・Safari 以外: 裏に回ったら、audio 要素から直接出す＋マイクの音をそのまま送る形に切りかえる
+//   ・Android の Chrome: 裏に回ったブラウザは、約 1 分でマイクを止められる（Chrome の AndroidEnableBackgroundMediaCapturing が
+//     まだオフのため）→ 小窓（ピクチャー・イン・ピクチャー）にすると「表に出ている」あつかいになり、マイクが止まらない
+//     また、ミュートした audio 要素は裏で止められる（PauseMutedBackgroundAudio）。Chrome は相手の声を audio 要素でも
+//     再生しておかないと Web Audio に音が来ないので、audio 要素は「ミュート」ではなく「音量 0.001」にしておく
+//   ・どの端末でも: Web Audio が止まった・audio 要素が止められた・Web Audio に音が来ていない → 止められにくい形に切りかえる
+//   ・戻ってきたら、部屋・音・マイク・相手とのつながりを自動でつなぎ直す。ページが読みこみ直されたら、自動で再開する
+//   ・LINE などアプリの中のブラウザは裏で止まるので、Safari・Chrome でひらき直してもらう（LINE は自動）
+// ---------------------------------------------------------------------
+const UA = navigator.userAgent || "";
+const IS_IOS = /iPhone|iPad|iPod/i.test(UA) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+const IS_ANDROID = /Android/i.test(UA);
+const IS_MOBILE = IS_IOS || IS_ANDROID || /Mobi/i.test(UA);
+const IS_IOS_OTHER = IS_IOS && /CriOS|FxiOS|EdgiOS|OPiOS|GSA\/|YJApp|Line\//.test(UA);   // iPhone の Safari 以外
+const IS_STANDALONE = !!((window.matchMedia && matchMedia("(display-mode: standalone)").matches) || navigator.standalone === true);
+/** iOS の版（17.5 → 17.05）。Safari は Version/、ほかは OS 17_5 から */
+const IOS_VER = (() => {
+  if (!IS_IOS) return 0;
+  const m = /Version\/(\d+)(?:\.(\d+))?/.exec(UA) || /OS (\d+)_(\d+)/.exec(UA);
+  return m ? Number(m[1]) + Number(m[2] || 0) / 100 : 0;
+})();
+/** アプリの中のブラウザ（裏でマイク・音が止まる） */
+const IN_APP = /\bLine\//i.test(UA) ? "LINE" : /Instagram/i.test(UA) ? "Instagram" : /FBAN|FBAV|FB_IAB|FBIOS/i.test(UA) ? "Facebook"
+  : /Twitter/i.test(UA) ? "X（Twitter）" : /TikTok|musical_ly|BytedanceWebview/i.test(UA) ? "TikTok" : /YJApp|YJiOS|YJAndroid/i.test(UA) ? "Yahoo! JAPAN"
+  : /Discord/i.test(UA) ? "Discord" : (IS_ANDROID && /; wv\)/.test(UA)) ? "アプリ" : "";
+// Android（と iPhone 以外のスマホ）: audio 要素は「ミュート」ではなく、聞こえないくらいの音量にする（裏で止められないように）
+const SINK_VOL = IS_MOBILE && !IS_IOS ? 0.001 : 0;
+const PIP_LABEL = IS_ANDROID ? "🎮 マイクラへ（小窓にする）" : IS_IOS ? "🪟 小窓も出す（任意）" : "🪟 小窓で表示";
+const BG = {
+  keep: null, keepUrl: "",            // ほぼ無音の audio
+  video: null, canvas: null, cctx: null, drawTimer: null, stream: null, loopUrl: "", pipFile: false,
+  hiddenAt: 0, metaKey: "", metaAt: 0, needMic: false, reMicBusy: false, probeTimer: null, micMutedAway: false,
+  audioSession: false, safeWhenHidden: false, forceElem: false, interruptedAway: false, pipWasActive: false,
+  resumeTried: false, autoStarted: false, androidTipShown: false,
+};
+const MS = "mediaSession" in navigator ? navigator.mediaSession : null;
+const ICON_URL = (document.querySelector("header img") || {}).src || "";
+
+/** iPhone の音声の種類（navigator.audioSession。iOS 16.4 以上の Safari） */
+function setAudioSession(type) {
+  try { if (navigator.audioSession) { navigator.audioSession.type = type; return true; } } catch (e) { /* 使えない */ }
+  return false;
+}
+if (navigator.audioSession && navigator.audioSession.addEventListener) {
+  navigator.audioSession.addEventListener("statechange", () => {
+    // 「interrupted」= ほかのアプリ（マイクラ・電話など）に音を止められた
+    if (S.started && navigator.audioSession.state === "interrupted" && document.hidden) BG.interruptedAway = true;
+    if (S.started && navigator.audioSession.state === "active" && S.ctx && S.ctx.state !== "running") S.ctx.resume().then(syncAudioMode, () => {});
+    bgStatus();
+  });
+}
+
+/** audio 要素を「Web Audio に音を流すためだけ」の状態にする（ふだんの形） */
+function sinkEl(p) {
+  const el = p.audioEl;
+  if (!el || p.useElement) return;
+  if (SINK_VOL) { el.muted = false; try { el.volume = SINK_VOL; } catch (e) { el.muted = true; } }
+  else el.muted = true;
+}
+/** audio 要素がブラウザに止められた */
+function onElPause(p, el) {
+  if (!S.started || p.audioEl !== el || !el.srcObject || BG.stopping) return;
+  el.play().catch(() => {});
+  // 裏で止められた → Web Audio に音が来なくなるので、audio 要素から直接出す形にする
+  if (document.hidden && !p.useElement && !S.elemOut) { BG.forceElem = true; syncAudioMode(); }
+}
+/** いま相手に送る音（ふだんはマイク音量を通した音・Web Audio が使えないときはマイクそのもの） */
+function curSendTrack() {
+  return S.rawSend && S.micTrack && S.micTrack.readyState === "live" ? S.micTrack : S.sendTrack;
+}
+/** マイクの音をそのまま送る／マイク音量を通した音に戻す */
+function setRawSend(on) {
+  on = !!on && !!S.micTrack;
+  if (S.rawSend === on) return;
+  S.rawSend = on;
+  applyMic();
+  const t = curSendTrack();
+  for (const p of S.peers.values()) if (p.sendOn && p.tr && p.tr.sender) p.tr.sender.replaceTrack(t).catch(() => {});
+}
+/** 音を audio 要素から直接出す（Web Audio の音は止める）／もとに戻す */
+function setElemOut(on) {
+  on = !!on;
+  if (S.elemOut === on) return;
+  S.elemOut = on;
+  if (S.master && S.ctx) { try { S.master.gain.value = on ? 0 : 1; } catch (e) { /* 無視 */ } }
+  for (const p of S.peers.values()) {
+    if (!p.audioEl || p.useElement) continue;
+    if (!on) sinkEl(p);
+  }
+  updateAudio();
+}
+/**
+ * いまの様子に合わせて、音の出し方・送り方を決める
+ *  ・Web Audio が止まっている → 止められにくい形（audio 要素から出す・マイクの音をそのまま送る）
+ *  ・古い iPhone などで裏にいる → 先に止められにくい形にしておく（裏では、あとから切りかえられないことがある）
+ *  ・audio 要素が止められた／Web Audio に音が来ていない → 聞くほうだけ audio 要素から出す
+ *  ・それ以外 → ふだんの形（立体音響・距離の音量・マイク音量）… マイクラ中もこのまま
+ */
+function syncAudioMode() {
+  if (!S.started) return;
+  const ctxOk = !!S.ctx && S.ctx.state === "running";
+  const hiddenSafe = document.hidden && BG.safeWhenHidden;
+  setElemOut(!ctxOk || hiddenSafe || BG.forceElem);
+  setRawSend(!ctxOk || hiddenSafe);
+  bgStatus();
+}
+/** Web Audio が止められた／戻った（電話がかかってきたとき など） */
+function onCtxState() {
+  const st = S.ctx ? S.ctx.state : "closed";
+  if ((st === "suspended" || st === "interrupted") && S.ctx) S.ctx.resume().catch(() => {});
+  syncAudioMode();
+}
+
+// ---- 見張り: Web Audio に、相手の声がちゃんと来ているか（iPhone 以外）--------
+//   相手のパケットの音の大きさ（getSynchronizationSources）は大きいのに、Web Audio に入ってくる音が 0 のまま
+//   → ブラウザが Web Audio への音を止めている → audio 要素から直接出す
+const FBUF = new Float32Array(512);
+function levelF(an) {
+  if (!an || !an.getFloatTimeDomainData) return 1;
+  an.getFloatTimeDomainData(FBUF);
+  let s = 0;
+  for (let i = 0; i < FBUF.length; i++) s += FBUF[i] * FBUF[i];
+  return Math.sqrt(s / FBUF.length);
+}
+function rtpLevel(p) {
+  try {
+    const r = p.pc && p.pc.getReceivers().find(x => x.track && x.track.kind === "audio");
+    if (!r || !r.getSynchronizationSources) return 0;
+    const nowEpoch = performance.timeOrigin + performance.now(), nowRel = performance.now();
+    let m = 0;
+    for (const x of r.getSynchronizationSources()) {
+      const fresh = x.timestamp > 1e11 ? Math.abs(nowEpoch - x.timestamp) < 1500 : Math.abs(nowRel - x.timestamp) < 1500;
+      if (fresh) m = Math.max(m, x.audioLevel || 0);
+    }
+    return m;
+  } catch (e) { return 0; }
+}
+setInterval(() => {
+  if (!S.started || IS_IOS || S.elemOut || !S.ctx || S.ctx.state !== "running") return;
+  let trip = false;
+  for (const p of S.peers.values()) {
+    if (!p.pc || !p.analyser || p.useElement) continue;
+    if (rtpLevel(p) < 0.06) continue;                 // 相手が話していない（くらべられない）
+    p.badHealth = levelF(p.analyser) < 0.003 ? (p.badHealth || 0) + 1 : 0;
+    if (p.badHealth >= 3) trip = true;
+  }
+  if (trip) {
+    for (const p of S.peers.values()) p.badHealth = 0;
+    console.warn("[近接VC] Web Audio に相手の声が来ていないので、audio 要素から直接出します");
+    BG.forceElem = true; syncAudioMode();
+  }
+}, 1000);
+
+/** 10 秒の、ほぼ無音の WAV（20Hz・とても小さい音。まったくの無音だと「音が出ていない」と見なされて止められることがある） */
+function quietWavUrl() {
+  const rate = 8000, n = rate * 10;
+  const buf = new ArrayBuffer(44 + n * 2), v = new DataView(buf);
+  const w = (o, t) => { for (let i = 0; i < t.length; i++) v.setUint8(o + i, t.charCodeAt(i)); };
+  w(0, "RIFF"); v.setUint32(4, 36 + n * 2, true); w(8, "WAVE"); w(12, "fmt ");
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, rate, true); v.setUint32(28, rate * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+  w(36, "data"); v.setUint32(40, n * 2, true);
+  for (let i = 0; i < n; i++) v.setInt16(44 + i * 2, Math.round(Math.sin(2 * Math.PI * 20 * i / rate) * 24), true);
+  return URL.createObjectURL(new Blob([buf], { type: "audio/wav" }));
+}
+/** ボタンを押した直後に呼ぶ（スマホは、押した直後でないと音を鳴らせない） */
+function bgPrime() {
+  if (!IS_MOBILE) return;   // パソコンは裏でも止められないので、いらない
+  if (!BG.keep) {
+    BG.keepUrl = BG.keepUrl || quietWavUrl();
+    const a = document.createElement("audio");
+    a.src = BG.keepUrl; a.loop = true; a.preload = "auto"; a.setAttribute("playsinline", ""); a.volume = 1;
+    // とちゅうで止められたら、このページを見ているときだけ再開する（裏でほかのアプリと音を取りあわないように）
+    a.addEventListener("pause", () => { if (S.started && !BG.keepStopping && !document.hidden) setTimeout(() => { if (BG.keep === a && a.paused && S.started && !document.hidden) a.play().catch(() => {}); }, 400); bgStatus(); });
+    a.addEventListener("playing", bgStatus);
+    BG.keep = a;
+  }
+  BG.keepStopping = false;
+  BG.keep.play().catch(() => bgStatus());
+}
+/** 端末ごとの案内 */
+function bgTexts() {
+  const box = $("bgBox");
+  box.classList.toggle("ios", IS_IOS); box.classList.toggle("android", IS_ANDROID);
+  const lead = $("bgLead"), note = $("bgNote"), steps = $("bgSteps");
+  const li = html => { const x = document.createElement("li"); x.innerHTML = html; return x; };
+  steps.textContent = "";
+  note.hidden = true; note.className = "bgwarn";
+  const full = "マイクラにいるあいだも、<b>立体音響・距離での音量・マイク音量はそのまま</b>です";
+  if (IS_ANDROID) {
+    lead.innerHTML = "マイクラに行く前に「<b>🎮 マイクラへ（小窓にする）</b>」を押してください。小窓になったら、マイクラをひらくだけ。ブラウザを<b>スワイプして閉じない</b>かぎり、マイクラの中でも聞こえて話せます。";
+    note.hidden = false;
+    note.innerHTML = "Android は、ブラウザを小窓にしないでマイクラに切りかえると、<b>約 1 分でマイクが止まります</b>（Android と Chrome の仕組み。聞くことはできます）。小窓にしておけば止まりません。";
+    steps.append(li(full), li("小窓には、だれが話しているかが出ます。小窓をタップすると、このページに戻ります"));
+  } else if (IS_IOS) {
+    lead.innerHTML = "このページを<b>ひらいたまま</b>、ホームに戻ってマイクラをひらくだけでOK。ブラウザを<b>スワイプして閉じない</b>かぎり、マイクラの中でも聞こえて話せます。";
+    if (IS_STANDALONE || IS_IOS_OTHER) {
+      note.hidden = false; note.className = "bgwarn ng";
+      note.innerHTML = IS_STANDALONE
+        ? "⚠「ホーム画面に追加」したアプリでひらいています。iPhone ではこの形だと、マイクラに切りかえるとマイクが止まります。<a href=\"" + safariUrl() + "\"><b>Safari でひらき直す</b></a>"
+        : "iPhone は <b>Safari</b> がいちばん安定します（Safari 以外だと、マイクラ中は立体音響がお休みになります）。<a href=\"" + safariUrl() + "\"><b>Safari でひらき直す</b></a>";
+    }
+    if (!BG.safeWhenHidden) steps.append(li(full));
+    else steps.append(li("マイクラにいるあいだは、立体音響はお休みで、音量は「聞こえる／聞こえない」の 2 段階です" + (IOS_VER && IOS_VER < 17.05 ? "（<b>iOS を 17.5 以上</b>にすると、マイクラ中も立体音響のまま使えます）" : "")));
+    steps.append(li("ロック画面の <b>⏸ / ▶</b> で、マイクのミュートを切りかえられます"));
+  } else {
+    lead.innerHTML = "このページをひらいたまま、ほかのアプリ（マイクラなど）に切りかえても、そのまま聞こえて話せます。";
+    steps.append(li("「🪟 小窓で表示」で、ゲームの上に、だれが話しているかの小さな窓を出せます"));
+  }
+  steps.append(li("このページに戻ると、切れていたところを自動でつなぎ直します"));
+  $("pipBtn").textContent = PIP_LABEL;
+  $("pipBtn").className = IS_ANDROID ? "btn btn-green bgpip" : "tbtn";
+}
+function bgStart() {
+  // iPhone で、裏に回っても Web Audio が止まらないか（iOS 17.5 以上の Safari で、audioSession を使えたとき）
+  BG.safeWhenHidden = IS_IOS && !(BG.audioSession && IOS_VER >= 17.05 && !IS_IOS_OTHER && !IS_STANDALONE);
+  bgTexts();
+  $("pipBtn").hidden = !pipSupported();
+  // 小窓は先に用意しておく（押したらすぐひらけるように。スマホは、押した直後でないとひらけない）
+  if (pipSupported()) pipEnsure();
+  bgPrime(); bgSession(true);
+  bgStatus();
+}
+function bgStop() {
+  BG.keepStopping = true; BG.stopping = true;
+  if (BG.keep) { try { BG.keep.pause(); } catch (e) { /* 無視 */ } }
+  pipClose();
+  bgSession(false);
+  BG.forceElem = false;
+  setTimeout(() => { BG.stopping = false; }, 0);
+}
+/** 通知・ロック画面の「近接VC」（Media Session） */
+function bgSession(on) {
+  if (!MS) return;
+  const act = (name, fn) => { try { MS.setActionHandler(name, fn); } catch (e) { /* このブラウザにはない */ } };
+  if (!on) {
+    for (const a of ["play", "pause", "stop", "togglemicrophone", "enterpictureinpicture"]) act(a, null);
+    try { MS.metadata = null; MS.playbackState = "none"; } catch (e) { /* 無視 */ }
+    BG.metaKey = "";
+    return;
+  }
+  // ⏸ / ▶ = マイクのミュートを切りかえる（音は止めない。止めると裏で止められやすくなるので、いつも「再生中」のまま）
+  const toggle = () => { setMute(!S.muted); if (BG.keep && BG.keep.paused) BG.keep.play().catch(() => {}); };
+  act("play", toggle);
+  act("pause", toggle);
+  act("togglemicrophone", () => setMute(!S.muted));
+  if (pipSupported()) act("enterpictureinpicture", () => pipOpen());
+  bgMeta(true);
+}
+/** 通知に出す文字（だれが話しているか・近くの人数・ミュート）。変わったときだけ、1.5 秒に 1 回まで */
+function bgMeta(force) {
+  if (!MS || !S.started || typeof MediaMetadata === "undefined") return;
+  const peers = [...S.peers.values()];
+  const talking = peers.filter(p => p.talking).map(p => p.name);
+  const near = peers.filter(p => p.g > 0.04).length;
+  const title = S.muted ? "🔇 近接VC（マイク: ミュート中）" : "🎙 近接VC（マイク: オン）";
+  // Android で小窓にしないまま裏にいる → 1 分でマイクが止まることを、通知で知らせる
+  const warnAndroid = IS_ANDROID && document.hidden && !pipActive() && BG.hiddenAt && Date.now() - BG.hiddenAt > 40000;
+  const artist = warnAndroid ? "⚠ 小窓にしないとマイクが止まります（ここをタップして戻る）"
+    : talking.length ? `🗣 ${talking.slice(0, 2).join("・")}${talking.length > 2 ? " ほか" : ""}` : near ? `近くの人: ${near} 人` : "近くにだれもいません";
+  const album = `部屋 ${S.room}・${S.spec ? "観戦者" : S.name}`;
+  const key = title + "|" + artist + "|" + album;
+  const now = Date.now();
+  if (key === BG.metaKey || (!force && now - BG.metaAt < 1500)) return;
+  BG.metaKey = key; BG.metaAt = now;
+  try {
+    MS.metadata = new MediaMetadata({ title, artist, album, artwork: ICON_URL ? [{ src: ICON_URL, sizes: "128x128", type: "image/png" }] : [] });
+    MS.playbackState = "playing";
+    if (MS.setMicrophoneActive) MS.setMicrophoneActive(!S.muted && !!S.sendTrack);
+  } catch (e) { /* 無視 */ }
+}
+/** いまの様子（欄の右上） */
+function bgStatus() {
+  const chip = $("bgChip");
+  if (!chip) return;
+  let text = "", kind = "";
+  if (!S.started) text = "";
+  else if (S.micTrack && S.micTrack.readyState === "ended") { text = "⚠ マイクが止まりました（つなぎ直します）"; kind = "bg-warn"; }
+  else if (S.micTrack && S.micTrack.muted) { text = "⚠ マイクが止められています"; kind = "bg-warn"; }
+  else if (S.ctx && S.ctx.state !== "running") { text = "⚠ 画面をタップすると、立体音響に戻ります"; kind = "bg-warn"; }
+  else if (pipActive()) { text = "🪟 小窓を表示中"; kind = "bg-ok"; }
+  else { text = IS_ANDROID ? "🟢 準備OK（小窓にしてからマイクラへ）" : IS_MOBILE ? "🟢 準備OK（このままマイクラへ）" : "🟢 準備OK"; kind = "bg-ok"; }
+  chip.textContent = text; chip.className = "chip " + kind;
+}
+
+// ---- ページが読みこみ直されたとき（スマホがメモリのためにページを閉じた など）: 自動で再開 ----
+function saveResume() { if (S.started && S.room) store.set("vc-resume", { room: S.room, at: Date.now() }); }
+function clearResume() { store.del("vc-resume"); }
+function maybeAutoResume() {
+  if (S.started || BG.resumeTried || !S.verified || S.kicked) return;
+  const r = store.get("vc-resume", null);
+  if (!r || r.room !== S.room || Date.now() - r.at > 30 * 60000) return;
+  BG.resumeTried = true; BG.autoStarted = true;
+  startAudio().then(() => {
+    if (!S.started) return;
+    ChatUI.toast("🔄 ボイスチャットを自動で再開しました（音が出ないときは画面をタップ）");
+  });
+}
+setInterval(() => { if (S.started) saveResume(); }, 60000);
+
+// ---- 小窓（ピクチャー・イン・ピクチャー）--------------------------------------
+function pipSupported() {
+  const v = $("pipVideo");
+  if (!v || !HTMLCanvasElement.prototype.captureStream) return false;
+  return !!((document.pictureInPictureEnabled && v.requestPictureInPicture) || (v.webkitSupportsPresentationMode && v.webkitSupportsPresentationMode("picture-in-picture")));
+}
+function pipActive() {
+  const v = $("pipVideo");
+  return !!v && (document.pictureInPictureElement === v || v.webkitPresentationMode === "picture-in-picture");
+}
+function pipEnsure() {
+  if (BG.video) return BG.video;
+  const c = document.createElement("canvas"); c.width = 480; c.height = 270;
+  BG.canvas = c; BG.cctx = c.getContext("2d");
+  pipDraw();
+  const v = $("pipVideo");
+  v.muted = true; v.playsInline = true;
+  if (BG.pipFile && BG.loopUrl) { v.srcObject = null; v.src = BG.loopUrl; v.loop = true; }
+  else { BG.stream = c.captureStream(4); v.srcObject = BG.stream; }
+  if (!BG.pipInit) {
+    BG.pipInit = true;
+    const sync = () => {
+      const on = pipActive();
+      $("pipBtn").textContent = on ? "🪟 小窓を閉じる" : PIP_LABEL;
+      if (on) BG.pipWasActive = true;
+      bgStatus(); bgMeta(true);
+    };
+    v.addEventListener("enterpictureinpicture", sync);
+    v.addEventListener("leavepictureinpicture", sync);
+    v.addEventListener("webkitpresentationmodechanged", sync);
+  }
+  BG.video = v;
+  clearInterval(BG.drawTimer);
+  BG.drawTimer = setInterval(() => { if (pipActive() || !document.hidden) pipDraw(); }, 300);
+  v.play().catch(() => {});
+  return v;
+}
+/** 小窓用の動画ファイルを作る（MediaStream の小窓が使えないブラウザ用。中身は止まった絵） */
+async function pipMakeLoop() {
+  if (BG.loopUrl) return BG.loopUrl;
+  if (!window.MediaRecorder || !BG.canvas) return "";
+  const type = ["video/webm;codecs=vp8", "video/webm", "video/mp4"].find(t => { try { return MediaRecorder.isTypeSupported(t); } catch (e) { return false; } });
+  if (!type) return "";
+  const stream = BG.canvas.captureStream(10);
+  const rec = new MediaRecorder(stream, { mimeType: type, videoBitsPerSecond: 250000 });
+  const chunks = [];
+  rec.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
+  const done = new Promise(r => { rec.onstop = r; });
+  const t = setInterval(pipDraw, 100);
+  rec.start();
+  await new Promise(r => setTimeout(r, 1500));
+  rec.stop(); await done; clearInterval(t);
+  for (const tr of stream.getTracks()) tr.stop();
+  if (!chunks.length) return "";
+  BG.loopUrl = URL.createObjectURL(new Blob(chunks, { type: type.split(";")[0] }));
+  return BG.loopUrl;
+}
+async function pipOpen() {
+  if (!S.started || !pipSupported()) return;
+  const v = pipEnsure();
+  try {
+    if (pipActive()) {
+      if (document.pictureInPictureElement === v) await document.exitPictureInPicture();
+      else if (v.webkitSetPresentationMode) v.webkitSetPresentationMode("inline");
+      return;
+    }
+    if (!IS_ANDROID) $("bgPrev").hidden = false;
+    if (v.paused) v.play().catch(() => {});
+    if (v.readyState < 1) await new Promise(r => { v.addEventListener("loadedmetadata", r, { once: true }); setTimeout(r, 1500); });
+    if (v.requestPictureInPicture && document.pictureInPictureEnabled) await v.requestPictureInPicture();
+    else v.webkitSetPresentationMode("picture-in-picture");
+    if (IS_ANDROID) ChatUI.toast("🪟 小窓にしました。ホームに戻ってマイクラをひらいてください");
+  } catch (e) {
+    // 動いている絵（MediaStream）の小窓が使えないブラウザ → 動画ファイルに切りかえて、もう一度押してもらう
+    if (!BG.pipFile) {
+      const url = await pipMakeLoop().catch(() => "");
+      if (url) {
+        BG.pipFile = true;
+        if (BG.stream) for (const t of BG.stream.getTracks()) t.stop();
+        BG.stream = null; v.srcObject = null; v.src = url; v.loop = true; v.play().catch(() => {});
+        ChatUI.toast("小窓の準備ができました。もう一度押してください");
+        bgStatus(); return;
+      }
+    }
+    ChatUI.toast("⚠ 小窓をひらけませんでした" + (IS_ANDROID ? "（Android の設定 → アプリ → Chrome で「ピクチャー イン ピクチャー」を許可してください）" : ""));
+  }
+  bgStatus();
+}
+function pipClose() {
+  const v = $("pipVideo");
+  try { if (document.pictureInPictureElement === v) document.exitPictureInPicture().catch(() => {}); } catch (e) { /* 無視 */ }
+  try { if (v && v.webkitPresentationMode === "picture-in-picture") v.webkitSetPresentationMode("inline"); } catch (e) { /* 無視 */ }
+  clearInterval(BG.drawTimer); BG.drawTimer = null;
+  if (BG.stream) for (const t of BG.stream.getTracks()) t.stop();
+  if (v) { v.srcObject = null; v.removeAttribute("src"); }
+  BG.video = null; BG.canvas = null; BG.cctx = null; BG.stream = null;
+  $("bgPrev").hidden = true;
+}
+/** 小窓の中身（部屋・マイク・近くの人・話している人） */
+function pipDraw() {
+  const c = BG.cctx;
+  if (!c) return;
+  const W = 480, H = 270;
+  const g = c.createLinearGradient(0, 0, W, H); g.addColorStop(0, "#1d1f2b"); g.addColorStop(1, "#3b1d3f");
+  c.fillStyle = g; c.fillRect(0, 0, W, H);
+  const font = (px, w = 700) => `${w} ${px}px -apple-system, "Hiragino Sans", "Noto Sans JP", "Yu Gothic UI", Meiryo, sans-serif`;
+  c.textBaseline = "middle";
+  // 上: 近接VC・部屋・マイク
+  c.fillStyle = "#fff"; c.font = font(26, 800); c.textAlign = "left";
+  c.fillText("🎙 近接VC", 18, 30);
+  c.fillStyle = "rgba(255,255,255,.65)"; c.font = font(17, 600);
+  c.fillText(`部屋 ${S.room}`, 170, 31);
+  const conn = S.ws && S.ws.readyState === 1;
+  const pill = !conn ? ["つなぎ直し中…", "#f39c12"] : S.muted ? ["🔇 ミュート", "#ed4956"] : ["🎙 マイク オン", "#22a55b"];
+  c.font = font(16, 700);
+  const pw = c.measureText(pill[0]).width + 24;
+  c.fillStyle = pill[1]; roundRect(c, W - pw - 14, 14, pw, 32, 16); c.fill();
+  c.fillStyle = "#fff"; c.textAlign = "center"; c.fillText(pill[0], W - pw / 2 - 14, 31);
+  // 人の一覧（聞こえる人 → 話している人を先に）
+  const me = personOf(S.name, S.spec);
+  const list = [...S.peers.values()].map(p => ({ p, o: personOf(p.name, p.spec) }))
+    .sort((a, b) => (b.p.talking - a.p.talking) || (b.p.g - a.p.g)).slice(0, 4);
+  c.textAlign = "left";
+  if (!list.length) {
+    c.fillStyle = "rgba(255,255,255,.7)"; c.font = font(19, 600);
+    c.fillText(S.world ? "近くにだれもいません" : "ワールドがつながるのを待っています…", 22, 150);
+  }
+  list.forEach(({ p, o }, i) => {
+    const y = 78 + i * 46;
+    c.fillStyle = p.talking ? "rgba(34,165,91,.28)" : "rgba(255,255,255,.07)";
+    roundRect(c, 12, y - 19, W - 24, 40, 12); c.fill();
+    c.beginPath(); c.arc(32, y + 1, 8, 0, Math.PI * 2);
+    c.fillStyle = p.talking ? "#2ee07a" : p.g > 0.04 ? "rgba(255,255,255,.55)" : "rgba(255,255,255,.18)"; c.fill();
+    c.fillStyle = p.g > 0.04 ? "#fff" : "rgba(255,255,255,.5)"; c.font = font(19, 700);
+    const nm = (p.spec ? "👻 " : "") + p.name + (p.remoteMuted ? " 🔇" : "");
+    c.fillText(nm.length > 16 ? nm.slice(0, 15) + "…" : nm, 50, y + 1);
+    c.textAlign = "right"; c.font = font(15, 600); c.fillStyle = "rgba(255,255,255,.7)";
+    c.fillText(p.talking ? "🗣 話しています" : showInfoOn() ? stateText(p, me, o) : p.g > 0.04 ? "聞こえる" : "", W - 24, y + 1);
+    c.textAlign = "left";
+  });
+  if (S.peers.size > 4) { c.fillStyle = "rgba(255,255,255,.6)"; c.font = font(14, 600); c.fillText(`ほか ${S.peers.size - 4} 人`, 22, H - 14); }
+}
+function roundRect(c, x, y, w, h, r) {
+  c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath();
+}
+
+// ---- 戻ってきたとき・回線が戻ったとき: 切れたところをつなぎ直す ------------
+function bgRecover(why) {
+  if (!S.room || S.leaving || S.kicked) return;
+  const away = BG.hiddenAt ? Date.now() - BG.hiddenAt : 0;
+  // 部屋（WebSocket）: 切れていればすぐ、つながって見えても返事を確かめる（裏で切れたのに気づいていないことがある）
+  if (!S.ws || S.ws.readyState > 1) { S.retry = 0; connectWs(); }
+  else if (S.ws.readyState === 1 && (away > 8000 || why === "online")) {
+    const ws = S.ws, at = Date.now();
+    try { ws.send("ping"); } catch (e) { /* 無視 */ }
+    clearTimeout(BG.probeTimer);
+    BG.probeTimer = setTimeout(() => { if (S.ws === ws && S.lastMsgAt < at) forceReconnect(); }, 5000);
+  }
+  if (!S.started) return;
+  // 戻ってきた → ふだんの形（立体音響・マイク音量）にもどす
+  if (why === "visible") BG.forceElem = false;
+  if (S.ctx && S.ctx.state !== "running" && S.ctx.state !== "closed") S.ctx.resume().then(syncAudioMode, () => {});
+  syncAudioMode();
+  // マイク: 切れた・止められたまま → 取りなおす
+  if (BG.needMic || (S.micTrack && S.micTrack.readyState === "ended")) reMic();
+  else if (S.micTrack && S.micTrack.muted) setTimeout(() => { if (S.started && S.micTrack && S.micTrack.muted && !document.hidden) reMic(); }, 1500);
+  // 裏にいたあいだのことを知らせる
+  if (why === "visible") {
+    let msg = "";
+    if (BG.interruptedAway) msg = "⚠ マイクラに切りかえているあいだ、iPhone にボイスチャットの音を止められていたようです（いま、つなぎ直しました）。マイクラの「設定 → オーディオ」で「音楽」を 0 にすると、止められにくくなることがあります。";
+    else if (BG.micMutedAway) msg = "⚠ マイクラに切りかえているあいだ、スマホにマイクを止められていたようです（いま、つなぎ直しました）。";
+    else if (IS_ANDROID && away > 55000 && !BG.pipWasActive && !BG.androidTipShown) {
+      BG.androidTipShown = true;
+      msg = "💡 Android は、小窓にしないでマイクラに切りかえると、約 1 分でマイクが止まります。次からは「🎮 マイクラへ（小窓にする）」を押してから切りかえてください。";
+    }
+    if (msg) { $("talkMsg").textContent = msg; $("talkMsg").className = "msg ng"; }
+    BG.interruptedAway = false; BG.micMutedAway = false; BG.pipWasActive = pipActive();
+  }
+  if (BG.keep && BG.keep.paused && !BG.keepStopping) BG.keep.play().catch(() => {});
+  for (const p of S.peers.values()) if (p.audioEl && p.audioEl.paused && p.audioEl.srcObject) p.audioEl.play().catch(() => {});
+  // とぎれている相手
+  for (const p of S.peers.values()) {
+    if (!p.pc) connectPeer(p, true);
+    else if (/failed|disconnected/.test(p.pc.connectionState) && amOfferer(p)) restartIce(p);
+  }
+  saveResume();
+  updateAudio(); bgStatus(); bgMeta(true);
+}
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    // マイクラに切りかえた → 必要なら、すぐ止められにくい形にする（裏では、あとから切りかえられないことがある）
+    BG.hiddenAt = Date.now();
+    BG.pipWasActive = pipActive();
+    syncAudioMode(); saveResume();
+    // Android で小窓にしていないとき: 40 秒たったら、通知で「小窓にして」と知らせる
+    if (IS_ANDROID && S.started) setTimeout(() => bgMeta(true), 41000);
+    return;
+  }
+  bgRecover("visible");
+  BG.hiddenAt = 0;
+});
+window.addEventListener("pageshow", e => { if (e.persisted) bgRecover("pageshow"); });
+window.addEventListener("online", () => bgRecover("online"));
+window.addEventListener("focus", () => { if (S.started && S.ctx && S.ctx.state !== "running") S.ctx.resume().then(syncAudioMode, () => {}); });
+// 画面をさわったら、止められていた音を再開（スマホは、さわった直後でないと再開できないことがある）
+document.addEventListener("pointerdown", () => {
+  if (!S.started) return;
+  if (S.ctx && S.ctx.state !== "running" && S.ctx.state !== "closed") S.ctx.resume().then(syncAudioMode, () => {});
+  if (BG.keep && BG.keep.paused && !BG.keepStopping) BG.keep.play().catch(() => {});
+  else if (!BG.keep && IS_MOBILE) bgPrime();
+  for (const p of S.peers.values()) if (p.audioEl && p.audioEl.paused && p.audioEl.srcObject) p.audioEl.play().catch(() => {});
+}, { passive: true });
+// 見張り: 返事が長いあいだ来ない接続は、切れていると見なしてつなぎ直す
+setInterval(() => {
+  if (!S.room || S.leaving || S.kicked) return;
+  if (S.ws && S.ws.readyState === 1 && S.lastMsgAt && Date.now() - S.lastMsgAt > 150000 && (S.started || !document.hidden)) forceReconnect();
+  else if (!S.ws && !S.reTimer) connectWs();
+}, 10000);
+// ボイスチャット中に閉じようとしたら確認（スマホのブラウザでは出ないことがあります）
+window.addEventListener("beforeunload", e => { if (S.started && !S.kicked) { e.preventDefault(); e.returnValue = ""; } });
+$("pipBtn").addEventListener("click", () => pipOpen());
+
+// ---- アプリの中のブラウザ（LINE など）: Safari・Chrome でひらき直してもらう ----
+function cleanHref() { return location.href.replace(/([?&])openExternalBrowser=1(&|(?=#)|$)/, "$1").replace(/[?&](?=#|$)/, ""); }
+function safariUrl() { return "x-safari-" + cleanHref(); }
+function chromeIntentUrl() {
+  // Android の intent: URL は # を使うので、部屋番号は ?r= にして渡す
+  const q = new URLSearchParams(location.search);
+  const r = roomIdOf(new URLSearchParams(location.hash.slice(1)).get("r") || q.get("r") || S.room);
+  if (ROOM_RE.test(r)) q.set("r", r);
+  const qs = q.toString() ? "?" + q.toString() : "";
+  const https = `https://${location.host}${location.pathname}${qs}`;
+  return `intent://${location.host}${location.pathname}${qs}#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${encodeURIComponent(https)};end`;
+}
+(function inAppBrowser() {
+  if (!IN_APP) return;
+  // LINE: URL に openExternalBrowser=1 を付けると、LINE がふつうのブラウザでひらき直してくれる
+  if (IN_APP === "LINE") {
+    const u = new URL(location.href);
+    const hr = roomIdOf(new URLSearchParams(u.hash.slice(1)).get("r"));
+    if (ROOM_RE.test(hr)) u.searchParams.set("r", hr);   // # が引きつがれなくても、部屋に入れるように
+    if (!u.searchParams.has("openExternalBrowser")) { u.searchParams.set("openExternalBrowser", "1"); BG.redirecting = true; location.replace(u.toString()); return; }
+  }
+  $("inApp").hidden = false;
+  $("inAppTitle").textContent = `⚠ ${IN_APP} の中のブラウザでひらいています`;
+  $("inAppWhich").textContent = IS_IOS ? "Safari" : "Chrome";
+  $("inAppOpen").textContent = IS_IOS ? "Safari でひらく" : "Chrome でひらく";
+  $("inAppOpen").href = IS_IOS ? safariUrl() : chromeIntentUrl();
+  $("inAppHint").textContent = IS_IOS
+    ? "ひらかないときは、右下（または右上）の「…」→「Safari で開く」/「ブラウザで開く」をえらぶか、URL をコピーして Safari に貼り付けてください。"
+    : "ひらかないときは、右上の「︙」→「Chrome で開く」/「ブラウザで開く」をえらぶか、URL をコピーして Chrome に貼り付けてください。";
+  $("inAppCopy").addEventListener("click", () => copyText(cleanHref(), $("inAppCopy")));
+})();
+// 「くわしく」→ 使い方をひらく
+for (const el of document.querySelectorAll('a[href="#help-bg"]')) el.addEventListener("click", () => { $("help").open = true; });
+if (IS_MOBILE) {
+  $("mobileNote").hidden = false; $("startHintMobile").hidden = false;
+  if (IS_ANDROID) {
+    $("mobileNote").innerHTML = "📱 <b>スマホ 1 台でマイクラもするとき</b>: ボイスチャットを開始したら「<b>🎮 マイクラへ（小窓にする）</b>」を押して、マイクラをひらくだけ。ブラウザをスワイプして閉じなければ、マイクラの中でも話せます（<a href=\"#help-bg\">くわしく</a>）。";
+    $("startHintMobile").innerHTML = "<br>📱 開始したら「🎮 マイクラへ（小窓にする）」でマイクラに切りかえてください。";
+    for (const el of document.querySelectorAll('#mobileNote a[href="#help-bg"]')) el.addEventListener("click", () => { $("help").open = true; });
+  }
+}
 
 // ---------------------------------------------------------------------
 //  ホスト（サイトで作った部屋）
@@ -1697,13 +2421,17 @@ $("codeDetails").addEventListener("toggle", () => { if ($("codeDetails").open) p
 $("upgradeDetails").addEventListener("toggle", () => { if ($("upgradeDetails").open) placeCode($("codeSlot3")); });
 $("newCodeBtn").addEventListener("click", () => send({ t: "code" }));
 $("startBtn").addEventListener("click", () => startAudio());
-$("stopBtn").addEventListener("click", () => { stopAudio(); showState(); });
+$("stopBtn").addEventListener("click", () => { clearResume(); stopAudio(); showState(); });
 $("reBtn").addEventListener("click", () => {
   S.reconnectAll = true;
-  setConn("つなぎ直しています…", "warn");
-  if (S.ws) { try { S.ws.close(); } catch (e) { connectWs(); } } else connectWs();
+  forceReconnect();
+  if (S.started) {
+    if (S.ctx && S.ctx.state !== "running") S.ctx.resume().catch(() => {});
+    if (S.micTrack && S.micTrack.readyState === "ended") reMic();
+    if (BG.keep && BG.keep.paused) BG.keep.play().catch(() => {});
+  }
 });
-$("muteBtn").addEventListener("click", () => { S.muted = !S.muted; applyMic(); send({ t: "mute", on: S.muted }); });
+$("muteBtn").addEventListener("click", () => setMute(!S.muted));
 $("deafBtn").addEventListener("click", () => { S.deaf = !S.deaf; applyMic(); updateAudio(); });
 $("pttChk").addEventListener("change", () => { S.ptt = $("pttChk").checked; applyMic(); });
 $("micVol").value = String(S.micVol); $("micVolText").textContent = S.micVol + "%";
@@ -1735,6 +2463,7 @@ roomComposer = ChatUI.composer($("roomForm"), {
 });
 renderPick();
 (async function init() {
+  if (BG.redirecting) return;   // LINE の中 → ふつうのブラウザでひらき直している
   if (!BOT) { $("noApi").hidden = false; return; }
   // マイクラで部屋を作るコマンド（リレーのアドレスから）
   fetch(`${BOT}/api/info`, { cache: "no-store" }).then(r => r.json()).then(j => {
@@ -1744,13 +2473,17 @@ renderPick();
     $("noRelayNote").hidden = !!cmd;
   }).catch(() => { $("newCmd").textContent = "（読みこめませんでした）"; });
   const q = new URLSearchParams(location.hash.slice(1));
-  const r = roomIdOf(q.get("r"));
+  const qs = new URLSearchParams(location.search);   // ?r=（Android の「Chrome でひらく」・LINE からひらき直したとき）
+  const r = roomIdOf(q.get("r") || qs.get("r"));
+  if (!q.get("r") && ROOM_RE.test(r)) history.replaceState(null, "", location.pathname + "#r=" + r);
   const key = q.get("host");
   if (ROOM_RE.test(r) && key && /^[A-Za-z0-9]{6,24}$/.test(key)) {
     const hosts = store.get("vc-hosts", {}); hosts[r] = key; store.set("vc-hosts", hosts);
     history.replaceState(null, "", "#r=" + r);   // 管理キーはアドレスから消す（画面を共有しても見えないように）
   }
   if (ROOM_RE.test(r)) $("roomInput").value = r;
+  // アプリの中のブラウザ: ひらき直すか「このまま使う」をえらぶまで、名前の入力は出さない
+  if (IN_APP) await new Promise(res => $("inAppStay").addEventListener("click", () => { $("inApp").hidden = true; res(); }, { once: true }));
   // さいしょに名前を入れる（ゲスト）
   try { GUEST = await Guest.ensure(); } catch (e) { $("noApi").hidden = false; return; }
   renderMe();

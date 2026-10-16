@@ -323,6 +323,10 @@ export const webMethods = {
     const w = await this.webLoad();
     const a = this.att(ws);
     let sid = String(m.sid || "");
+    // 同じブラウザ（同じ sid）の古い接続が残っていたら、入れかえる。
+    // スマホで裏に回したとき・回線が変わったときに、切れたはずの古い接続が名前を使ったままになり、
+    // 「その名前は、ほかの人が使っています」で入り直せなくなるのを防ぐ
+    if (/^[A-Za-z0-9]{24}$/.test(sid)) this.webDropSameSid(ws, sid);
     let s = /^[A-Za-z0-9]{24}$/.test(sid) ? w.sessions[sid] : null;
     const rules = this.webRules();
     const via = s ? (s.via || "code") : "";
@@ -367,8 +371,8 @@ export const webMethods = {
   /** ワールドにいる人（testfor @a で読んだ名前） */
   webPlayers() { return (this.webPos && this.webPos.players) || []; },
   /** サイトで使われている名前 */
-  webTakenList() {
-    return [...new Set(this.webSockets().filter(s => this.att(s).verified && !this.att(s).spec).map(s => this.att(s).name))];
+  webTakenList(except = null) {
+    return [...new Set(this.webSockets().filter(s => s !== except && this.att(s).verified && !this.att(s).spec).map(s => this.att(s).name))];
   },
   webTaken(name, except) {
     const lower = String(name || "").toLowerCase();
@@ -518,6 +522,18 @@ export const webMethods = {
   },
 
   /** 同じ名前で、ほかのタブ・端末から入っていたら、そちらを閉じる */
+  /** 同じ sid の古い接続を閉じる（つなぎ直したブラウザが、新しい接続で続ける） */
+  webDropSameSid(ws, sid) {
+    for (const s of this.webSockets()) {
+      if (s === ws) continue;
+      const b = this.att(s);
+      if (b.sid !== sid) continue;
+      this.webSend(s, { t: "kick", text: "ほかのタブで、この部屋に入り直しました" });
+      b.verified = false; b.kicked = true; b.closed = true;   // closed: 閉じたときに「いなくなった」と知らせない（新しい接続で続くため）
+      this.setAtt(s, b);
+      try { s.close(4004, "replaced"); } catch (e) { /* 無視 */ }
+    }
+  },
   webKickOthers(ws, name) {
     const lower = String(name).toLowerCase();
     for (const s of this.webSockets()) {
@@ -580,8 +596,8 @@ export const webMethods = {
     }
   },
 
-  webPeers() {
-    return this.webSockets().filter(s => this.att(s).verified)
+  webPeers(except = null) {
+    return this.webSockets().filter(s => s !== except && this.att(s).verified)
       .map(s => { const b = this.att(s); return { sid: b.sid, name: b.name, muted: !!b.muted, via: b.via || "code", spec: !!b.spec }; });
   },
 
@@ -591,8 +607,9 @@ export const webMethods = {
     a.closed = true;
     this.setAtt(ws, a);
     if (a.verified) {
-      this.webBroadcast({ t: "peers", peers: this.webPeers().filter(p => p.sid !== a.sid) });
-      this.webBroadcast({ t: "players", list: this.webPlayers(), taken: this.webTakenList().filter(n => a.spec || n !== a.name) }, false);
+      // 閉じた接続だけを除く（同じ人がもう新しい接続で入り直していたら、その人は残す）
+      this.webBroadcast({ t: "peers", peers: this.webPeers(ws) });
+      this.webBroadcast({ t: "players", list: this.webPlayers(), taken: this.webTakenList(ws) }, false);
     }
   },
 

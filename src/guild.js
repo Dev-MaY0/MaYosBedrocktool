@@ -13,6 +13,7 @@ import { resolveEnv } from "./appconfig.js";
 import { WS_ENCRYPT_PROTOCOL, beginKeyExchange, finishKeyExchange, newCipherState, encryptText, decryptBytes } from "./mcenc.js";
 import { webMethods } from "./webvc.js";
 import { chatMethods, CHAT_TAG } from "./chat.js";
+import { loadNews, publicNews, newsOp } from "./news.js";
 
 export const DEAD_ROOM = 31;
 const MAX_ROOM = 30;
@@ -160,6 +161,14 @@ export class GuildRoom {
       const cur = (await this.storage.get("appConfig")) || {};
       await this.storage.put("appConfig", { ...cur, ...(await request.json()) });
       return json({ ok: true });
+    }
+    // お知らせ（"__config__" の部屋だけが使う。中身は src/news.js）
+    if (url.pathname === "/news/list") return json({ ok: true, items: publicNews(await loadNews(this.storage)) });
+    if (url.pathname === "/news/op" && request.method === "POST") {
+      let body = {};
+      try { body = await request.json(); } catch (e) { body = {}; }
+      const r = await newsOp(this.storage, body);
+      return json(r, r.ok ? 200 : 400);
     }
     if (!url.pathname.startsWith("/dir/")) await this.useEnv();
     switch (url.pathname) {

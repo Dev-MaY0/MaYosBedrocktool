@@ -21,3 +21,5 @@
 | `relay/` | 近接VC リレー（**Google Cloud の VM** や **Railway** で動かす中継サーバー）。Minecraft の `/wsserver` を PC のアプリなしで Bot につなぐ。Cloudflare では使いません。手順は [relay/vps/README.md](relay/vps/README.md)（VPS・ConoHa）・[relay/gcp/README.md](relay/gcp/README.md)（Google Cloud）・[relay/README.md](relay/README.md)（Railway） |
 | `relay/vps/PUBLIC_SERVER.md` | （上級者向け）このサイトと Bot をまとめて VPS に引っ越す手順（自分のドメインがあるとき） |
 | `test/` | Worker のテスト（`npm test`。Cloudflare では使いません） |
+| `src/news.js` | ホームの「最新情報」（お知らせ）。`/setup/` の「📢 お知らせ」で書くと、ホームに出ます |
+| `relay/vps/build-vps-server.mjs` | `public/download/vps-server.sh` を作り直す（`node relay/vps/build-vps-server.mjs`）。src/ や public/ を変えたら実行 |

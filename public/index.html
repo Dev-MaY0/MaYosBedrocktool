@@ -311,6 +311,58 @@ ol.steps > li { margin: 8px 0; }
   .chatcard { padding: 14px 16px; }
   .chatcard .go { display: none; }
 }
+
+/* ===== 最新情報（お知らせ）===== */
+.nbanners { display: flex; flex-direction: column; gap: 10px; margin: 6px 0 4px; }
+.nbanner { display: flex; gap: 12px; align-items: flex-start; border-radius: 16px; padding: 12px 16px; border: 1px solid; box-shadow: var(--shadow); text-align: left; cursor: pointer; font: inherit; color: inherit; width: 100%; }
+.nbanner .bi { flex: none; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; font-size: 19px; background: #fff; }
+.nbanner .bt { min-width: 0; flex: 1; }
+.nbanner .bt b { display: block; font-size: 15px; line-height: 1.4; overflow-wrap: anywhere; }
+.nbanner .bt small { display: block; font-size: 12.5px; margin-top: 2px; opacity: .85; overflow-wrap: anywhere; }
+.nbanner .bm { flex: none; align-self: center; font-size: 12.5px; font-weight: 700; opacity: .8; white-space: nowrap; }
+.nbanner.maint-now { background: #fff4e0; border-color: #f5c46b; color: #7a4300; }
+.nbanner.maint-now .bi { animation: npulse 1.6s ease-in-out infinite; }
+@keyframes npulse { 50% { box-shadow: 0 0 0 6px rgba(243, 156, 18, .25); } }
+.nbanner.maint-planned { background: #fffbef; border-color: #f7e2a8; color: #6b4a00; }
+.nbanner.important { background: #fff1f2; border-color: #f6c3c8; color: #9b1c2e; }
+.nbanner.update, .nbanner.info { background: linear-gradient(135deg, #fff7fb 0%, #f2f6ff 100%); border-color: #e6def3; color: var(--text); }
+.news { padding: 16px 18px 12px; }
+.news-head { display: flex; align-items: center; gap: 8px; margin: 0 0 6px; }
+.news-head h2 { margin: 0; font-size: 18px; font-weight: 800; }
+.news-head .chip.new { background: var(--grad-btn); color: #fff; }
+.newsfeed { list-style: none; margin: 0; padding: 0; }
+.newsfeed > li { border-top: 1px solid var(--border-soft); }
+.newsfeed > li:first-child { border-top: 0; }
+.newsfeed details > summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 4px 10px; padding: 10px 2px; border-radius: 10px; }
+.newsfeed details > summary::-webkit-details-marker { display: none; }
+.newsfeed details > summary:hover { background: #fafafa; }
+.newsfeed details > summary:focus-visible { outline: 3px solid rgba(0, 149, 246, .35); outline-offset: -2px; }
+.newsfeed .nt { min-width: 0; font-weight: 700; font-size: 15px; line-height: 1.4; overflow-wrap: anywhere; }
+.newsfeed .nd { color: var(--sub); font-size: 12px; white-space: nowrap; }
+.newsfeed .nbs { display: flex; gap: 4px; flex-wrap: wrap; }
+.newsfeed .chev { width: 18px; height: 18px; color: var(--sub); transition: transform .2s; grid-column: 3; grid-row: 1; }
+.newsfeed details[open] .chev { transform: rotate(180deg); }
+.newsfeed .nbody { margin: 0 2px 12px; padding: 10px 14px; background: #fafafa; border-radius: 12px; font-size: 14px; line-height: 1.7; white-space: pre-wrap; overflow-wrap: anywhere; }
+.newsfeed .nbody a { color: var(--blue); }
+.newsfeed .nmeta { display: block; color: var(--sub); font-size: 12px; margin: 0 0 6px; white-space: normal; }
+.newsfeed .nsum-l { display: flex; flex-direction: column; gap: 3px; min-width: 0; grid-column: 1 / 3; }
+.nbadge { display: inline-flex; align-items: center; gap: 3px; font-size: 11px; font-weight: 700; border-radius: 999px; padding: 1px 8px; line-height: 1.6; white-space: nowrap; }
+.nbadge.update { background: #e8f3ff; color: #0064c8; }
+.nbadge.maintenance { background: #fff1db; color: #a35b00; }
+.nbadge.info { background: #e7f7ee; color: #17803f; }
+.nbadge.important { background: #fff1f2; color: #c81e3a; }
+.nbadge.now { background: #f39c12; color: #fff; }
+.nbadge.planned { background: #fff8e6; color: #a35b00; border: 1px solid #f7d58a; }
+.nbadge.done { background: #efefef; color: var(--sub); }
+.nbadge.pin { background: #262626; color: #fff; }
+.nbadge.new { background: var(--grad-btn); color: #fff; }
+.news-more { display: block; margin: 4px auto 2px; }
+@media (max-width: 640px) {
+  .news { padding: 14px 14px 10px; }
+  .nbanner { padding: 11px 12px; gap: 10px; }
+  .nbanner .bm { display: none; }
+  .newsfeed .nt { font-size: 14.5px; }
+}
 </style>
 </head>
 <body>
@@ -333,6 +385,9 @@ ol.steps > li { margin: 8px 0; }
 </nav>
 
 <main>
+  <!-- メンテナンス中・ピン留めのお知らせ（/setup/ で書いたもの） -->
+  <div class="nbanners" id="newsBanners" aria-live="polite" hidden></div>
+
   <section class="hero">
     <h2><span>マイクラ統合版</span>をもっと楽しく</h2>
     <p>ブラウザだけで使えるアドオンツールと、近くの人と話せる近接VC。インストールも登録もいりません。</p>
@@ -344,6 +399,13 @@ ol.steps > li { margin: 8px 0; }
     <a class="story" href="vc/discord/"><span class="sring"><span>🎙</span></span>Discord VC</a>
     <a class="story" href="chat/"><span class="sring"><span>💬</span></span>チャット</a>
   </nav>
+
+  <!-- 最新情報（アップデート・メンテナンス・お知らせ） -->
+  <section class="card news" id="news" aria-labelledby="newsTitle" hidden>
+    <div class="news-head"><h2 id="newsTitle">📢 最新情報</h2><span class="chip new" id="newsNewChip"></span></div>
+    <ul class="newsfeed" id="newsFeed"></ul>
+    <button class="link news-more" id="newsMore" type="button" hidden></button>
+  </section>
 
   <div class="features">
     <section class="feature" aria-labelledby="f1">
@@ -479,6 +541,158 @@ ol.steps > li { margin: 8px 0; }
   });
   window.addEventListener("hashchange", function () { if (location.hash === "#about") about.open = true; });
   if (location.hash === "#about") about.open = true;
+})();
+</script>
+
+<script>
+// ---- 最新情報（お知らせ）… 管理者が /setup/ で書いたものを出す  制作: MaYo (mayo01297) ----
+(function () {
+  "use strict";
+  var CFG = window.SITE_CONFIG || {};
+  var cfgBot = String(CFG.botUrl || "").trim().replace(/\/+$/, "");
+  var BOT = cfgBot && !/ここに|xxxx/i.test(cfgBot) ? cfgBot : (/^https?:$/.test(location.protocol) ? location.origin : "");
+  if (!BOT) return;
+  var LABEL = { update: "🆕 アップデート", maintenance: "🛠 メンテナンス", info: "📢 お知らせ", important: "⚠ 重要" };
+  var ICON = { update: "🆕", maintenance: "🛠", info: "📢", important: "⚠️" };
+  var SHOW = 5;                    // はじめに出す数（のこりは「すべて見る」）
+  var items = [], skew = 0, showAll = false, lastLoad = 0, seenBefore = 0;
+  var $ = function (id) { return document.getElementById(id); };
+  function storeGet(k) { try { return Number(localStorage.getItem(k)) || 0; } catch (e) { return 0; } }
+  function storeSet(k, v) { try { localStorage.setItem(k, String(v)); } catch (e) { /* 使えないブラウザ */ } }
+  var now = function () { return Date.now() + skew; };
+  var WD = ["日", "月", "火", "水", "木", "金", "土"];
+  function pad(n) { return n < 10 ? "0" + n : String(n); }
+  function fmt(ms, withDay) {
+    var d = new Date(ms);
+    var s = (d.getMonth() + 1) + "/" + d.getDate() + (withDay ? "（" + WD[d.getDay()] + "）" : "");
+    if (new Date(now()).getFullYear() !== d.getFullYear()) s = d.getFullYear() + "/" + s;
+    return s;
+  }
+  function fmtT(ms) { var d = new Date(ms); return fmt(ms, true) + " " + d.getHours() + ":" + pad(d.getMinutes()); }
+  /** メンテナンスの様子: planned（予定）・now（中）・done（終了）・""（日時なし） */
+  function maintState(n) {
+    if (n.type !== "maintenance" || (!n.start && !n.end)) return "";
+    var t = now();
+    if (n.end && t >= n.end) return "done";
+    if (n.start && t < n.start) return "planned";
+    return "now";
+  }
+  function range(n) {
+    if (!n.start && !n.end) return "";
+    var s = n.start ? fmtT(n.start) : "";
+    var e = n.end ? fmtT(n.end) : "";
+    if (n.start && n.end && new Date(n.start).toDateString() === new Date(n.end).toDateString()) { var d = new Date(n.end); e = d.getHours() + ":" + pad(d.getMinutes()); }
+    return (s || "いま") + " 〜 " + (e || "終わりしだい");
+  }
+  /** 本文: 改行そのまま・URL をリンクに（HTML としては読まない） */
+  function fillText(el, text) {
+    el.textContent = "";
+    var re = /https?:\/\/[^\s<>"'（）「」『』【】、。]+/g, last = 0, m;
+    while ((m = re.exec(text))) {
+      var url = m[0].replace(/[.,!?:;)\]]+$/, "");
+      if (m.index > last) el.appendChild(document.createTextNode(text.slice(last, m.index)));
+      var a = document.createElement("a"); a.href = url; a.textContent = url; a.target = "_blank"; a.rel = "noopener noreferrer";
+      el.appendChild(a);
+      last = m.index + url.length;
+      re.lastIndex = last;
+    }
+    if (last < text.length) el.appendChild(document.createTextNode(text.slice(last)));
+  }
+  function badge(cls, text) { var b = document.createElement("span"); b.className = "nbadge " + cls; b.textContent = text; return b; }
+  function openItem(id) {
+    var li = document.querySelector('#newsFeed [data-id="' + id + '"]');
+    if (!li) { showAll = true; render(); li = document.querySelector('#newsFeed [data-id="' + id + '"]'); }
+    if (!li) return;
+    li.querySelector("details").open = true;
+    li.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+  function renderBanners() {
+    var box = $("newsBanners"); box.textContent = "";
+    var list = items.filter(function (n) { var st = maintState(n); return st === "now" || st === "planned" || (n.pinned && st !== "done"); });
+    // メンテナンス中 → 重要 → 予定 → そのほか
+    var rank = function (n) { var st = maintState(n); return st === "now" ? 0 : n.type === "important" ? 1 : st === "planned" ? 2 : 3; };
+    list.sort(function (a, b) { return rank(a) - rank(b) || b.at - a.at; });
+    list.slice(0, 3).forEach(function (n) {
+      var st = maintState(n);
+      var b = document.createElement("button"); b.type = "button";
+      b.className = "nbanner " + (st === "now" ? "maint-now" : st === "planned" ? "maint-planned" : n.type);
+      var i = document.createElement("span"); i.className = "bi"; i.textContent = ICON[n.type] || "📢"; i.setAttribute("aria-hidden", "true");
+      var t = document.createElement("span"); t.className = "bt";
+      var h = document.createElement("b");
+      h.textContent = (st === "now" ? "メンテナンス中: " : st === "planned" ? "メンテナンス予定: " : "") + n.title;
+      var sm = document.createElement("small");
+      sm.textContent = st ? range(n) + (n.body ? "　" + n.body.split("\n")[0].slice(0, 60) : "") : (n.body || "").split("\n")[0].slice(0, 80);
+      t.appendChild(h); if (sm.textContent) t.appendChild(sm);
+      var m = document.createElement("span"); m.className = "bm"; m.textContent = "くわしく →";
+      b.appendChild(i); b.appendChild(t); b.appendChild(m);
+      b.addEventListener("click", function () { openItem(n.id); });
+      box.appendChild(b);
+    });
+    box.hidden = !box.firstChild;
+  }
+  function renderFeed() {
+    var ul = $("newsFeed");
+    var openIds = {};   // 書きなおしても、ひらいていたものはひらいたまま
+    Array.prototype.forEach.call(ul.querySelectorAll("li[data-id] > details[open]"), function (d) { openIds[d.parentNode.getAttribute("data-id")] = 1; });
+    var first = !ul.firstChild;
+    ul.textContent = "";
+    var list = items.slice().sort(function (a, b) { return (b.pinned - a.pinned) || (b.at - a.at); });
+    var shown = showAll ? list : list.slice(0, SHOW);
+    var news = 0;
+    list.forEach(function (n) { if (n.at > seenBefore) news++; });
+    shown.forEach(function (n, idx) {
+      var li = document.createElement("li"); li.setAttribute("data-id", n.id);
+      var d = document.createElement("details");
+      var isNew = seenBefore > 0 && n.at > seenBefore;
+      if ((first && idx === 0 && (isNew || !seenBefore)) || openIds[n.id]) d.open = true;
+      var sum = document.createElement("summary");
+      var left = document.createElement("span"); left.className = "nsum-l";
+      var bs = document.createElement("span"); bs.className = "nbs";
+      if (isNew) bs.appendChild(badge("new", "NEW"));
+      bs.appendChild(badge(n.type, LABEL[n.type] || "お知らせ"));
+      var st = maintState(n);
+      if (st) bs.appendChild(badge(st, { planned: "予定", now: "メンテナンス中", done: "終了" }[st]));
+      if (n.pinned) bs.appendChild(badge("pin", "📌"));
+      var date = document.createElement("span"); date.className = "nd"; date.textContent = fmt(n.at, true);
+      bs.appendChild(date);
+      var t = document.createElement("span"); t.className = "nt"; t.textContent = n.title;
+      left.appendChild(bs); left.appendChild(t);
+      sum.appendChild(left);
+      sum.insertAdjacentHTML("beforeend", '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>');
+      var body = document.createElement("div"); body.className = "nbody";
+      var meta = document.createElement("span"); meta.className = "nmeta";
+      meta.textContent = fmtT(n.at) + (n.edited ? "（" + fmtT(n.edited) + " に更新）" : "") + (n.type === "maintenance" && range(n) ? "　｜　メンテナンス: " + range(n) : "");
+      var text = document.createElement("div");
+      fillText(text, n.body || "");
+      body.appendChild(meta); if (n.body) body.appendChild(text);
+      d.appendChild(sum); d.appendChild(body);
+      li.appendChild(d); ul.appendChild(li);
+    });
+    var more = $("newsMore");
+    more.hidden = list.length <= SHOW;
+    more.textContent = showAll ? "少なく表示する" : "すべて見る（" + list.length + " 件）";
+    $("newsNewChip").textContent = seenBefore > 0 && news ? "新着 " + news : "";
+    $("news").hidden = !list.length;
+  }
+  function render() { renderBanners(); renderFeed(); }
+  function load() {
+    lastLoad = Date.now();
+    fetch(BOT + "/api/news", { cache: "no-cache" }).then(function (r) { return r.json(); }).then(function (j) {
+      if (!j || !j.ok || !Array.isArray(j.items)) return;
+      if (typeof j.now === "number") skew = j.now - Date.now();
+      items = j.items;
+      render();
+      // 見たところまでを覚える（次にひらいたとき、これより新しいものに NEW がつく）
+      var max = 0; items.forEach(function (n) { if (n.at > max) max = n.at; });
+      if (max > storeGet("news-seen")) storeSet("news-seen", max);
+    }).catch(function () { /* お知らせが読めなくても、ほかはそのまま */ });
+  }
+  seenBefore = storeGet("news-seen");
+  $("newsMore").addEventListener("click", function () { showAll = !showAll; renderFeed(); if (!showAll) $("news").scrollIntoView({ block: "nearest" }); });
+  load();
+  // しばらくしてから戻ってきたら読み直す・メンテナンスの「予定 → 中 → 終了」を時間で直す
+  document.addEventListener("visibilitychange", function () { if (!document.hidden && Date.now() - lastLoad > 60000) load(); });
+  setInterval(function () { if (!document.hidden && items.length) renderBanners(); }, 30000);
 })();
 </script>
 

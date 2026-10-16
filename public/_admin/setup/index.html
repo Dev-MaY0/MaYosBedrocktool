@@ -11,7 +11,7 @@
 <meta name="copyright" content="© 2026 MaYo (mayo01297) 二次配布禁止">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>近接VC の設定</title>
+<title>サイトの管理</title>
 <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAB40lEQVR4nO3dsU3DQBiAUYJo2SJESGnTUNGzAQ0lKzADK7AAc6RKwwBIjAE9bJAUxjrD915rWb7i0y/5fJJX6832+4ys89ELYCwBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIE4AcQKIE0CcAOIuRi+AeV0/Xx29bgLECSBOAHECiBNAnADiBBA3eR9gd3v4jXVkfd09HL3+/vQx6/NNgDgBxAkgTgBxAogTQJwA4pwHGOzUe/6p7/lT9wlMgDgBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIE4AcQKIE0CcAOIWfx7g9eXy6PX7x89F3790JkCcAOIEECeAOAHECSBOAHECiBNAnADiBBAngDgBxAkgTgBxiz8PMPV7++j7l84EiBNAnADiBBAngDgBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIG7x5wH+u7n/B3CKCRAngDgBxAkgTgBxAogTQNzkfYC3/c2k+3e3h6lLOGrq+ma3H/t4EyBOAHECiBNAnADiBBAngLg/fx5g8e/5g506T2ACxAkgTgBxAogTQJwA4gQQt/h9AO/58zIB4gQQJ4A4AcQJIE4AcQKIW6032+/Ri2AcEyBOAHECiBNAnADiBBAngDgBxAkgTgBxAogTQJwA4gQQJ4C4Hz5iK0yQ/79HAAAAAElFTkSuQmCC">
 <style>
 /* =====================================================================
@@ -305,6 +305,53 @@ ul.adminlist .ab button { border: 0; border-radius: 8px; padding: 5px 10px; font
 ul.adminlist .ab button.ban { background: #fff1f2; color: var(--red); }
 ul.adminlist .empty { color: var(--sub); text-align: center; display: block; }
 ul.result li.warn::before { content: "! "; font-weight: 700; }
+
+/* ---- お知らせ（管理者） ---- */
+.nf-lead { margin: 0 0 10px; font-size: 14.5px; }
+.nf-grid { display: grid; gap: 8px; max-width: 640px; }
+.nf-grid .field { width: 100%; }
+.nf-grid textarea.field { resize: vertical; min-height: 120px; line-height: 1.55; font-size: 15px; }
+.nf-type { display: flex; flex-wrap: wrap; gap: 6px; }
+.nf-type label { display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--border); border-radius: 999px; padding: 5px 12px; font-size: 13.5px; font-weight: 600; cursor: pointer; background: #fff; }
+.nf-type label { position: relative; }
+.nf-type input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; pointer-events: none; }
+.nf-type label:has(input:checked) { background: #262626; color: #fff; border-color: #262626; }
+.nf-type label:has(input:focus-visible) { outline: 3px solid rgba(0, 149, 246, .35); outline-offset: 2px; }
+.nf-count { text-align: right; font-size: 12px; color: var(--sub); margin-top: -4px; }
+.nf-count.over { color: var(--red); font-weight: 700; }
+.nf-maint { display: flex; flex-wrap: wrap; gap: 8px 16px; background: #fff8e6; border: 1px solid #f7d58a; border-radius: 12px; padding: 10px 12px; font-size: 13.5px; }
+.nf-maint label { display: flex; flex-direction: column; gap: 3px; font-weight: 600; }
+.nf-maint input { font: inherit; font-size: 15px; padding: 6px 8px; border: 1px solid var(--border); border-radius: 9px; background: #fff; }
+.nf-maint .small-note { flex-basis: 100%; margin: 0; }
+.nf-checks { display: flex; flex-direction: column; gap: 4px; font-size: 14px; }
+.nf-checks label { display: flex; align-items: center; gap: 8px; }
+.nf-editing { background: var(--blue-pale); color: #0064c8; border-radius: 10px; padding: 6px 12px; font-size: 13.5px; font-weight: 600; }
+.nl-h { display: flex; align-items: center; gap: 8px; margin: 18px 0 8px; font-size: 15px; }
+ul.newslist { list-style: none; margin: 0; padding: 0; border: 1px solid var(--border-soft); border-radius: 14px; }
+ul.newslist > li { padding: 12px 14px; border-bottom: 1px solid var(--border-soft); }
+ul.newslist > li:last-child { border-bottom: 0; }
+ul.newslist > li.draft { background: #fafafa; }
+ul.newslist > li.editing { box-shadow: inset 4px 0 0 var(--blue); }
+ul.newslist .nl-top { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+ul.newslist .nl-title { font-weight: 700; font-size: 15px; overflow-wrap: anywhere; }
+ul.newslist .nl-meta { color: var(--sub); font-size: 12px; margin-top: 2px; }
+ul.newslist .nl-body { color: var(--text); font-size: 13.5px; margin-top: 4px; white-space: pre-wrap; overflow-wrap: anywhere; max-height: 4.8em; overflow: hidden; }
+ul.newslist .nl-btns { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+ul.newslist .nl-btns button { border: 0; border-radius: 8px; padding: 5px 11px; font-size: 12.5px; font-weight: 600; cursor: pointer; background: #efefef; color: var(--text); }
+ul.newslist .nl-btns button:hover { background: #e3e3e3; }
+ul.newslist .nl-btns button.del { background: #fff1f2; color: var(--red); }
+ul.newslist .nl-btns button.go { background: var(--blue); color: #fff; }
+ul.newslist .empty { color: var(--sub); text-align: center; font-size: 13.5px; }
+.nbadge { display: inline-flex; align-items: center; gap: 3px; font-size: 11.5px; font-weight: 700; border-radius: 999px; padding: 1px 9px; line-height: 1.6; white-space: nowrap; }
+.nbadge.update { background: #e8f3ff; color: #0064c8; }
+.nbadge.maintenance { background: #fff1db; color: #a35b00; }
+.nbadge.info { background: #e7f7ee; color: #17803f; }
+.nbadge.important { background: #fff1f2; color: #c81e3a; }
+.nbadge.now { background: #f39c12; color: #fff; }
+.nbadge.planned { background: #fff8e6; color: #a35b00; border: 1px solid #f7d58a; }
+.nbadge.done { background: #efefef; color: var(--sub); }
+.nbadge.pin { background: #262626; color: #fff; }
+.nbadge.draft { background: #efefef; color: var(--sub); border: 1px dashed #c7c7c7; }
 </style>
 </head>
 <body>
@@ -312,8 +359,8 @@ ul.result li.warn::before { content: "! "; font-weight: 700; }
   <div class="header-in">
     <img class="pixel" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAB40lEQVR4nO3dsU3DQBiAUYJo2SJESGnTUNGzAQ0lKzADK7AAc6RKwwBIjAE9bJAUxjrD915rWb7i0y/5fJJX6832+4ys89ELYCwBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIE4AcQKIE0CcAOIuRi+AeV0/Xx29bgLECSBOAHECiBNAnADiBBA3eR9gd3v4jXVkfd09HL3+/vQx6/NNgDgBxAkgTgBxAogTQJwA4pwHGOzUe/6p7/lT9wlMgDgBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIE4AcQKIE0CcAOIWfx7g9eXy6PX7x89F3790JkCcAOIEECeAOAHECSBOAHECiBNAnADiBBAngDgBxAkgTgBxiz8PMPV7++j7l84EiBNAnADiBBAngDgBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIG7x5wH+u7n/B3CKCRAngDgBxAkgTgBxAogTQNzkfYC3/c2k+3e3h6lLOGrq+ma3H/t4EyBOAHECiBNAnADiBBAngLg/fx5g8e/5g506T2ACxAkgTgBxAogTQJwA4gQQt/h9AO/58zIB4gQQJ4A4AcQJIE4AcQKIW6032+/Ri2AcEyBOAHECiBNAnADiBBAngDgBxAkgTgBxAogTQJwA4gQQJ4C4Hz5iK0yQ/79HAAAAAElFTkSuQmCC">
     <div>
-      <h1>近接VC の設定</h1>
-      <p>サイトを公開した人（管理者）用のページ　｜　制作: MaYo（mayo01297）</p>
+      <h1>サイトの管理</h1>
+      <p>お知らせ・近接VC の設定（サイトを公開した人＝管理者用）　｜　制作: MaYo（mayo01297）</p>
     </div>
   </div>
 </header>
@@ -341,6 +388,44 @@ ul.result li.warn::before { content: "! "; font-weight: 700; }
     <div class="actions" id="doneActions" hidden>
       <a class="btn btn-indigo" id="inviteBtn" href="#" target="_blank" rel="noopener noreferrer">Bot を Discord サーバーに招待する</a>
       <a class="btn btn-sub" href="../vc/discord/">近接VC（Discord 版）のページへ</a>
+    </div>
+  </section>
+
+  <!-- お知らせ（ホームの「最新情報」） -->
+  <section class="card" id="newsCard" aria-labelledby="tn">
+    <h2 class="step" id="tn"><span class="num">📢</span><span>お知らせ（ホームの「最新情報」）</span></h2>
+    <div class="indent">
+      <p class="nf-lead">アップデート・メンテナンスなどのお知らせを書くと、<a href="../" target="_blank" rel="noopener">ホーム</a>の「最新情報」に出ます。利用者はホームをひらくだけで見られます。</p>
+      <form id="newsForm" class="nf-grid" autocomplete="off" novalidate>
+        <p class="nf-editing" id="nfEditing" hidden></p>
+        <div class="nf-type" role="radiogroup" aria-label="お知らせの種類">
+          <label><input type="radio" name="nfType" value="update" checked> 🆕 アップデート</label>
+          <label><input type="radio" name="nfType" value="maintenance"> 🛠 メンテナンス</label>
+          <label><input type="radio" name="nfType" value="info"> 📢 お知らせ</label>
+          <label><input type="radio" name="nfType" value="important"> ⚠ 重要</label>
+        </div>
+        <input class="field" id="nfTitle" type="text" maxlength="80" spellcheck="false" placeholder="タイトル（例: v1.3 アップデート）" aria-label="タイトル">
+        <textarea class="field" id="nfBody" rows="6" placeholder="本文（改行はそのまま出ます。https:// で始まる URL はリンクになります）&#10;例:&#10;・サイト版の近接VCに「バックグラウンドモード」を追加しました&#10;・死体スキンの読みこみを速くしました" aria-label="本文"></textarea>
+        <div class="nf-count" id="nfCount">0 / 2000</div>
+        <div class="nf-maint" id="nfMaint" hidden>
+          <label>はじまり <input type="datetime-local" id="nfStart"></label>
+          <label>終わり（予定） <input type="datetime-local" id="nfEnd"></label>
+          <p class="small-note">どちらも空でもOK。<b>はじまり〜終わり</b>のあいだは、ホームのいちばん上に「🛠 メンテナンス中」と出ます。はじまる前は「予定」、終わりを過ぎると自動で「終了」になります（終わりが空なら、「いま終わらせる」を押すまで続きます）。</p>
+        </div>
+        <div class="nf-checks">
+          <label><input type="checkbox" id="nfPinned"> ホームのいちばん上に大きく出す（ピン留め）</label>
+          <label><input type="checkbox" id="nfDraft"> 下書きにする（まだホームに出さない）</label>
+          <label id="nfBumpRow" hidden><input type="checkbox" id="nfBump"> 新着として、いちばん上に出しなおす（「NEW」がもう一度つきます）</label>
+        </div>
+        <div class="actions" style="margin-top:4px">
+          <button class="btn btn-green" id="nfSave" type="submit" style="width:auto;padding:11px 26px;font-size:16px">投稿する</button>
+          <button class="btn btn-sub" id="nfCancel" type="button" hidden>編集をやめる</button>
+        </div>
+        <ul class="result" id="nfResult"></ul>
+      </form>
+      <h3 class="nl-h">書いたお知らせ <span class="chip" id="nfCountAll"></span> <button class="link" id="nfReload" type="button">↻ 読みこみ直す</button></h3>
+      <ul class="newslist" id="newsList"><li><span class="empty">読みこんでいます…</span></li></ul>
+      <p class="small-note">ホームに出るのは「公開」しているものだけです（ピン留め → 新しい順）。保存できるのは 50 件まで（ふえたら、ピン留めしていない古いものから消えます）。ホームへの反映は 15 秒くらいかかることがあります。</p>
     </div>
   </section>
 
@@ -796,6 +881,159 @@ $("unbanBtn").addEventListener("click", async () => {
   if (!/^[A-Za-z0-9]{10}$/.test(id)) { $("unbanId").focus(); return; }
   if (await admin("unban", { id })) { $("unbanId").value = ""; const li = document.createElement("li"); li.className = "ok"; li.textContent = "BAN を解除しました。"; $("adminResult").appendChild(li); }
 });
+// ---- お知らせ（ホームの「最新情報」） ----
+const NEWS_LABEL = { update: "🆕 アップデート", maintenance: "🛠 メンテナンス", info: "📢 お知らせ", important: "⚠ 重要" };
+const N = { items: [], editing: "", busy: false };
+const pad2 = n => String(n).padStart(2, "0");
+/** ミリ秒 → <input type="datetime-local"> の値（この PC の時刻） */
+function toLocalInput(ms) {
+  if (!ms) return "";
+  const d = new Date(ms);
+  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}T${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+}
+function fromLocalInput(v) {
+  if (!v) return null;
+  const t = new Date(v).getTime();
+  return Number.isFinite(t) ? t : NaN;
+}
+function fmtTime(ms) {
+  const d = new Date(ms);
+  return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()} ${d.getHours()}:${pad2(d.getMinutes())}`;
+}
+/** メンテナンスの様子: "planned"（予定）・"now"（中）・"done"（終了）・""（日時なし） */
+function maintState(n, now = Date.now()) {
+  if (n.type !== "maintenance" || (!n.start && !n.end)) return "";
+  if (n.end && now >= n.end) return "done";
+  if (n.start && now < n.start) return "planned";
+  return "now";
+}
+const MAINT_TEXT = { planned: "予定", now: "メンテナンス中", done: "終了" };
+function nfType() { const r = document.querySelector('input[name="nfType"]:checked'); return r ? r.value : "update"; }
+function nfLine(kind, text) { const li = document.createElement("li"); li.className = kind; li.textContent = text; $("nfResult").appendChild(li); }
+function nfSync() {
+  const maint = nfType() === "maintenance";
+  $("nfMaint").hidden = !maint;
+  $("nfTitle").placeholder = maint ? "タイトル（例: サーバーのメンテナンスのお知らせ）" : "タイトル（例: v1.3 アップデート）";
+  const len = [...$("nfBody").value].length;
+  $("nfCount").textContent = `${len} / 2000`;
+  $("nfCount").classList.toggle("over", len > 2000);
+}
+function nfReset() {
+  N.editing = "";
+  $("newsForm").reset();
+  $("nfEditing").hidden = true; $("nfCancel").hidden = true; $("nfBumpRow").hidden = true;
+  $("nfSave").textContent = "投稿する";
+  nfSync(); renderNews();
+}
+function nfEdit(n) {
+  N.editing = n.id;
+  for (const r of document.querySelectorAll('input[name="nfType"]')) r.checked = r.value === n.type;
+  $("nfTitle").value = n.title; $("nfBody").value = n.body || "";
+  $("nfStart").value = toLocalInput(n.start); $("nfEnd").value = toLocalInput(n.end);
+  $("nfPinned").checked = !!n.pinned; $("nfDraft").checked = !n.published; $("nfBump").checked = false;
+  $("nfEditing").textContent = `✏️ 「${n.title}」を編集しています（${fmtTime(n.at)} に投稿）`;
+  $("nfEditing").hidden = false; $("nfCancel").hidden = false; $("nfBumpRow").hidden = false;
+  $("nfSave").textContent = "更新する";
+  $("nfResult").textContent = "";
+  nfSync(); renderNews();
+  $("newsCard").scrollIntoView({ behavior: "smooth", block: "start" });
+  setTimeout(() => $("nfTitle").focus({ preventScroll: true }), 300);
+}
+async function newsCall(action, extra = {}) {
+  const res = await fetch("../api/admin/news", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action, ...extra }), cache: "no-store" });
+  const j = await res.json().catch(() => ({ ok: false, error: "サーバーの返事が読めませんでした。" }));
+  if (j.ok && Array.isArray(j.items)) { N.items = j.items; renderNews(); }
+  return j;
+}
+function renderNews() {
+  const ul = $("newsList"); ul.textContent = "";
+  $("nfCountAll").textContent = N.items.length ? `${N.items.length} 件（公開 ${N.items.filter(n => n.published).length}）` : "";
+  if (!N.items.length) { const li = document.createElement("li"); li.innerHTML = '<span class="empty">まだお知らせはありません。上のフォームから書けます。</span>'; ul.appendChild(li); return; }
+  const now = Date.now();
+  const list = N.items.slice().sort((a, b) => (b.pinned - a.pinned) || (b.at - a.at));
+  for (const n of list) {
+    const li = document.createElement("li");
+    if (!n.published) li.classList.add("draft");
+    if (n.id === N.editing) li.classList.add("editing");
+    const top = document.createElement("div"); top.className = "nl-top";
+    const badge = (cls, text) => { const b = document.createElement("span"); b.className = "nbadge " + cls; b.textContent = text; top.appendChild(b); };
+    badge(n.type, NEWS_LABEL[n.type] || n.type);
+    const ms = maintState(n, now);
+    if (ms) badge(ms, MAINT_TEXT[ms]);
+    if (n.pinned) badge("pin", "📌 ピン留め");
+    if (!n.published) badge("draft", "下書き（ホームに出ていません）");
+    const t = document.createElement("span"); t.className = "nl-title"; t.textContent = n.title; top.appendChild(t);
+    const meta = document.createElement("div"); meta.className = "nl-meta";
+    let mt = `${fmtTime(n.at)} に投稿` + (n.edited ? `・${fmtTime(n.edited)} に編集` : "");
+    if (n.type === "maintenance" && (n.start || n.end)) mt += `　｜　メンテナンス: ${n.start ? fmtTime(n.start) : "（未定）"} 〜 ${n.end ? fmtTime(n.end) : "（未定）"}`;
+    meta.textContent = mt;
+    const body = document.createElement("div"); body.className = "nl-body"; body.textContent = n.body || "（本文なし）";
+    const btns = document.createElement("div"); btns.className = "nl-btns";
+    const mk = (text, cls, fn) => { const b = document.createElement("button"); b.type = "button"; b.textContent = text; if (cls) b.className = cls; b.addEventListener("click", () => nfAct(b, fn)); btns.appendChild(b); };
+    mk("✏️ 編集", "", async () => { nfEdit(n); });
+    mk(n.published ? "下書きに戻す" : "公開する", n.published ? "" : "go", () => newsCall("publish", { id: n.id, on: !n.published }));
+    mk(n.pinned ? "ピン留めをはずす" : "📌 ピン留め", "", () => newsCall("pin", { id: n.id, on: !n.pinned }));
+    if (ms === "now" || ms === "planned") mk(ms === "now" ? "✅ いま終わらせる" : "取りやめる（終了にする）", "go", () => {
+      const end = Date.now();
+      return newsCall("save", { item: { ...n, start: n.start && n.start < end ? n.start : null, end } });
+    });
+    mk("🗑 消す", "del", async () => {
+      if (!confirm(`「${n.title}」を消しますか？（もとに戻せません）`)) return { ok: true };
+      const r = await newsCall("delete", { id: n.id });
+      if (r.ok && N.editing === n.id) nfReset();
+      return r;
+    });
+    li.append(top, meta, body, btns);
+    ul.appendChild(li);
+  }
+}
+/** 一覧のボタン: 押しているあいだは押せないように。失敗したら上に出す */
+async function nfAct(btn, fn) {
+  if (N.busy) return;
+  N.busy = true; btn.disabled = true;
+  try {
+    const r = await fn();
+    if (r && !r.ok) { $("nfResult").textContent = ""; nfLine("ng", r.error || "できませんでした。"); }
+  } catch (e) { $("nfResult").textContent = ""; nfLine("ng", "つながりませんでした。もう一度ためしてください。"); }
+  N.busy = false; btn.disabled = false;
+}
+async function nfSave(ev) {
+  if (ev) ev.preventDefault();
+  if (N.busy) return;
+  $("nfResult").textContent = "";
+  const title = $("nfTitle").value.trim();
+  if (!title) { $("nfTitle").focus(); nfLine("ng", "タイトルを入れてください。"); return; }
+  if ([...$("nfBody").value].length > 2000) { $("nfBody").focus(); nfLine("ng", "本文は 2000 文字までです。"); return; }
+  const type = nfType();
+  const start = type === "maintenance" ? fromLocalInput($("nfStart").value) : null;
+  const end = type === "maintenance" ? fromLocalInput($("nfEnd").value) : null;
+  if (Number.isNaN(start) || Number.isNaN(end)) { nfLine("ng", "日時の形がちがいます。"); return; }
+  if (start && end && end <= start) { $("nfEnd").focus(); nfLine("ng", "「終わり」は「はじまり」より後にしてください。"); return; }
+  const item = { type, title, body: $("nfBody").value, pinned: $("nfPinned").checked, published: !$("nfDraft").checked, start, end };
+  if (N.editing) { item.id = N.editing; item.bump = $("nfBump").checked; }
+  N.busy = true; $("nfSave").disabled = true; $("nfSave").textContent = N.editing ? "更新しています…" : "投稿しています…";
+  try {
+    const r = await newsCall("save", { item });
+    if (!r.ok) nfLine("ng", r.error || "保存できませんでした。");
+    else {
+      const was = N.editing;
+      N.busy = false; nfReset();
+      nfLine("ok", (was ? "更新しました。" : item.published ? "投稿しました。" : "下書きを保存しました。") + (item.published ? "ホームの「最新情報」に出ます（15 秒くらいかかることがあります）。" : ""));
+    }
+  } catch (e) { nfLine("ng", "つながりませんでした。もう一度ためしてください。"); }
+  N.busy = false; $("nfSave").disabled = false; $("nfSave").textContent = N.editing ? "更新する" : "投稿する";
+}
+$("newsForm").addEventListener("submit", nfSave);
+$("nfCancel").addEventListener("click", () => { nfReset(); $("nfResult").textContent = ""; });
+for (const r of document.querySelectorAll('input[name="nfType"]')) r.addEventListener("change", nfSync);
+$("nfBody").addEventListener("input", nfSync);
+$("nfTitle").addEventListener("keydown", ev => { if (ev.key === "Enter" && !ev.isComposing) ev.preventDefault(); });
+$("nfReload").addEventListener("click", () => newsCall("list").then(r => { if (!r.ok) nfLine("ng", r.error || "読みこめませんでした。"); }).catch(() => nfLine("ng", "つながりませんでした。")));
+nfSync();
+newsCall("list").catch(() => { $("newsList").innerHTML = '<li><span class="empty">読みこめませんでした。↻ を押してください。</span></li>'; });
+// メンテナンスの「予定 → 中 → 終了」の表示を、時間がたったら直す
+setInterval(() => { if (!document.hidden && N.items.some(n => n.type === "maintenance")) renderNews(); }, 30000);
+
 $("tokenInput").addEventListener("keydown", ev => { if (ev.key === "Enter") setup(); });
 refresh();
 </script>
