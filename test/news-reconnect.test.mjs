@@ -1,5 +1,5 @@
 // =====================================================================
-//  お知らせ（/api/news・/api/admin/news）と、サイト内VC のつなぎ直し（同じブラウザの入れかえ）のテスト
+//  お知らせ（/api/news・/api/admin/news）・作品（/api/works）と、サイト内VC のつなぎ直し（同じブラウザの入れかえ）のテスト
 //
 //  使い方（cloudflare フォルダで）:  npm install && node test/news-reconnect.test.mjs
 //  workerd（Cloudflare Workers と同じ実行環境）を直接動かします。Discord には何も送りません。
@@ -138,6 +138,33 @@ try {
   for (let i = 0; i < 52; i++) await admin({ action: "save", item: { type: "info", title: "たくさん " + i } });
   const many = await admin({ action: "list" });
   check(many.j.items.length === 50 && many.j.items.some(n => n.id === upId) && many.j.items.some(n => n.type === "maintenance"), "50 件まで（ピン留めしたものは残る）→ " + many.j.items.length + " 件");
+
+  // ---- 作品の紹介 ----
+  const wadmin = async body => { const r = await post("/api/admin/works", body, { headers: { Cookie: cookie } }); return { status: r.status, j: await r.json() }; };
+  check((await post("/api/admin/works", { action: "list" })).status === 401, "ログインなしで /api/admin/works → 401");
+  check((await wadmin({ action: "save", item: { cat: "nope", title: "x" } })).status === 400, "作品: 知らない種類 → 400");
+  const badLink = await wadmin({ action: "save", item: { cat: "addon", title: "x", links: [{ label: "a", url: "javascript:alert(1)" }] } });
+  check(badLink.status === 400 && /https/.test(badLink.j.error), "作品: javascript: のリンク → 400");
+  const PNG = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==";
+  check((await wadmin({ action: "save", item: { cat: "addon", title: "x" }, image: "data:image/svg+xml;base64,PHN2Zz48L3N2Zz4=" })).status === 400, "作品: SVG の画像 → 400（スクリプトを入れられないように）");
+  check((await wadmin({ action: "save", item: { cat: "addon", title: "x" }, image: "data:image/png;base64,SGVsbG8gd29ybGQh" })).status === 400, "作品: PNG と言いながら中身がちがう → 400");
+  const wk1 = await wadmin({ action: "save", item: { cat: "addon", title: "死体アドオン", summary: "死体が残る", sub: "v1.3", body: "説明\r\nです", pinned: true,
+    links: [{ label: "つくる", url: "/corpse/" }, { label: "YouTube", url: "https://youtu.be/dQw4w9WgXcQ" }, { label: "", url: "" }] }, image: PNG });
+  check(wk1.status === 200 && wk1.j.created && wk1.j.items[0].img && wk1.j.items[0].links.length === 2, "作品を載せる（画像・リンク 2 つ）");
+  const wk2 = await wadmin({ action: "save", item: { cat: "client", title: "下書きクライアント", published: false } });
+  check(wk2.j.ok, "作品の下書き");
+  let wl = await (await req("/api/works")).json();
+  check(wl.ok && wl.items.length === 1 && wl.items[0].title === "死体アドオン" && /^\/api\/works\/img\/[a-z0-9]{10}\?v=\d+$/.test(wl.items[0].img), "作品ページ用（/api/works）には公開したものだけ・画像の URL つき");
+  check(wl.items[0].body === "説明\nです" && !("published" in wl.items[0]), "作品: 改行をそろえる・出さなくてよい項目は入れない");
+  const imgRes = await req(wl.items[0].img);
+  const imgBytes = new Uint8Array(await imgRes.arrayBuffer());
+  check(imgRes.status === 200 && imgRes.headers.get("content-type") === "image/png" && /immutable/.test(imgRes.headers.get("cache-control") || "") && imgBytes[0] === 0x89, "作品の画像を配る（image/png・長く覚えてよい）");
+  check((await req("/api/works/img/zzzzzzzzzz")).status === 404, "ない作品の画像 → 404");
+  const wEdit = await wadmin({ action: "save", item: { id: wk1.j.saved, cat: "addon", title: "死体アドオン 2", links: [] }, removeImage: true });
+  check(wEdit.j.ok && !wEdit.j.items.find(w => w.id === wk1.j.saved).img, "作品を編集して画像を消す");
+  check((await req(wl.items[0].img)).status === 404, "消した画像は配らない");
+  const wDel = await wadmin({ action: "delete", id: wk2.j.saved });
+  check(wDel.j.ok && wDel.j.items.length === 1, "作品を消す");
 
   // ---- サイト内VC: 同じブラウザ（同じ sid）でつなぎ直す ----
   const room = await (await post("/api/web/rooms", { name: "つなぎ直し" })).json();

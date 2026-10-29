@@ -363,6 +363,26 @@ ol.steps > li { margin: 8px 0; }
   .nbanner .bm { display: none; }
   .newsfeed .nt { font-size: 14.5px; }
 }
+/* ===== 制作者の作品（ホーム）===== */
+.hworks { padding: 16px 18px 18px; }
+.hworks .news-head { margin-bottom: 10px; }
+.hw-all { margin-left: auto; color: var(--blue); font-weight: 700; font-size: 14px; text-decoration: none; }
+.hw-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.hw-card { display: flex; flex-direction: column; border: 1px solid var(--border-soft); border-radius: 14px; overflow: hidden; text-decoration: none; color: var(--text); background: #fff; transition: transform .12s, box-shadow .12s; }
+.hw-card:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(0,0,0,.08); }
+.hw-img { position: relative; aspect-ratio: 16 / 9; background: linear-gradient(135deg, #fff1f5 0%, #f1efff 100%); display: grid; place-items: center; overflow: hidden; font-size: 34px; }
+.hw-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hw-img .hw-star { position: absolute; top: 7px; left: 7px; background: rgba(38,38,38,.85); color: #fff; font-size: 10.5px; font-weight: 700; border-radius: 999px; padding: 1px 8px; }
+.hw-b { padding: 8px 10px 10px; }
+.hw-b small { display: block; color: var(--sub); font-size: 11.5px; }
+.hw-b b { display: block; font-size: 14px; line-height: 1.35; overflow-wrap: anywhere; }
+.hw-b span { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; color: var(--sub); font-size: 12.5px; margin-top: 2px; }
+.hw-grid.big { grid-template-columns: repeat(2, 1fr); }
+.hw-grid.n3 { grid-template-columns: repeat(3, 1fr); }
+.hw-grid.big .hw-b b { font-size: 16px; }
+@media (max-width: 860px) { .hw-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 640px) { .hworks { padding: 14px 14px 14px; } .hw-grid, .hw-grid.big, .hw-grid.n3 { grid-template-columns: 1fr 1fr; gap: 10px; } }
+@media (max-width: 380px) { .hw-grid, .hw-grid.big, .hw-grid.n3 { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -381,6 +401,7 @@ ol.steps > li { margin: 8px 0; }
     <a href="./corpse/" data-page="corpse">🪦 死体スキン</a>
     <a href="./vc/" data-page="vc">🎙 近接VC</a>
     <a href="./chat/" data-page="chat">💬 チャット</a>
+    <a href="./works/" data-page="works">🧩 作品</a>
   </div>
 </nav>
 
@@ -398,6 +419,7 @@ ol.steps > li { margin: 8px 0; }
     <a class="story" href="talk/"><span class="sring"><span>🎧</span></span>サイトでVC</a>
     <a class="story" href="vc/discord/"><span class="sring"><span>🎙</span></span>Discord VC</a>
     <a class="story" href="chat/"><span class="sring"><span>💬</span></span>チャット</a>
+    <a class="story" href="works/"><span class="sring"><span>🧩</span></span>作品</a>
   </nav>
 
   <!-- 最新情報（アップデート・メンテナンス・お知らせ） -->
@@ -439,6 +461,12 @@ ol.steps > li { margin: 8px 0; }
       <a class="btn btn-green" href="vc/">近接VCをえらぶ →</a>
     </section>
   </div>
+
+  <!-- 制作者の作品（/setup/ で載せたもの。おすすめ → 新しい順） -->
+  <section class="card hworks" id="hWorks" aria-labelledby="hwTitle" hidden>
+    <div class="news-head"><h2 id="hwTitle">🧩 制作者の作品</h2><a class="hw-all" href="works/">すべて見る →</a></div>
+    <div class="hw-grid" id="hwGrid"></div>
+  </section>
 
   <a class="chatcard" href="chat/">
     <span class="cic" aria-hidden="true">💬</span>
@@ -693,6 +721,48 @@ ol.steps > li { margin: 8px 0; }
   // しばらくしてから戻ってきたら読み直す・メンテナンスの「予定 → 中 → 終了」を時間で直す
   document.addEventListener("visibilitychange", function () { if (!document.hidden && Date.now() - lastLoad > 60000) load(); });
   setInterval(function () { if (!document.hidden && items.length) renderBanners(); }, 30000);
+})();
+</script>
+
+<script>
+// ---- 制作者の作品（ホーム）… /setup/ で載せたもの  制作: MaYo (mayo01297) ----
+(function () {
+  "use strict";
+  var CFG = window.SITE_CONFIG || {};
+  var cfgBot = String(CFG.botUrl || "").trim().replace(/\/+$/, "");
+  var BOT = cfgBot && !/ここに|xxxx/i.test(cfgBot) ? cfgBot : (/^https?:$/.test(location.protocol) ? location.origin : "");
+  if (!BOT) return;
+  var CAT = { addon: ["🧩", "アドオン"], client: ["🗡", "クライアント"], map: ["🗺", "マップ"], tool: ["🛠", "ツール"], game: ["🎮", "ゲーム"], video: ["🎬", "動画"], other: ["✨", "その他"] };
+  function yt(w) {
+    for (var i = 0; i < (w.links || []).length; i++) {
+      var m = /(?:youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|live\/|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/.exec(w.links[i].url);
+      if (m) return "https://i.ytimg.com/vi/" + m[1] + "/hqdefault.jpg";
+    }
+    return "";
+  }
+  fetch(BOT + "/api/works", { cache: "no-cache" }).then(function (r) { return r.json(); }).then(function (j) {
+    if (!j || !j.ok || !Array.isArray(j.items) || !j.items.length) return;
+    var list = j.items.slice(0, 4);            // おすすめ → 新しい順（サーバーで並べてある）
+    var grid = document.getElementById("hwGrid");
+    grid.classList.toggle("big", list.length <= 2);
+    grid.classList.toggle("n3", list.length === 3);
+    list.forEach(function (w) {
+      var a = document.createElement("a"); a.className = "hw-card"; a.href = "works/#w=" + w.id;
+      var box = document.createElement("div"); box.className = "hw-img";
+      var src = w.img ? BOT + w.img : yt(w);
+      var emo = (CAT[w.cat] || CAT.other)[0];
+      if (src) { var im = document.createElement("img"); im.src = src; im.alt = ""; im.loading = "lazy"; im.onerror = function () { im.remove(); box.prepend(document.createTextNode(emo)); }; box.appendChild(im); }
+      else box.textContent = emo;
+      if (w.pinned) { var st = document.createElement("span"); st.className = "hw-star"; st.textContent = "⭐ おすすめ"; box.appendChild(st); }
+      var b = document.createElement("div"); b.className = "hw-b";
+      var sm = document.createElement("small"); sm.textContent = (CAT[w.cat] || CAT.other).join(" ") + (w.sub ? "・" + w.sub : "");
+      var t = document.createElement("b"); t.textContent = w.title;
+      var d = document.createElement("span"); d.textContent = w.summary || "";
+      b.appendChild(sm); b.appendChild(t); if (w.summary) b.appendChild(d);
+      a.appendChild(box); a.appendChild(b); grid.appendChild(a);
+    });
+    document.getElementById("hWorks").hidden = false;
+  }).catch(function () { /* 作品が読めなくても、ほかはそのまま */ });
 })();
 </script>
 

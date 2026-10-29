@@ -306,6 +306,38 @@ ul.adminlist .ab button.ban { background: #fff1f2; color: var(--red); }
 ul.adminlist .empty { color: var(--sub); text-align: center; display: block; }
 ul.result li.warn::before { content: "! "; font-weight: 700; }
 
+/* ---- 作品（管理者） ---- */
+.wf-two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.wf-img { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; border: 1px dashed var(--border); border-radius: 12px; padding: 10px; background: #fafafa; }
+.wf-img img { width: 192px; height: 108px; object-fit: cover; border-radius: 10px; background: #e9e9e9; flex: none; }
+.wf-img .wf-imgbtns { display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
+.wf-img input[type=file] { font-size: 13px; max-width: 230px; }
+.wf-links { display: grid; gap: 6px; }
+.wf-links .wl { display: grid; grid-template-columns: 180px 1fr; gap: 6px; }
+.wf-links input { width: 100%; min-width: 0; font-size: 14px !important; padding: 8px 10px !important; }
+.wf-label { font-size: 13px; font-weight: 700; color: var(--sub); margin: 4px 0 -2px; }
+ul.worklist { list-style: none; margin: 0; padding: 0; border: 1px solid var(--border-soft); border-radius: 14px; }
+ul.worklist > li { display: grid; grid-template-columns: 128px 1fr; gap: 12px; padding: 12px 14px; border-bottom: 1px solid var(--border-soft); }
+ul.worklist > li:last-child { border-bottom: 0; }
+ul.worklist > li.draft { background: #fafafa; }
+ul.worklist > li.editing { box-shadow: inset 4px 0 0 var(--blue); }
+ul.worklist .wthumb { width: 128px; height: 72px; border-radius: 10px; object-fit: cover; background: linear-gradient(135deg, #fff7fb, #f2f6ff); display: grid; place-items: center; font-size: 28px; }
+ul.worklist .wt { font-weight: 700; font-size: 15px; overflow-wrap: anywhere; }
+ul.worklist .ws { color: var(--sub); font-size: 13px; overflow-wrap: anywhere; }
+ul.worklist .empty { grid-column: 1 / 3; color: var(--sub); text-align: center; font-size: 13.5px; }
+.nbadge.cat { background: #efefef; color: var(--text); }
+ul.worklist .nl-top { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 2px; }
+ul.worklist .nl-meta { color: var(--sub); font-size: 12px; margin-top: 2px; }
+ul.worklist .nl-btns { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+ul.worklist .nl-btns button { border: 0; border-radius: 8px; padding: 5px 11px; font-size: 12.5px; font-weight: 600; cursor: pointer; background: #efefef; color: var(--text); }
+ul.worklist .nl-btns button:hover { background: #e3e3e3; }
+ul.worklist .nl-btns button.del { background: #fff1f2; color: var(--red); }
+ul.worklist .nl-btns button.go { background: var(--blue); color: #fff; }
+@media (max-width: 640px) {
+  .wf-two { grid-template-columns: 1fr; }
+  .wf-links .wl { grid-template-columns: 1fr; }
+  ul.worklist > li { grid-template-columns: 1fr; }
+}
 /* ---- お知らせ（管理者） ---- */
 .nf-lead { margin: 0 0 10px; font-size: 14.5px; }
 .nf-grid { display: grid; gap: 8px; max-width: 640px; }
@@ -360,7 +392,7 @@ ul.newslist .empty { color: var(--sub); text-align: center; font-size: 13.5px; }
     <img class="pixel" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAB40lEQVR4nO3dsU3DQBiAUYJo2SJESGnTUNGzAQ0lKzADK7AAc6RKwwBIjAE9bJAUxjrD915rWb7i0y/5fJJX6832+4ys89ELYCwBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIE4AcQKIE0CcAOIuRi+AeV0/Xx29bgLECSBOAHECiBNAnADiBBA3eR9gd3v4jXVkfd09HL3+/vQx6/NNgDgBxAkgTgBxAogTQJwA4pwHGOzUe/6p7/lT9wlMgDgBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIE4AcQKIE0CcAOIWfx7g9eXy6PX7x89F3790JkCcAOIEECeAOAHECSBOAHECiBNAnADiBBAngDgBxAkgTgBxiz8PMPV7++j7l84EiBNAnADiBBAngDgBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIG7x5wH+u7n/B3CKCRAngDgBxAkgTgBxAogTQNzkfYC3/c2k+3e3h6lLOGrq+ma3H/t4EyBOAHECiBNAnADiBBAngLg/fx5g8e/5g506T2ACxAkgTgBxAogTQJwA4gQQt/h9AO/58zIB4gQQJ4A4AcQJIE4AcQKIW6032+/Ri2AcEyBOAHECiBNAnADiBBAngDgBxAkgTgBxAogTQJwA4gQQJ4C4Hz5iK0yQ/79HAAAAAElFTkSuQmCC">
     <div>
       <h1>サイトの管理</h1>
-      <p>お知らせ・近接VC の設定（サイトを公開した人＝管理者用）　｜　制作: MaYo（mayo01297）</p>
+      <p>お知らせ・作品・近接VC の設定（サイトを公開した人＝管理者用）　｜　制作: MaYo（mayo01297）</p>
     </div>
   </div>
 </header>
@@ -370,6 +402,7 @@ ul.newslist .empty { color: var(--sub); text-align: center; font-size: 13.5px; }
     <a href="../corpse/" data-page="corpse">🪦 死体スキン</a>
     <a href="../vc/" data-page="vc">🎙 近接VC</a>
     <a href="../chat/" data-page="chat">💬 チャット</a>
+    <a href="../works/" data-page="works">🧩 作品</a>
   </div>
 </nav>
 
@@ -426,6 +459,57 @@ ul.newslist .empty { color: var(--sub); text-align: center; font-size: 13.5px; }
       <h3 class="nl-h">書いたお知らせ <span class="chip" id="nfCountAll"></span> <button class="link" id="nfReload" type="button">↻ 読みこみ直す</button></h3>
       <ul class="newslist" id="newsList"><li><span class="empty">読みこんでいます…</span></li></ul>
       <p class="small-note">ホームに出るのは「公開」しているものだけです（ピン留め → 新しい順）。保存できるのは 50 件まで（ふえたら、ピン留めしていない古いものから消えます）。ホームへの反映は 15 秒くらいかかることがあります。</p>
+    </div>
+  </section>
+
+  <!-- 作品（/works/ とホームに出す） -->
+  <section class="card" id="worksCard" aria-labelledby="tw">
+    <h2 class="step" id="tw"><span class="num">🧩</span><span>作品の紹介（アドオン・クライアントなど）</span></h2>
+    <div class="indent">
+      <p class="nf-lead">あなたが作った作品を載せると、<a href="../works/" target="_blank" rel="noopener">作品のページ</a>に出ます。「おすすめ」にした作品は、ホームにも大きく出ます。</p>
+      <form id="worksForm" class="nf-grid" autocomplete="off" novalidate>
+        <p class="nf-editing" id="wfEditing" hidden></p>
+        <div class="nf-type" role="radiogroup" aria-label="作品の種類">
+          <label><input type="radio" name="wfCat" value="addon" checked> 🧩 アドオン</label>
+          <label><input type="radio" name="wfCat" value="client"> 🗡 クライアント</label>
+          <label><input type="radio" name="wfCat" value="map"> 🗺 マップ</label>
+          <label><input type="radio" name="wfCat" value="tool"> 🛠 ツール</label>
+          <label><input type="radio" name="wfCat" value="game"> 🎮 ゲーム</label>
+          <label><input type="radio" name="wfCat" value="video"> 🎬 動画</label>
+          <label><input type="radio" name="wfCat" value="other"> ✨ その他</label>
+        </div>
+        <div class="wf-two">
+          <input class="field" id="wfTitle" type="text" maxlength="60" placeholder="作品の名前（例: プレイヤーの死体アドオン）" aria-label="作品の名前">
+          <input class="field" id="wfSub" type="text" maxlength="50" placeholder="バージョン・対応（例: v1.2 ／ 統合版 1.21〜）" aria-label="バージョン・対応">
+        </div>
+        <input class="field" id="wfSummary" type="text" maxlength="120" placeholder="ひとこと紹介（一覧に出ます。例: 死んだ場所に、本人のスキンの死体が残る）" aria-label="ひとこと紹介">
+        <textarea class="field" id="wfBody" rows="5" placeholder="くわしい説明（入れ方・できること・注意など。改行そのまま、https:// の URL はリンクになります）" aria-label="くわしい説明"></textarea>
+        <div class="nf-count" id="wfCount">0 / 3000</div>
+        <p class="wf-label">画像（スクリーンショットなど・横長がおすすめ。自動で小さくして保存します）</p>
+        <div class="wf-img">
+          <img id="wfImgPrev" alt="" hidden>
+          <div class="wf-imgbtns">
+            <input type="file" id="wfImgFile" accept="image/png,image/jpeg,image/webp,image/gif">
+            <button class="link" id="wfImgDel" type="button" hidden>画像を消す</button>
+            <span class="sub-hint" id="wfImgInfo">画像なし（YouTube のリンクがあれば、その画像を使います）</span>
+          </div>
+        </div>
+        <p class="wf-label">リンクのボタン（4 つまで・https:// から始まる URL。このサイトのページなら /corpse/ のように）</p>
+        <div class="wf-links" id="wfLinks"></div>
+        <div class="nf-checks">
+          <label><input type="checkbox" id="wfPinned"> おすすめ（ホームと作品ページのいちばん上に大きく出す）</label>
+          <label><input type="checkbox" id="wfDraft"> 下書きにする（まだ出さない）</label>
+          <label id="wfBumpRow" hidden><input type="checkbox" id="wfBump"> 新着として、いちばん上に出しなおす</label>
+        </div>
+        <div class="actions" style="margin-top:4px">
+          <button class="btn btn-green" id="wfSave" type="submit" style="width:auto;padding:11px 26px;font-size:16px">載せる</button>
+          <button class="btn btn-sub" id="wfCancel" type="button" hidden>編集をやめる</button>
+        </div>
+        <ul class="result" id="wfResult"></ul>
+      </form>
+      <h3 class="nl-h">載せた作品 <span class="chip" id="wfCountAll"></span> <button class="link" id="wfReload" type="button">↻ 読みこみ直す</button></h3>
+      <ul class="worklist" id="workList"><li><span class="empty">読みこんでいます…</span></li></ul>
+      <p class="small-note">60 個まで載せられます。作品ページへの反映は 15 秒くらいかかることがあります。</p>
     </div>
   </section>
 
@@ -1033,6 +1117,175 @@ nfSync();
 newsCall("list").catch(() => { $("newsList").innerHTML = '<li><span class="empty">読みこめませんでした。↻ を押してください。</span></li>'; });
 // メンテナンスの「予定 → 中 → 終了」の表示を、時間がたったら直す
 setInterval(() => { if (!document.hidden && N.items.some(n => n.type === "maintenance")) renderNews(); }, 30000);
+
+// ---- 作品の紹介（/works/ とホーム） ----
+const WCAT = { addon: "🧩 アドオン", client: "🗡 クライアント", map: "🗺 マップ", tool: "🛠 ツール", game: "🎮 ゲーム", video: "🎬 動画", other: "✨ その他" };
+const W = { items: [], editing: "", busy: false, image: "", removeImage: false, curImg: "" };
+function wfCat() { const r = document.querySelector('input[name="wfCat"]:checked'); return r ? r.value : "addon"; }
+function wfLine(kind, text) { const li = document.createElement("li"); li.className = kind; li.textContent = text; $("wfResult").appendChild(li); }
+function wfLinksRender(links) {
+  const box = $("wfLinks"); box.textContent = "";
+  const ex = [["ダウンロード", "https://…"], ["YouTube", "https://youtu.be/…"], ["GitHub", "https://github.com/…"], ["", ""]];
+  for (let i = 0; i < 4; i++) {
+    const l = (links || [])[i] || {};
+    const row = document.createElement("div"); row.className = "wl";
+    const a = document.createElement("input"); a.className = "field"; a.type = "text"; a.maxLength = 20; a.placeholder = ex[i][0] ? `例: ${ex[i][0]}` : "ボタンの文字"; a.value = l.label || ""; a.setAttribute("aria-label", `リンク ${i + 1} のボタンの文字`);
+    const b = document.createElement("input"); b.className = "field"; b.type = "url"; b.maxLength = 400; b.placeholder = ex[i][1] || "https://…"; b.value = l.url || ""; b.setAttribute("aria-label", `リンク ${i + 1} の URL`);
+    row.append(a, b); box.appendChild(row);
+  }
+}
+function wfLinksRead() {
+  return [...$("wfLinks").querySelectorAll(".wl")].map(r => { const [a, b] = r.querySelectorAll("input"); return { label: a.value.trim(), url: b.value.trim() }; }).filter(l => l.url);
+}
+function wfImgShow(url, info) {
+  $("wfImgPrev").hidden = !url; if (url) $("wfImgPrev").src = url; else $("wfImgPrev").removeAttribute("src");
+  $("wfImgDel").hidden = !url;
+  $("wfImgInfo").textContent = info || (url ? "" : "画像なし（YouTube のリンクがあれば、その画像を使います）");
+}
+function wfSync() {
+  const len = [...$("wfBody").value].length;
+  $("wfCount").textContent = `${len} / 3000`; $("wfCount").classList.toggle("over", len > 3000);
+}
+function wfReset() {
+  W.editing = ""; W.image = ""; W.removeImage = false; W.curImg = "";
+  $("worksForm").reset(); wfLinksRender([]); wfImgShow("");
+  $("wfEditing").hidden = true; $("wfCancel").hidden = true; $("wfBumpRow").hidden = true;
+  $("wfSave").textContent = "載せる";
+  wfSync(); renderWorks();
+}
+function wfEdit(w) {
+  W.editing = w.id; W.image = ""; W.removeImage = false; W.curImg = w.imgUrl || "";
+  for (const r of document.querySelectorAll('input[name="wfCat"]')) r.checked = r.value === w.cat;
+  $("wfTitle").value = w.title; $("wfSub").value = w.sub || ""; $("wfSummary").value = w.summary || ""; $("wfBody").value = w.body || "";
+  $("wfPinned").checked = !!w.pinned; $("wfDraft").checked = !w.published; $("wfBump").checked = false;
+  $("wfImgFile").value = ""; wfImgShow(W.curImg ? ".." + W.curImg : "", W.curImg ? "いまの画像" : "");
+  wfLinksRender(w.links);
+  $("wfEditing").textContent = `✏️ 「${w.title}」を編集しています`;
+  $("wfEditing").hidden = false; $("wfCancel").hidden = false; $("wfBumpRow").hidden = false;
+  $("wfSave").textContent = "更新する"; $("wfResult").textContent = "";
+  wfSync(); renderWorks();
+  $("worksCard").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+/** 画像を小さくして、WebP（だめなら JPEG）にする。550KB をこえないように */
+async function wfShrink(file) {
+  const url = URL.createObjectURL(file);
+  try {
+    const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = url; });
+    let scale = Math.min(1, 1280 / img.naturalWidth, 1280 / img.naturalHeight);
+    for (let round = 0; round < 6; round++) {
+      const c = document.createElement("canvas");
+      c.width = Math.max(1, Math.round(img.naturalWidth * scale)); c.height = Math.max(1, Math.round(img.naturalHeight * scale));
+      const g = c.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0, 0, c.width, c.height); g.drawImage(img, 0, 0, c.width, c.height);
+      for (const q of [0.86, 0.76, 0.66]) {
+        let d = c.toDataURL("image/webp", q);
+        if (!/^data:image\/webp/.test(d)) d = c.toDataURL("image/jpeg", q);
+        const bytes = Math.floor((d.length - d.indexOf(",") - 1) * 3 / 4);
+        if (bytes <= 550 * 1024) return { data: d, w: c.width, h: c.height, kb: Math.round(bytes / 1024) };
+      }
+      scale *= 0.75;
+    }
+    throw new Error("小さくできませんでした");
+  } finally { URL.revokeObjectURL(url); }
+}
+async function worksCall(action, extra = {}) {
+  const res = await fetch("../api/admin/works", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action, ...extra }), cache: "no-store" });
+  const j = await res.json().catch(() => ({ ok: false, error: "サーバーの返事が読めませんでした。" }));
+  if (j.ok && Array.isArray(j.items)) { W.items = j.items; renderWorks(); }
+  return j;
+}
+function renderWorks() {
+  const ul = $("workList"); ul.textContent = "";
+  $("wfCountAll").textContent = W.items.length ? `${W.items.length} 個（公開 ${W.items.filter(w => w.published).length}）` : "";
+  if (!W.items.length) { const li = document.createElement("li"); li.innerHTML = '<span class="empty">まだ作品はありません。上のフォームから載せられます。</span>'; ul.appendChild(li); return; }
+  for (const w of W.items) {
+    const li = document.createElement("li");
+    if (!w.published) li.classList.add("draft");
+    if (w.id === W.editing) li.classList.add("editing");
+    let th;
+    if (w.imgUrl) { th = document.createElement("img"); th.className = "wthumb"; th.src = ".." + w.imgUrl; th.alt = ""; th.loading = "lazy"; }
+    else { th = document.createElement("div"); th.className = "wthumb"; th.textContent = (WCAT[w.cat] || "✨").split(" ")[0]; }
+    const box = document.createElement("div");
+    const top = document.createElement("div"); top.className = "nl-top";
+    const badge = (cls, text) => { const b = document.createElement("span"); b.className = "nbadge " + cls; b.textContent = text; top.appendChild(b); };
+    badge("cat", WCAT[w.cat] || w.cat);
+    if (w.pinned) badge("pin", "⭐ おすすめ");
+    if (!w.published) badge("draft", "下書き");
+    if (w.sub) badge("cat", w.sub);
+    const t = document.createElement("div"); t.className = "wt"; t.textContent = w.title;
+    const sm = document.createElement("div"); sm.className = "ws"; sm.textContent = w.summary || "（ひとこと紹介なし）";
+    const meta = document.createElement("div"); meta.className = "nl-meta";
+    meta.textContent = `${fmtTime(w.at)} に載せた` + (w.edited ? `・${fmtTime(w.edited)} に編集` : "") + `・リンク ${w.links.length} 個`;
+    const btns = document.createElement("div"); btns.className = "nl-btns";
+    const mk = (text, cls, fn) => { const b = document.createElement("button"); b.type = "button"; b.textContent = text; if (cls) b.className = cls; b.addEventListener("click", () => wfAct(b, fn)); btns.appendChild(b); };
+    mk("✏️ 編集", "", async () => { wfEdit(w); });
+    mk(w.published ? "下書きに戻す" : "公開する", w.published ? "" : "go", () => worksCall("publish", { id: w.id, on: !w.published }));
+    mk(w.pinned ? "おすすめをはずす" : "⭐ おすすめ", "", () => worksCall("pin", { id: w.id, on: !w.pinned }));
+    mk("🗑 消す", "del", async () => {
+      if (!confirm(`「${w.title}」を消しますか？（画像も消えます。もとに戻せません）`)) return { ok: true };
+      const r = await worksCall("delete", { id: w.id });
+      if (r.ok && W.editing === w.id) wfReset();
+      return r;
+    });
+    box.append(top, t, sm, meta, btns);
+    li.append(th, box);
+    ul.appendChild(li);
+  }
+}
+async function wfAct(btn, fn) {
+  if (W.busy) return;
+  W.busy = true; btn.disabled = true;
+  try {
+    const r = await fn();
+    if (r && !r.ok) { $("wfResult").textContent = ""; wfLine("ng", r.error || "できませんでした。"); }
+  } catch (e) { $("wfResult").textContent = ""; wfLine("ng", "つながりませんでした。もう一度ためしてください。"); }
+  W.busy = false; btn.disabled = false;
+}
+async function wfSave(ev) {
+  if (ev) ev.preventDefault();
+  if (W.busy) return;
+  $("wfResult").textContent = "";
+  const title = $("wfTitle").value.trim();
+  if (!title) { $("wfTitle").focus(); wfLine("ng", "作品の名前を入れてください。"); return; }
+  if ([...$("wfBody").value].length > 3000) { $("wfBody").focus(); wfLine("ng", "くわしい説明は 3000 文字までです。"); return; }
+  const links = wfLinksRead();
+  if (links.some(l => !/^https:\/\/\S+$|^\/(?!\/)\S*$/.test(l.url))) { wfLine("ng", "リンクは https:// から始まる URL（またはこのサイトの /〜）にしてください。"); return; }
+  const item = { cat: wfCat(), title, sub: $("wfSub").value, summary: $("wfSummary").value, body: $("wfBody").value, links, pinned: $("wfPinned").checked, published: !$("wfDraft").checked };
+  if (W.editing) { item.id = W.editing; item.bump = $("wfBump").checked; }
+  const extra = { item };
+  if (W.image) extra.image = W.image; else if (W.removeImage) extra.removeImage = true;
+  W.busy = true; $("wfSave").disabled = true; $("wfSave").textContent = W.editing ? "更新しています…" : "載せています…";
+  try {
+    const r = await worksCall("save", extra);
+    if (!r.ok) wfLine("ng", r.error || "保存できませんでした。");
+    else {
+      const was = W.editing;
+      W.busy = false; wfReset();
+      wfLine("ok", (was ? "更新しました。" : item.published ? "載せました。" : "下書きを保存しました。") + (item.published ? "作品ページに出ます（15 秒くらいかかることがあります）。" : ""));
+    }
+  } catch (e) { wfLine("ng", "つながりませんでした。もう一度ためしてください。"); }
+  W.busy = false; $("wfSave").disabled = false; $("wfSave").textContent = W.editing ? "更新する" : "載せる";
+}
+$("worksForm").addEventListener("submit", wfSave);
+$("wfCancel").addEventListener("click", () => { wfReset(); $("wfResult").textContent = ""; });
+$("wfBody").addEventListener("input", wfSync);
+for (const id of ["wfTitle", "wfSub", "wfSummary"]) $(id).addEventListener("keydown", ev => { if (ev.key === "Enter" && !ev.isComposing) ev.preventDefault(); });
+$("wfImgFile").addEventListener("change", async () => {
+  const f = $("wfImgFile").files && $("wfImgFile").files[0];
+  if (!f) return;
+  $("wfImgInfo").textContent = "小さくしています…";
+  try {
+    const r = await wfShrink(f);
+    W.image = r.data; W.removeImage = false;
+    wfImgShow(r.data, `${r.w}×${r.h}・${r.kb}KB（保存すると反映されます）`);
+  } catch (e) { W.image = ""; wfImgShow(W.curImg ? ".." + W.curImg : "", "⚠ この画像は使えませんでした。ほかの画像をためしてください。"); }
+});
+$("wfImgDel").addEventListener("click", () => {
+  W.image = ""; W.removeImage = !!W.curImg; $("wfImgFile").value = "";
+  wfImgShow("", W.removeImage ? "画像を消します（保存すると反映されます）" : "");
+});
+$("wfReload").addEventListener("click", () => worksCall("list").then(r => { if (!r.ok) wfLine("ng", r.error || "読みこめませんでした。"); }).catch(() => wfLine("ng", "つながりませんでした。")));
+wfLinksRender([]); wfSync();
+worksCall("list").catch(() => { $("workList").innerHTML = '<li><span class="empty">読みこめませんでした。↻ を押してください。</span></li>'; });
 
 $("tokenInput").addEventListener("keydown", ev => { if (ev.key === "Enter") setup(); });
 refresh();

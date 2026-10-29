@@ -375,6 +375,59 @@ ul.bgsteps li { margin: 2px 0; }
   .bigcode code { font-size: 23px; }
   .rchat .cmsgs { height: 300px; }
 }
+
+/* ===== サイトで近接VC（シンプルな画面）===== */
+.vcmain { max-width: 600px; }
+.vcard { background: var(--panel); border: 1px solid var(--border); border-radius: 22px; padding: 26px 24px 22px; margin: 4px 0 14px; box-shadow: var(--shadow); }
+.vtitle { margin: 0 0 6px; text-align: center; font-size: 21px; font-weight: 800; background: var(--grad-btn); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.vlead { margin: 0 0 18px; text-align: center; font-size: 15.5px; font-weight: 700; line-height: 1.65; }
+.vcard:has(#roomBox:not([hidden])) .vtitle, .vcard:has(#roomBox:not([hidden])) .vlead { display: none; }
+input.vcode { display: block; width: 100%; max-width: 420px; margin: 0 auto; text-align: center; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 34px; font-weight: 800; letter-spacing: .32em; text-indent: .32em; text-transform: uppercase; padding: 14px 10px; border: 2px solid var(--border); border-radius: 16px; background: var(--input); color: var(--text); transition: border-color .15s, box-shadow .15s, background .15s; }
+input.vcode::placeholder { color: #c7c7c7; }
+input.vcode:focus { outline: none; border-color: #d62976; background: #fff; box-shadow: 0 0 0 4px rgba(214, 41, 118, .12); }
+.vbig { display: flex; width: 100%; max-width: none; margin: 14px 0 0; padding: 15px 18px; font-size: 17px; border-radius: 14px; }
+.vcenter { text-align: center; }
+#joinMsg { margin-top: 12px; }
+.vstep { display: block; text-align: center; font-size: 16px; font-weight: 800; margin: 4px 0 12px; }
+select.vsel { display: block; width: 100%; font-size: 17px; padding: 13px 14px; border: 2px solid var(--border); border-radius: 14px; background: var(--input); color: var(--text); }
+select.vsel:focus { outline: none; border-color: #d62976; }
+.roomhead { display: block; margin: -4px 0 16px; padding: 0 0 14px; border-bottom: 1px solid var(--border-soft); }
+.rh-top { display: flex; align-items: center; gap: 10px; }
+.rh-top b { font-size: 19px; font-weight: 800; overflow-wrap: anywhere; }
+.rh-top .link { margin-left: auto; color: var(--red); white-space: nowrap; }
+.rh-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.who { justify-content: center; text-align: center; }
+#talkBox .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 2px 0 10px; }
+#talkBox .controls[hidden] { display: none; }
+#talkBox .tbtn { padding: 12px 10px; font-size: 14.5px; border-radius: 14px; }
+.vset { margin: 10px 0 0; padding: 0; background: none; border: 0; }
+.vset > details { background: #fafafa; border: 1px solid var(--border-soft); border-radius: 14px; padding: 10px 14px; }
+.vset summary { cursor: pointer; font-weight: 700; font-size: 14px; color: var(--sub); }
+.vset-in { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.bgbox { margin: 0 0 12px; }
+.bgbox details { margin-top: 6px; }
+.bgbox ul.bgsteps { margin: 8px 0 6px; }
+#bgTrouble { margin: 6px 0 0; padding-left: 20px; font-size: 13px; }
+.adminlink { text-align: center; margin: 16px 0 0; }
+.mobile-note { margin: -4px 0 14px; }
+.vcard:has(#controls:not([hidden])) + .mobile-note { display: none; }
+.vchat { padding: 18px 18px 14px; }
+.vsub { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 0 0 10px; font-size: 16px; font-weight: 800; }
+details.vmore { background: var(--panel); border: 1px solid var(--border); border-radius: 18px; margin: 0 0 12px; box-shadow: var(--shadow); }
+details.vmore > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 12px; padding: 14px 18px; }
+details.vmore > summary::-webkit-details-marker { display: none; }
+details.vmore > summary::after { content: "▾"; margin-left: auto; color: var(--sub); transition: transform .2s; }
+details.vmore[open] > summary::after { transform: rotate(180deg); }
+details.vmore .vm-ic { width: 38px; height: 38px; flex: none; border-radius: 12px; background: linear-gradient(135deg, #fff1f5 0%, #f1efff 100%); display: grid; place-items: center; font-size: 19px; }
+details.vmore summary b { display: block; font-size: 15px; }
+details.vmore summary small { display: block; color: var(--sub); font-size: 12.5px; }
+.vmore-in { padding: 0 18px 16px; }
+@media (max-width: 640px) {
+  .vcard { padding: 22px 16px 18px; border-radius: 18px; }
+  input.vcode { font-size: 30px; letter-spacing: .26em; text-indent: .26em; }
+  .vtitle { font-size: 19px; }
+  .vlead { font-size: 14.5px; }
+}
 </style>
 <script src="../config.js"></script>
 <script>
@@ -672,10 +725,11 @@ ul.bgsteps li { margin: 2px 0; }
     <a href="../corpse/" data-page="corpse">🪦 死体スキン</a>
     <a href="../vc/" data-page="vc" aria-current="page">🎙 近接VC</a>
     <a href="../chat/" data-page="chat">💬 チャット</a>
+    <a href="../works/" data-page="works">🧩 作品</a>
   </div>
 </nav>
 
-<main>
+<main class="vcmain">
   <p class="notice" id="noApi" hidden>⚠ このページは、サイトのサーバー（Cloudflare Workers か VPS）で動かしているときだけ使えます。</p>
   <div class="inapp" id="inApp" hidden>
     <b id="inAppTitle">⚠ アプリの中のブラウザでひらいています</b>
@@ -686,118 +740,111 @@ ul.bgsteps li { margin: 2px 0; }
   </div>
   <div class="mebar" id="meBar" hidden></div>
 
-  <div class="easy" role="note">
-    <b class="t">⚡ かんたんな流れ（Discord はいりません）</b>
-    <ol>
-      <li><b>ホスト</b>（ワールドを開く人）: ワールドで<b>チートをオン</b>にして、チャットで <code class="cmdline" id="easyNew">/wsserver …/new</code> を送る → ゲームに<b>6けたの部屋番号</b>が出る</li>
-      <li><b>みんな</b>: このページで部屋番号を入れて「この部屋に入る」</li>
-      <li>「<b>自分を選択</b>」で自分の名前をえらんで「<b>ボイスチャットを開始</b>」→ 近くの人の声が聞こえます（遠いほど小さく、左右からも）</li>
-    </ol>
-    <p class="mobile-note" id="mobileNote" hidden>📱 <b>スマホ 1 台でマイクラもするとき</b>: ボイスチャットを開始したら、このページは<b>ひらいたまま</b>ホームに戻って、マイクラをひらくだけ。ブラウザをスワイプして閉じなければ、マイクラの中でも話せます（<a href="#help-bg">くわしく</a>）。</p>
-  </div>
+  <!-- 部屋に入る（入ったあとは、この中に部屋の画面が出る） -->
+  <section class="vcard" aria-labelledby="s1">
+    <h2 class="vtitle" id="s1">ルーム選択</h2>
+    <p class="vlead">マイクラに表示されている<br>6けたの部屋番号を入力してください</p>
+    <div id="joinForm">
+      <input type="text" class="vcode" id="roomInput" maxlength="7" inputmode="numeric" enterkeyhint="go" autocomplete="off" spellcheck="false" placeholder="000000" aria-label="部屋番号（6けた）">
+      <button class="btn btn-green vbig" id="joinBtn" type="button">この部屋に入る</button>
+      <p class="msg vcenter" id="joinMsg">部屋番号は、ホストがマイクラで /wsserver を送ると、ゲームのチャットに出ます（マイクラのチャットで <code>!vc</code> と送っても出ます）。</p>
+    </div>
 
-  <!-- ① 部屋に入る -->
-  <section class="card" aria-labelledby="s1">
-    <h2 class="step" id="s1"><span class="num">1</span>部屋に入る</h2>
-    <div class="indent">
-      <div id="joinForm">
-        <div class="row">
-          <input type="text" class="code" id="roomInput" maxlength="7" inputmode="numeric" autocomplete="off" spellcheck="false" placeholder="部屋番号（6けた）" aria-label="部屋番号（6けた）">
-          <button class="btn btn-blue" id="joinBtn" type="button">この部屋に入る</button>
-        </div>
-        <p class="msg" id="joinMsg">部屋番号は、ホストがマイクラで /wsserver を送ると、ゲームのチャットに出ます（マイクラのチャットで <code>!vc</code> と送っても出ます）。</p>
-      </div>
-
-      <div id="roomBox" hidden>
-        <div class="roomhead">
-          <b id="roomName">部屋</b>
+    <div id="roomBox" hidden>
+      <div class="roomhead">
+        <div class="rh-top"><b id="roomName">部屋</b><button class="link" id="leaveBtn" type="button">部屋を出る</button></div>
+        <div class="rh-chips">
           <span class="chip" id="roomChip"></span>
           <span class="chip" id="worldChip"></span>
           <span class="chip" id="connChip"></span>
-          <button class="link" id="leaveBtn" type="button">部屋を出る</button>
         </div>
-
-        <!-- 自分を選択 -->
-        <div id="pickBox" hidden>
-          <label class="fl" for="pickSel">自分を選択</label>
-          <div class="row">
-            <select id="pickSel" aria-label="自分を選択"></select>
-            <button class="btn btn-blue" id="pickBtn" type="button">これにする</button>
-          </div>
-          <p class="msg" id="pickMsg">ワールドにいる人の名前が出ます。ゲームに出ていない人は「観戦者」をえらんでください。</p>
-          <details class="adv" id="codeDetails">
-            <summary>なりすまし防止の本人確認（!vc）をする</summary>
-            <div id="codeSlot1"></div>
-          </details>
-        </div>
-
-        <!-- !vc で本人確認（部屋の設定で必須のとき） -->
-        <div id="verifyBox" hidden>
-          <p style="margin:0">この部屋は<b>本人確認</b>が必要です。ワールドに入って、<b>Minecraft のチャット</b>でこれを送ってください（10 分以内）。</p>
-          <div id="codeSlot2"></div>
-          <p style="margin:10px 0 0"><button class="btn-outline" id="specBtn" type="button">👻 観戦者で入る（ゲームに出ていない人）</button></p>
-        </div>
-
-        <div id="codeArea">
-          <div class="bigcode"><code id="codeText">!vc ------</code><button type="button" id="codeCopy">コピー</button></div>
-          <p class="msg" id="verifyMsg"></p>
-          <button class="link" id="newCodeBtn" type="button">番号を出し直す</button>
-        </div>
-
-        <div id="talkBox" hidden>
-          <p class="who" id="whoLine"></p>
-          <details class="adv" id="upgradeDetails" hidden>
-            <summary>本人確認（!vc）をする（✓ が付いて、ゲーム中チャットがマイクラにも出ます）</summary>
-            <div id="codeSlot3"></div>
-          </details>
-          <button class="btn btn-green" id="startBtn" type="button">🎧 ボイスチャットを開始</button>
-          <p class="sub-hint" id="startHint">ヘッドホン・イヤホンがおすすめです（スピーカーだと、自分の声が相手に返ってしまうことがあります）。<span id="startHintMobile" hidden><br>📱 開始したら、このページはひらいたままマイクラに切りかえてOK（ブラウザをスワイプして閉じると止まります）。</span></p>
-          <div class="controls" id="controls" hidden>
-            <button class="tbtn" id="muteBtn" type="button">🎙 マイク: オン</button>
-            <button class="tbtn" id="deafBtn" type="button">🔊 音: オン</button>
-            <button class="tbtn" id="reBtn" type="button">🔄 再接続</button>
-            <button class="tbtn off" id="stopBtn" type="button">ボイスチャットを退出</button>
-          </div>
-          <div class="vset" id="vset" hidden>
-            <label class="vrow">マイク音量 <input type="range" id="micVol" min="0" max="200" step="5" value="100" aria-label="マイク音量"> <span id="micVolText">100%</span>
-              <span class="meter" title="自分の声の大きさ"><span id="micMeter"></span></span></label>
-            <label class="vrow"><input type="checkbox" id="spatialChk" checked> 立体音響を有効にする（左右から聞こえる）<small>スマホはイヤホンがおすすめ</small></label>
-            <label class="vrow"><input type="checkbox" id="pttChk"> 押して話す（<kbd>V</kbd> キー）</label>
-          </div>
-          <div class="bgbox" id="bgBox" hidden>
-            <div class="bghead"><b>📱 マイクラに切りかえても話せます</b><span class="chip" id="bgChip"></span></div>
-            <p class="bglead" id="bgLead"></p>
-            <div class="bgrow"><button class="btn btn-green bgpip" id="pipBtn" type="button" hidden>🎮 マイクラへ（小窓にする）</button></div>
-            <p class="bgwarn" id="bgNote" hidden></p>
-            <ul class="bgsteps" id="bgSteps"></ul>
-            <div class="bgprev" id="bgPrev" hidden>
-              <video id="pipVideo" muted playsinline aria-label="小窓の表示"></video>
-              <p class="sub-hint">これが小窓（ピクチャー・イン・ピクチャー）に出ます。マイクラの上に出たままになり、だれが話しているか見えます。</p>
-            </div>
-            <details>
-              <summary>マイクラに切りかえると声が止まるとき</summary>
-              <ul id="bgTrouble">
-                <li>ブラウザを、アプリの切りかえ画面で<b>上にスワイプして閉じていない</b>か確認してください（閉じると止まります。もしページが読みこみ直されても、自動でボイスチャットを再開します）</li>
-                <li class="only-android">Android: 「<b>🎮 マイクラへ（小窓にする）</b>」を使っていますか？ 小窓にしないと、Android の仕組みで <b>約 1 分でマイクが止まります</b>（聞くことはできます）</li>
-                <li class="only-android">Android: 設定 → アプリ → Chrome → バッテリー を「<b>制限なし</b>」に。小窓が出ないときは、同じ画面の「ピクチャー イン ピクチャー」を許可</li>
-                <li>マイクラの「設定 → オーディオ」で「<b>音楽</b>」を 0 にしてみてください（マイクラの音楽が流れはじめるときに、ほかのアプリの音を止めることがあります）</li>
-                <li class="only-ios">iPhone: <b>Safari</b> で使う・<b>iOS を最新</b>にする（17.5 以上）・低電力モードをオフにする</li>
-                <li>LINE・X・Instagram などのアプリの中でひらいたページだと、裏で止まります。Safari・Chrome でひらいてください</li>
-                <li>それでもだめなときは <a href="../vc/discord/">Discord 版の近接VC</a> を使ってください（Discord のアプリは、裏でも止まりません）</li>
-              </ul>
-            </details>
-          </div>
-          <p class="msg" id="talkMsg"></p>
-          <ul class="players" id="players"></ul>
-        </div>
-        <p class="adminlink"><button class="link" id="adminOpen" type="button">🔒 管理者設定</button></p>
       </div>
+
+      <!-- 自分を選択 -->
+      <div id="pickBox" hidden>
+        <label class="vstep" for="pickSel">自分をえらんでください</label>
+        <select id="pickSel" class="vsel" aria-label="自分を選択"></select>
+        <button class="btn btn-green vbig" id="pickBtn" type="button">これにする</button>
+        <p class="msg vcenter" id="pickMsg">ワールドにいる人の名前が出ます。ゲームに出ていない人は「観戦者」をえらんでください。</p>
+        <details class="adv" id="codeDetails">
+          <summary>なりすまし防止の本人確認（!vc）をする</summary>
+          <div id="codeSlot1"></div>
+        </details>
+      </div>
+
+      <!-- !vc で本人確認（部屋の設定で必須のとき） -->
+      <div id="verifyBox" hidden>
+        <p class="vstep">この部屋は<b>本人確認</b>が必要です</p>
+        <p class="vcenter" style="margin:0;font-size:14px">ワールドに入って、<b>Minecraft のチャット</b>でこれを送ってください（10 分以内）。</p>
+        <div id="codeSlot2"></div>
+        <p class="vcenter" style="margin:10px 0 0"><button class="btn-outline" id="specBtn" type="button">👻 観戦者で入る（ゲームに出ていない人）</button></p>
+      </div>
+
+      <div id="codeArea">
+        <div class="bigcode"><code id="codeText">!vc ------</code><button type="button" id="codeCopy">コピー</button></div>
+        <p class="msg" id="verifyMsg"></p>
+        <button class="link" id="newCodeBtn" type="button">番号を出し直す</button>
+      </div>
+
+      <div id="talkBox" hidden>
+        <p class="who" id="whoLine"></p>
+        <details class="adv" id="upgradeDetails" hidden>
+          <summary>本人確認（!vc）をする（✓ が付いて、ゲーム中チャットがマイクラにも出ます）</summary>
+          <div id="codeSlot3"></div>
+        </details>
+        <button class="btn btn-green vbig" id="startBtn" type="button">🎧 ボイスチャットを開始</button>
+        <p class="sub-hint vcenter" id="startHint">ヘッドホン・イヤホンがおすすめです（スピーカーだと、自分の声が相手に返ってしまうことがあります）。<span id="startHintMobile" hidden><br>📱 開始したら、このページはひらいたままマイクラに切りかえてOK（ブラウザをスワイプして閉じると止まります）。</span></p>
+        <div class="controls" id="controls" hidden>
+          <button class="tbtn" id="muteBtn" type="button">🎙 マイク: オン</button>
+          <button class="tbtn" id="deafBtn" type="button">🔊 音: オン</button>
+          <button class="tbtn" id="reBtn" type="button">🔄 再接続</button>
+          <button class="tbtn off" id="stopBtn" type="button">🚪 VCを退出</button>
+        </div>
+        <p class="msg" id="talkMsg"></p>
+        <div class="bgbox" id="bgBox" hidden>
+          <div class="bghead"><b>📱 マイクラに切りかえても話せます</b><span class="chip" id="bgChip"></span></div>
+          <p class="bglead" id="bgLead"></p>
+          <div class="bgrow"><button class="btn btn-green bgpip" id="pipBtn" type="button" hidden>🎮 マイクラへ（小窓にする）</button></div>
+          <p class="bgwarn" id="bgNote" hidden></p>
+          <div class="bgprev" id="bgPrev" hidden>
+            <video id="pipVideo" muted playsinline aria-label="小窓の表示"></video>
+            <p class="sub-hint">これが小窓（ピクチャー・イン・ピクチャー）に出ます。マイクラの上に出たままになり、だれが話しているか見えます。</p>
+          </div>
+          <details>
+            <summary>くわしく・声が止まるとき</summary>
+            <ul class="bgsteps" id="bgSteps"></ul>
+            <ul id="bgTrouble">
+              <li>ブラウザを、アプリの切りかえ画面で<b>上にスワイプして閉じていない</b>か確認してください（閉じると止まります。もしページが読みこみ直されても、自動でボイスチャットを再開します）</li>
+              <li class="only-android">Android: 「<b>🎮 マイクラへ（小窓にする）</b>」を使っていますか？ 小窓にしないと、Android の仕組みで <b>約 1 分でマイクが止まります</b>（聞くことはできます）</li>
+              <li class="only-android">Android: 設定 → アプリ → Chrome → バッテリー を「<b>制限なし</b>」に。小窓が出ないときは、同じ画面の「ピクチャー イン ピクチャー」を許可</li>
+              <li>マイクラの「設定 → オーディオ」で「<b>音楽</b>」を 0 にしてみてください（マイクラの音楽が流れはじめるときに、ほかのアプリの音を止めることがあります）</li>
+              <li class="only-ios">iPhone: <b>Safari</b> で使う・<b>iOS を最新</b>にする（17.5 以上）・低電力モードをオフにする</li>
+              <li>LINE・X・Instagram などのアプリの中でひらいたページだと、裏で止まります。Safari・Chrome でひらいてください</li>
+              <li>それでもだめなときは <a href="../vc/discord/">Discord 版の近接VC</a> を使ってください（Discord のアプリは、裏でも止まりません）</li>
+            </ul>
+          </details>
+        </div>
+        <ul class="players" id="players"></ul>
+        <div class="vset" id="vset" hidden>
+          <details>
+            <summary>⚙ 音の設定（マイク音量・立体音響・押して話す）</summary>
+            <div class="vset-in">
+              <label class="vrow">マイク音量 <input type="range" id="micVol" min="0" max="200" step="5" value="100" aria-label="マイク音量"> <span id="micVolText">100%</span>
+                <span class="meter" title="自分の声の大きさ"><span id="micMeter"></span></span></label>
+              <label class="vrow"><input type="checkbox" id="spatialChk" checked> 立体音響を有効にする（左右から聞こえる）<small>スマホはイヤホンがおすすめ</small></label>
+              <label class="vrow"><input type="checkbox" id="pttChk"> 押して話す（<kbd>V</kbd> キー）</label>
+            </div>
+          </details>
+        </div>
+      </div>
+      <p class="adminlink"><button class="link" id="adminOpen" type="button">🔒 管理者設定</button></p>
     </div>
   </section>
+  <p class="mobile-note" id="mobileNote" hidden>📱 <b>スマホ 1 台でマイクラもするとき</b>: ボイスチャットを開始したら、このページは<b>ひらいたまま</b>ホームに戻って、マイクラをひらくだけ。ブラウザをスワイプして閉じなければ、マイクラの中でも話せます（<a href="#help-bg">くわしく</a>）。</p>
 
   <!-- ゲーム中チャット（部屋の中だけ） -->
-  <section class="card" id="chatCard" aria-labelledby="sc" hidden>
-    <h2 class="step" id="sc"><span class="num">💬</span>ゲーム中チャット<span class="chip" id="chatChip"></span></h2>
+  <section class="vcard vchat" id="chatCard" aria-labelledby="sc" hidden>
+    <h2 class="vsub" id="sc">💬 ゲーム中チャット<span class="chip" id="chatChip"></span></h2>
     <div class="rchat">
       <div class="cmsgs" id="roomMsgs" aria-live="polite"></div>
       <form class="composer" id="roomForm">
@@ -810,18 +857,19 @@ ul.bgsteps li { margin: 2px 0; }
       200 文字まで・10 秒に 5 回・1 分に 20 回まで。悪口・個人情報（本名・学校・住所）は書かないでください。</p>
   </section>
 
-  <!-- ② 部屋を作る -->
-  <section class="card" aria-labelledby="s2">
-    <h2 class="step" id="s2"><span class="num">2</span>部屋を作る（ワールドを開く人 = ホスト）</h2>
-    <div class="indent">
+  <!-- 部屋を作る（ホスト）・はじめての人へ … ふだんはとじておく -->
+  <details class="vmore" id="hostMore">
+    <summary><span class="vm-ic">🏠</span><span><b>部屋を作る</b><small>ワールドを開く人（ホスト）はこちら</small></span></summary>
+    <div class="vmore-in" aria-labelledby="s2">
+      <h3 class="vsub" id="s2">部屋を作る（ワールドを開く人 = ホスト）</h3>
       <ol class="steps">
         <li>ワールドの設定で「<b>チートを有効にする</b>」をオン</li>
         <li>ワールドに入って、<b>チャットでこれを送る</b>（ワールドを開くたびに）
           <div class="copybox"><code id="newCmd">読みこみ中…</code><button type="button" data-copy="newCmd">コピー</button></div>
           <p class="sub-hint" id="noRelayNote" hidden>⚠ このサイトにはまだリレー（中継サーバー）が設定されていないので、マイクラで部屋を作れません。下の「サイトで先に部屋を作る」を使ってください（Windows の近接VC コネクターが必要です）。</p>
         </li>
-        <li>ゲームのチャットに出た<b>6けたの部屋番号</b>を、みんなに教える（自分も ① で入る）<br>
-          <span class="sub-hint">「<b>管理キー</b>」はあなたにだけ出ます。① の「🔒 管理者設定」で、声が届く距離・人狼・観戦者のルールを変えるのに使います。</span></li>
+        <li>ゲームのチャットに出た<b>6けたの部屋番号</b>を、みんなに教える（自分も上で入る）<br>
+          <span class="sub-hint">「<b>管理キー</b>」はあなたにだけ出ます。部屋の中の「🔒 管理者設定」で、声が届く距離・人狼・観戦者のルールを変えるのに使います。</span></li>
       </ol>
       <details class="adv" id="siteCreate">
         <summary>サイトで先に部屋を作る（リンクで招待したいとき・同じ部屋をずっと使うとき）</summary>
@@ -851,7 +899,18 @@ ul.bgsteps li { margin: 2px 0; }
         </div>
       </details>
     </div>
-  </section>
+  </details>
+
+  <details class="vmore" id="easyMore">
+    <summary><span class="vm-ic">⚡</span><span><b>はじめての人へ</b><small>かんたんな流れ（Discord はいりません）</small></span></summary>
+    <div class="vmore-in">
+      <ol class="steps">
+        <li><b>ホスト</b>（ワールドを開く人）: ワールドで<b>チートをオン</b>にして、チャットで <code class="cmdline" id="easyNew">/wsserver …/new</code> を送る → ゲームに<b>6けたの部屋番号</b>が出る</li>
+        <li><b>みんな</b>: このページで部屋番号を入れて「この部屋に入る」</li>
+        <li>「<b>自分をえらぶ</b>」で自分の名前をえらんで「<b>ボイスチャットを開始</b>」→ 近くの人の声が聞こえます（遠いほど小さく、左右からも）</li>
+      </ol>
+    </div>
+  </details>
 
   <details class="help" id="help">
     <summary>？ 使い方・困ったとき</summary>

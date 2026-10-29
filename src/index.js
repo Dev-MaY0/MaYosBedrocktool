@@ -13,6 +13,8 @@
 //  - /api/guest・/api/chat/… … ゲスト（名前#1234）と、みんなのチャット・DM
 //  - /api/news     … ホームに出すお知らせ（だれでも読める・公開したものだけ）
 //  - /api/admin/news … お知らせを書く・直す・消す（/setup/ にログインした管理者だけ）
+//  - /api/works    … 作品の紹介（だれでも読める・公開したものだけ）。/api/works/img/<ID> は作品の画像
+//  - /api/admin/works … 作品を書く・直す・消す（/setup/ にログインした管理者だけ）
 //  制作: MaYo (mayo01297)  二次配布禁止
 // =====================================================================
 import { GuildRoom, CODE_RE } from "./guild.js";
@@ -101,6 +103,7 @@ const newsRoom = env => room(env, "__config__");
 // お知らせの読み出しを少しだけ覚えておく（みんながホームをひらくたびに部屋を起こさないように）
 const NEWS_CACHE_MS = 15000;
 let newsCache = null, newsCacheAt = 0;
+let worksCache = null, worksCacheAt = 0;
 
 /**
  * 使っている人の IP（いたずら防止の数え方にだけ使う。そのままは保存しない）
@@ -144,7 +147,7 @@ function sameKey(a, b) {
 }
 
 // パスワード（入室の印）が必要な API
-const ADMIN_API = new Set(["/api/setup/status", "/api/setup", "/api/setup/relay", "/api/setup/relay/test", "/api/setup/vps", "/api/admin/chat", "/api/admin/news"]);
+const ADMIN_API = new Set(["/api/setup/status", "/api/setup", "/api/setup/relay", "/api/setup/relay/test", "/api/setup/vps", "/api/admin/chat", "/api/admin/news", "/api/admin/works"]);
 
 // 設定ボタンの連打よけ（3秒）
 async function recentlyTried(env) {
@@ -276,6 +279,43 @@ export default {
       if (text.length > 20000) return new Response(JSON.stringify({ ok: false, error: "長すぎます。" }), { status: 413, headers: noStore });
       const r = await newsRoom(env).fetch("https://room/news/op", { method: "POST", body: text });
       newsCache = null;   // このサーバーでは、すぐ新しい内容を出す（ほかの場所のサーバーも 15 秒以内に変わる）
+      return new Response(r.body, { status: r.status, headers: noStore });
+    }
+
+    // ---- 作品の紹介 ----
+    if (path === "/api/works") {
+      if (request.method !== "GET" && request.method !== "HEAD") return new Response("Method Not Allowed", { status: 405, headers: { Allow: "GET, HEAD" } });
+      const now = Date.now();
+      if (!worksCache || now - worksCacheAt > NEWS_CACHE_MS) {
+        try {
+          const j = await (await newsRoom(env).fetch("https://room/works/list")).json();
+          worksCache = Array.isArray(j.items) ? j.items : []; worksCacheAt = now;
+        } catch (e) {
+          if (!worksCache) return cors(json({ ok: false, error: "作品を読みこめませんでした。" }, 503));
+        }
+      }
+      return cors(new Response(request.method === "HEAD" ? null : JSON.stringify({ ok: true, now, items: worksCache }), {
+        status: 200, headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "public, max-age=15" } }));
+    }
+    const workImg = /^\/api\/works\/img\/([a-z0-9]{10})$/.exec(path);
+    if (workImg && (request.method === "GET" || request.method === "HEAD")) {
+      const r = await newsRoom(env).fetch("https://room/works/img?id=" + workImg[1]);
+      if (!r.ok) return new Response("Not Found", { status: 404, headers: { "Cache-Control": "no-store" } });
+      // URL に ?v=（画像を変えた時刻）が付いているので、長く覚えておいてよい
+      return new Response(request.method === "HEAD" ? null : r.body, { status: 200, headers: {
+        "Content-Type": r.headers.get("Content-Type") || "application/octet-stream",
+        "Cache-Control": url.searchParams.has("v") ? "public, max-age=31536000, immutable" : "public, max-age=300",
+        "X-Content-Type-Options": "nosniff", "Access-Control-Allow-Origin": "*" } });
+    }
+    // 作品を書く・直す・消す（ログインした管理者だけ。上の ADMIN_API で確認ずみ）
+    if (path === "/api/admin/works" && request.method === "POST") {
+      const noStore = { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" };
+      if (!/^application\/json\b/i.test(request.headers.get("Content-Type") || ""))
+        return new Response(JSON.stringify({ ok: false, error: "JSON で送ってください。" }), { status: 415, headers: noStore });
+      const text = await request.text();
+      if (text.length > 1000000) return new Response(JSON.stringify({ ok: false, error: "大きすぎます（画像を小さくしてください）。" }), { status: 413, headers: noStore });
+      const r = await newsRoom(env).fetch("https://room/works/op", { method: "POST", body: text });
+      worksCache = null;
       return new Response(r.body, { status: r.status, headers: noStore });
     }
 

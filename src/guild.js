@@ -14,6 +14,7 @@ import { WS_ENCRYPT_PROTOCOL, beginKeyExchange, finishKeyExchange, newCipherStat
 import { webMethods } from "./webvc.js";
 import { chatMethods, CHAT_TAG } from "./chat.js";
 import { loadNews, publicNews, newsOp } from "./news.js";
+import { loadWorks, publicWorks, worksOp, loadWorkImage } from "./works.js";
 
 export const DEAD_ROOM = 31;
 const MAX_ROOM = 30;
@@ -168,6 +169,19 @@ export class GuildRoom {
       let body = {};
       try { body = await request.json(); } catch (e) { body = {}; }
       const r = await newsOp(this.storage, body);
+      return json(r, r.ok ? 200 : 400);
+    }
+    // 作品の紹介（"__config__" の部屋だけが使う。中身は src/works.js）
+    if (url.pathname === "/works/list") return json({ ok: true, items: publicWorks(await loadWorks(this.storage)) });
+    if (url.pathname === "/works/img") {
+      const img = await loadWorkImage(this.storage, url.searchParams.get("id"));
+      if (!img) return new Response("Not Found", { status: 404 });
+      return new Response(img.data, { headers: { "Content-Type": img.type } });
+    }
+    if (url.pathname === "/works/op" && request.method === "POST") {
+      let body = {};
+      try { body = await request.json(); } catch (e) { body = {}; }
+      const r = await worksOp(this.storage, body);
       return json(r, r.ok ? 200 : 400);
     }
     if (!url.pathname.startsWith("/dir/")) await this.useEnv();
