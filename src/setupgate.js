@@ -81,14 +81,13 @@ const PAGE_HEAD = `<!doctype html>
 <meta name="referrer" content="no-referrer">
 <title>ログイン</title>
 <style>
-:root { color-scheme: light dark; --bg: #f4f5f8; --card: #fff; --fg: #1d2030; --sub: #5d6378; --line: #cfd3df; --accent: #4f46e5; --ng: #c0392b; }
-@media (prefers-color-scheme: dark) { :root { --bg: #14161f; --card: #1d2030; --fg: #e8eaf2; --sub: #9aa1b8; --line: #343a52; --accent: #8b87ff; --ng: #ff7b6b; } }
+:root { color-scheme: dark; --bg: #07090c; --card: #121418; --fg: #eceef0; --sub: #9aa0a7; --line: rgba(255,255,255,.12); --accent: linear-gradient(90deg, #ff9a2e, #ff6a1a, #ec4419); --ng: #ff7b6b; }
 * { box-sizing: border-box; }
-body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: var(--bg); color: var(--fg); font: 16px/1.6 system-ui, "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif; padding: 16px; }
+body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: var(--bg) radial-gradient(40% 35% at 50% 40%, rgba(255,122,24,.14), transparent 70%) fixed; color: var(--fg); font: 16px/1.6 system-ui, "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif; padding: 16px; }
 main { width: 100%; max-width: 380px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 24px 22px; }
 h1 { margin: 0 0 14px; font-size: 18px; }
-input { width: 100%; padding: 11px 12px; font-size: 16px; border: 1px solid var(--line); border-radius: 9px; background: transparent; color: inherit; }
-button { margin-top: 12px; width: 100%; padding: 11px; font-size: 16px; font-weight: 700; border: 0; border-radius: 9px; background: var(--accent); color: #fff; cursor: pointer; }
+input { width: 100%; padding: 11px 12px; font-size: 16px; border: 1px solid var(--line); border-radius: 12px; background: rgba(255,255,255,.05); color: inherit; }
+button { margin-top: 12px; width: 100%; padding: 11px; font-size: 16px; font-weight: 700; border: 0; border-radius: 999px; background: var(--accent); color: #fff; cursor: pointer; }
 button:disabled { opacity: .6; cursor: default; }
 p { margin: 10px 0 0; font-size: 14px; color: var(--sub); }
 #msg { min-height: 1.4em; color: var(--ng); }
