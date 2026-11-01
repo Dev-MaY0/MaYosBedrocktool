@@ -10,16 +10,18 @@
 <meta name="author" content="MaYo (mayo01297)">
 <meta name="copyright" content="© 2026 MaYo (mayo01297) 二次配布禁止">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>チャット</title>
+<title>チャット | MaYo鯖 BEツール</title>
 <meta name="description" content="名前を入れるだけで使えるチャット。サイトに来ている人みんなと話せる「みんなのチャット」と、1 対 1 の DM。制作: MaYo (mayo01297)">
-<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAACjUlEQVR42u2bPUwUQRiG3zEYG0KLpbEQOI0o0cRwWBAiojmD+NOoUBgbCgv5CYeJFQUSwMbWigMafhovglhcg8TExAQKEygulppY2liNxd0YdnK7s8Pt3jF379ftfjt7O/s+837f7t0JGOLcxQcSDsfB3qoIyp9AnYfwV/6+rKWJHuytCRIQhoCWGlNej32NBBLwX/n2e7KeJr6/uy5IAADR6rjyOx9HPNudN99YjScBrZcGnCRgZ3M0MN/ZN08CQhHQFjMBk+OPA/PTs0tW5/tsUF6PpIGEuiegASJaACbHnpRFyPTcYsSMSxIQeH8Sl+9GgkDaUnlTvDaQsL0xFpjvujXHKhCOgI7+sghIjw6GOi77PgsASN1J2ZEwnwkm4cO4V/nbs+wEraqAcO2FhRbXNcVt50MCjjpwIuTaLzfU58wYvOCoQQJExJ2gcnvbfOL8hWAvEJIEHCsP8Au/Om/qA/L5H1W5ASQgrrUVeT9AD+AS4A2gB5AAB/qAqOJld1bbjvb8V140kgCnPCAuTyEBrlxo4lF5zwrfl8+wCtAD6AFV9ADb7wP4LFAxD3DsgrffjVgd3/Ws9G+GBAlQHuBIFVDKN994DgBoH1wBAGwN/fQc17twGgCwm3lYHKcy6xoCrAKlPeDs0F8AQH7hVKj9lY5fn94WlS+dV0So43z7AHqA5gFNPb8BACvDXwuZYZ8Rxf2Z5bWqXviX7LfA/LVUh6EVpAd4PSA3VVC++9XVUAOftqWreuFGhU3PAvQAtRKklDbKVyq2+hpjPf/JZI4EqKdBtRzq7cUA/zGivw84ViT0bv6JVflcklXAozqKxeBwNZC1OFfV7wghSICHAJ2Ew7tqaY5KebATLMQ/lnufS6vEI9gAAAAASUVORK5CYII=">
+<link rel="icon" type="image/png" href="../img/mayosaba-64.png">
+<link rel="apple-touch-icon" href="../img/mayosaba.png">
 <style>
 /* =====================================================================
    共通スタイル（全ページ）  制作: MaYo (mayo01297)  二次配布禁止
-   白ベース・角の丸いカード・グラデーションのアクセント（SNS アプリのような雰囲気）
+   シンプル: 白ベース・細い線のカード（影なし）・アクセントはピンク→紫・ボタンは青
    ===================================================================== */
 :root {
   --back: #fafafa; --panel: #ffffff; --border: #dbdbdb; --border-soft: #efefef; --input: #fafafa;
+  --line: #e8e8e8; --soft: #f3f3f4; --accent: #d62976;
   --text: #262626; --sub: #737373; --link: #00376b;
   --header: #ffffff; --header-sub: #737373;
   --blue: #0095f6; --blue-hover: #1877f2; --blue-pale: #e8f3ff;
@@ -27,8 +29,8 @@
   --red: #ed4956; --orange: #f39c12; --preview: #f2f2f2;
   --grad: linear-gradient(45deg, #feda75 0%, #fa7e1e 25%, #d62976 50%, #962fbf 75%, #4f5bd5 100%);
   --grad-btn: linear-gradient(90deg, #f56040 0%, #e1306c 45%, #833ab4 100%);
-  --radius: 16px;
-  --shadow: 0 1px 2px rgba(0, 0, 0, .04), 0 6px 20px rgba(0, 0, 0, .05);
+  --radius: 14px;
+  --shadow: none;
   --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic UI", Meiryo, system-ui, sans-serif;
 }
 * { box-sizing: border-box; }
@@ -40,19 +42,20 @@ a { color: var(--link); }
 .pixel { image-rendering: pixelated; image-rendering: crisp-edges; }
 
 /* ---- header ---- */
-header { background: rgba(255, 255, 255, .92); color: var(--text); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 20; -webkit-backdrop-filter: saturate(180%) blur(12px); backdrop-filter: saturate(180%) blur(12px); }
-.header-in { max-width: 920px; margin: 0 auto; padding: 10px 16px; display: flex; align-items: center; gap: 12px; }
-.header-in img { width: 42px; height: 42px; flex: none; border-radius: 12px; padding: 2px; background: var(--grad); }
-.header-in h1 { margin: 0; font-size: 20px; line-height: 1.25; font-weight: 800; letter-spacing: -.01em; background: var(--grad-btn); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.header-in p { margin: 1px 0 0; color: var(--header-sub); font-size: 12.5px; }
-.header-in .help-btn { margin-left: auto; flex: none; color: var(--text); background: #efefef; border: 0; border-radius: 10px; padding: 7px 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none; white-space: nowrap; }
-.header-in .help-btn:hover { background: #e3e3e3; }
+header { background: #fff; color: var(--text); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 20; }
+.header-in { max-width: 920px; height: 60px; margin: 0 auto; padding: 0 16px; display: flex; align-items: center; gap: 11px; }
+.header-in img { width: 40px; height: 40px; flex: none; border-radius: 10px; box-shadow: 0 0 0 1px rgba(0, 0, 0, .06); }
+.header-in > div { min-width: 0; }
+.header-in h1 { margin: 0; font-size: 18.5px; line-height: 1.25; font-weight: 800; letter-spacing: -.01em; color: var(--text); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.header-in p { margin: 1px 0 0; color: var(--header-sub); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.header-in .help-btn { margin-left: auto; flex: none; color: var(--text); background: var(--soft); border: 0; border-radius: 10px; padding: 7px 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none; white-space: nowrap; }
+.header-in .help-btn:hover { background: #e8e8e9; }
 
-main { max-width: 920px; margin: 0 auto; padding: 18px 16px 90px; }
-.card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
-.step { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; font-size: 17px; font-weight: 700; }
-.num { width: 30px; height: 30px; flex: none; border-radius: 50%; background: var(--grad); color: #fff; display: grid; place-items: center; font-size: 15px; font-weight: 700; box-shadow: 0 2px 8px rgba(214, 41, 118, .25); }
-.indent { padding-left: 40px; }
+main { max-width: 920px; margin: 0 auto; padding: 20px 16px 90px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 20px 20px; margin-bottom: 14px; }
+.step { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; font-size: 16.5px; font-weight: 700; }
+.num { width: 26px; height: 26px; flex: none; border-radius: 50%; background: var(--grad-btn); color: #fff; display: grid; place-items: center; font-size: 13.5px; font-weight: 700; }
+.indent { padding-left: 36px; }
 
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 10px; cursor: pointer; color: #fff; font-weight: 600; transition: filter .15s, transform .05s, background .15s; }
 .btn:active { transform: scale(.98); }
@@ -60,7 +63,7 @@ main { max-width: 920px; margin: 0 auto; padding: 18px 16px 90px; }
 .btn:disabled { background: #c7c7c7 !important; cursor: default; filter: none; }
 .btn-blue { background: var(--blue); padding: 10px 18px; font-size: 15.5px; }
 .btn-blue:hover { background: var(--blue-hover); }
-.btn-green { background: var(--grad-btn); padding: 14px 22px; font-size: 17px; width: 100%; max-width: 480px; box-shadow: 0 6px 18px rgba(225, 48, 108, .25); }
+.btn-green { background: var(--grad-btn); padding: 13px 22px; font-size: 16.5px; width: 100%; max-width: 480px; border-radius: 12px; }
 .btn-green:hover { filter: brightness(1.06); }
 .btn-green.pulse { animation: pulse 0.5s ease-in-out 3 alternate; }
 @keyframes pulse { to { box-shadow: 0 0 0 7px rgba(225, 48, 108, .22); } }
@@ -70,8 +73,8 @@ main { max-width: 920px; margin: 0 auto; padding: 18px 16px 90px; }
 .link:disabled { color: var(--sub); cursor: default; text-decoration: none; }
 .link svg { width: 15px; height: 15px; vertical-align: -2px; margin-right: 4px; }
 hr { border: 0; border-top: 1px solid var(--border-soft); margin: 14px 0 10px; }
-.btn-outline { display: inline-flex; align-items: center; gap: 6px; background: #efefef; color: var(--text); border: 0; border-radius: 10px; padding: 7px 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none; }
-.btn-outline:hover { background: #e3e3e3; }
+.btn-outline { display: inline-flex; align-items: center; gap: 6px; background: var(--soft); color: var(--text); border: 0; border-radius: 10px; padding: 7px 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none; }
+.btn-outline:hover { background: #e8e8e9; }
 .btn-outline svg { width: 15px; height: 15px; flex: none; }
 
 .notice { background: #fff8e6; border: 1px solid #f7d58a; border-radius: 12px; padding: 10px 14px; font-size: 13px; margin: 0 0 14px; }
@@ -85,7 +88,7 @@ input[type=text], input[type=password], input[type=search], input:not([type]), t
 kbd { font-family: inherit; background: #efefef; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 6px; padding: 0 6px; font-size: 13px; }
 
 /* ---- help ---- */
-details.help { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 12px; box-shadow: var(--shadow); }
+details.help { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); margin-bottom: 12px; }
 details.help summary { cursor: pointer; padding: 14px 20px; font-weight: 700; }
 details.help .help-body { padding: 0 20px 16px; font-size: 14px; }
 details.help h4 { margin: 14px 0 4px; font-size: 14px; }
@@ -113,19 +116,19 @@ details.about[open] > summary { border-radius: var(--radius) var(--radius) 0 0; 
 .about-body { padding: 2px 20px 20px; }
 .num svg { width: 16px; height: 16px; }
 .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.about-box { border: 1px solid var(--border-soft); border-radius: 14px; padding: 14px 16px 16px; background: #fff; }
+.about-box { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px 16px; background: #fff; }
 .about-box h3 { margin: 0 0 10px; font-size: 15px; }
 .profile { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
-.avatar { width: 72px; height: 72px; flex: none; border-radius: 50%; border: 3px solid #fff; outline: 2px solid transparent; object-fit: cover; background: #fff5ac; box-shadow: 0 0 0 2px #d62976; }
+.avatar { width: 64px; height: 64px; flex: none; border-radius: 50%; object-fit: cover; background: #fff5ac; box-shadow: 0 0 0 1px var(--line); }
 .pname { font-size: 18px; font-weight: 700; line-height: 1.3; }
 .psub { color: var(--sub); font-size: 13px; }
 .about-box p { margin: 0 0 8px; font-size: 14px; }
 .about-box .label { margin: 10px 0 6px; font-size: 13px; font-weight: 700; color: var(--sub); }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.chips span { background: #efefef; border-radius: 999px; padding: 3px 12px; font-size: 13px; }
+.chips span { background: var(--soft); border-radius: 999px; padding: 3px 12px; font-size: 13px; }
 .chips span.more { background: none; color: var(--sub); padding: 2px 2px; }
 .links { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
-.links li { display: flex; align-items: center; gap: 10px; border: 1px solid var(--border-soft); border-radius: 12px; padding: 8px 10px; }
+.links li { display: flex; align-items: center; gap: 10px; border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px; }
 .links .ic { width: 34px; height: 34px; flex: none; border-radius: 10px; display: grid; place-items: center; color: #fff; }
 .links .ic svg { width: 20px; height: 20px; }
 .links .lt { flex: 1; min-width: 0; line-height: 1.35; }
@@ -133,7 +136,7 @@ details.about[open] > summary { border-radius: var(--radius) var(--radius) 0 0; 
 .links .lt b { word-break: break-all; }
 .links a.go, .links button { flex: none; border: 0; color: #fff; background: var(--blue); border-radius: 8px; padding: 5px 12px; font-size: 12.5px; font-weight: 600; cursor: pointer; text-decoration: none; font-family: inherit; }
 .links a.go:hover, .links button:hover { background: var(--blue-hover); }
-.license { margin: 14px 0 0 40px; background: #fff1f2; border: 1px solid #f6c3c8; border-radius: 12px; padding: 10px 14px; font-size: 14px; }
+.license { margin: 14px 0 0 36px; background: #fafafa; border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; font-size: 14px; }
 .license b.ng { color: var(--red); }
 .license ul { margin: 4px 0; padding-left: 20px; }
 
@@ -156,9 +159,9 @@ dialog::backdrop { background: rgba(0, 0, 0, .55); }
 
 /* ---- ゲストの名前（partials/guest.js）---- */
 .gmodal { position: fixed; inset: 0; z-index: 50; background: rgba(0, 0, 0, .55); display: grid; place-items: center; padding: 16px; }
-.gmodal .gbox { width: min(400px, 100%); background: #fff; border-radius: 22px; padding: 30px 26px 24px; text-align: center; box-shadow: 0 20px 60px rgba(0, 0, 0, .3); }
-.gmodal .ring { width: 88px; height: 88px; margin: 0 auto 12px; border-radius: 50%; padding: 3px; background: var(--grad); }
-.gmodal .ring > div { width: 100%; height: 100%; border-radius: 50%; background: #fff; border: 3px solid #fff; display: grid; place-items: center; font-size: 34px; }
+.gmodal .gbox { width: min(400px, 100%); background: #fff; border-radius: 18px; padding: 28px 24px 22px; text-align: center; box-shadow: 0 20px 60px rgba(0, 0, 0, .25); }
+.gmodal .ring { width: 72px; height: 72px; margin: 0 auto 12px; border-radius: 50%; background: var(--soft); }
+.gmodal .ring > div { width: 100%; height: 100%; border-radius: 50%; display: grid; place-items: center; font-size: 32px; }
 .gmodal h2 { margin: 0 0 4px; font-size: 20px; }
 .gmodal p { margin: 0 0 16px; color: var(--sub); font-size: 13.5px; }
 .gmodal input { width: 100%; font-size: 16px; padding: 12px 14px; border: 1px solid var(--border); background: var(--input); border-radius: 12px; margin-bottom: 10px; }
@@ -171,12 +174,12 @@ dialog::backdrop { background: rgba(0, 0, 0, .55); }
 
 @media (max-width: 640px) {
   body { font-size: 14.5px; }
-  .header-in { padding: 8px 12px; gap: 10px; }
-  .header-in img { width: 36px; height: 36px; border-radius: 10px; }
-  .header-in h1 { font-size: 17px; }
+  .header-in { height: 52px; padding: 0 12px; gap: 10px; }
+  .header-in img { width: 34px; height: 34px; border-radius: 9px; }
+  .header-in h1 { font-size: 16.5px; }
   .header-in p { display: none; }
-  main { padding: 12px 12px 90px; }
-  .card { padding: 16px 14px 16px; border-radius: 14px; }
+  main { padding: 14px 12px 90px; }
+  .card { padding: 16px 14px 16px; border-radius: 12px; }
   .indent { padding-left: 0; }
   .btn-blue { width: 100%; }
   .btn-green { font-size: 16px; padding: 13px 14px; }
@@ -189,16 +192,23 @@ dialog::backdrop { background: rgba(0, 0, 0, .55); }
 }
 
 /* ---- サイトのメニュー ---- */
-.sitenav { background: rgba(255, 255, 255, .92); border-bottom: 1px solid var(--border-soft); position: sticky; top: 63px; z-index: 19; -webkit-backdrop-filter: saturate(180%) blur(12px); backdrop-filter: saturate(180%) blur(12px); }
-.sitenav-in { max-width: 920px; margin: 0 auto; padding: 8px 12px; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+/* タブのように: 文字だけ・いまのページは下に線（ピンク→紫） */
+.sitenav { background: #fff; border-bottom: 1px solid var(--line); position: sticky; top: 61px; z-index: 19; }
+.sitenav-in { max-width: 920px; margin: 0 auto; padding: 0 8px; display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
 .sitenav-in::-webkit-scrollbar { display: none; }
-.sitenav a { color: var(--text); text-decoration: none; padding: 6px 14px; font-size: 14px; font-weight: 600; border-radius: 999px; white-space: nowrap; background: #efefef; }
-.sitenav a:hover { background: #e3e3e3; }
-.sitenav a[aria-current="page"] { color: #fff; background: #262626; }
+.sitenav a { color: var(--sub); text-decoration: none; padding: 10px 12px 11px; font-size: 14px; font-weight: 600; white-space: nowrap; }
+.sitenav a:hover { color: var(--text); }
+.sitenav a[aria-current="page"] { color: var(--text); background: var(--grad-btn) left bottom / 100% 2px no-repeat; }
 @media (max-width: 640px) {
   .sitenav { top: 53px; }
-  .sitenav-in { padding: 7px 10px; gap: 5px; }
-  .sitenav a { padding: 5px 10px; font-size: 12.5px; }
+  .sitenav-in { padding: 0 4px; gap: 0; }
+  .sitenav a { padding: 9px 9px 10px; font-size: 13px; }
+}
+.sitenav .ni { margin-right: 5px; }
+@media (max-width: 480px) {
+  .sitenav-in { justify-content: space-between; }
+  .sitenav .ni { display: none; }
+  .sitenav a { padding: 10px 8px 11px; font-size: 13.5px; }
 }
 
 /* ---- 共通の部品（入力・コピー欄・かんたんな流れ・チップ）---- */
@@ -212,7 +222,7 @@ dialog::backdrop { background: rgba(0, 0, 0, .55); }
 .copybox button:hover { background: var(--blue-hover); }
 .copybox.disabled code { color: #a8a8a8; }
 .copybox.disabled button { background: #c7c7c7; cursor: default; }
-.easy, .tip { position: relative; background: linear-gradient(135deg, #fff7fb 0%, #f7f4ff 100%); border: 1px solid #f1e4f3; border-radius: var(--radius); padding: 14px 18px; margin: 0 0 16px; }
+.easy, .tip { position: relative; background: #fafafa; border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 18px; margin: 0 0 16px; }
 .tip { padding: 10px 14px; margin-top: 10px; font-size: 14px; border-radius: 12px; }
 .easy b.t { display: block; font-size: 15px; margin-bottom: 4px; }
 .easy ol { margin: 0; padding-left: 22px; font-size: 14px; }
@@ -272,8 +282,8 @@ ol.steps > li { margin: 8px 0; }
 
 /* ===== チャット ===== */
 main { padding-bottom: 40px; }
-.app { display: grid; grid-template-columns: 330px 1fr; height: calc(100vh - 170px); height: calc(100dvh - 170px); min-height: 480px; max-height: 820px; background: var(--panel); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; box-shadow: var(--shadow); margin-bottom: 16px; }
-.side { display: flex; flex-direction: column; border-right: 1px solid var(--border); min-height: 0; }
+.app { display: grid; grid-template-columns: 330px 1fr; height: calc(100vh - 170px); height: calc(100dvh - 170px); min-height: 480px; max-height: 820px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; margin-bottom: 14px; }
+.side { display: flex; flex-direction: column; border-right: 1px solid var(--line); min-height: 0; }
 .side-head { display: flex; align-items: center; gap: 10px; padding: 14px 14px 10px; }
 .side-head .av { width: 40px; height: 40px; font-size: 17px; }
 .me-t { flex: 1; min-width: 0; line-height: 1.3; }
@@ -284,20 +294,20 @@ main { padding-bottom: 40px; }
 .side-head .btn-outline { padding: 6px 12px; font-size: 12.5px; }
 .online { padding: 2px 0 8px; border-bottom: 1px solid var(--border-soft); }
 .online-h { font-size: 12.5px; font-weight: 700; color: var(--sub); padding: 0 14px 6px; }
-.ostories { display: flex; gap: 10px; overflow-x: auto; padding: 2px 14px 4px; scrollbar-width: none; min-height: 84px; }
+.ostories { display: flex; gap: 8px; overflow-x: auto; padding: 2px 14px 4px; scrollbar-width: none; min-height: 76px; }
 .ostories::-webkit-scrollbar { display: none; }
-.ost { flex: none; width: 62px; display: flex; flex-direction: column; align-items: center; gap: 4px; border: 0; background: none; padding: 0; cursor: pointer; font-size: 11.5px; color: var(--text); }
-.ost .ring { width: 56px; height: 56px; border-radius: 50%; padding: 2.5px; background: var(--grad); }
-.ost .ring .av { width: 100%; height: 100%; border: 2.5px solid #fff; font-size: 19px; }
+.ost { flex: none; width: 58px; display: flex; flex-direction: column; align-items: center; gap: 4px; border: 0; background: none; padding: 0; cursor: pointer; font-size: 11.5px; color: var(--text); }
+.ost .ring { width: 50px; height: 50px; border-radius: 50%; }
+.ost .ring .av { width: 100%; height: 100%; font-size: 19px; }
 .ost span.n { max-width: 62px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ost-empty { color: var(--sub); font-size: 12.5px; padding: 18px 0; }
 .convs { flex: 1; overflow-y: auto; padding: 6px 0 10px; }
 .convs-h { font-size: 12.5px; font-weight: 700; color: var(--sub); padding: 12px 14px 4px; }
 .conv { display: flex; align-items: center; gap: 12px; width: 100%; border: 0; background: none; text-align: left; padding: 9px 14px; cursor: pointer; color: var(--text); text-decoration: none; }
 .conv:hover { background: #fafafa; }
-.conv.active { background: #efefef; }
+.conv.active { background: var(--soft); }
 .conv .av { width: 48px; height: 48px; font-size: 19px; }
-.conv .bigic { width: 48px; height: 48px; flex: none; border-radius: 50%; display: grid; place-items: center; font-size: 22px; background: var(--grad-btn); }
+.conv .bigic { width: 48px; height: 48px; flex: none; border-radius: 50%; display: grid; place-items: center; font-size: 22px; background: var(--soft); }
 .conv .bigic.game { background: #e7f7ee; }
 .conv .ct { flex: 1; min-width: 0; line-height: 1.35; }
 .conv .ct b { display: block; font-size: 14.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -308,9 +318,9 @@ main { padding-bottom: 40px; }
 .conv .blk { font-size: 11px; color: var(--red); font-weight: 700; }
 .dm-empty { color: var(--sub); font-size: 13px; padding: 4px 14px 8px; }
 .pane { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
-.pane-head { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+.pane-head { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--line); }
 .pane-head .av, .pane-head .bigic { width: 40px; height: 40px; flex: none; font-size: 17px; }
-.pane-head .bigic { border-radius: 50%; display: grid; place-items: center; background: var(--grad-btn); font-size: 19px; }
+.pane-head .bigic { border-radius: 50%; display: grid; place-items: center; background: var(--soft); font-size: 19px; }
 .pane-head .pt { flex: 1; min-width: 0; line-height: 1.3; }
 .pane-head .pt b { display: block; font-size: 15.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pane-head .pt small { color: var(--sub); font-size: 12.5px; }
@@ -321,8 +331,8 @@ main { padding-bottom: 40px; }
 .pane .cmsgs { flex: 1; min-height: 0; }
 .blocked-note { text-align: center; color: var(--sub); font-size: 13px; margin: 8px 12px 14px; }
 .profile-dlg .dlg-body { text-align: center; padding-top: 26px; }
-.profile-dlg .ring { width: 92px; height: 92px; margin: 0 auto 10px; border-radius: 50%; padding: 3px; background: var(--grad); }
-.profile-dlg .ring .av { width: 100%; height: 100%; border: 3px solid #fff; font-size: 34px; }
+.profile-dlg .ring { width: 80px; height: 80px; margin: 0 auto 10px; border-radius: 50%; }
+.profile-dlg .ring .av { width: 100%; height: 100%; font-size: 32px; }
 .profile-dlg h3 { margin: 0; font-size: 19px; }
 .profile-dlg .pid { color: var(--sub); font-size: 13px; margin: 2px 0 8px; }
 .profile-dlg .dlg-btns { flex-direction: column; align-items: stretch; padding: 4px 22px 22px; }
@@ -392,11 +402,11 @@ main { padding-bottom: 40px; }
         '<button class="btn btn-green" type="submit">はじめる</button>' +
         '<button class="link gcancel" type="button" hidden>やめる</button>' +
         '<p class="gerr" aria-live="polite"></p>' +
-        '<p class="gnote">名前は、ほかの人に見えます。本名・学校・住所などは入れないでください。<br>登録やパスワードはいりません（このブラウザに保存されます）。</p>' +
+        '<p class="gnote">名前はほかの人に見えます。本名などは入れないでください。</p>' +
         "</form>";
       const form = wrap.querySelector("form"), input = wrap.querySelector("input"), err = wrap.querySelector(".gerr");
       wrap.querySelector("h2").textContent = opts.title || "ようこそ！";
-      wrap.querySelector(".gtext").textContent = opts.text || "チャットや近接VCで使う名前を決めてください（ゲストとして参加します）。";
+      wrap.querySelector(".gtext").textContent = opts.text || "チャットと近接VCで使う名前を決めてください。";
       wrap.querySelector("button[type=submit]").textContent = opts.button || "はじめる";
       input.placeholder = "名前（16 文字まで）";
       input.value = opts.value || "";
@@ -467,7 +477,7 @@ main { padding-bottom: 40px; }
       const st = await check();
       checked = st !== "offline";
       if (st === "banned") {
-        await ask({ title: "いまは使えません", text: "このゲストは、サイトの管理者によって止められています。しばらくしてから、もう一度ためしてください。", banned: true });
+        await ask({ title: "いまは使えません", text: "管理者に止められています。しばらく待ってください。", banned: true });
         return new Promise(() => {});
       }
     }
@@ -620,26 +630,26 @@ main { padding-bottom: 40px; }
 <body>
 <header>
   <div class="header-in">
-    <img class="pixel" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAACjUlEQVR42u2bPUwUQRiG3zEYG0KLpbEQOI0o0cRwWBAiojmD+NOoUBgbCgv5CYeJFQUSwMbWigMafhovglhcg8TExAQKEygulppY2liNxd0YdnK7s8Pt3jF379ftfjt7O/s+837f7t0JGOLcxQcSDsfB3qoIyp9AnYfwV/6+rKWJHuytCRIQhoCWGlNej32NBBLwX/n2e7KeJr6/uy5IAADR6rjyOx9HPNudN99YjScBrZcGnCRgZ3M0MN/ZN08CQhHQFjMBk+OPA/PTs0tW5/tsUF6PpIGEuiegASJaACbHnpRFyPTcYsSMSxIQeH8Sl+9GgkDaUnlTvDaQsL0xFpjvujXHKhCOgI7+sghIjw6GOi77PgsASN1J2ZEwnwkm4cO4V/nbs+wEraqAcO2FhRbXNcVt50MCjjpwIuTaLzfU58wYvOCoQQJExJ2gcnvbfOL8hWAvEJIEHCsP8Au/Om/qA/L5H1W5ASQgrrUVeT9AD+AS4A2gB5AAB/qAqOJld1bbjvb8V140kgCnPCAuTyEBrlxo4lF5zwrfl8+wCtAD6AFV9ADb7wP4LFAxD3DsgrffjVgd3/Ws9G+GBAlQHuBIFVDKN994DgBoH1wBAGwN/fQc17twGgCwm3lYHKcy6xoCrAKlPeDs0F8AQH7hVKj9lY5fn94WlS+dV0So43z7AHqA5gFNPb8BACvDXwuZYZ8Rxf2Z5bWqXviX7LfA/LVUh6EVpAd4PSA3VVC++9XVUAOftqWreuFGhU3PAvQAtRKklDbKVyq2+hpjPf/JZI4EqKdBtRzq7cUA/zGivw84ViT0bv6JVflcklXAozqKxeBwNZC1OFfV7wghSICHAJ2Ew7tqaY5KebATLMQ/lnufS6vEI9gAAAAASUVORK5CYII=">
+    <img alt="MaYo鯖" src="../img/mayosaba.png" width="40" height="40">
     <div>
       <h1>チャット</h1>
-      <p>名前を入れるだけ。みんなのチャットと DM　｜　制作: MaYo（mayo01297）</p>
+      <p>チャットと DM　｜　制作: MaYo（mayo01297）</p>
     </div>
     <a class="help-btn" href="#help">？ ルール</a>
   </div>
 </header>
 <nav class="sitenav" aria-label="サイトのメニュー">
   <div class="sitenav-in">
-    <a href="../" data-page="home">🏠 ホーム</a>
-    <a href="../corpse/" data-page="corpse">🪦 死体スキン</a>
-    <a href="../vc/" data-page="vc">🎙 近接VC</a>
-    <a href="../chat/" data-page="chat" aria-current="page">💬 チャット</a>
-    <a href="../works/" data-page="works">🧩 作品</a>
+    <a href="../" data-page="home"><span class="ni" aria-hidden="true">🏠</span>ホーム</a>
+    <a href="../corpse/" data-page="corpse"><span class="ni" aria-hidden="true">🪦</span>死体スキン</a>
+    <a href="../vc/" data-page="vc"><span class="ni" aria-hidden="true">🎙</span>近接VC</a>
+    <a href="../chat/" data-page="chat" aria-current="page"><span class="ni" aria-hidden="true">💬</span>チャット</a>
+    <a href="../works/" data-page="works"><span class="ni" aria-hidden="true">🧩</span>作品</a>
   </div>
 </nav>
 
 <main>
-  <p class="notice" id="noApi" hidden>⚠ このページは、サイトのサーバー（Cloudflare Workers か VPS）で動かしているときだけ使えます。</p>
+  <p class="notice" id="noApi" hidden>⚠ サイトのサーバー（Workers か VPS）で動かしたときだけ使えます。</p>
 
   <div class="app" id="app">
     <aside class="side" aria-label="会話の一覧">
@@ -655,12 +665,12 @@ main { padding-bottom: 40px; }
       <div class="convs">
         <button class="conv" type="button" id="lobbyConv">
           <span class="bigic" aria-hidden="true">🌏</span>
-          <span class="ct"><b>みんなのチャット</b><small id="lobbyPrev">サイトに来ている人みんなで話せます</small></span>
+          <span class="ct"><b>みんなのチャット</b><small id="lobbyPrev">みんなで話せます</small></span>
           <span class="dot"></span>
         </button>
         <a class="conv" href="../talk/">
           <span class="bigic game" aria-hidden="true">🎮</span>
-          <span class="ct"><b>ゲーム中チャット</b><small>サイト版の近接VC の部屋の中にあります</small></span>
+          <span class="ct"><b>ゲーム中チャット</b><small>サイト版VC の部屋の中</small></span>
         </a>
         <div class="convs-h">メッセージ（DM）</div>
         <div id="dmList"></div>
@@ -676,7 +686,7 @@ main { padding-bottom: 40px; }
       </div>
       <p class="pin" id="pin"></p>
       <div class="cmsgs" id="msgs" aria-live="polite"></div>
-      <p class="blocked-note" id="blockedNote" hidden>この人をブロックしています。プロフィールから解除すると、メッセージを送れます。</p>
+      <p class="blocked-note" id="blockedNote" hidden>ブロック中です（プロフィールから解除できます）。</p>
       <form class="composer" id="form">
         <textarea rows="1" maxlength="1000" placeholder="メッセージを入力…" aria-label="メッセージ"></textarea>
         <span class="cnt"></span>
@@ -690,27 +700,20 @@ main { padding-bottom: 40px; }
     <div class="help-body">
       <h4>■ ルール</h4>
       <ul>
-        <li>悪口・いやがらせ・こわがらせることは書かない</li>
-        <li>個人情報（本名・住所・学校・電話番号・SNS のアカウントなど）は、自分のものも人のものも書かない</li>
-        <li>宣伝・同じ文のくり返し・意味のない連投はしない</li>
-        <li>守らない人は、サイトの管理者が止める（しばらく使えなくする）ことがあります</li>
+        <li>悪口・いやがらせ・宣伝・連投は禁止</li>
+        <li>個人情報（本名・住所・学校・SNS など）は書かない</li>
+        <li>守らない人は管理者が止めることがあります</li>
       </ul>
-      <h4>■ 上限（スパム対策）</h4>
+      <h4>■ 上限</h4>
       <ul>
-        <li>みんなのチャット: <b>200 文字</b>まで・<b>10 秒に 3 回</b>・<b>1 分に 15 回</b>まで。名前を決めてから 10 秒は書けません</li>
-        <li>DM: <b>500 文字</b>まで・10 秒に 6 回・1 分に 30 回まで。<b>新しい相手</b>に送れるのは 1 日 20 人まで</li>
-        <li>同じメッセージは続けて送れません。人が多いときは「ゆっくりモード」（10 秒に 1 回）になります</li>
-        <li>名前を変えられるのは 1 時間に 3 回まで</li>
-        <li>画像やファイルは送れません（文字だけ）</li>
+        <li>みんなのチャット: 200 文字・10 秒に 3 回まで</li>
+        <li>DM: 500 文字まで・新しい相手は 1 日 20 人まで</li>
+        <li>名前の変更は 1 時間に 3 回まで・文字だけ（画像は不可）</li>
       </ul>
       <h4>■ ブロック</h4>
-      <p>名前やアイコンを押して「ブロックする」と、その人のメッセージがこの端末に出なくなります（相手には伝わりません）。</p>
-      <h4>■ データについて</h4>
-      <ul>
-        <li>ゲストの名前とトークン（合言葉）は、このブラウザに保存されます。ブラウザのデータを消すと、新しいゲストになります（前の DM は見られなくなります）</li>
-        <li>みんなのチャットは最新 100 件、DM は会話ごとに最新 60 件を、サイトのサーバーに 7 日まで（みんなのチャットは件数まで）保存します</li>
-        <li>DM は相手とあなたにだけ表示されますが、暗号化はしていません。サーバーの管理者は技術的に見られるので、ひみつの話は書かないでください</li>
-      </ul>
+      <p>名前を押して「ブロックする」と、その人のメッセージが出なくなります（相手には伝わりません）。</p>
+      <h4>■ データ</h4>
+      <p>名前はこのブラウザに保存。メッセージはサーバーに 7 日まで保存します。DM は暗号化していないので、ひみつの話は書かないでください。</p>
     </div>
   </details>
 
@@ -733,7 +736,7 @@ main { padding-bottom: 40px; }
             <div class="psub">高校1年生</div>
           </div>
         </div>
-        <p>普段は、マインクラフトの PvP クライアントを作ったり、Roblox でゲームを作ったり、アドオンを作ったり、マインクラフトのマップを作ったりしています。</p>
+        <p>マイクラの PvP クライアント・アドオン・マップや、Roblox のゲームを作っています。</p>
         <p class="label">好きなゲーム</p>
         <div class="chips">
           <span>マインクラフト</span><span>第五人格</span><span>崩壊：スターレイル</span><span>Roblox</span><span>Dead by Daylight</span><span class="more">など</span>
@@ -761,15 +764,7 @@ main { padding-bottom: 40px; }
       </div>
     </div>
     <div class="license">
-      <b>クレジット・二次配布について</b><br>
-      このスキン登録ページと「プレイヤーの死体アドオン」は、<b>MaYo（mayo01297）</b>が制作しました。<br>
-      <b class="ng">二次配布は禁止です。</b>次のことはしないでください。
-      <ul>
-        <li>このページのファイルやアドオンを、ほかのサイト・SNS・Discord サーバーなどにアップロードして配ること</li>
-        <li>改変して配ること</li>
-        <li>自分が作ったと言うこと（自作発言）</li>
-      </ul>
-      紹介するときは、このページのURLを共有してください。
+      <b class="ng">二次配布禁止</b>：再アップロード・改変して配布・自作発言はしないでください。紹介はこのページの URL でお願いします。
     </div>
     </div>
   </details>
@@ -901,7 +896,7 @@ function connect() {
 setInterval(() => { if (C.ws && C.ws.readyState === 1) C.ws.send("ping"); }, 30000);
 async function banned() {
   setConn(false, "使えません");
-  await Guest.ask({ title: "いまは使えません", text: "このゲストは、サイトの管理者によって止められています。しばらくしてから、もう一度ためしてください。", banned: true });
+  await Guest.ask({ title: "いまは使えません", text: "管理者に止められています。しばらく待ってください。", banned: true });
 }
 
 function onMsg(m) {
@@ -973,7 +968,7 @@ function renderOnline(count) {
   box.textContent = "";
   const others = C.online.filter(u => !C.me || u.id !== C.me.id);
   $("onlineCount").textContent = String(count ?? C.online.length);
-  if (C.view === "lobby") $("paneSub").textContent = `サイトに来ている人みんなで話せます（いま ${count ?? C.online.length} 人）`;
+  if (C.view === "lobby") $("paneSub").textContent = `いま ${count ?? C.online.length} 人`;
   if (!others.length) { const s = document.createElement("span"); s.className = "ost-empty"; s.textContent = "ほかにはまだだれもいません"; box.appendChild(s); return; }
   for (const u of others.slice(0, 60)) {
     const b = document.createElement("button");
@@ -1019,7 +1014,7 @@ function renderConvs() {
     box.appendChild(b);
   }
   if (!list.length) { const p = document.createElement("p"); p.className = "dm-empty"; p.textContent = "「いまいる人」やメッセージの名前を押すと、DM を送れます。"; box.appendChild(p); }
-  document.title = unread ? `(${unread}) チャット` : "チャット";
+  document.title = (unread ? `(${unread}) ` : "") + "チャット | MaYo鯖 BEツール";
 }
 /** 会話をひらく（"lobby" か、相手の ID） */
 function show(v, keep) {
@@ -1032,12 +1027,12 @@ function show(v, keep) {
     $("paneTitle").textContent = Guest.label(c.peer);
     const on = C.online.some(u => u.id === v);
     $("paneSub").textContent = on ? "🟢 いまサイトにいます" : "オフライン（送ったメッセージは、あとで届きます）";
-    $("pin").innerHTML = "🔒 <b>DM</b> は相手とあなたにだけ表示されます（7 日で消えます）。500 文字まで。";
+    $("pin").innerHTML = "🔒 相手とあなただけに表示（7 日で消えます）";
   } else {
     const ic = document.createElement("span"); ic.id = "paneIcon"; ic.className = "bigic"; ic.textContent = "🌏"; icon.replaceWith(ic);
     $("paneTitle").textContent = "みんなのチャット";
-    $("paneSub").textContent = `サイトに来ている人みんなで話せます（いま ${C.online.length} 人）`;
-    $("pin").innerHTML = "📌 <b>ルール</b>: 悪口・個人情報・宣伝はダメ。200 文字まで・10 秒に 3 回まで。いやな人は名前を押して「ブロック」できます。";
+    $("paneSub").textContent = `いま ${C.online.length} 人`;
+    $("pin").innerHTML = "📌 悪口・個人情報・宣伝はダメ。名前を押すとブロックできます。";
   }
   $("paneUser").hidden = !dm;
   const blocked = dm && !!C.block[v];
@@ -1091,7 +1086,7 @@ $("paneUser").addEventListener("click", () => { const c = C.convs.get(C.view); i
 $("lobbyConv").addEventListener("click", () => show("lobby"));
 $("backBtn").addEventListener("click", () => { $("app").classList.remove("open"); renderConvs(); });
 $("renameBtn").addEventListener("click", async () => {
-  const name = await Guest.ask({ title: "名前を変える", text: "新しい名前を入れてください（1 時間に 3 回まで）。#のあとの数字は変わりません。", value: C.me ? C.me.name : "", button: "変える", cancel: true });
+  const name = await Guest.ask({ title: "名前を変える", text: "新しい名前（1 時間に 3 回まで）", value: C.me ? C.me.name : "", button: "変える", cancel: true });
   if (name) send({ t: "rename", name });
 });
 

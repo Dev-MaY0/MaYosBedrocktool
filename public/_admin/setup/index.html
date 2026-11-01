@@ -16,10 +16,11 @@
 <style>
 /* =====================================================================
    共通スタイル（全ページ）  制作: MaYo (mayo01297)  二次配布禁止
-   白ベース・角の丸いカード・グラデーションのアクセント（SNS アプリのような雰囲気）
+   シンプル: 白ベース・細い線のカード（影なし）・アクセントはピンク→紫・ボタンは青
    ===================================================================== */
 :root {
   --back: #fafafa; --panel: #ffffff; --border: #dbdbdb; --border-soft: #efefef; --input: #fafafa;
+  --line: #e8e8e8; --soft: #f3f3f4; --accent: #d62976;
   --text: #262626; --sub: #737373; --link: #00376b;
   --header: #ffffff; --header-sub: #737373;
   --blue: #0095f6; --blue-hover: #1877f2; --blue-pale: #e8f3ff;
@@ -27,8 +28,8 @@
   --red: #ed4956; --orange: #f39c12; --preview: #f2f2f2;
   --grad: linear-gradient(45deg, #feda75 0%, #fa7e1e 25%, #d62976 50%, #962fbf 75%, #4f5bd5 100%);
   --grad-btn: linear-gradient(90deg, #f56040 0%, #e1306c 45%, #833ab4 100%);
-  --radius: 16px;
-  --shadow: 0 1px 2px rgba(0, 0, 0, .04), 0 6px 20px rgba(0, 0, 0, .05);
+  --radius: 14px;
+  --shadow: none;
   --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic UI", Meiryo, system-ui, sans-serif;
 }
 * { box-sizing: border-box; }
@@ -40,19 +41,20 @@ a { color: var(--link); }
 .pixel { image-rendering: pixelated; image-rendering: crisp-edges; }
 
 /* ---- header ---- */
-header { background: rgba(255, 255, 255, .92); color: var(--text); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 20; -webkit-backdrop-filter: saturate(180%) blur(12px); backdrop-filter: saturate(180%) blur(12px); }
-.header-in { max-width: 920px; margin: 0 auto; padding: 10px 16px; display: flex; align-items: center; gap: 12px; }
-.header-in img { width: 42px; height: 42px; flex: none; border-radius: 12px; padding: 2px; background: var(--grad); }
-.header-in h1 { margin: 0; font-size: 20px; line-height: 1.25; font-weight: 800; letter-spacing: -.01em; background: var(--grad-btn); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.header-in p { margin: 1px 0 0; color: var(--header-sub); font-size: 12.5px; }
-.header-in .help-btn { margin-left: auto; flex: none; color: var(--text); background: #efefef; border: 0; border-radius: 10px; padding: 7px 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none; white-space: nowrap; }
-.header-in .help-btn:hover { background: #e3e3e3; }
+header { background: #fff; color: var(--text); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 20; }
+.header-in { max-width: 920px; height: 60px; margin: 0 auto; padding: 0 16px; display: flex; align-items: center; gap: 11px; }
+.header-in img { width: 40px; height: 40px; flex: none; border-radius: 10px; box-shadow: 0 0 0 1px rgba(0, 0, 0, .06); }
+.header-in > div { min-width: 0; }
+.header-in h1 { margin: 0; font-size: 18.5px; line-height: 1.25; font-weight: 800; letter-spacing: -.01em; color: var(--text); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.header-in p { margin: 1px 0 0; color: var(--header-sub); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.header-in .help-btn { margin-left: auto; flex: none; color: var(--text); background: var(--soft); border: 0; border-radius: 10px; padding: 7px 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none; white-space: nowrap; }
+.header-in .help-btn:hover { background: #e8e8e9; }
 
-main { max-width: 920px; margin: 0 auto; padding: 18px 16px 90px; }
-.card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
-.step { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; font-size: 17px; font-weight: 700; }
-.num { width: 30px; height: 30px; flex: none; border-radius: 50%; background: var(--grad); color: #fff; display: grid; place-items: center; font-size: 15px; font-weight: 700; box-shadow: 0 2px 8px rgba(214, 41, 118, .25); }
-.indent { padding-left: 40px; }
+main { max-width: 920px; margin: 0 auto; padding: 20px 16px 90px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 20px 20px; margin-bottom: 14px; }
+.step { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; font-size: 16.5px; font-weight: 700; }
+.num { width: 26px; height: 26px; flex: none; border-radius: 50%; background: var(--grad-btn); color: #fff; display: grid; place-items: center; font-size: 13.5px; font-weight: 700; }
+.indent { padding-left: 36px; }
 
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 10px; cursor: pointer; color: #fff; font-weight: 600; transition: filter .15s, transform .05s, background .15s; }
 .btn:active { transform: scale(.98); }
@@ -60,7 +62,7 @@ main { max-width: 920px; margin: 0 auto; padding: 18px 16px 90px; }
 .btn:disabled { background: #c7c7c7 !important; cursor: default; filter: none; }
 .btn-blue { background: var(--blue); padding: 10px 18px; font-size: 15.5px; }
 .btn-blue:hover { background: var(--blue-hover); }
-.btn-green { background: var(--grad-btn); padding: 14px 22px; font-size: 17px; width: 100%; max-width: 480px; box-shadow: 0 6px 18px rgba(225, 48, 108, .25); }
+.btn-green { background: var(--grad-btn); padding: 13px 22px; font-size: 16.5px; width: 100%; max-width: 480px; border-radius: 12px; }
 .btn-green:hover { filter: brightness(1.06); }
 .btn-green.pulse { animation: pulse 0.5s ease-in-out 3 alternate; }
 @keyframes pulse { to { box-shadow: 0 0 0 7px rgba(225, 48, 108, .22); } }
@@ -70,8 +72,8 @@ main { max-width: 920px; margin: 0 auto; padding: 18px 16px 90px; }
 .link:disabled { color: var(--sub); cursor: default; text-decoration: none; }
 .link svg { width: 15px; height: 15px; vertical-align: -2px; margin-right: 4px; }
 hr { border: 0; border-top: 1px solid var(--border-soft); margin: 14px 0 10px; }
-.btn-outline { display: inline-flex; align-items: center; gap: 6px; background: #efefef; color: var(--text); border: 0; border-radius: 10px; padding: 7px 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none; }
-.btn-outline:hover { background: #e3e3e3; }
+.btn-outline { display: inline-flex; align-items: center; gap: 6px; background: var(--soft); color: var(--text); border: 0; border-radius: 10px; padding: 7px 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none; }
+.btn-outline:hover { background: #e8e8e9; }
 .btn-outline svg { width: 15px; height: 15px; flex: none; }
 
 .notice { background: #fff8e6; border: 1px solid #f7d58a; border-radius: 12px; padding: 10px 14px; font-size: 13px; margin: 0 0 14px; }
@@ -85,7 +87,7 @@ input[type=text], input[type=password], input[type=search], input:not([type]), t
 kbd { font-family: inherit; background: #efefef; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 6px; padding: 0 6px; font-size: 13px; }
 
 /* ---- help ---- */
-details.help { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 12px; box-shadow: var(--shadow); }
+details.help { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); margin-bottom: 12px; }
 details.help summary { cursor: pointer; padding: 14px 20px; font-weight: 700; }
 details.help .help-body { padding: 0 20px 16px; font-size: 14px; }
 details.help h4 { margin: 14px 0 4px; font-size: 14px; }
@@ -113,19 +115,19 @@ details.about[open] > summary { border-radius: var(--radius) var(--radius) 0 0; 
 .about-body { padding: 2px 20px 20px; }
 .num svg { width: 16px; height: 16px; }
 .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.about-box { border: 1px solid var(--border-soft); border-radius: 14px; padding: 14px 16px 16px; background: #fff; }
+.about-box { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px 16px; background: #fff; }
 .about-box h3 { margin: 0 0 10px; font-size: 15px; }
 .profile { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
-.avatar { width: 72px; height: 72px; flex: none; border-radius: 50%; border: 3px solid #fff; outline: 2px solid transparent; object-fit: cover; background: #fff5ac; box-shadow: 0 0 0 2px #d62976; }
+.avatar { width: 64px; height: 64px; flex: none; border-radius: 50%; object-fit: cover; background: #fff5ac; box-shadow: 0 0 0 1px var(--line); }
 .pname { font-size: 18px; font-weight: 700; line-height: 1.3; }
 .psub { color: var(--sub); font-size: 13px; }
 .about-box p { margin: 0 0 8px; font-size: 14px; }
 .about-box .label { margin: 10px 0 6px; font-size: 13px; font-weight: 700; color: var(--sub); }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.chips span { background: #efefef; border-radius: 999px; padding: 3px 12px; font-size: 13px; }
+.chips span { background: var(--soft); border-radius: 999px; padding: 3px 12px; font-size: 13px; }
 .chips span.more { background: none; color: var(--sub); padding: 2px 2px; }
 .links { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
-.links li { display: flex; align-items: center; gap: 10px; border: 1px solid var(--border-soft); border-radius: 12px; padding: 8px 10px; }
+.links li { display: flex; align-items: center; gap: 10px; border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px; }
 .links .ic { width: 34px; height: 34px; flex: none; border-radius: 10px; display: grid; place-items: center; color: #fff; }
 .links .ic svg { width: 20px; height: 20px; }
 .links .lt { flex: 1; min-width: 0; line-height: 1.35; }
@@ -133,7 +135,7 @@ details.about[open] > summary { border-radius: var(--radius) var(--radius) 0 0; 
 .links .lt b { word-break: break-all; }
 .links a.go, .links button { flex: none; border: 0; color: #fff; background: var(--blue); border-radius: 8px; padding: 5px 12px; font-size: 12.5px; font-weight: 600; cursor: pointer; text-decoration: none; font-family: inherit; }
 .links a.go:hover, .links button:hover { background: var(--blue-hover); }
-.license { margin: 14px 0 0 40px; background: #fff1f2; border: 1px solid #f6c3c8; border-radius: 12px; padding: 10px 14px; font-size: 14px; }
+.license { margin: 14px 0 0 36px; background: #fafafa; border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; font-size: 14px; }
 .license b.ng { color: var(--red); }
 .license ul { margin: 4px 0; padding-left: 20px; }
 
@@ -156,9 +158,9 @@ dialog::backdrop { background: rgba(0, 0, 0, .55); }
 
 /* ---- ゲストの名前（partials/guest.js）---- */
 .gmodal { position: fixed; inset: 0; z-index: 50; background: rgba(0, 0, 0, .55); display: grid; place-items: center; padding: 16px; }
-.gmodal .gbox { width: min(400px, 100%); background: #fff; border-radius: 22px; padding: 30px 26px 24px; text-align: center; box-shadow: 0 20px 60px rgba(0, 0, 0, .3); }
-.gmodal .ring { width: 88px; height: 88px; margin: 0 auto 12px; border-radius: 50%; padding: 3px; background: var(--grad); }
-.gmodal .ring > div { width: 100%; height: 100%; border-radius: 50%; background: #fff; border: 3px solid #fff; display: grid; place-items: center; font-size: 34px; }
+.gmodal .gbox { width: min(400px, 100%); background: #fff; border-radius: 18px; padding: 28px 24px 22px; text-align: center; box-shadow: 0 20px 60px rgba(0, 0, 0, .25); }
+.gmodal .ring { width: 72px; height: 72px; margin: 0 auto 12px; border-radius: 50%; background: var(--soft); }
+.gmodal .ring > div { width: 100%; height: 100%; border-radius: 50%; display: grid; place-items: center; font-size: 32px; }
 .gmodal h2 { margin: 0 0 4px; font-size: 20px; }
 .gmodal p { margin: 0 0 16px; color: var(--sub); font-size: 13.5px; }
 .gmodal input { width: 100%; font-size: 16px; padding: 12px 14px; border: 1px solid var(--border); background: var(--input); border-radius: 12px; margin-bottom: 10px; }
@@ -171,12 +173,12 @@ dialog::backdrop { background: rgba(0, 0, 0, .55); }
 
 @media (max-width: 640px) {
   body { font-size: 14.5px; }
-  .header-in { padding: 8px 12px; gap: 10px; }
-  .header-in img { width: 36px; height: 36px; border-radius: 10px; }
-  .header-in h1 { font-size: 17px; }
+  .header-in { height: 52px; padding: 0 12px; gap: 10px; }
+  .header-in img { width: 34px; height: 34px; border-radius: 9px; }
+  .header-in h1 { font-size: 16.5px; }
   .header-in p { display: none; }
-  main { padding: 12px 12px 90px; }
-  .card { padding: 16px 14px 16px; border-radius: 14px; }
+  main { padding: 14px 12px 90px; }
+  .card { padding: 16px 14px 16px; border-radius: 12px; }
   .indent { padding-left: 0; }
   .btn-blue { width: 100%; }
   .btn-green { font-size: 16px; padding: 13px 14px; }
@@ -189,16 +191,23 @@ dialog::backdrop { background: rgba(0, 0, 0, .55); }
 }
 
 /* ---- サイトのメニュー ---- */
-.sitenav { background: rgba(255, 255, 255, .92); border-bottom: 1px solid var(--border-soft); position: sticky; top: 63px; z-index: 19; -webkit-backdrop-filter: saturate(180%) blur(12px); backdrop-filter: saturate(180%) blur(12px); }
-.sitenav-in { max-width: 920px; margin: 0 auto; padding: 8px 12px; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+/* タブのように: 文字だけ・いまのページは下に線（ピンク→紫） */
+.sitenav { background: #fff; border-bottom: 1px solid var(--line); position: sticky; top: 61px; z-index: 19; }
+.sitenav-in { max-width: 920px; margin: 0 auto; padding: 0 8px; display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
 .sitenav-in::-webkit-scrollbar { display: none; }
-.sitenav a { color: var(--text); text-decoration: none; padding: 6px 14px; font-size: 14px; font-weight: 600; border-radius: 999px; white-space: nowrap; background: #efefef; }
-.sitenav a:hover { background: #e3e3e3; }
-.sitenav a[aria-current="page"] { color: #fff; background: #262626; }
+.sitenav a { color: var(--sub); text-decoration: none; padding: 10px 12px 11px; font-size: 14px; font-weight: 600; white-space: nowrap; }
+.sitenav a:hover { color: var(--text); }
+.sitenav a[aria-current="page"] { color: var(--text); background: var(--grad-btn) left bottom / 100% 2px no-repeat; }
 @media (max-width: 640px) {
   .sitenav { top: 53px; }
-  .sitenav-in { padding: 7px 10px; gap: 5px; }
-  .sitenav a { padding: 5px 10px; font-size: 12.5px; }
+  .sitenav-in { padding: 0 4px; gap: 0; }
+  .sitenav a { padding: 9px 9px 10px; font-size: 13px; }
+}
+.sitenav .ni { margin-right: 5px; }
+@media (max-width: 480px) {
+  .sitenav-in { justify-content: space-between; }
+  .sitenav .ni { display: none; }
+  .sitenav a { padding: 10px 8px 11px; font-size: 13.5px; }
 }
 
 /* ---- 共通の部品（入力・コピー欄・かんたんな流れ・チップ）---- */
@@ -212,7 +221,7 @@ dialog::backdrop { background: rgba(0, 0, 0, .55); }
 .copybox button:hover { background: var(--blue-hover); }
 .copybox.disabled code { color: #a8a8a8; }
 .copybox.disabled button { background: #c7c7c7; cursor: default; }
-.easy, .tip { position: relative; background: linear-gradient(135deg, #fff7fb 0%, #f7f4ff 100%); border: 1px solid #f1e4f3; border-radius: var(--radius); padding: 14px 18px; margin: 0 0 16px; }
+.easy, .tip { position: relative; background: #fafafa; border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 18px; margin: 0 0 16px; }
 .tip { padding: 10px 14px; margin-top: 10px; font-size: 14px; border-radius: 12px; }
 .easy b.t { display: block; font-size: 15px; margin-bottom: 4px; }
 .easy ol { margin: 0; padding-left: 22px; font-size: 14px; }
@@ -321,7 +330,7 @@ ul.worklist > li { display: grid; grid-template-columns: 128px 1fr; gap: 12px; p
 ul.worklist > li:last-child { border-bottom: 0; }
 ul.worklist > li.draft { background: #fafafa; }
 ul.worklist > li.editing { box-shadow: inset 4px 0 0 var(--blue); }
-ul.worklist .wthumb { width: 128px; height: 72px; border-radius: 10px; object-fit: cover; background: linear-gradient(135deg, #fff7fb, #f2f6ff); display: grid; place-items: center; font-size: 28px; }
+ul.worklist .wthumb { width: 128px; height: 72px; border-radius: 10px; object-fit: cover; background: var(--soft); display: grid; place-items: center; font-size: 28px; }
 ul.worklist .wt { font-weight: 700; font-size: 15px; overflow-wrap: anywhere; }
 ul.worklist .ws { color: var(--sub); font-size: 13px; overflow-wrap: anywhere; }
 ul.worklist .empty { grid-column: 1 / 3; color: var(--sub); text-align: center; font-size: 13.5px; }
@@ -392,22 +401,22 @@ ul.newslist .empty { color: var(--sub); text-align: center; font-size: 13.5px; }
     <img class="pixel" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAB40lEQVR4nO3dsU3DQBiAUYJo2SJESGnTUNGzAQ0lKzADK7AAc6RKwwBIjAE9bJAUxjrD915rWb7i0y/5fJJX6832+4ys89ELYCwBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIE4AcQKIE0CcAOIuRi+AeV0/Xx29bgLECSBOAHECiBNAnADiBBA3eR9gd3v4jXVkfd09HL3+/vQx6/NNgDgBxAkgTgBxAogTQJwA4pwHGOzUe/6p7/lT9wlMgDgBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIE4AcQKIE0CcAOIWfx7g9eXy6PX7x89F3790JkCcAOIEECeAOAHECSBOAHECiBNAnADiBBAngDgBxAkgTgBxiz8PMPV7++j7l84EiBNAnADiBBAngDgBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIG7x5wH+u7n/B3CKCRAngDgBxAkgTgBxAogTQNzkfYC3/c2k+3e3h6lLOGrq+ma3H/t4EyBOAHECiBNAnADiBBAngLg/fx5g8e/5g506T2ACxAkgTgBxAogTQJwA4gQQt/h9AO/58zIB4gQQJ4A4AcQJIE4AcQKIW6032+/Ri2AcEyBOAHECiBNAnADiBBAngDgBxAkgTgBxAogTQJwA4gQQJ4C4Hz5iK0yQ/79HAAAAAElFTkSuQmCC">
     <div>
       <h1>サイトの管理</h1>
-      <p>お知らせ・作品・近接VC の設定（サイトを公開した人＝管理者用）　｜　制作: MaYo（mayo01297）</p>
+      <p>管理者用の設定　｜　制作: MaYo（mayo01297）</p>
     </div>
   </div>
 </header>
 <nav class="sitenav" aria-label="サイトのメニュー">
   <div class="sitenav-in">
-    <a href="../" data-page="home">🏠 ホーム</a>
-    <a href="../corpse/" data-page="corpse">🪦 死体スキン</a>
-    <a href="../vc/" data-page="vc">🎙 近接VC</a>
-    <a href="../chat/" data-page="chat">💬 チャット</a>
-    <a href="../works/" data-page="works">🧩 作品</a>
+    <a href="../" data-page="home"><span class="ni" aria-hidden="true">🏠</span>ホーム</a>
+    <a href="../corpse/" data-page="corpse"><span class="ni" aria-hidden="true">🪦</span>死体スキン</a>
+    <a href="../vc/" data-page="vc"><span class="ni" aria-hidden="true">🎙</span>近接VC</a>
+    <a href="../chat/" data-page="chat"><span class="ni" aria-hidden="true">💬</span>チャット</a>
+    <a href="../works/" data-page="works"><span class="ni" aria-hidden="true">🧩</span>作品</a>
   </div>
 </nav>
 
 <main>
-  <p class="notice" id="noApi" hidden>⚠ この設定ページは、サイトを Cloudflare Workers か VPS（mayo-vc）で動かしているときだけ使えます（ファイルを直接ひらいたときや、ほかの場所に置いたときは使えません）。</p>
+  <p class="notice" id="noApi" hidden>⚠ サイトのサーバー（Workers か VPS）で動かしたときだけ使えます。</p>
 
   <!-- 今の様子 -->
   <section class="card" aria-live="polite">
@@ -419,16 +428,16 @@ ul.newslist .empty { color: var(--sub); text-align: center; font-size: 13.5px; }
       </div>
     </div>
     <div class="actions" id="doneActions" hidden>
-      <a class="btn btn-indigo" id="inviteBtn" href="#" target="_blank" rel="noopener noreferrer">Bot を Discord サーバーに招待する</a>
-      <a class="btn btn-sub" href="../vc/discord/">近接VC（Discord 版）のページへ</a>
+      <a class="btn btn-indigo" id="inviteBtn" href="#" target="_blank" rel="noopener noreferrer">Bot を招待する</a>
+      <a class="btn btn-sub" href="../vc/discord/">Discord 版のページへ</a>
     </div>
   </section>
 
   <!-- お知らせ（ホームの「最新情報」） -->
   <section class="card" id="newsCard" aria-labelledby="tn">
-    <h2 class="step" id="tn"><span class="num">📢</span><span>お知らせ（ホームの「最新情報」）</span></h2>
+    <h2 class="step" id="tn"><span class="num">📢</span><span>お知らせ</span></h2>
     <div class="indent">
-      <p class="nf-lead">アップデート・メンテナンスなどのお知らせを書くと、<a href="../" target="_blank" rel="noopener">ホーム</a>の「最新情報」に出ます。利用者はホームをひらくだけで見られます。</p>
+      <p class="nf-lead"><a href="../" target="_blank" rel="noopener">ホーム</a>の「最新情報」に出ます。</p>
       <form id="newsForm" class="nf-grid" autocomplete="off" novalidate>
         <p class="nf-editing" id="nfEditing" hidden></p>
         <div class="nf-type" role="radiogroup" aria-label="お知らせの種類">
@@ -438,17 +447,17 @@ ul.newslist .empty { color: var(--sub); text-align: center; font-size: 13.5px; }
           <label><input type="radio" name="nfType" value="important"> ⚠ 重要</label>
         </div>
         <input class="field" id="nfTitle" type="text" maxlength="80" spellcheck="false" placeholder="タイトル（例: v1.3 アップデート）" aria-label="タイトル">
-        <textarea class="field" id="nfBody" rows="6" placeholder="本文（改行はそのまま出ます。https:// で始まる URL はリンクになります）&#10;例:&#10;・サイト版の近接VCに「バックグラウンドモード」を追加しました&#10;・死体スキンの読みこみを速くしました" aria-label="本文"></textarea>
+        <textarea class="field" id="nfBody" rows="6" placeholder="本文（URL はリンクになります）" aria-label="本文"></textarea>
         <div class="nf-count" id="nfCount">0 / 2000</div>
         <div class="nf-maint" id="nfMaint" hidden>
           <label>はじまり <input type="datetime-local" id="nfStart"></label>
           <label>終わり（予定） <input type="datetime-local" id="nfEnd"></label>
-          <p class="small-note">どちらも空でもOK。<b>はじまり〜終わり</b>のあいだは、ホームのいちばん上に「🛠 メンテナンス中」と出ます。はじまる前は「予定」、終わりを過ぎると自動で「終了」になります（終わりが空なら、「いま終わらせる」を押すまで続きます）。</p>
+          <p class="small-note">空でもOK。あいだはホームの上に「🛠 メンテナンス中」と出ます（終わりが空なら「いま終わらせる」まで）。</p>
         </div>
         <div class="nf-checks">
-          <label><input type="checkbox" id="nfPinned"> ホームのいちばん上に大きく出す（ピン留め）</label>
-          <label><input type="checkbox" id="nfDraft"> 下書きにする（まだホームに出さない）</label>
-          <label id="nfBumpRow" hidden><input type="checkbox" id="nfBump"> 新着として、いちばん上に出しなおす（「NEW」がもう一度つきます）</label>
+          <label><input type="checkbox" id="nfPinned"> ピン留め（ホームの上に大きく出す）</label>
+          <label><input type="checkbox" id="nfDraft"> 下書き（まだ出さない）</label>
+          <label id="nfBumpRow" hidden><input type="checkbox" id="nfBump"> 新着として出しなおす（NEW がつく）</label>
         </div>
         <div class="actions" style="margin-top:4px">
           <button class="btn btn-green" id="nfSave" type="submit" style="width:auto;padding:11px 26px;font-size:16px">投稿する</button>
@@ -458,15 +467,15 @@ ul.newslist .empty { color: var(--sub); text-align: center; font-size: 13.5px; }
       </form>
       <h3 class="nl-h">書いたお知らせ <span class="chip" id="nfCountAll"></span> <button class="link" id="nfReload" type="button">↻ 読みこみ直す</button></h3>
       <ul class="newslist" id="newsList"><li><span class="empty">読みこんでいます…</span></li></ul>
-      <p class="small-note">ホームに出るのは「公開」しているものだけです（ピン留め → 新しい順）。保存できるのは 50 件まで（ふえたら、ピン留めしていない古いものから消えます）。ホームへの反映は 15 秒くらいかかることがあります。</p>
+      <p class="small-note">50 件まで（古いものから消えます）。反映まで 15 秒ほど。</p>
     </div>
   </section>
 
   <!-- 作品（/works/ とホームに出す） -->
   <section class="card" id="worksCard" aria-labelledby="tw">
-    <h2 class="step" id="tw"><span class="num">🧩</span><span>作品の紹介（アドオン・クライアントなど）</span></h2>
+    <h2 class="step" id="tw"><span class="num">🧩</span><span>作品</span></h2>
     <div class="indent">
-      <p class="nf-lead">あなたが作った作品を載せると、<a href="../works/" target="_blank" rel="noopener">作品のページ</a>に出ます。「おすすめ」にした作品は、ホームにも大きく出ます。</p>
+      <p class="nf-lead"><a href="../works/" target="_blank" rel="noopener">作品のページ</a>に出ます（おすすめはホームにも）。</p>
       <form id="worksForm" class="nf-grid" autocomplete="off" novalidate>
         <p class="nf-editing" id="wfEditing" hidden></p>
         <div class="nf-type" role="radiogroup" aria-label="作品の種類">
@@ -479,27 +488,27 @@ ul.newslist .empty { color: var(--sub); text-align: center; font-size: 13.5px; }
           <label><input type="radio" name="wfCat" value="other"> ✨ その他</label>
         </div>
         <div class="wf-two">
-          <input class="field" id="wfTitle" type="text" maxlength="60" placeholder="作品の名前（例: プレイヤーの死体アドオン）" aria-label="作品の名前">
-          <input class="field" id="wfSub" type="text" maxlength="50" placeholder="バージョン・対応（例: v1.2 ／ 統合版 1.21〜）" aria-label="バージョン・対応">
+          <input class="field" id="wfTitle" type="text" maxlength="60" placeholder="作品の名前" aria-label="作品の名前">
+          <input class="field" id="wfSub" type="text" maxlength="50" placeholder="バージョン・対応（例: v1.2）" aria-label="バージョン・対応">
         </div>
-        <input class="field" id="wfSummary" type="text" maxlength="120" placeholder="ひとこと紹介（一覧に出ます。例: 死んだ場所に、本人のスキンの死体が残る）" aria-label="ひとこと紹介">
-        <textarea class="field" id="wfBody" rows="5" placeholder="くわしい説明（入れ方・できること・注意など。改行そのまま、https:// の URL はリンクになります）" aria-label="くわしい説明"></textarea>
+        <input class="field" id="wfSummary" type="text" maxlength="120" placeholder="ひとこと紹介" aria-label="ひとこと紹介">
+        <textarea class="field" id="wfBody" rows="5" placeholder="くわしい説明（URL はリンクになります）" aria-label="くわしい説明"></textarea>
         <div class="nf-count" id="wfCount">0 / 3000</div>
-        <p class="wf-label">画像（スクリーンショットなど・横長がおすすめ。自動で小さくして保存します）</p>
+        <p class="wf-label">画像（横長がおすすめ）</p>
         <div class="wf-img">
           <img id="wfImgPrev" alt="" hidden>
           <div class="wf-imgbtns">
             <input type="file" id="wfImgFile" accept="image/png,image/jpeg,image/webp,image/gif">
             <button class="link" id="wfImgDel" type="button" hidden>画像を消す</button>
-            <span class="sub-hint" id="wfImgInfo">画像なし（YouTube のリンクがあれば、その画像を使います）</span>
+            <span class="sub-hint" id="wfImgInfo">画像なし（YouTube のリンクがあればその画像）</span>
           </div>
         </div>
-        <p class="wf-label">リンクのボタン（4 つまで・https:// から始まる URL。このサイトのページなら /corpse/ のように）</p>
+        <p class="wf-label">リンク（4 つまで・https:// か /corpse/ など）</p>
         <div class="wf-links" id="wfLinks"></div>
         <div class="nf-checks">
-          <label><input type="checkbox" id="wfPinned"> おすすめ（ホームと作品ページのいちばん上に大きく出す）</label>
-          <label><input type="checkbox" id="wfDraft"> 下書きにする（まだ出さない）</label>
-          <label id="wfBumpRow" hidden><input type="checkbox" id="wfBump"> 新着として、いちばん上に出しなおす</label>
+          <label><input type="checkbox" id="wfPinned"> おすすめ（上に大きく出す）</label>
+          <label><input type="checkbox" id="wfDraft"> 下書き（まだ出さない）</label>
+          <label id="wfBumpRow" hidden><input type="checkbox" id="wfBump"> 新着として出しなおす</label>
         </div>
         <div class="actions" style="margin-top:4px">
           <button class="btn btn-green" id="wfSave" type="submit" style="width:auto;padding:11px 26px;font-size:16px">載せる</button>
@@ -509,7 +518,7 @@ ul.newslist .empty { color: var(--sub); text-align: center; font-size: 13.5px; }
       </form>
       <h3 class="nl-h">載せた作品 <span class="chip" id="wfCountAll"></span> <button class="link" id="wfReload" type="button">↻ 読みこみ直す</button></h3>
       <ul class="worklist" id="workList"><li><span class="empty">読みこんでいます…</span></li></ul>
-      <p class="small-note">60 個まで載せられます。作品ページへの反映は 15 秒くらいかかることがあります。</p>
+      <p class="small-note">60 個まで。反映まで 15 秒ほど。</p>
     </div>
   </section>
 
@@ -518,20 +527,14 @@ ul.newslist .empty { color: var(--sub); text-align: center; font-size: 13.5px; }
     <h2 class="step" id="t1"><span class="num">🔑</span><span id="tokenTitle">Discord の Bot のトークンを入れる</span></h2>
     <div class="indent">
       <ol class="how">
-        <li><b>トークンを取る:</b> <a href="https://discord.com/developers/applications" target="_blank" rel="noopener noreferrer">Discord Developer Portal</a> をひらいて、右上の「<b>New Application</b>」→ 名前（例: <b>近接VC</b>）を入れて「Create」</li>
-        <li>左のメニューの「<b>Bot</b>」→「<b>Reset Token</b>」→「Yes, do it!」→「<b>Copy</b>」（このトークンは次の ⑤ で使います）</li>
-        <li><b>Public Bot をオンにする:</b> 同じ「<b>Bot</b>」の画面にある「<b>Public Bot</b>」のスイッチを<b>オン</b>にする（世界中の人が、自分のサーバーにこの Bot を呼べるようになります。オフだと、あなたしか招待できません）</li>
-        <li><b>インテントを許可する（大事）:</b> 同じ「<b>Bot</b>」の画面の「<b>Privileged Gateway Intents</b>」にある、次の <b>3 つのスイッチをすべてオン</b>にして、下に出る「<b>Save Changes</b>」を押す
-          <ul>
-            <li><b>PRESENCE INTENT</b></li>
-            <li><b>SERVER MEMBERS INTENT</b></li>
-            <li><b>MESSAGE CONTENT INTENT</b></li>
-          </ul>
-        </li>
-        <li>②でコピーしたトークンを下に貼り付けて「<b>設定する</b>」を押す（Bot の URL の登録や、/vc コマンドの登録は自動でやります）</li>
+        <li><a href="https://discord.com/developers/applications" target="_blank" rel="noopener noreferrer">Developer Portal</a> で「<b>New Application</b>」→ 名前を入れて「Create」</li>
+        <li>「<b>Bot</b>」→「<b>Reset Token</b>」→「<b>Copy</b>」</li>
+        <li>同じ画面で「<b>Public Bot</b>」をオン（オフだと自分しか招待できません）</li>
+        <li>「<b>Privileged Gateway Intents</b>」の <b>PRESENCE</b>・<b>SERVER MEMBERS</b>・<b>MESSAGE CONTENT</b> をオン →「Save Changes」</li>
+        <li>トークンを下に貼って「<b>設定する</b>」</li>
       </ol>
       <div class="token-row relay-row" id="setupKeyRow" hidden>
-        <input id="setupKeyInput" type="password" autocomplete="off" spellcheck="false" placeholder="設定用のキー（VPS にインストールしたときに出たもの）" aria-label="設定用のキー">
+        <input id="setupKeyInput" type="password" autocomplete="off" spellcheck="false" placeholder="設定用のキー" aria-label="設定用のキー">
       </div>
       <div class="token-row relay-row">
         <input id="tokenInput" type="password" autocomplete="off" spellcheck="false" placeholder="ここに Bot のトークンを貼り付け" aria-label="Bot のトークン">
@@ -539,19 +542,11 @@ ul.newslist .empty { color: var(--sub); text-align: center; font-size: 13.5px; }
       </div>
       <ul class="result" id="result"></ul>
       <ol class="how" start="6">
-        <li><b>招待用の URL を作って、サーバーに入れる:</b> Developer Portal の左のメニュー「<b>OAuth2</b>」→「<b>URL Generator</b>」をひらく
-          <ul>
-            <li>「SCOPES」で <b>bot</b> と <b>applications.commands</b> の両方にチェックを入れる</li>
-            <li>「BOT PERMISSIONS」で、必要な権限にチェックを入れる: <b>View Channels</b>（チャンネルを見る）・<b>Send Messages</b>（メッセージを送信）・<b>Connect</b>（接続）・<b>Move Members</b>（メンバーを移動）・<b>Manage Channels</b>（チャンネルの管理）</li>
-            <li>いちばん下の「GENERATED URL」に出た URL を「<b>Copy</b>」→ ブラウザでひらいて、Bot を入れたい Discord サーバーを選んで「はい」。（設定が終わると、上の「Bot を Discord サーバーに招待する」ボタンでも、同じ招待ができます）</li>
-          </ul>
-        </li>
+        <li>招待: 上の「Bot を招待する」ボタン、または Portal の「<b>OAuth2</b>」→「<b>URL Generator</b>」で <b>bot</b>・<b>applications.commands</b> と権限（View Channels・Send Messages・Connect・Move Members・Manage Channels）を選んで URL をひらく</li>
       </ol>
-      <p class="small-note" id="setupKeyNote" hidden>このサイトは「設定用のキー」で守られています。VPS にインストールしたときに最後に出たキー（<code>/etc/mayo-vc/env</code> の <code>SETUP_KEY</code>）を入れてください。ほかの人が先に Bot を登録してしまうのを防ぎます。</p>
-      <p class="small-note">トークンは、このサイトのサーバー（Cloudflare の Worker か、あなたの VPS）の中にだけ保存されます。ほかの人には見せないでください。<br>
-        世界中の人が自分の Discord サーバーに入れられるようにするには、Developer Portal の「Bot」で「<b>Public Bot</b>」をオンにしてください（オフだと、あなたしか招待できません）。<br>
-        Bot を作り直したときや、トークンを Reset したときは、新しいトークンをもう一度入れてください。<br>
-        上級者向け: Cloudflare の「設定」→「変数とシークレット」に <code>DISCORD_TOKEN</code>（シークレット）を入れておくと、このページを開くだけで自動で設定されます。</p>
+      <p class="small-note" id="setupKeyNote" hidden>VPS のインストールで出た「設定用のキー」（<code>/etc/mayo-vc/env</code> の <code>SETUP_KEY</code>）も入れてください。</p>
+      <p class="small-note">トークンはサイトのサーバーの中にだけ保存されます（人に見せないでください）。Reset したら入れ直してください。<br>
+        上級者向け: Cloudflare のシークレット <code>DISCORD_TOKEN</code> に入れると自動で設定されます。</p>
     </div>
   </section>
 
@@ -559,84 +554,75 @@ ul.newslist .empty { color: var(--sub); text-align: center; font-size: 13.5px; }
   <section class="card" id="vpsHere" aria-labelledby="t0" hidden>
     <h2 class="step" id="t0"><span class="num">🖥</span><span>このサイトは VPS で動いています</span></h2>
     <div class="indent">
-      <p style="margin:0 0 6px;font-size:14.5px">サイト・Bot・<b>近接VC リレー</b>（/wsserver 用）・<b>音声の中継（TURN）</b>が、同じ VPS で動いています。リレーの設定はいりません。</p>
+      <p style="margin:0 0 6px;font-size:14.5px">サイト・Bot・リレー・音声の中継が同じ VPS で動いています（リレーの設定は不要）。</p>
       <p class="relay-now" id="vpsHereRelay"></p>
-      <p class="small-note">更新するとき: VPS に SSH でログインして <code>sudo mayo-vc update</code>（新しいサイトのファイルを入れ直します）。<br>
-        ようすを見る: <code>sudo mayo-vc status</code>　・　ログ: <code>sudo journalctl -u mayo-vc -n 50</code></p>
+      <p class="small-note">更新: <code>sudo mayo-vc update</code>　・　ようす: <code>sudo mayo-vc status</code>　・　ログ: <code>sudo journalctl -u mayo-vc -n 50</code></p>
     </div>
   </section>
 
   <!-- VPS -->
   <section class="card" id="vpsCard" aria-labelledby="t3">
-    <h2 class="step" id="t3"><span class="num">🖥</span><span>VPS（ConoHa など）にリレーと音声の中継を入れる（おすすめ）</span></h2>
+    <h2 class="step" id="t3"><span class="num">🖥</span><span>VPS にリレーと音声の中継を入れる（おすすめ）</span></h2>
     <div class="indent">
-      <p style="margin:0 0 8px;font-size:14.5px">月額が決まっている VPS（Ubuntu）に、<b>近接VC リレー</b>（Minecraft の /wsserver 用）と、<b>音声の中継（TURN）</b>（サイトで近接VC の声がつながりにくい人用）を、コマンド 1 つで入れます。</p>
+      <p style="margin:0 0 8px;font-size:14.5px">VPS（Ubuntu）に、<b>リレー</b>（/wsserver 用）と<b>音声の中継（TURN）</b>をコマンド 1 つで入れます。</p>
       <ol class="how">
         <li>下にトークンを入れて「<b>VPS に貼るコマンドを作る</b>」</li>
-        <li>VPS に SSH でログインして（例: Windows の PowerShell で <code>ssh root@VPSのIP</code>）、出てきたコマンドを貼り付けて Enter</li>
-        <li>最後に出る「リレーのアドレス」（VPS の IP）を、下の 📡 に入れて「保存してためす」</li>
+        <li>VPS に SSH で入って（<code>ssh root@VPSのIP</code>）、コマンドを貼って Enter</li>
+        <li>最後に出るアドレスを、下の 📡 に入れて「保存してためす」</li>
       </ol>
       <div class="token-row">
-        <input id="vpsToken" type="password" autocomplete="off" spellcheck="false" placeholder="確認のため Bot のトークン（上で入れたもの）" aria-label="確認用の Bot のトークン（VPS）">
+        <input id="vpsToken" type="password" autocomplete="off" spellcheck="false" placeholder="確認用の Bot のトークン" aria-label="確認用の Bot のトークン（VPS）">
         <button class="btn btn-green" id="vpsBtn" type="button">VPS に貼るコマンドを作る</button>
       </div>
       <ul class="result" id="vpsResult"></ul>
       <div class="copybox" id="vpsBox" hidden><code id="vpsCmd"></code><button type="button" id="vpsCopy">コピー</button></div>
-      <p class="small-note">コマンドには、音声の中継の合言葉が入っています。<b>人に見せないでください</b>（見られたときは、Cloudflare のシークレット <code>TURN_SECRET</code> に新しい合言葉を入れて、コマンドを作り直して VPS で動かし直します）。<span id="turnNow"></span></p>
+      <p class="small-note">合言葉入りなので<b>人に見せないでください</b>（見られたら <code>TURN_SECRET</code> を変えて作り直し）。<span id="turnNow"></span></p>
     </div>
   </section>
 
   <!-- リレー -->
   <section class="card" id="relayCard" aria-labelledby="t2">
-    <h2 class="step" id="t2"><span class="num">📡</span><span>リレー（中継サーバー）のアドレスを入れる</span></h2>
+    <h2 class="step" id="t2"><span class="num">📡</span><span>リレーのアドレス</span></h2>
     <div class="indent">
-      <p style="margin:0 0 8px;font-size:14.5px">Minecraft の /wsserver は、Cloudflare の Bot に直接つなぐと、すぐ切れてしまいます（Minecraft が求める返事の形と、Cloudflare の返事の形がちがうため）。
-        VPS（ConoHa など）・Google Cloud・Railway に置いた「<b>近接VC リレー</b>」を通すと、PC のアプリなしでつなげます。<br>
-        ここにリレーのアドレスを入れると、Discord の <b>/vc key</b> や「サイトで近接VC」で出るコマンドが <code>/wsserver ws://リレーのアドレス/v/接続コード</code> に変わります。</p>
+      <p style="margin:0 0 8px;font-size:14.5px">/wsserver は Bot に直接つなぐと切れるので、リレーを通します。入れると、コマンドが <code>/wsserver ws://リレー/v/接続コード</code> になります。</p>
       <p class="relay-now" id="relayNow">いまの設定: 確認しています…</p>
       <div class="token-row">
         <input id="relayInput" type="text" autocomplete="off" spellcheck="false" placeholder="例: 160.251.1.2 ／ vc.example.com ／ xxx.proxy.rlwy.net:15140" aria-label="リレーのアドレス">
       </div>
       <div class="token-row relay-row">
-        <input id="relayToken" type="password" autocomplete="off" spellcheck="false" placeholder="確認のため Bot のトークン（上で入れたもの）" aria-label="確認用の Bot のトークン">
+        <input id="relayToken" type="password" autocomplete="off" spellcheck="false" placeholder="確認用の Bot のトークン" aria-label="確認用の Bot のトークン">
         <button class="btn btn-green" id="relayBtn" type="button">保存してためす</button>
       </div>
       <div class="actions"><button class="btn btn-sub" id="relayTestBtn" type="button" hidden>いまのリレーがつながるか、ためす</button></div>
       <ul class="result" id="relayResult"></ul>
-      <p class="small-note"><b>VPS（ConoHa など）</b>: VPS の IP アドレス（例: <code>160.251.1.2</code>）。上の 🖥 のコマンドで入れたときは、ポート番号はいりません。<br>
-        <b>Google Cloud の VM</b>: VM の外部 IP（例: <code>34.82.1.2</code>）か、それに向けた独自ドメイン（例: <code>vc.example.com</code>）。ポート 80 で動かしているときは、ポート番号はいりません。<br>
-        <b>Railway</b>: 「Settings」→「Networking」→「TCP Proxy」に出るアドレス（<code>〜.proxy.rlwy.net:12345</code>）を、<b>: のあとのポート番号まで</b>。独自ドメインなら <code>vc.example.com:12345</code>（Railway のポート番号）。<br>
-        空にして保存すると、リレーを使わない案内（近接VC コネクター）に戻ります。トークンは確認に使うだけで、ここでは保存しません。<br>
-        上級者向け: Cloudflare の変数 <code>RELAY_HOST</code>（wrangler.toml の [vars]）に入れると、そちらが優先されます。</p>
+      <p class="small-note">VPS: IP だけ（例: <code>160.251.1.2</code>）。Railway: <code>〜.proxy.rlwy.net:12345</code> のようにポートまで。<br>
+        空で保存するとコネクターの案内に戻ります。<code>RELAY_HOST</code> 変数があればそちらが優先。</p>
     </div>
   </section>
 
   <!-- VPS でサイトごと動かす -->
   <section class="card" id="vpsServerCard" aria-labelledby="t5">
-    <h2 class="step" id="t5"><span class="num">🌏</span><span>（上級者向け）VPS でサイトごと動かす（自分のドメインを持っているとき）</span></h2>
+    <h2 class="step" id="t5"><span class="num">🌏</span><span>（上級者向け）VPS でサイトごと動かす</span></h2>
     <div class="indent">
-      <p style="margin:0 0 8px;font-size:14.5px">ふつうは使いません（このサイトは Cloudflare のまま、上の 🖥 でリレーと音声の中継だけ VPS に入れれば十分です）。<br>
-        Cloudflare の無料プランの上限が足りなくなったときに、<b>このサイト・Discord Bot・リレー・音声の中継</b>をまとめて VPS に引っ越すためのものです。
-        自分のドメイン（例: <code>vc.example.com</code>）を VPS の IP に向けてから使ってください（https の証明書は自動・無料）。</p>
+      <p style="margin:0 0 8px;font-size:14.5px">サイト・Bot・リレー・音声の中継をまとめて VPS に引っ越します。先に自分のドメインを VPS の IP に向けてください（https は自動）。</p>
       <div class="token-row relay-row"><input id="serverHost" type="text" autocomplete="off" spellcheck="false" placeholder="自分のドメイン（例: vc.example.com）" aria-label="自分のドメイン"></div>
       <ol class="how">
-        <li>VPS の会社の「セキュリティグループ」で、22・80・443/TCP、3478/TCP・UDP、49160-49200/UDP をあける</li>
-        <li>VPS に SSH でログインして（例: Windows の PowerShell で <code>ssh root@VPSのIP</code>）、下のコマンドを貼り付けて Enter（5 分くらい）</li>
-        <li>最後に出る「サイトの URL」の <b>/setup/</b> をひらいて、出てきた「設定用のキー」と Bot のトークンを入れる</li>
+        <li>ポートをあける: 22・80・443/TCP、3478/TCP・UDP、49160-49200/UDP</li>
+        <li>VPS に SSH で入って、下のコマンドを貼って Enter（5 分ほど）</li>
+        <li>出てきたサイトの <b>/setup/</b> で、設定用のキーとトークンを入れる</li>
       </ol>
       <div class="copybox"><code id="serverCmd">…</code><button type="button" id="serverCopy">コピー</button></div>
-      <p class="small-note">コマンドに合言葉は入っていません（そのまま人に見せても大丈夫です）。新しい版にするときは、VPS で <code>sudo mayo-vc update</code>。<br>
-        VPS で Bot を設定すると、Discord の Bot は VPS のほうで動きます（Cloudflare のほうの Discord の設定・紐付けは引きつがれないので、Discord で <code>/vc setup</code> をやり直してください）。</p>
+      <p class="small-note">更新は <code>sudo mayo-vc update</code>。Discord の設定は引きつがれないので <code>/vc setup</code> をやり直してください。</p>
     </div>
   </section>
 
   <!-- チャットの管理 -->
   <section class="card" aria-labelledby="t4">
-    <h2 class="step" id="t4"><span class="num">💬</span><span>チャットの管理（みんなのチャット）</span></h2>
+    <h2 class="step" id="t4"><span class="num">💬</span><span>チャットの管理</span></h2>
     <div class="indent">
-      <p style="margin:0 0 8px;font-size:14.5px">みんなのチャットの最新 50 件を見て、ルールを守らない人を<b>止める（BAN）</b>・メッセージを<b>消す</b>ことができます。BAN すると、その人のメッセージも消え、同じネットワークからは新しい名前も作れなくなります。</p>
+      <p style="margin:0 0 8px;font-size:14.5px">最新 50 件を見て、<b>BAN</b>・<b>メッセージ削除</b>ができます。</p>
       <div class="token-row">
-        <input id="adminToken" type="password" autocomplete="off" spellcheck="false" placeholder="確認のため Bot のトークン（上で入れたもの）" aria-label="確認用の Bot のトークン（チャットの管理）">
+        <input id="adminToken" type="password" autocomplete="off" spellcheck="false" placeholder="確認用の Bot のトークン" aria-label="確認用の Bot のトークン（チャットの管理）">
         <button class="btn btn-green" id="adminLoad" type="button">ひらく</button>
       </div>
       <ul class="result" id="adminResult"></ul>
@@ -647,7 +633,7 @@ ul.newslist .empty { color: var(--sub); text-align: center; font-size: 13.5px; }
           <input id="unbanId" type="text" autocomplete="off" spellcheck="false" placeholder="BAN を解除するゲストの ID（10 文字）" aria-label="BAN を解除するゲストの ID">
           <button class="btn btn-sub" id="unbanBtn" type="button">BAN を解除</button>
         </div>
-        <p class="small-note">トークンはこのページを閉じるまで、このページの中だけで使います（保存しません）。DM の中身は、このページでは見られません。</p>
+        <p class="small-note">トークンは保存しません。DM は見られません。</p>
       </div>
     </div>
   </section>
@@ -671,7 +657,7 @@ ul.newslist .empty { color: var(--sub); text-align: center; font-size: 13.5px; }
             <div class="psub">高校1年生</div>
           </div>
         </div>
-        <p>普段は、マインクラフトの PvP クライアントを作ったり、Roblox でゲームを作ったり、アドオンを作ったり、マインクラフトのマップを作ったりしています。</p>
+        <p>マイクラの PvP クライアント・アドオン・マップや、Roblox のゲームを作っています。</p>
         <p class="label">好きなゲーム</p>
         <div class="chips">
           <span>マインクラフト</span><span>第五人格</span><span>崩壊：スターレイル</span><span>Roblox</span><span>Dead by Daylight</span><span class="more">など</span>
@@ -699,15 +685,7 @@ ul.newslist .empty { color: var(--sub); text-align: center; font-size: 13.5px; }
       </div>
     </div>
     <div class="license">
-      <b>クレジット・二次配布について</b><br>
-      このスキン登録ページと「プレイヤーの死体アドオン」は、<b>MaYo（mayo01297）</b>が制作しました。<br>
-      <b class="ng">二次配布は禁止です。</b>次のことはしないでください。
-      <ul>
-        <li>このページのファイルやアドオンを、ほかのサイト・SNS・Discord サーバーなどにアップロードして配ること</li>
-        <li>改変して配ること</li>
-        <li>自分が作ったと言うこと（自作発言）</li>
-      </ul>
-      紹介するときは、このページのURLを共有してください。
+      <b class="ng">二次配布禁止</b>：再アップロード・改変して配布・自作発言はしないでください。紹介はこのページの URL でお願いします。
     </div>
     </div>
   </details>
@@ -801,7 +779,7 @@ async function refresh() {
     showState("ng", `もう少しです（Bot「${st.appName}」）`, st.error || "「設定する」をもう一度押してください。");
     $("doneActions").hidden = true;
   } else {
-    showState("ng", "まだ設定されていません", "下の手順で、Discord の Bot のトークンを入れてください（1分くらいで終わります）。");
+    showState("ng", "まだ設定されていません", "下の手順でトークンを入れてください。");
     $("doneActions").hidden = true;
   }
 }
@@ -835,7 +813,7 @@ async function saveRelay() {
   const relay = $("relayInput").value.trim(), token = $("relayToken").value.trim();
   $("relayResult").textContent = "";
   if (!token) { $("relayToken").focus(); relayLine("ng", "確認のため、Bot のトークンを入れてください。"); return; }
-  if (/\.rlwy\.net$/i.test(relay.replace(/^[a-z]+:\/\//i, "").replace(/[/?#].*$/, ""))) relayLine("warn", "ポート番号がありません。Railway の TCP Proxy なら「:12345」のような番号がつきます（ないとつながりません）。");
+  if (/\.rlwy\.net$/i.test(relay.replace(/^[a-z]+:\/\//i, "").replace(/[/?#].*$/, ""))) relayLine("warn", "ポート番号がありません（Railway は「:12345」が必要）。");
   $("relayBtn").disabled = true; $("relayBtn").textContent = "保存しています…";
   try {
     const res = await fetch("../api/setup/relay", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token, relay }) });
@@ -843,7 +821,7 @@ async function saveRelay() {
     if (!r.ok) relayLine("ng", r.error || "保存できませんでした。");
     else {
       $("relayToken").value = "";
-      relayLine("ok", r.saved ? `保存しました（${r.saved}）。/vc key で出るコマンドが変わります（反映まで 30 秒くらいかかることがあります）。` : "リレーを使わない設定にしました。");
+      relayLine("ok", r.saved ? `保存しました（${r.saved}）。反映まで 30 秒ほど。` : "リレーを使わない設定にしました。");
       showTest(r.test);
     }
   } catch (e) { relayLine("ng", "つながりませんでした。もう一度ためしてください。"); }
@@ -873,7 +851,7 @@ async function makeVps() {
     else {
       $("vpsToken").value = "";
       $("vpsCmd").textContent = r.command; $("vpsBox").hidden = false;
-      line("ok", "コマンドを作りました。VPS に SSH でログインして、貼り付けて Enter を押してください。");
+      line("ok", "コマンドを作りました。VPS に貼って Enter。");
     }
   } catch (e) { line("ng", "つながりませんでした。もう一度ためしてください。"); }
   $("vpsBtn").disabled = false;
@@ -1032,7 +1010,7 @@ async function newsCall(action, extra = {}) {
 function renderNews() {
   const ul = $("newsList"); ul.textContent = "";
   $("nfCountAll").textContent = N.items.length ? `${N.items.length} 件（公開 ${N.items.filter(n => n.published).length}）` : "";
-  if (!N.items.length) { const li = document.createElement("li"); li.innerHTML = '<span class="empty">まだお知らせはありません。上のフォームから書けます。</span>'; ul.appendChild(li); return; }
+  if (!N.items.length) { const li = document.createElement("li"); li.innerHTML = '<span class="empty">まだお知らせはありません。</span>'; ul.appendChild(li); return; }
   const now = Date.now();
   const list = N.items.slice().sort((a, b) => (b.pinned - a.pinned) || (b.at - a.at));
   for (const n of list) {
@@ -1196,7 +1174,7 @@ async function worksCall(action, extra = {}) {
 function renderWorks() {
   const ul = $("workList"); ul.textContent = "";
   $("wfCountAll").textContent = W.items.length ? `${W.items.length} 個（公開 ${W.items.filter(w => w.published).length}）` : "";
-  if (!W.items.length) { const li = document.createElement("li"); li.innerHTML = '<span class="empty">まだ作品はありません。上のフォームから載せられます。</span>'; ul.appendChild(li); return; }
+  if (!W.items.length) { const li = document.createElement("li"); li.innerHTML = '<span class="empty">まだ作品はありません。</span>'; ul.appendChild(li); return; }
   for (const w of W.items) {
     const li = document.createElement("li");
     if (!w.published) li.classList.add("draft");

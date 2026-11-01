@@ -17,10 +17,11 @@
 <style>
 /* =====================================================================
    共通スタイル（全ページ）  制作: MaYo (mayo01297)  二次配布禁止
-   白ベース・角の丸いカード・グラデーションのアクセント（SNS アプリのような雰囲気）
+   シンプル: 白ベース・細い線のカード（影なし）・アクセントはピンク→紫・ボタンは青
    ===================================================================== */
 :root {
   --back: #fafafa; --panel: #ffffff; --border: #dbdbdb; --border-soft: #efefef; --input: #fafafa;
+  --line: #e8e8e8; --soft: #f3f3f4; --accent: #d62976;
   --text: #262626; --sub: #737373; --link: #00376b;
   --header: #ffffff; --header-sub: #737373;
   --blue: #0095f6; --blue-hover: #1877f2; --blue-pale: #e8f3ff;
@@ -28,8 +29,8 @@
   --red: #ed4956; --orange: #f39c12; --preview: #f2f2f2;
   --grad: linear-gradient(45deg, #feda75 0%, #fa7e1e 25%, #d62976 50%, #962fbf 75%, #4f5bd5 100%);
   --grad-btn: linear-gradient(90deg, #f56040 0%, #e1306c 45%, #833ab4 100%);
-  --radius: 16px;
-  --shadow: 0 1px 2px rgba(0, 0, 0, .04), 0 6px 20px rgba(0, 0, 0, .05);
+  --radius: 14px;
+  --shadow: none;
   --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic UI", Meiryo, system-ui, sans-serif;
 }
 * { box-sizing: border-box; }
@@ -41,19 +42,20 @@ a { color: var(--link); }
 .pixel { image-rendering: pixelated; image-rendering: crisp-edges; }
 
 /* ---- header ---- */
-header { background: rgba(255, 255, 255, .92); color: var(--text); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 20; -webkit-backdrop-filter: saturate(180%) blur(12px); backdrop-filter: saturate(180%) blur(12px); }
-.header-in { max-width: 920px; margin: 0 auto; padding: 10px 16px; display: flex; align-items: center; gap: 12px; }
-.header-in img { width: 42px; height: 42px; flex: none; border-radius: 12px; padding: 2px; background: var(--grad); }
-.header-in h1 { margin: 0; font-size: 20px; line-height: 1.25; font-weight: 800; letter-spacing: -.01em; background: var(--grad-btn); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.header-in p { margin: 1px 0 0; color: var(--header-sub); font-size: 12.5px; }
-.header-in .help-btn { margin-left: auto; flex: none; color: var(--text); background: #efefef; border: 0; border-radius: 10px; padding: 7px 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none; white-space: nowrap; }
-.header-in .help-btn:hover { background: #e3e3e3; }
+header { background: #fff; color: var(--text); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 20; }
+.header-in { max-width: 920px; height: 60px; margin: 0 auto; padding: 0 16px; display: flex; align-items: center; gap: 11px; }
+.header-in img { width: 40px; height: 40px; flex: none; border-radius: 10px; box-shadow: 0 0 0 1px rgba(0, 0, 0, .06); }
+.header-in > div { min-width: 0; }
+.header-in h1 { margin: 0; font-size: 18.5px; line-height: 1.25; font-weight: 800; letter-spacing: -.01em; color: var(--text); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.header-in p { margin: 1px 0 0; color: var(--header-sub); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.header-in .help-btn { margin-left: auto; flex: none; color: var(--text); background: var(--soft); border: 0; border-radius: 10px; padding: 7px 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none; white-space: nowrap; }
+.header-in .help-btn:hover { background: #e8e8e9; }
 
-main { max-width: 920px; margin: 0 auto; padding: 18px 16px 90px; }
-.card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
-.step { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; font-size: 17px; font-weight: 700; }
-.num { width: 30px; height: 30px; flex: none; border-radius: 50%; background: var(--grad); color: #fff; display: grid; place-items: center; font-size: 15px; font-weight: 700; box-shadow: 0 2px 8px rgba(214, 41, 118, .25); }
-.indent { padding-left: 40px; }
+main { max-width: 920px; margin: 0 auto; padding: 20px 16px 90px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 20px 20px; margin-bottom: 14px; }
+.step { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; font-size: 16.5px; font-weight: 700; }
+.num { width: 26px; height: 26px; flex: none; border-radius: 50%; background: var(--grad-btn); color: #fff; display: grid; place-items: center; font-size: 13.5px; font-weight: 700; }
+.indent { padding-left: 36px; }
 
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 10px; cursor: pointer; color: #fff; font-weight: 600; transition: filter .15s, transform .05s, background .15s; }
 .btn:active { transform: scale(.98); }
@@ -61,7 +63,7 @@ main { max-width: 920px; margin: 0 auto; padding: 18px 16px 90px; }
 .btn:disabled { background: #c7c7c7 !important; cursor: default; filter: none; }
 .btn-blue { background: var(--blue); padding: 10px 18px; font-size: 15.5px; }
 .btn-blue:hover { background: var(--blue-hover); }
-.btn-green { background: var(--grad-btn); padding: 14px 22px; font-size: 17px; width: 100%; max-width: 480px; box-shadow: 0 6px 18px rgba(225, 48, 108, .25); }
+.btn-green { background: var(--grad-btn); padding: 13px 22px; font-size: 16.5px; width: 100%; max-width: 480px; border-radius: 12px; }
 .btn-green:hover { filter: brightness(1.06); }
 .btn-green.pulse { animation: pulse 0.5s ease-in-out 3 alternate; }
 @keyframes pulse { to { box-shadow: 0 0 0 7px rgba(225, 48, 108, .22); } }
@@ -71,8 +73,8 @@ main { max-width: 920px; margin: 0 auto; padding: 18px 16px 90px; }
 .link:disabled { color: var(--sub); cursor: default; text-decoration: none; }
 .link svg { width: 15px; height: 15px; vertical-align: -2px; margin-right: 4px; }
 hr { border: 0; border-top: 1px solid var(--border-soft); margin: 14px 0 10px; }
-.btn-outline { display: inline-flex; align-items: center; gap: 6px; background: #efefef; color: var(--text); border: 0; border-radius: 10px; padding: 7px 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none; }
-.btn-outline:hover { background: #e3e3e3; }
+.btn-outline { display: inline-flex; align-items: center; gap: 6px; background: var(--soft); color: var(--text); border: 0; border-radius: 10px; padding: 7px 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none; }
+.btn-outline:hover { background: #e8e8e9; }
 .btn-outline svg { width: 15px; height: 15px; flex: none; }
 
 .notice { background: #fff8e6; border: 1px solid #f7d58a; border-radius: 12px; padding: 10px 14px; font-size: 13px; margin: 0 0 14px; }
@@ -86,7 +88,7 @@ input[type=text], input[type=password], input[type=search], input:not([type]), t
 kbd { font-family: inherit; background: #efefef; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 6px; padding: 0 6px; font-size: 13px; }
 
 /* ---- help ---- */
-details.help { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 12px; box-shadow: var(--shadow); }
+details.help { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); margin-bottom: 12px; }
 details.help summary { cursor: pointer; padding: 14px 20px; font-weight: 700; }
 details.help .help-body { padding: 0 20px 16px; font-size: 14px; }
 details.help h4 { margin: 14px 0 4px; font-size: 14px; }
@@ -114,19 +116,19 @@ details.about[open] > summary { border-radius: var(--radius) var(--radius) 0 0; 
 .about-body { padding: 2px 20px 20px; }
 .num svg { width: 16px; height: 16px; }
 .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.about-box { border: 1px solid var(--border-soft); border-radius: 14px; padding: 14px 16px 16px; background: #fff; }
+.about-box { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px 16px; background: #fff; }
 .about-box h3 { margin: 0 0 10px; font-size: 15px; }
 .profile { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
-.avatar { width: 72px; height: 72px; flex: none; border-radius: 50%; border: 3px solid #fff; outline: 2px solid transparent; object-fit: cover; background: #fff5ac; box-shadow: 0 0 0 2px #d62976; }
+.avatar { width: 64px; height: 64px; flex: none; border-radius: 50%; object-fit: cover; background: #fff5ac; box-shadow: 0 0 0 1px var(--line); }
 .pname { font-size: 18px; font-weight: 700; line-height: 1.3; }
 .psub { color: var(--sub); font-size: 13px; }
 .about-box p { margin: 0 0 8px; font-size: 14px; }
 .about-box .label { margin: 10px 0 6px; font-size: 13px; font-weight: 700; color: var(--sub); }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.chips span { background: #efefef; border-radius: 999px; padding: 3px 12px; font-size: 13px; }
+.chips span { background: var(--soft); border-radius: 999px; padding: 3px 12px; font-size: 13px; }
 .chips span.more { background: none; color: var(--sub); padding: 2px 2px; }
 .links { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
-.links li { display: flex; align-items: center; gap: 10px; border: 1px solid var(--border-soft); border-radius: 12px; padding: 8px 10px; }
+.links li { display: flex; align-items: center; gap: 10px; border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px; }
 .links .ic { width: 34px; height: 34px; flex: none; border-radius: 10px; display: grid; place-items: center; color: #fff; }
 .links .ic svg { width: 20px; height: 20px; }
 .links .lt { flex: 1; min-width: 0; line-height: 1.35; }
@@ -134,7 +136,7 @@ details.about[open] > summary { border-radius: var(--radius) var(--radius) 0 0; 
 .links .lt b { word-break: break-all; }
 .links a.go, .links button { flex: none; border: 0; color: #fff; background: var(--blue); border-radius: 8px; padding: 5px 12px; font-size: 12.5px; font-weight: 600; cursor: pointer; text-decoration: none; font-family: inherit; }
 .links a.go:hover, .links button:hover { background: var(--blue-hover); }
-.license { margin: 14px 0 0 40px; background: #fff1f2; border: 1px solid #f6c3c8; border-radius: 12px; padding: 10px 14px; font-size: 14px; }
+.license { margin: 14px 0 0 36px; background: #fafafa; border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; font-size: 14px; }
 .license b.ng { color: var(--red); }
 .license ul { margin: 4px 0; padding-left: 20px; }
 
@@ -157,9 +159,9 @@ dialog::backdrop { background: rgba(0, 0, 0, .55); }
 
 /* ---- ゲストの名前（partials/guest.js）---- */
 .gmodal { position: fixed; inset: 0; z-index: 50; background: rgba(0, 0, 0, .55); display: grid; place-items: center; padding: 16px; }
-.gmodal .gbox { width: min(400px, 100%); background: #fff; border-radius: 22px; padding: 30px 26px 24px; text-align: center; box-shadow: 0 20px 60px rgba(0, 0, 0, .3); }
-.gmodal .ring { width: 88px; height: 88px; margin: 0 auto 12px; border-radius: 50%; padding: 3px; background: var(--grad); }
-.gmodal .ring > div { width: 100%; height: 100%; border-radius: 50%; background: #fff; border: 3px solid #fff; display: grid; place-items: center; font-size: 34px; }
+.gmodal .gbox { width: min(400px, 100%); background: #fff; border-radius: 18px; padding: 28px 24px 22px; text-align: center; box-shadow: 0 20px 60px rgba(0, 0, 0, .25); }
+.gmodal .ring { width: 72px; height: 72px; margin: 0 auto 12px; border-radius: 50%; background: var(--soft); }
+.gmodal .ring > div { width: 100%; height: 100%; border-radius: 50%; display: grid; place-items: center; font-size: 32px; }
 .gmodal h2 { margin: 0 0 4px; font-size: 20px; }
 .gmodal p { margin: 0 0 16px; color: var(--sub); font-size: 13.5px; }
 .gmodal input { width: 100%; font-size: 16px; padding: 12px 14px; border: 1px solid var(--border); background: var(--input); border-radius: 12px; margin-bottom: 10px; }
@@ -172,12 +174,12 @@ dialog::backdrop { background: rgba(0, 0, 0, .55); }
 
 @media (max-width: 640px) {
   body { font-size: 14.5px; }
-  .header-in { padding: 8px 12px; gap: 10px; }
-  .header-in img { width: 36px; height: 36px; border-radius: 10px; }
-  .header-in h1 { font-size: 17px; }
+  .header-in { height: 52px; padding: 0 12px; gap: 10px; }
+  .header-in img { width: 34px; height: 34px; border-radius: 9px; }
+  .header-in h1 { font-size: 16.5px; }
   .header-in p { display: none; }
-  main { padding: 12px 12px 90px; }
-  .card { padding: 16px 14px 16px; border-radius: 14px; }
+  main { padding: 14px 12px 90px; }
+  .card { padding: 16px 14px 16px; border-radius: 12px; }
   .indent { padding-left: 0; }
   .btn-blue { width: 100%; }
   .btn-green { font-size: 16px; padding: 13px 14px; }
@@ -190,16 +192,23 @@ dialog::backdrop { background: rgba(0, 0, 0, .55); }
 }
 
 /* ---- サイトのメニュー ---- */
-.sitenav { background: rgba(255, 255, 255, .92); border-bottom: 1px solid var(--border-soft); position: sticky; top: 63px; z-index: 19; -webkit-backdrop-filter: saturate(180%) blur(12px); backdrop-filter: saturate(180%) blur(12px); }
-.sitenav-in { max-width: 920px; margin: 0 auto; padding: 8px 12px; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+/* タブのように: 文字だけ・いまのページは下に線（ピンク→紫） */
+.sitenav { background: #fff; border-bottom: 1px solid var(--line); position: sticky; top: 61px; z-index: 19; }
+.sitenav-in { max-width: 920px; margin: 0 auto; padding: 0 8px; display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
 .sitenav-in::-webkit-scrollbar { display: none; }
-.sitenav a { color: var(--text); text-decoration: none; padding: 6px 14px; font-size: 14px; font-weight: 600; border-radius: 999px; white-space: nowrap; background: #efefef; }
-.sitenav a:hover { background: #e3e3e3; }
-.sitenav a[aria-current="page"] { color: #fff; background: #262626; }
+.sitenav a { color: var(--sub); text-decoration: none; padding: 10px 12px 11px; font-size: 14px; font-weight: 600; white-space: nowrap; }
+.sitenav a:hover { color: var(--text); }
+.sitenav a[aria-current="page"] { color: var(--text); background: var(--grad-btn) left bottom / 100% 2px no-repeat; }
 @media (max-width: 640px) {
   .sitenav { top: 53px; }
-  .sitenav-in { padding: 7px 10px; gap: 5px; }
-  .sitenav a { padding: 5px 10px; font-size: 12.5px; }
+  .sitenav-in { padding: 0 4px; gap: 0; }
+  .sitenav a { padding: 9px 9px 10px; font-size: 13px; }
+}
+.sitenav .ni { margin-right: 5px; }
+@media (max-width: 480px) {
+  .sitenav-in { justify-content: space-between; }
+  .sitenav .ni { display: none; }
+  .sitenav a { padding: 10px 8px 11px; font-size: 13.5px; }
 }
 
 /* ---- 共通の部品（入力・コピー欄・かんたんな流れ・チップ）---- */
@@ -213,7 +222,7 @@ dialog::backdrop { background: rgba(0, 0, 0, .55); }
 .copybox button:hover { background: var(--blue-hover); }
 .copybox.disabled code { color: #a8a8a8; }
 .copybox.disabled button { background: #c7c7c7; cursor: default; }
-.easy, .tip { position: relative; background: linear-gradient(135deg, #fff7fb 0%, #f7f4ff 100%); border: 1px solid #f1e4f3; border-radius: var(--radius); padding: 14px 18px; margin: 0 0 16px; }
+.easy, .tip { position: relative; background: #fafafa; border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 18px; margin: 0 0 16px; }
 .tip { padding: 10px 14px; margin-top: 10px; font-size: 14px; border-radius: 12px; }
 .easy b.t { display: block; font-size: 15px; margin-bottom: 4px; }
 .easy ol { margin: 0; padding-left: 22px; font-size: 14px; }
@@ -280,7 +289,7 @@ ol.steps > li { margin: 8px 0; }
 .list-head h3 { margin: 0; font-size: 15px; }
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; }
 .empty { grid-column: 1 / -1; color: var(--sub); text-align: center; padding: 22px 8px; font-size: 14px; border: 2px dashed var(--border); border-radius: 14px; }
-.pcard { position: relative; border: 1px solid var(--border); border-radius: 14px; background: #fff; padding: 10px 4px 8px; text-align: center; cursor: pointer; }
+.pcard { position: relative; border: 1px solid var(--line); border-radius: 12px; background: #fff; padding: 10px 4px 8px; text-align: center; cursor: pointer; }
 .pcard:hover { background: #fafafa; }
 .pcard.sel { border: 2px solid #d62976; background: #fff5f9; padding: 9px 3px 7px; }
 .pcard canvas { width: 52px; height: 52px; display: block; margin: 0 auto 4px; }
@@ -289,7 +298,7 @@ ol.steps > li { margin: 8px 0; }
 .pcard .del { position: absolute; top: 4px; right: 4px; width: 24px; height: 24px; border-radius: 50%; border: 0; background: #969aa2; color: #fff; font-size: 15px; line-height: 24px; padding: 0; cursor: pointer; opacity: 0; transition: opacity .15s; }
 .pcard:hover .del, .pcard.sel .del, .pcard .del:focus { opacity: 1; }
 .pcard .del:hover { background: var(--red); }
-.preview { background: var(--preview); border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px 8px; min-height: 290px; text-align: center; }
+.preview { background: var(--preview); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px 8px; min-height: 290px; text-align: center; }
 .preview canvas { width: 112px; height: 224px; }
 .preview .pn { font-weight: 700; margin-top: 8px; word-break: break-all; }
 .preview .pa { color: var(--sub); font-size: 12px; }
@@ -324,28 +333,28 @@ ol.steps > li { margin: 8px 0; }
     <img class="pixel" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAACjUlEQVR42u2bPUwUQRiG3zEYG0KLpbEQOI0o0cRwWBAiojmD+NOoUBgbCgv5CYeJFQUSwMbWigMafhovglhcg8TExAQKEygulppY2liNxd0YdnK7s8Pt3jF379ftfjt7O/s+837f7t0JGOLcxQcSDsfB3qoIyp9AnYfwV/6+rKWJHuytCRIQhoCWGlNej32NBBLwX/n2e7KeJr6/uy5IAADR6rjyOx9HPNudN99YjScBrZcGnCRgZ3M0MN/ZN08CQhHQFjMBk+OPA/PTs0tW5/tsUF6PpIGEuiegASJaACbHnpRFyPTcYsSMSxIQeH8Sl+9GgkDaUnlTvDaQsL0xFpjvujXHKhCOgI7+sghIjw6GOi77PgsASN1J2ZEwnwkm4cO4V/nbs+wEraqAcO2FhRbXNcVt50MCjjpwIuTaLzfU58wYvOCoQQJExJ2gcnvbfOL8hWAvEJIEHCsP8Au/Om/qA/L5H1W5ASQgrrUVeT9AD+AS4A2gB5AAB/qAqOJld1bbjvb8V140kgCnPCAuTyEBrlxo4lF5zwrfl8+wCtAD6AFV9ADb7wP4LFAxD3DsgrffjVgd3/Ws9G+GBAlQHuBIFVDKN994DgBoH1wBAGwN/fQc17twGgCwm3lYHKcy6xoCrAKlPeDs0F8AQH7hVKj9lY5fn94WlS+dV0So43z7AHqA5gFNPb8BACvDXwuZYZ8Rxf2Z5bWqXviX7LfA/LVUh6EVpAd4PSA3VVC++9XVUAOftqWreuFGhU3PAvQAtRKklDbKVyq2+hpjPf/JZI4EqKdBtRzq7cUA/zGivw84ViT0bv6JVflcklXAozqKxeBwNZC1OFfV7wghSICHAJ2Ew7tqaY5KebATLMQ/lnufS6vEI9gAAAAASUVORK5CYII=">
     <div>
       <h1><span class="wide-only">プレイヤーの死体アドオン　</span>スキン登録</h1>
-      <p>ユーザー名を入れるだけで、死体があなたのスキンになります　｜　制作: MaYo（mayo01297）</p>
+      <p>死体があなたのスキンに　｜　制作: MaYo（mayo01297）</p>
     </div>
     <a class="help-btn" href="#help" id="openHelp">？<span class="wide-only"> 使い方・困ったとき</span></a>
   </div>
 </header>
 <nav class="sitenav" aria-label="サイトのメニュー">
   <div class="sitenav-in">
-    <a href="../" data-page="home">🏠 ホーム</a>
-    <a href="../corpse/" data-page="corpse" aria-current="page">🪦 死体スキン</a>
-    <a href="../vc/" data-page="vc">🎙 近接VC</a>
-    <a href="../chat/" data-page="chat">💬 チャット</a>
-    <a href="../works/" data-page="works">🧩 作品</a>
+    <a href="../" data-page="home"><span class="ni" aria-hidden="true">🏠</span>ホーム</a>
+    <a href="../corpse/" data-page="corpse" aria-current="page"><span class="ni" aria-hidden="true">🪦</span>死体スキン</a>
+    <a href="../vc/" data-page="vc"><span class="ni" aria-hidden="true">🎙</span>近接VC</a>
+    <a href="../chat/" data-page="chat"><span class="ni" aria-hidden="true">💬</span>チャット</a>
+    <a href="../works/" data-page="works"><span class="ni" aria-hidden="true">🧩</span>作品</a>
   </div>
 </nav>
 
 <main>
   <!-- ① -->
   <section class="card" aria-labelledby="s1">
-    <h2 class="step" id="s1"><span class="num">1</span>Minecraft のユーザー名を入れて「スキンをさがす」</h2>
+    <h2 class="step" id="s1"><span class="num">1</span>ユーザー名でスキンをさがす</h2>
     <div class="step1-body indent">
       <div>
-        <p class="notice" id="fileNotice" hidden>⚠ このページをファイルとして直接ひらいているため、ユーザー名での検索ができません（GeyserMC がファイルからの通信を受け付けないため）。Webサイト（Cloudflare Pages など）に置いてひらいてください。スキン画像（PNG）からの登録とダウンロードは、このままでも使えます。</p>
+        <p class="notice" id="fileNotice" hidden>⚠ ファイルを直接ひらいているため、名前での検索は使えません（PNG 登録とダウンロードは使えます）。</p>
         <form class="search" id="searchForm" autocomplete="off">
           <input id="nameInput" type="text" inputmode="text" maxlength="32" placeholder="ユーザー名を入力（例: MaYoS）" aria-label="Minecraft のユーザー名">
           <button class="btn btn-blue" id="searchBtn" type="submit">
@@ -353,9 +362,9 @@ ol.steps > li { margin: 8px 0; }
             スキンをさがす
           </button>
         </form>
-        <p class="hint">Minecraft のプロフィールに出ている名前（ゲーマータグ）を入れてください。</p>
+        <p class="hint">ゲーマータグを入れてください。</p>
         <button class="link" id="pngBtn" type="button">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M5 17l5-6 4 4 2-2 3 4" stroke-linejoin="round"/><circle cx="16" cy="9" r="1.5" fill="currentColor"/></svg>スキン画像（PNG）を持っている人は、こちらから登録できます
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M5 17l5-6 4 4 2-2 3 4" stroke-linejoin="round"/><circle cx="16" cy="9" r="1.5" fill="currentColor"/></svg>PNG 画像で登録する
         </button>
         <input id="pngInput" type="file" accept="image/png,.png" hidden>
         <hr>
@@ -373,7 +382,7 @@ ol.steps > li { margin: 8px 0; }
 
   <!-- ② -->
   <section class="card" aria-labelledby="s2">
-    <h2 class="step" id="s2"><span class="num">2</span>アドオンをダウンロードして、ひらく</h2>
+    <h2 class="step" id="s2"><span class="num">2</span>ダウンロードしてひらく</h2>
     <div class="indent">
       <div class="settings">
         <label>死体が消えるまで
@@ -395,13 +404,13 @@ ol.steps > li { margin: 8px 0; }
           </select>
         </label>
       </div>
-      <p class="hint">数をこえると、古い死体から消えます。しゃがみながら叩くと、自分の死体を片付けられます。</p>
+      <p class="hint">数をこえると古い順に消えます。しゃがんで叩くと片付けられます。</p>
       <div class="dl-row">
         <button class="btn btn-green" id="downloadBtn" type="button">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v11M7.5 9.5 12 14l4.5-4.5M4 14v6h16v-6"/></svg>
           アドオンをダウンロード（.mcaddon）
         </button>
-        <p class="dl-note">ダウンロードしたファイル（<b>PlayerCorpse_日付.mcaddon</b>）をひらくと、Minecraft に読み込まれます（スマホでもOK）。</p>
+        <p class="dl-note">ファイルをひらくと Minecraft に入ります（スマホもOK）。</p>
       </div>
       <p class="last-dl" id="lastDl" hidden></p>
     </div>
@@ -411,16 +420,13 @@ ol.steps > li { margin: 8px 0; }
   <section class="card step3" aria-labelledby="s3">
     <h2 class="step" id="s3"><span class="num">3</span>ワールドでオンにする</h2>
     <div class="indent">
-      <p>ワールドの「編集」→「ビヘイビアパック」で「<b>プレイヤーの死体 BP</b>」を有効にする。</p>
+      <p>ワールドの「編集」→「ビヘイビアパック」で「<b>プレイヤーの死体 BP</b>」をオン。</p>
       <div class="tip">
-        <b>2回目から（スキンを変えて作り直したとき）</b><br>
-        アドオンの名前の最後に <b class="lbl">【月/日 時:分版】</b> のように<b>作った日時</b>が付きます。いちばん新しい日時のものが、今のスキンです。<br>
-        古い版が残って増えていくので、新しいファイルをひらく<b>前に</b>、古い版を消しておくとスッキリします。
+        <b>作り直したとき</b>
         <ol>
-          <li>Minecraft の「設定」→「ストレージ」をひらく（「一般」の中にある場合もあります）</li>
-          <li>「ビヘイビアパック」と「リソースパック」で、名前が「<b>プレイヤーの死体</b>」で始まるものを選んで削除（全部消してOK）</li>
-          <li>② でダウンロードした新しいファイルをひらく</li>
-          <li>ワールドの「編集」→「ビヘイビアパック」で、<b class="lbl curLabel">新しい日時</b>のものが「有効」になっているか確認（なっていなければ有効にする）</li>
+          <li>「設定」→「ストレージ」で、古い「プレイヤーの死体」を削除</li>
+          <li>② の新しいファイルをひらく</li>
+          <li>ワールドで <b class="lbl curLabel">新しい日時</b> の版をオン</li>
         </ol>
       </div>
     </div>
@@ -429,42 +435,32 @@ ol.steps > li { margin: 8px 0; }
   <details class="help" id="help">
     <summary>？ 使い方・困ったとき</summary>
     <div class="help-body">
-      <h4>■「見つかりませんでした」と出たとき</h4>
-      <p>このページは、統合版のスキン検索サイトと同じ「GeyserMC」のデータからスキンを取っています。Geyser 対応サーバーに一度も入ったことがない人は、まだデータがありません。次の手順で登録できます。</p>
+      <h4>■「見つかりませんでした」</h4>
+      <p>GeyserMC のサーバーに一度入ると見つかります。</p>
       <ol>
-        <li>Minecraft を起動 →「遊ぶ」→「サーバー」→「サーバーを追加」</li>
-        <li>サーバー名：なんでもOK ／ アドレス：<code>test.geysermc.org</code> ／ ポート：<code>19132</code></li>
-        <li>保存して参加する（入れたら、すぐに抜けてOK）</li>
-        <li>このページで、もう一度「スキンをさがす」</li>
+        <li>「サーバーを追加」→ アドレス <code>test.geysermc.org</code>・ポート <code>19132</code></li>
+        <li>入ってすぐ抜けてOK → もう一度さがす</li>
       </ol>
-      <p>スキン画像（PNG）を持っている人は「スキン画像（PNG）を持っている人は…」から登録することもできます。</p>
-      <h4>■ 昔のスキンが表示されるとき</h4>
-      <p>GeyserMC には「最後に Geyser 対応サーバーに入ったときのスキン」が保存されています。今のスキンにするには、どちらかの方法で。</p>
+      <p>PNG 画像で登録してもOKです。</p>
+      <h4>■ 昔のスキンが出る</h4>
       <ul>
-        <li><b>画像で差し替える</b>：一覧でその人を選び、右の「画像で差し替え」から今のスキンのPNGを選ぶ</li>
-        <li><b>GeyserMC を更新する</b>：今のスキンで <code>test.geysermc.org</code> に入り直してから「全員のスキンを取り直す」</li>
+        <li>その人を選んで「画像で差し替え」</li>
+        <li>または今のスキンで <code>test.geysermc.org</code> に入り直して「全員のスキンを取り直す」</li>
       </ul>
-      <p>画像で差し替えた人は「全員のスキンを取り直す」を押しても上書きされません（戻すときは「自動取得に戻す」）。腕の太さが合っていないときは「腕を「細い」にする」などで切り替えられます。</p>
-      <h4>■「頭だけのスキンのようです」と出たとき</h4>
-      <p>頭より下がぜんぶ透明なスキンのときに出ます（キャラクタークリエイターで作ったスキンは、頭しか取れないことがあります）。「このまま使う」で頭だけの死体にするか、スキン画像（PNG）で登録してください。ワールド設定の実験的機能「ベータ API」をオンにして「プレイヤーの死体 スキンコピー拡張」も追加すると、本人の見た目で出せることもあります。</p>
-      <h4>■ アドオンがいくつも増えてしまった</h4>
-      <p>作り直すたびに、Minecraft の中に新しい版が追加されます（古い版は自動では消えません）。名前の最後の【月/日 時:分版】が作った日時です。Minecraft の「設定」→「ストレージ」→「ビヘイビアパック」「リソースパック」で、古い版を選んで削除できます。くわしくは ③ の「2回目から」を見てください。</p>
+      <h4>■「頭だけのスキンのようです」</h4>
+      <p>「このまま使う」か、PNG で登録。実験的機能「ベータ API」＋「スキンコピー拡張」で本人の見た目になることもあります。</p>
+      <h4>■ アドオンが増えた・見た目が変わらない</h4>
+      <p>古い版を削除して、新しい版をオン（③）。ワールドも開き直してください。</p>
       <h4>■ 死体が消えない・すぐ消える</h4>
-      <p>② の「死体が消えるまで」「1人あたりの死体」で変えられます。変えたら ② でダウンロードし直してください。ワールドに残っている死体をまとめて消したいときは、チャットで <code>/scriptevent corpse:clear</code>（チートがオンのとき）。</p>
-      <h4>■ ダウンロードしたファイルのひらきかた</h4>
+      <p>② で変えてダウンロードし直し。全部消す: <code>/scriptevent corpse:clear</code></p>
+      <h4>■ ファイルのひらきかた</h4>
       <ul>
-        <li><b>パソコン</b>：ダウンロードした「PlayerCorpse_日付.mcaddon」をダブルクリック</li>
-        <li><b>Android</b>：ダウンロード完了の通知や「ファイル」アプリからタップ → Minecraft を選ぶ</li>
-        <li><b>iPhone / iPad</b>：「ファイル」アプリの「ダウンロード」でタップ → 共有ボタン → Minecraft</li>
+        <li>パソコン: ダブルクリック</li>
+        <li>Android: 通知か「ファイル」からタップ → Minecraft</li>
+        <li>iPhone: 「ファイル」→ 共有 → Minecraft</li>
       </ul>
-      <h4>■ Minecraft に入れたのに見た目が変わらない</h4>
-      <ul>
-        <li>ワールドをいったん閉じて、開き直してください。</li>
-        <li>ワールドの「編集」→「ビヘイビアパック」で、いちばん新しい日時の版が有効になっているか確認してください（③）。</li>
-        <li>スキンを変えたときは「全員のスキンを取り直す」→ ② をもう一度。</li>
-      </ul>
-      <h4>■ データについて</h4>
-      <p>登録した人とスキン画像は、このブラウザの中にだけ保存されます。通信するのは GeyserMC（<code>api.geysermc.org</code>）とスキン画像のサーバー（<code>textures.minecraft.net</code>）だけです。</p>
+      <h4>■ データ</h4>
+      <p>登録内容はこのブラウザだけに保存。通信先は GeyserMC とスキン画像のサーバーだけです。</p>
     </div>
   </details>
   <!-- 制作者について（全ページ共通: partials/about.html） -->
@@ -486,7 +482,7 @@ ol.steps > li { margin: 8px 0; }
             <div class="psub">高校1年生</div>
           </div>
         </div>
-        <p>普段は、マインクラフトの PvP クライアントを作ったり、Roblox でゲームを作ったり、アドオンを作ったり、マインクラフトのマップを作ったりしています。</p>
+        <p>マイクラの PvP クライアント・アドオン・マップや、Roblox のゲームを作っています。</p>
         <p class="label">好きなゲーム</p>
         <div class="chips">
           <span>マインクラフト</span><span>第五人格</span><span>崩壊：スターレイル</span><span>Roblox</span><span>Dead by Daylight</span><span class="more">など</span>
@@ -514,15 +510,7 @@ ol.steps > li { margin: 8px 0; }
       </div>
     </div>
     <div class="license">
-      <b>クレジット・二次配布について</b><br>
-      このスキン登録ページと「プレイヤーの死体アドオン」は、<b>MaYo（mayo01297）</b>が制作しました。<br>
-      <b class="ng">二次配布は禁止です。</b>次のことはしないでください。
-      <ul>
-        <li>このページのファイルやアドオンを、ほかのサイト・SNS・Discord サーバーなどにアップロードして配ること</li>
-        <li>改変して配ること</li>
-        <li>自分が作ったと言うこと（自作発言）</li>
-      </ul>
-      紹介するときは、このページのURLを共有してください。
+      <b class="ng">二次配布禁止</b>：再アップロード・改変して配布・自作発言はしないでください。紹介はこのページの URL でお願いします。
     </div>
     </div>
   </details>
@@ -568,7 +556,7 @@ ol.steps > li { margin: 8px 0; }
   <p class="small">プレイヤーの死体アドオン　スキン登録（Web版）<br>© 2026 MaYo（mayo01297）　・　二次配布禁止　・　<a href="#about">制作者について</a></p>
 </main>
 
-<div id="status" class="info" role="status" aria-live="polite"><span class="dot">i</span><span id="statusText">まずは ① の欄に、Minecraft のユーザー名を入れてください。</span></div>
+<div id="status" class="info" role="status" aria-live="polite"><span class="dot">i</span><span id="statusText">① にユーザー名を入れてください。</span></div>
 
 <dialog id="dlg">
   <form method="dialog">
@@ -592,7 +580,7 @@ const CONFIG_JS = "PlayerCorpse_BP/scripts/config.js";
 const DEFAULT_SETTINGS = { lifetime: 0, max: 10 };
 const LIFETIMES = [0, 300, 600, 1800, 3600], MAXES = [1, 3, 5, 10, 0];
 const PACK_DIRS = ["PlayerCorpse_BP", "PlayerCorpse_RP", "PlayerCorpse_SkinCopy_BP"];
-const HOW_TO_REGISTER = "\n\n統合版の Minecraft で、Geyser 対応サーバー（例: test.geysermc.org ポート 19132）に一度入ると登録されます。くわしくは下の「使い方・困ったとき」を見てください。";
+const HOW_TO_REGISTER = "\n\ntest.geysermc.org（ポート 19132）に一度入ると見つかるようになります。";
 
 // アドオン本体（PlayerCorpse_BP / RP / SkinCopy_BP の全ファイル。パス → base64）
 const TEMPLATE = {
@@ -703,15 +691,15 @@ async function httpGet(url, asBytes) {
   try { res = await fetch(url, { cache: "no-store" }); }
   catch (e) {
     if (location.protocol === "file:")
-      throw new SkinError("Network", "ファイルとして直接ひらいたページからは、ユーザー名での検索ができません。\nこのページを Webサイト（Cloudflare Pages など）に置いてひらいてください。\n（スキン画像（PNG）からの登録は使えます）");
-    throw new SkinError("Network", "インターネットにつながりませんでした。接続を確認して、もう一度ためしてください。");
+      throw new SkinError("Network", "ファイルを直接ひらいているため、名前での検索は使えません（PNG 登録は使えます）。");
+    throw new SkinError("Network", "インターネットにつながりませんでした。");
   }
   const body = asBytes ? new Uint8Array(await res.arrayBuffer()) : await res.text();
   return { status: res.status, ok: res.ok, body };
 }
 
 function serverError(status) {
-  return new SkinError("Server", `スキンのサーバーが混んでいるか、止まっているようです（エラー ${status}）。少し時間をおいてから、もう一度ためしてください。`);
+  return new SkinError("Server", `スキンのサーバーが混んでいます（エラー ${status}）。少し待ってからためしてください。`);
 }
 
 async function fetchSkin(gamertag) {
@@ -720,19 +708,19 @@ async function fetchSkin(gamertag) {
   if (!r1.ok) {
     // GeyserMC に居ない人は「503 + Unable to find user in our cache」が返ってくる
     if (r1.status === 400 || r1.status === 404 || /cache/i.test(r1.body))
-      throw new SkinError("NotFound", `「${name}」のスキンが見つかりませんでした。${HOW_TO_REGISTER}`);
+      throw new SkinError("NotFound", `「${name}」が見つかりませんでした。${HOW_TO_REGISTER}`);
     throw serverError(r1.status);
   }
   const m = /"xuid"\s*:\s*"?(\d+)/.exec(r1.body);
   if (!m || m[1] === "0")
-    throw new SkinError("NotFound", `「${name}」のスキンが見つかりませんでした。名前のつづりを確認してください。${HOW_TO_REGISTER}`);
+    throw new SkinError("NotFound", `「${name}」が見つかりませんでした。つづりを確認してください。${HOW_TO_REGISTER}`);
 
   const r2 = await httpGet(`${GEYSER_API}/v2/skin/${m[1]}`);
   if (!r2.ok) throw serverError(r2.status);
   let skin = {};
   try { skin = JSON.parse(r2.body || "{}"); } catch (e) { skin = {}; }
   if (!skin.texture_id)
-    throw new SkinError("NoSkin", `「${name}」はいましたが、スキンがまだ保存されていませんでした。${HOW_TO_REGISTER}`);
+    throw new SkinError("NoSkin", `「${name}」のスキンがまだありません。${HOW_TO_REGISTER}`);
   const slim = skin.is_steve === true ? false : skin.is_steve === false ? true : null;
 
   const r3 = await httpGet(`${TEXTURES}/texture/${encodeURIComponent(skin.texture_id)}`, true);
@@ -744,7 +732,7 @@ async function fetchSkin(gamertag) {
 //  スキン画像の確認・整形
 // =====================================================================
 const PNG_SIG = [137, 80, 78, 71, 13, 10, 26, 10];
-const badPng = () => new SkinError("BadImage", "PNG画像として読み込めませんでした。スキンのPNGファイルを選んでください。");
+const badPng = () => new SkinError("BadImage", "スキンの PNG を選んでください。");
 
 function concatBytes(list) {
   const out = new Uint8Array(list.reduce((n, a) => n + a.length, 0));
@@ -913,7 +901,7 @@ async function prepareSkin(bytes, slimHint) {
     img = conv.img;
   }
   if (img.w !== img.h || (img.w !== 64 && img.w !== 128))
-    throw new SkinError("BadImage", `画像の大きさが ${img.w}×${img.h} です。スキン画像（64×64 か 128×128）を選んでください。`);
+    throw new SkinError("BadImage", `${img.w}×${img.h} の画像です。64×64 か 128×128 のスキンを選んでください。`);
   const slim = slimHint === true || slimHint === false ? slimHint : guessSlim(img);
   return { png: bytes, slim, headOnly: !hasBody(img) };
 }
@@ -924,7 +912,7 @@ function addOrUpdate(name, prepared, source) {
   if (!p) {
     let slot = 0;
     for (let s = 1; s <= MAX_SLOTS; s++) if (!state.players.some(q => q.slot === s)) { slot = s; break; }
-    if (!slot) throw new SkinError("Full", `登録できるのは ${MAX_SLOTS} 人までです。だれかを削除してから追加してください。`);
+    if (!slot) throw new SkinError("Full", `${MAX_SLOTS} 人までです。だれかを削除してください。`);
     p = { slot };
     state.players.push(p);
   }
@@ -1122,7 +1110,7 @@ async function render(select) {
   if (!state.players.length) {
     const e = document.createElement("div");
     e.className = "empty";
-    e.textContent = "まだだれも登録されていません。上の欄にユーザー名を入れて「スキンをさがす」を押してください。";
+    e.textContent = "まだだれもいません。上でユーザー名をさがしてください。";
     grid.appendChild(e);
   }
   for (const p of [...state.players].sort((a, b) => a.slot - b.slot)) {
@@ -1255,11 +1243,8 @@ async function showSkinError(name, err, offerPng) {
 
 /** 頭より下が透明なスキンのとき、使うかどうか聞く → "yes" / "png" / "no" */
 function confirmHeadOnly(name, fromFile) {
-  const text = `${name} のスキンは、頭より下が透明でした。このまま使うと、死体は頭だけが見えます。\n\n` +
-    (fromFile
-      ? "ふつうのスキン画像のつもりなら、ファイルがちがうかもしれません。別のPNGを選び直せます。"
-      : "キャラクタークリエイターで作ったスキンは、頭しか取れないことがあります。スキン画像（PNG）を持っていれば、そちらで登録できます。") +
-    "\n（ワールド設定の実験的機能「ベータ API」をオンにして「スキンコピー拡張」を入れると、本人の見た目で出せることもあります）";
+  const text = `${name} のスキンは頭より下が透明です。このままだと死体は頭だけになります。` +
+    (fromFile ? "\nファイルがちがうかもしれません。" : "\nPNG 画像でも登録できます。");
   return ask("頭だけのスキンのようです", text, [
     { label: "やめる", value: "no" },
     { label: fromFile ? "別のPNGを選ぶ" : "PNG画像を選ぶ", value: "png" },
@@ -1271,10 +1256,10 @@ function confirmHeadOnly(name, fromFile) {
 async function search(forName, fromPreview) {
   if (busy) return;
   const name = (typeof forName === "string" ? forName : $("nameInput").value).trim();
-  if (!name) { setStatus("warn", "まず ① の欄に、Minecraft のユーザー名を入れてください。"); $("nameInput").focus(); return; }
+  if (!name) { setStatus("warn", "① にユーザー名を入れてください。"); $("nameInput").focus(); return; }
   const existing = findPlayer(name);
   if (existing && existing.source !== "GeyserMC" && !fromPreview) {
-    const r = await ask("画像で登録している人です", `${existing.name} は画像（PNG）で登録されています。\n自動で取得したスキンに置き換えますか？\n（自動で取得したスキンは、昔のスキンのことがあります）`,
+    const r = await ask("画像で登録している人です", `${existing.name} は PNG で登録しています。\n自動で取ったスキン（昔のものの場合あり）に置き換えますか？`,
       [{ label: "やめる", value: "no" }, { label: "置き換える", value: "yes", primary: true }]);
     if (r !== "yes") return;
   }
@@ -1296,7 +1281,7 @@ async function search(forName, fromPreview) {
   if (added) {
     $("nameInput").value = "";
     await render(added.name);
-    setStatus("ok", `${added.name} のスキンを登録しました！　見た目を確認して、② の緑のボタンを押してください。`);
+    setStatus("ok", `${added.name} を登録しました。② でダウンロード！`);
     pulseDownload();
   } else {
     setStatus("warn", `「${name}」のスキンを登録できませんでした。`);
@@ -1336,8 +1321,8 @@ async function onPngChosen() {
     if ($("nameInput").value.trim().toLowerCase() === name.toLowerCase()) $("nameInput").value = "";
     await render(p.name);
     setStatus("ok", replaced
-      ? `${p.name} のスキンを画像に差し替えました！　② でダウンロードし直すと反映されます。`
-      : `${p.name} を画像から登録しました！　次は ② の緑のボタンを押してください。`);
+      ? `${p.name} を画像に差し替えました。② で反映されます。`
+      : `${p.name} を登録しました。② でダウンロード！`);
     pulseDownload();
   } catch (e) {
     await showSkinError(name, e instanceof SkinError ? e : new SkinError("Other", "画像を読み込めませんでした。\n" + e), false);
@@ -1352,19 +1337,19 @@ async function toggleArm(name) {
   p.slim = !p.slim;
   saveState();
   await render(p.name);
-  setStatus("info", `${p.name} の腕を「${p.slim ? "細い" : "ふつう"}」にしました。② でダウンロードし直すと反映されます。`);
+  setStatus("info", `${p.name} の腕を「${p.slim ? "細い" : "ふつう"}」に。② で反映されます。`);
 }
 
 // ---- 削除・取り直し ----
 async function removePlayer(name) {
   if (busy) return;
-  const r = await ask("削除の確認", `${name} を一覧から削除しますか？\n（② でダウンロードし直すまで、Minecraft の中は変わりません）`,
+  const r = await ask("削除の確認", `${name} を削除しますか？\n（② でダウンロードし直すと反映）`,
     [{ label: "やめる", value: "no" }, { label: "削除する", value: "yes", primary: true }]);
   if (r !== "yes") return;
   state.players = state.players.filter(p => p.name !== name);
   saveState();
   await render();
-  setStatus("info", `${name} を削除しました。② でダウンロードし直すと Minecraft にも反映されます。`);
+  setStatus("info", `${name} を削除しました。② で反映されます。`);
 }
 
 async function refreshAll() {
@@ -1385,7 +1370,7 @@ async function refreshAll() {
   }
   setBusy(false);
   await render();
-  if (!failed.length) { setStatus("ok", "全員のスキンを取り直しました。② でダウンロードし直すと反映されます。"); pulseDownload(); }
+  if (!failed.length) { setStatus("ok", "全員のスキンを取り直しました。② で反映されます。"); pulseDownload(); }
   else {
     setStatus("warn", "取り直せなかった人がいます（前のスキンのままです）。");
     await ask("取り直せなかった人がいます", "次の人は前のスキンのままです：\n\n" + failed.join("\n"));
@@ -1396,7 +1381,7 @@ async function refreshAll() {
 async function download() {
   if (busy) return;
   if (!state.players.length) {
-    const r = await ask("確認", "まだだれも登録されていません。このままだと、死体はスティーブの見た目になります。\n続けますか？",
+    const r = await ask("確認", "だれも登録されていません。死体はスティーブになります。\n続けますか？",
       [{ label: "やめる", value: "no" }, { label: "ダウンロードする", value: "yes", primary: true }]);
     if (r !== "yes") return;
   }
@@ -1415,14 +1400,13 @@ async function download() {
   state.lastDownload = made;
   saveState();
   renderDownloadInfo();
-  setStatus("ok", `ダウンロードしました【${made.label}版】。${made.file} をひらくと Minecraft に読み込まれます。`);
+  setStatus("ok", `ダウンロードしました【${made.label}版】。ファイルをひらいてください。`);
   if (prev && !state.hideReimportTip) {
     const r = await ask(`ダウンロードしました【${made.label}版】`,
-      `前に作った【${prev}版】などが Minecraft に残っていると、同じアドオンがどんどん増えていきます。ひらく前に古い版を消しておくとスッキリします。\n\n` +
-      "1. Minecraft の「設定」→「ストレージ」\n" +
-      "2.「ビヘイビアパック」と「リソースパック」で、「プレイヤーの死体」で始まるものを削除（全部消してOK）\n" +
-      `3. ダウンロードした ${made.file} をひらく\n` +
-      `4. ワールドの「編集」→「ビヘイビアパック」で【${made.label}版】が有効になっているか確認`,
+      `古い【${prev}版】が残っていると増えていきます。\n\n` +
+      "1.「設定」→「ストレージ」で古い「プレイヤーの死体」を削除\n" +
+      "2. 新しいファイルをひらく\n" +
+      `3. ワールドで【${made.label}版】をオン`,
       [{ label: "次から表示しない", value: "hide" }, { label: "OK", value: "ok", primary: true }]);
     if (r === "hide") { state.hideReimportTip = true; saveState(); }
   }
@@ -1437,7 +1421,7 @@ function renderDownloadInfo() {
     box.textContent = "";
     const b = document.createElement("b");
     b.textContent = `【${d.label}版】`;
-    box.append("最後にダウンロードしたもの：", b, `（${d.file}）。Minecraft では、この日時が付いたものが最新です。`);
+    box.append("最後のダウンロード：", b);
   }
   for (const el of document.querySelectorAll(".curLabel")) el.textContent = d ? `【${d.label}版】` : "新しい日時";
 }
@@ -1450,7 +1434,7 @@ function renderSettings() {
 function onSettingChanged() {
   state.settings = { lifetime: Number($("lifetimeSel").value) || 0, max: Number($("maxSel").value) || 0 };
   saveState();
-  setStatus("info", `死体の設定を「${lifetimeText(state.settings.lifetime)}・${maxText(state.settings.max)}」にしました。② の緑のボタンでダウンロードし直すと反映されます。`);
+  setStatus("info", `「${lifetimeText(state.settings.lifetime)}・${maxText(state.settings.max)}」にしました。② で反映されます。`);
   pulseDownload();
 }
 
@@ -1472,7 +1456,7 @@ renderSettings();
 renderDownloadInfo();
 render().then(() => {
   if (state.players.length)
-    setStatus("info", `${state.players.length} 人登録されています。スキンを追加・変更したら ② を押してください。`);
+    setStatus("info", `${state.players.length} 人登録ずみ。変えたら ② を押してください。`);
 });
 </script>
 </body>

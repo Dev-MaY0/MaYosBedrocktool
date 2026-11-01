@@ -16,10 +16,11 @@
 <style>
 /* =====================================================================
    共通スタイル（全ページ）  制作: MaYo (mayo01297)  二次配布禁止
-   白ベース・角の丸いカード・グラデーションのアクセント（SNS アプリのような雰囲気）
+   シンプル: 白ベース・細い線のカード（影なし）・アクセントはピンク→紫・ボタンは青
    ===================================================================== */
 :root {
   --back: #fafafa; --panel: #ffffff; --border: #dbdbdb; --border-soft: #efefef; --input: #fafafa;
+  --line: #e8e8e8; --soft: #f3f3f4; --accent: #d62976;
   --text: #262626; --sub: #737373; --link: #00376b;
   --header: #ffffff; --header-sub: #737373;
   --blue: #0095f6; --blue-hover: #1877f2; --blue-pale: #e8f3ff;
@@ -27,8 +28,8 @@
   --red: #ed4956; --orange: #f39c12; --preview: #f2f2f2;
   --grad: linear-gradient(45deg, #feda75 0%, #fa7e1e 25%, #d62976 50%, #962fbf 75%, #4f5bd5 100%);
   --grad-btn: linear-gradient(90deg, #f56040 0%, #e1306c 45%, #833ab4 100%);
-  --radius: 16px;
-  --shadow: 0 1px 2px rgba(0, 0, 0, .04), 0 6px 20px rgba(0, 0, 0, .05);
+  --radius: 14px;
+  --shadow: none;
   --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic UI", Meiryo, system-ui, sans-serif;
 }
 * { box-sizing: border-box; }
@@ -40,19 +41,20 @@ a { color: var(--link); }
 .pixel { image-rendering: pixelated; image-rendering: crisp-edges; }
 
 /* ---- header ---- */
-header { background: rgba(255, 255, 255, .92); color: var(--text); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 20; -webkit-backdrop-filter: saturate(180%) blur(12px); backdrop-filter: saturate(180%) blur(12px); }
-.header-in { max-width: 920px; margin: 0 auto; padding: 10px 16px; display: flex; align-items: center; gap: 12px; }
-.header-in img { width: 42px; height: 42px; flex: none; border-radius: 12px; padding: 2px; background: var(--grad); }
-.header-in h1 { margin: 0; font-size: 20px; line-height: 1.25; font-weight: 800; letter-spacing: -.01em; background: var(--grad-btn); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.header-in p { margin: 1px 0 0; color: var(--header-sub); font-size: 12.5px; }
-.header-in .help-btn { margin-left: auto; flex: none; color: var(--text); background: #efefef; border: 0; border-radius: 10px; padding: 7px 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none; white-space: nowrap; }
-.header-in .help-btn:hover { background: #e3e3e3; }
+header { background: #fff; color: var(--text); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 20; }
+.header-in { max-width: 920px; height: 60px; margin: 0 auto; padding: 0 16px; display: flex; align-items: center; gap: 11px; }
+.header-in img { width: 40px; height: 40px; flex: none; border-radius: 10px; box-shadow: 0 0 0 1px rgba(0, 0, 0, .06); }
+.header-in > div { min-width: 0; }
+.header-in h1 { margin: 0; font-size: 18.5px; line-height: 1.25; font-weight: 800; letter-spacing: -.01em; color: var(--text); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.header-in p { margin: 1px 0 0; color: var(--header-sub); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.header-in .help-btn { margin-left: auto; flex: none; color: var(--text); background: var(--soft); border: 0; border-radius: 10px; padding: 7px 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none; white-space: nowrap; }
+.header-in .help-btn:hover { background: #e8e8e9; }
 
-main { max-width: 920px; margin: 0 auto; padding: 18px 16px 90px; }
-.card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
-.step { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; font-size: 17px; font-weight: 700; }
-.num { width: 30px; height: 30px; flex: none; border-radius: 50%; background: var(--grad); color: #fff; display: grid; place-items: center; font-size: 15px; font-weight: 700; box-shadow: 0 2px 8px rgba(214, 41, 118, .25); }
-.indent { padding-left: 40px; }
+main { max-width: 920px; margin: 0 auto; padding: 20px 16px 90px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 20px 20px; margin-bottom: 14px; }
+.step { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; font-size: 16.5px; font-weight: 700; }
+.num { width: 26px; height: 26px; flex: none; border-radius: 50%; background: var(--grad-btn); color: #fff; display: grid; place-items: center; font-size: 13.5px; font-weight: 700; }
+.indent { padding-left: 36px; }
 
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 10px; cursor: pointer; color: #fff; font-weight: 600; transition: filter .15s, transform .05s, background .15s; }
 .btn:active { transform: scale(.98); }
@@ -60,7 +62,7 @@ main { max-width: 920px; margin: 0 auto; padding: 18px 16px 90px; }
 .btn:disabled { background: #c7c7c7 !important; cursor: default; filter: none; }
 .btn-blue { background: var(--blue); padding: 10px 18px; font-size: 15.5px; }
 .btn-blue:hover { background: var(--blue-hover); }
-.btn-green { background: var(--grad-btn); padding: 14px 22px; font-size: 17px; width: 100%; max-width: 480px; box-shadow: 0 6px 18px rgba(225, 48, 108, .25); }
+.btn-green { background: var(--grad-btn); padding: 13px 22px; font-size: 16.5px; width: 100%; max-width: 480px; border-radius: 12px; }
 .btn-green:hover { filter: brightness(1.06); }
 .btn-green.pulse { animation: pulse 0.5s ease-in-out 3 alternate; }
 @keyframes pulse { to { box-shadow: 0 0 0 7px rgba(225, 48, 108, .22); } }
@@ -70,8 +72,8 @@ main { max-width: 920px; margin: 0 auto; padding: 18px 16px 90px; }
 .link:disabled { color: var(--sub); cursor: default; text-decoration: none; }
 .link svg { width: 15px; height: 15px; vertical-align: -2px; margin-right: 4px; }
 hr { border: 0; border-top: 1px solid var(--border-soft); margin: 14px 0 10px; }
-.btn-outline { display: inline-flex; align-items: center; gap: 6px; background: #efefef; color: var(--text); border: 0; border-radius: 10px; padding: 7px 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none; }
-.btn-outline:hover { background: #e3e3e3; }
+.btn-outline { display: inline-flex; align-items: center; gap: 6px; background: var(--soft); color: var(--text); border: 0; border-radius: 10px; padding: 7px 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none; }
+.btn-outline:hover { background: #e8e8e9; }
 .btn-outline svg { width: 15px; height: 15px; flex: none; }
 
 .notice { background: #fff8e6; border: 1px solid #f7d58a; border-radius: 12px; padding: 10px 14px; font-size: 13px; margin: 0 0 14px; }
@@ -85,7 +87,7 @@ input[type=text], input[type=password], input[type=search], input:not([type]), t
 kbd { font-family: inherit; background: #efefef; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 6px; padding: 0 6px; font-size: 13px; }
 
 /* ---- help ---- */
-details.help { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 12px; box-shadow: var(--shadow); }
+details.help { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); margin-bottom: 12px; }
 details.help summary { cursor: pointer; padding: 14px 20px; font-weight: 700; }
 details.help .help-body { padding: 0 20px 16px; font-size: 14px; }
 details.help h4 { margin: 14px 0 4px; font-size: 14px; }
@@ -113,19 +115,19 @@ details.about[open] > summary { border-radius: var(--radius) var(--radius) 0 0; 
 .about-body { padding: 2px 20px 20px; }
 .num svg { width: 16px; height: 16px; }
 .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.about-box { border: 1px solid var(--border-soft); border-radius: 14px; padding: 14px 16px 16px; background: #fff; }
+.about-box { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px 16px; background: #fff; }
 .about-box h3 { margin: 0 0 10px; font-size: 15px; }
 .profile { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
-.avatar { width: 72px; height: 72px; flex: none; border-radius: 50%; border: 3px solid #fff; outline: 2px solid transparent; object-fit: cover; background: #fff5ac; box-shadow: 0 0 0 2px #d62976; }
+.avatar { width: 64px; height: 64px; flex: none; border-radius: 50%; object-fit: cover; background: #fff5ac; box-shadow: 0 0 0 1px var(--line); }
 .pname { font-size: 18px; font-weight: 700; line-height: 1.3; }
 .psub { color: var(--sub); font-size: 13px; }
 .about-box p { margin: 0 0 8px; font-size: 14px; }
 .about-box .label { margin: 10px 0 6px; font-size: 13px; font-weight: 700; color: var(--sub); }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.chips span { background: #efefef; border-radius: 999px; padding: 3px 12px; font-size: 13px; }
+.chips span { background: var(--soft); border-radius: 999px; padding: 3px 12px; font-size: 13px; }
 .chips span.more { background: none; color: var(--sub); padding: 2px 2px; }
 .links { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
-.links li { display: flex; align-items: center; gap: 10px; border: 1px solid var(--border-soft); border-radius: 12px; padding: 8px 10px; }
+.links li { display: flex; align-items: center; gap: 10px; border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px; }
 .links .ic { width: 34px; height: 34px; flex: none; border-radius: 10px; display: grid; place-items: center; color: #fff; }
 .links .ic svg { width: 20px; height: 20px; }
 .links .lt { flex: 1; min-width: 0; line-height: 1.35; }
@@ -133,7 +135,7 @@ details.about[open] > summary { border-radius: var(--radius) var(--radius) 0 0; 
 .links .lt b { word-break: break-all; }
 .links a.go, .links button { flex: none; border: 0; color: #fff; background: var(--blue); border-radius: 8px; padding: 5px 12px; font-size: 12.5px; font-weight: 600; cursor: pointer; text-decoration: none; font-family: inherit; }
 .links a.go:hover, .links button:hover { background: var(--blue-hover); }
-.license { margin: 14px 0 0 40px; background: #fff1f2; border: 1px solid #f6c3c8; border-radius: 12px; padding: 10px 14px; font-size: 14px; }
+.license { margin: 14px 0 0 36px; background: #fafafa; border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; font-size: 14px; }
 .license b.ng { color: var(--red); }
 .license ul { margin: 4px 0; padding-left: 20px; }
 
@@ -156,9 +158,9 @@ dialog::backdrop { background: rgba(0, 0, 0, .55); }
 
 /* ---- ゲストの名前（partials/guest.js）---- */
 .gmodal { position: fixed; inset: 0; z-index: 50; background: rgba(0, 0, 0, .55); display: grid; place-items: center; padding: 16px; }
-.gmodal .gbox { width: min(400px, 100%); background: #fff; border-radius: 22px; padding: 30px 26px 24px; text-align: center; box-shadow: 0 20px 60px rgba(0, 0, 0, .3); }
-.gmodal .ring { width: 88px; height: 88px; margin: 0 auto 12px; border-radius: 50%; padding: 3px; background: var(--grad); }
-.gmodal .ring > div { width: 100%; height: 100%; border-radius: 50%; background: #fff; border: 3px solid #fff; display: grid; place-items: center; font-size: 34px; }
+.gmodal .gbox { width: min(400px, 100%); background: #fff; border-radius: 18px; padding: 28px 24px 22px; text-align: center; box-shadow: 0 20px 60px rgba(0, 0, 0, .25); }
+.gmodal .ring { width: 72px; height: 72px; margin: 0 auto 12px; border-radius: 50%; background: var(--soft); }
+.gmodal .ring > div { width: 100%; height: 100%; border-radius: 50%; display: grid; place-items: center; font-size: 32px; }
 .gmodal h2 { margin: 0 0 4px; font-size: 20px; }
 .gmodal p { margin: 0 0 16px; color: var(--sub); font-size: 13.5px; }
 .gmodal input { width: 100%; font-size: 16px; padding: 12px 14px; border: 1px solid var(--border); background: var(--input); border-radius: 12px; margin-bottom: 10px; }
@@ -171,12 +173,12 @@ dialog::backdrop { background: rgba(0, 0, 0, .55); }
 
 @media (max-width: 640px) {
   body { font-size: 14.5px; }
-  .header-in { padding: 8px 12px; gap: 10px; }
-  .header-in img { width: 36px; height: 36px; border-radius: 10px; }
-  .header-in h1 { font-size: 17px; }
+  .header-in { height: 52px; padding: 0 12px; gap: 10px; }
+  .header-in img { width: 34px; height: 34px; border-radius: 9px; }
+  .header-in h1 { font-size: 16.5px; }
   .header-in p { display: none; }
-  main { padding: 12px 12px 90px; }
-  .card { padding: 16px 14px 16px; border-radius: 14px; }
+  main { padding: 14px 12px 90px; }
+  .card { padding: 16px 14px 16px; border-radius: 12px; }
   .indent { padding-left: 0; }
   .btn-blue { width: 100%; }
   .btn-green { font-size: 16px; padding: 13px 14px; }
@@ -189,16 +191,23 @@ dialog::backdrop { background: rgba(0, 0, 0, .55); }
 }
 
 /* ---- サイトのメニュー ---- */
-.sitenav { background: rgba(255, 255, 255, .92); border-bottom: 1px solid var(--border-soft); position: sticky; top: 63px; z-index: 19; -webkit-backdrop-filter: saturate(180%) blur(12px); backdrop-filter: saturate(180%) blur(12px); }
-.sitenav-in { max-width: 920px; margin: 0 auto; padding: 8px 12px; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+/* タブのように: 文字だけ・いまのページは下に線（ピンク→紫） */
+.sitenav { background: #fff; border-bottom: 1px solid var(--line); position: sticky; top: 61px; z-index: 19; }
+.sitenav-in { max-width: 920px; margin: 0 auto; padding: 0 8px; display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
 .sitenav-in::-webkit-scrollbar { display: none; }
-.sitenav a { color: var(--text); text-decoration: none; padding: 6px 14px; font-size: 14px; font-weight: 600; border-radius: 999px; white-space: nowrap; background: #efefef; }
-.sitenav a:hover { background: #e3e3e3; }
-.sitenav a[aria-current="page"] { color: #fff; background: #262626; }
+.sitenav a { color: var(--sub); text-decoration: none; padding: 10px 12px 11px; font-size: 14px; font-weight: 600; white-space: nowrap; }
+.sitenav a:hover { color: var(--text); }
+.sitenav a[aria-current="page"] { color: var(--text); background: var(--grad-btn) left bottom / 100% 2px no-repeat; }
 @media (max-width: 640px) {
   .sitenav { top: 53px; }
-  .sitenav-in { padding: 7px 10px; gap: 5px; }
-  .sitenav a { padding: 5px 10px; font-size: 12.5px; }
+  .sitenav-in { padding: 0 4px; gap: 0; }
+  .sitenav a { padding: 9px 9px 10px; font-size: 13px; }
+}
+.sitenav .ni { margin-right: 5px; }
+@media (max-width: 480px) {
+  .sitenav-in { justify-content: space-between; }
+  .sitenav .ni { display: none; }
+  .sitenav a { padding: 10px 8px 11px; font-size: 13.5px; }
 }
 
 /* ---- 共通の部品（入力・コピー欄・かんたんな流れ・チップ）---- */
@@ -212,7 +221,7 @@ dialog::backdrop { background: rgba(0, 0, 0, .55); }
 .copybox button:hover { background: var(--blue-hover); }
 .copybox.disabled code { color: #a8a8a8; }
 .copybox.disabled button { background: #c7c7c7; cursor: default; }
-.easy, .tip { position: relative; background: linear-gradient(135deg, #fff7fb 0%, #f7f4ff 100%); border: 1px solid #f1e4f3; border-radius: var(--radius); padding: 14px 18px; margin: 0 0 16px; }
+.easy, .tip { position: relative; background: #fafafa; border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 18px; margin: 0 0 16px; }
 .tip { padding: 10px 14px; margin-top: 10px; font-size: 14px; border-radius: 12px; }
 .easy b.t { display: block; font-size: 15px; margin-bottom: 4px; }
 .easy ol { margin: 0; padding-left: 22px; font-size: 14px; }
@@ -319,53 +328,47 @@ table.cmds td:first-child { white-space: nowrap; }
     <img class="pixel" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAB40lEQVR4nO3dsU3DQBiAUYJo2SJESGnTUNGzAQ0lKzADK7AAc6RKwwBIjAE9bJAUxjrD915rWb7i0y/5fJJX6832+4ys89ELYCwBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIE4AcQKIE0CcAOIuRi+AeV0/Xx29bgLECSBOAHECiBNAnADiBBA3eR9gd3v4jXVkfd09HL3+/vQx6/NNgDgBxAkgTgBxAogTQJwA4pwHGOzUe/6p7/lT9wlMgDgBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIE4AcQKIE0CcAOIWfx7g9eXy6PX7x89F3790JkCcAOIEECeAOAHECSBOAHECiBNAnADiBBAngDgBxAkgTgBxiz8PMPV7++j7l84EiBNAnADiBBAngDgBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIG7x5wH+u7n/B3CKCRAngDgBxAkgTgBxAogTQNzkfYC3/c2k+3e3h6lLOGrq+ma3H/t4EyBOAHECiBNAnADiBBAngLg/fx5g8e/5g506T2ACxAkgTgBxAogTQJwA4gQQt/h9AO/58zIB4gQQJ4A4AcQJIE4AcQKIW6032+/Ri2AcEyBOAHECiBNAnADiBBAngDgBxAkgTgBxAogTQJwA4gQQJ4C4Hz5iK0yQ/79HAAAAAElFTkSuQmCC">
     <div>
       <h1>近接VC（Discord 版）</h1>
-      <p>Minecraft の位置で Discord のVCを自動で切り替え　｜　制作: MaYo（mayo01297）</p>
+      <p>位置で Discord のVCを自動で切り替え　｜　制作: MaYo（mayo01297）</p>
     </div>
     <a class="help-btn" href="#help" id="openHelp">？<span class="wide-only"> 使い方・困ったとき</span></a>
   </div>
 </header>
 <nav class="sitenav" aria-label="サイトのメニュー">
   <div class="sitenav-in">
-    <a href="../../" data-page="home">🏠 ホーム</a>
-    <a href="../../corpse/" data-page="corpse">🪦 死体スキン</a>
-    <a href="../../vc/" data-page="vc" aria-current="page">🎙 近接VC</a>
-    <a href="../../chat/" data-page="chat">💬 チャット</a>
-    <a href="../../works/" data-page="works">🧩 作品</a>
+    <a href="../../" data-page="home"><span class="ni" aria-hidden="true">🏠</span>ホーム</a>
+    <a href="../../corpse/" data-page="corpse"><span class="ni" aria-hidden="true">🪦</span>死体スキン</a>
+    <a href="../../vc/" data-page="vc" aria-current="page"><span class="ni" aria-hidden="true">🎙</span>近接VC</a>
+    <a href="../../chat/" data-page="chat"><span class="ni" aria-hidden="true">💬</span>チャット</a>
+    <a href="../../works/" data-page="works"><span class="ni" aria-hidden="true">🧩</span>作品</a>
   </div>
 </nav>
 
 <main>
-  <p class="sub-hint" style="margin:0 0 12px"><a href="../">← 近接VC のえらび方</a>　・　Discord なしで、ブラウザで話すときは <a href="../../talk/">サイト版</a></p>
-  <p class="notice" id="configNotice" hidden>⚠ まだ近接VC Bot の設定が終わっていません。サイトを公開した人は、<a href="../../setup/">設定ページ</a>で Discord の Bot のトークンを入れてください。</p>
+  <p class="sub-hint" style="margin:0 0 12px"><a href="../">← えらび方</a>　・　Discord なしなら <a href="../../talk/">サイト版</a></p>
+  <p class="notice" id="configNotice" hidden>⚠ Bot の設定がまだです。サイトを公開した人は<a href="../../setup/">設定ページ</a>でトークンを入れてください。</p>
 
   <div class="easy" role="note">
-    <b class="t">⚡ かんたんな流れ（ワールドで遊ぶとき）</b>
+    <b class="t">⚡ かんたんな流れ</b>
     <ol>
-      <li>① の「Bot を招待する」を押す</li>
-      <li>Discord で <span class="cmd">/vc setup</span> を送る → 届いた<b>ファイルをひらく</b>（近接VCアドオンが入ります）</li>
-      <li data-conn="connector">ホストは <a href="../../download/MaYoVCConnector.zip">近接VC コネクター</a>（Windows）をひらいて、Discord に出た <span class="cmd">/wsserver …</span> を貼って「スタート」</li>
-      <li data-conn="connector">ワールドでチートをオンにして、チャットで <span class="cmd">/wsserver ws://127.0.0.1:19131</span> を送る</li>
-      <li data-conn="relay" hidden>ワールドでチートをオンにして、Discord に出た <span class="cmd">/wsserver ws://…/v/…</span> をそのままチャットで送る</li>
-      <li>遊ぶ人は <span class="cmd">/vc link</span> で自分の名前を選んで、「🎮 近接VC ロビー」に入る</li>
+      <li>① で Bot を招待</li>
+      <li>Discord で <span class="cmd">/vc setup</span> → 届いた<b>ファイルをひらく</b></li>
+      <li data-conn="connector">ホストは <a href="../../download/MaYoVCConnector.zip">コネクター</a>（Windows）に <span class="cmd">/wsserver …</span> を貼って「スタート」</li>
+      <li data-conn="connector">ワールド（チートON）で <span class="cmd">/wsserver ws://127.0.0.1:19131</span></li>
+      <li data-conn="relay" hidden>ワールド（チートON）で、Discord に出た <span class="cmd">/wsserver ws://…/v/…</span> を送る</li>
+      <li>遊ぶ人は <span class="cmd">/vc link</span> →「🎮 近接VC ロビー」へ</li>
     </ol>
-    <p class="sub-hint" style="margin-top:6px">Discord のメッセージの「サイトでくわしく見る」ボタンから来ると、接続キーが自動で入ります。下の手順は、くわしく知りたいとき・BDS で使うときに。</p>
   </div>
-
   <!-- できること -->
   <section class="card what" aria-labelledby="w0">
-    <h2 class="step" id="w0"><span class="num">🎙</span>近接VCでできること</h2>
+    <h2 class="step" id="w0"><span class="num">🎙</span>できること</h2>
     <div class="indent">
       <ul>
-        <li>Minecraft で<b>近くにいるプレイヤーの声だけ</b>聞こえる（近い人どうしを Discord の同じVCに自動で移動）</li>
-        <li>離れると別のVCに分かれて、<b>一定の距離で聞こえなくなる</b>（声が届く距離は <span class="cmd">/vc distance</span> で設定）</li>
-        <li>プレイヤーが死んだら<b>死亡者専用VC</b>へ（死亡者どうしだけで話せる。リスポーンすると元に戻る）</li>
-        <li>Discord のユーザーと Minecraft のプレイヤーを<b>紐付け</b>る</li>
-        <li><b>専用の Discord Bot</b> で、VCの参加者を管理（だれがどこにいるか・紐付け・リセット）</li>
+        <li>近い人どうしを<b>同じVCに自動で移動</b>（距離は <span class="cmd">/vc distance</span>）</li>
+        <li>死んだら<b>死亡者VC</b>へ</li>
       </ul>
-      <p class="note">※ Discord のVCを切り替える方式のため、距離に合わせて声の大きさを少しずつ変えることはできません（Discord の仕様）。近い人どうしは同じVC、離れると別のVC、という切り替えになります。</p>
+      <p class="note">※ 声の大きさは距離で変わりません（Discord の仕様）。</p>
     </div>
   </section>
-
   <!-- ① -->
   <section class="card" aria-labelledby="s1">
     <h2 class="step" id="s1"><span class="num" data-n="1">1</span>Bot を Discord サーバーに招待する</h2>
@@ -374,7 +377,7 @@ table.cmds td:first-child { white-space: nowrap; }
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-9l-5 4v-4H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg>
         Bot を招待する
       </a>
-      <p class="hint">サーバーの管理者がやってください。Bot には「チャンネルの管理」「メンバーを移動」「接続」などの権限が必要です（招待のときに自動でつきます）。</p>
+      <p class="hint">サーバーの管理者が押してください（権限は自動でつきます）。</p>
     </div>
   </section>
 
@@ -382,8 +385,7 @@ table.cmds td:first-child { white-space: nowrap; }
   <section class="card" aria-labelledby="s2">
     <h2 class="step" id="s2"><span class="num" data-n="2">2</span>Discord で <span class="cmd">/vc setup</span> を送る</h2>
     <div class="indent">
-      <p style="margin:0">Bot が「🎮 近接VC ロビー」「💀 死亡者VC」「🔊 近接VC 1〜4」を自動で作って、<b>ワールド用の近接VCアドオン</b>と <b>/wsserver のコマンド</b>を送ってくれます（自分にだけ見えるメッセージ）。<br>
-      メッセージの「<b>サイトでくわしく見る</b>」ボタンを押すと、このページに接続キーが自動で入ります。</p>
+      <p style="margin:0">VC が作られ、<b>アドオン</b>と <b>/wsserver のコマンド</b>が届きます。「サイトでくわしく見る」を押すと、キーがここに入ります。</p>
     </div>
   </section>
 
@@ -393,7 +395,7 @@ table.cmds td:first-child { white-space: nowrap; }
     <div class="indent">
       <div class="label" style="margin-top:0">接続キー</div>
       <div class="key-row">
-        <input id="keyInput" type="text" autocomplete="off" spellcheck="false" placeholder="/vc setup で出たキーを貼り付け（例: 1234567890….AbCd…）" aria-label="接続キー">
+        <input id="keyInput" type="text" autocomplete="off" spellcheck="false" placeholder="/vc setup で出たキーを貼り付け" aria-label="接続キー">
         <button class="btn btn-blue" id="checkBtn" type="button">確認する</button>
       </div>
       <p class="check-result" id="checkResult" aria-live="polite"></p>
@@ -401,9 +403,9 @@ table.cmds td:first-child { white-space: nowrap; }
       <div class="label">遊ぶ場所</div>
       <div class="modes" role="radiogroup">
         <label class="mode" id="modeWorldBox"><input type="radio" name="mode" value="world" checked>
-          <span><b>だれかのワールド</b><small id="modeWorldNote">ホストが Windows の PC でワールドを開いて、近接VC コネクターを使う（チートON）。Realms では使えません。</small></span></label>
+          <span><b>だれかのワールド</b><small id="modeWorldNote">ホストが Windows でコネクターを使う（チートON・Realms 不可）</small></span></label>
         <label class="mode" id="modeBdsBox"><input type="radio" name="mode" value="bds">
-          <span><b>BDS・レンタルサーバー</b><small>サーバーのアドオンが Bot に直接送る。ベータ API と permissions.json の設定が必要。</small></span></label>
+          <span><b>BDS・レンタルサーバー</b><small>サーバーから直接つなぐ（ベータ API が必要）</small></span></label>
       </div>
 
       <div class="dl-row">
@@ -411,10 +413,10 @@ table.cmds td:first-child { white-space: nowrap; }
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v11M7.5 9.5 12 14l4.5-4.5M4 14v6h16v-6"/></svg>
           近接VCアドオンをダウンロード（.mcaddon）
         </button>
-        <p class="dl-note" id="dlNote">ワールド用は、接続キーがなくても作れます。BDS用は接続キーが入ったアドオンになります。</p>
+        <p class="dl-note" id="dlNote">ワールド用はキーなしでも作れます。</p>
       </div>
       <p class="last-dl" id="lastDl" hidden></p>
-      <p class="sub-hint">Discord の <span class="cmd">/vc setup</span> や <span class="cmd">/vc addon</span> でも、同じアドオンがもらえます。<br>作り直したときは、Minecraft の「設定」→「ストレージ」→「ビヘイビアパック」で古い「近接VC BP」を消してから入れるとスッキリします（名前の最後に作った日時が付きます）。</p>
+      <p class="sub-hint"><span class="cmd">/vc addon</span> でももらえます。作り直したら古い「近接VC BP」を消してから入れてください。</p>
     </div>
   </section>
 
@@ -426,45 +428,43 @@ table.cmds td:first-child { white-space: nowrap; }
       <div class="panel" id="panelWorld">
         <!-- リレー（Google Cloud の VM・Railway など）が設定されているとき -->
         <div id="worldRelay" hidden>
-        <p style="margin:0 0 4px"><b>だれかのワールド</b>（ホストがやること）</p>
+        <p style="margin:0 0 4px"><b>ワールド</b>（ホスト）</p>
         <ol class="steps">
-          <li>ワールドの設定で「<b>チートを有効にする</b>」をオン、「ビヘイビアパック」で「<b>近接VC BP</b>」を有効にする</li>
-          <li>ワールドを開いて、チャットにこれを送る（ワールドを開くたびに）
-            <div class="copybox" id="relayBox"><code id="relayCmd">（接続キーを入れると、ここにコマンドが出ます）</code><button type="button" id="relayCopy">コピー</button></div>
+          <li>チートON・「<b>近接VC BP</b>」をオン</li>
+          <li>ワールドを開くたびに、チャットで送る
+            <div class="copybox" id="relayBox"><code id="relayCmd">（キーを入れると出ます）</code><button type="button" id="relayCopy">コピー</button></div>
           </li>
-          <li>チャットに「<b>[近接VC] Discord「サーバー名」とつながりました</b>」と出たら準備OK</li>
+          <li>「<b>[近接VC] Discord「サーバー名」とつながりました</b>」と出たらOK</li>
         </ol>
-        <p class="sub-hint">つながらないときは、<a class="checkLink" href="#" target="_blank" rel="noopener">接続チェック</a>をひらいたまま、もう一度送ってください（どこで止まっているか分かります）。<br>
-          ホストがワールドを閉じると、全員「🎮 近接VC ロビー」に戻ります。</p>
+        <p class="sub-hint">つながらないときは<a class="checkLink" href="#" target="_blank" rel="noopener">接続チェック</a>をひらいたまま送り直してください。</p>
         </div>
         <details class="conn nosum" id="worldConnector" open>
-        <summary>予備: リレーが動かないとき（近接VC コネクター・Windows）</summary>
-        <p style="margin:0 0 4px" id="connectorTitle"><b>だれかのワールド</b>（ホストがやること・Windows の PC）</p>
-        <p class="sub-hint" style="margin:0 0 6px">Minecraft の <span class="cmd">/wsserver</span> は、インターネット上の Bot（Cloudflare）に直接つなぐと、すぐ切れてしまいます。<br>そこで、PC の中で中継する「<b>近接VC コネクター</b>」を使います（インストール不要・ダブルクリックでひらくだけ）。</p>
+        <summary>予備: リレーが動かないとき（コネクター・Windows）</summary>
+        <p style="margin:0 0 4px" id="connectorTitle"><b>ワールド</b>（ホスト・Windows）</p>
+        <p class="sub-hint" style="margin:0 0 6px">Bot に直接つなぐと切れるので、PC の中で中継する「<b>近接VC コネクター</b>」を使います（インストール不要）。</p>
         <ol class="steps">
-          <li><a class="btn btn-blue" href="../../download/MaYoVCConnector.zip" style="padding:6px 14px;font-size:14px">近接VC コネクターをダウンロード（.zip）</a><br>
-            zip をひらいて <b>MaYoVCConnector.exe</b> をダブルクリック（「Windows によって PC が保護されました」と出たら「詳細情報」→「実行」）</li>
-          <li>コネクターに、このコマンドを貼り付けて「<b>スタート</b>」（2回目からは、ひらくだけで自動でスタートします）
-            <div class="copybox" id="wsBox"><code id="wsCmd">（接続キーを入れると、ここにコマンドが出ます）</code><button type="button" id="wsCopy">コピー</button></div>
+          <li><a class="btn btn-blue" href="../../download/MaYoVCConnector.zip" style="padding:6px 14px;font-size:14px">コネクターをダウンロード（.zip）</a><br>
+            中の <b>MaYoVCConnector.exe</b> をひらく（警告が出たら「詳細情報」→「実行」）</li>
+          <li>これを貼って「<b>スタート</b>」
+            <div class="copybox" id="wsBox"><code id="wsCmd">（キーを入れると出ます）</code><button type="button" id="wsCopy">コピー</button></div>
           </li>
-          <li>ワールドの設定で「<b>チートを有効にする</b>」をオン、「ビヘイビアパック」で「<b>近接VC BP</b>」を有効にする</li>
-          <li>ワールドを開いて、チャットにこれを送る（ワールドを開くたびに）
+          <li>チートON・「<b>近接VC BP</b>」をオン</li>
+          <li>ワールドを開くたびに、チャットで送る
             <div class="copybox"><code id="localCmd">/wsserver ws://127.0.0.1:19131</code><button type="button" id="localCopy">コピー</button></div>
           </li>
-          <li>チャットに「<b>[近接VC] Discord「サーバー名」とつながりました</b>」と出たら準備OK</li>
+          <li>「<b>[近接VC] Discord「サーバー名」とつながりました</b>」と出たらOK</li>
         </ol>
-        <p class="sub-hint">つながらないときは、<a class="checkLink" id="checkLink" href="#" target="_blank" rel="noopener">接続チェック</a>をひらいたまま、もう一度送ってください（どこで止まっているか分かります）。<br>
-          遊んでいるあいだは、コネクターを開いたままにしてください。ホストがワールドを閉じると、全員「🎮 近接VC ロビー」に戻ります。</p>
+        <p class="sub-hint">つながらないときは<a class="checkLink" id="checkLink" href="#" target="_blank" rel="noopener">接続チェック</a>をひらいたまま送り直してください。遊ぶあいだはコネクターを開いたままに。</p>
         </details>
       </div>
       <div class="panel" id="panelBds" hidden>
-        <p style="margin:0 0 4px"><b>BDS・レンタルサーバー</b>（サーバーの管理者がやること・最初の1回だけ）</p>
+        <p style="margin:0 0 4px"><b>BDS・レンタルサーバー</b>（管理者・最初の1回）</p>
         <ol class="steps">
-          <li>③ で作った「近接VC BP」を、サーバーのワールドにビヘイビアパックとして入れる（入れ方はサーバーによってちがいます。<span class="cmd">world_behavior_packs.json</span> に書くときは下の内容）
-            <div class="copybox" id="packBox"><pre id="packJson">（BDS用をダウンロードすると、ここに出ます）</pre><button type="button" id="packCopy">コピー</button></div>
+          <li>③ の「近接VC BP」をワールドに入れる（<span class="cmd">world_behavior_packs.json</span> の例）
+            <div class="copybox" id="packBox"><pre id="packJson">（BDS用をダウンロードすると出ます）</pre><button type="button" id="packCopy">コピー</button></div>
           </li>
-          <li>ワールドの実験的機能「<b>ベータ API</b>」をオンにする（BDS で HTTP 通信を使うのに必要です）</li>
-          <li><span class="cmd">config/default/permissions.json</span> を次の内容にする（<span class="cmd">@minecraft/server-net</span> を使えるようにする）
+          <li>実験的機能「<b>ベータ API</b>」をオン</li>
+          <li><span class="cmd">config/default/permissions.json</span> をこうする
             <div class="copybox"><pre id="permJson">{
   "allowed_modules": [
     "@minecraft/server-gametest",
@@ -476,31 +476,23 @@ table.cmds td:first-child { white-space: nowrap; }
   ]
 }</pre><button type="button" id="permCopy">コピー</button></div>
           </li>
-          <li>サーバーを再起動する。つながらないときは、チャットに「<b>[近接VC] Discord の Bot につながりません</b>」と出ます</li>
+          <li>再起動（つながらないとチャットに「<b>[近接VC] Discord の Bot につながりません</b>」）</li>
         </ol>
-        <p class="sub-hint">サーバーが止まると、1分後に全員「🎮 近接VC ロビー」に戻ります。</p>
       </div>
     </div>
   </section>
-
   <!-- ⑤ -->
   <section class="card" aria-labelledby="s5">
     <h2 class="step" id="s5"><span class="num" data-n="5">5</span>遊ぶ人みんながやること</h2>
     <div class="indent">
       <ol class="steps">
-        <li>Discord で <span class="cmd">/vc link</span> を送る（最初の1回だけ）。ゲーム中なら、自分の名前が候補に出るので選ぶだけ</li>
-        <li>紐付けを確かめる
-          <ul>
-            <li><b>ワールド</b>: マイクラのチャットで、Bot に言われたとおり <span class="cmd">!vc 1234</span> のように送る</li>
-            <li><b>BDS</b>: ゲームの中に確認画面が出るので「紐付ける」を押す</li>
-          </ul>
-        </li>
-        <li>遊ぶときは Discord の「<b>🎮 近接VC ロビー</b>」に入っておく → ゲームの中の位置で、自動でVCが切り替わります（数秒かかることがあります）</li>
-        <li>死んだら「<b>💀 死亡者VC</b>」へ。リスポーンすると、近くの人のVCに戻ります</li>
+        <li>Discord で <span class="cmd">/vc link</span>（最初の1回）</li>
+        <li>確認: ワールドはチャットで <span class="cmd">!vc 1234</span> のように送る／BDS は画面の「紐付ける」</li>
+        <li>「<b>🎮 近接VC ロビー</b>」に入っておくと、位置で自動で切り替わります</li>
+        <li>死んだら「<b>💀 死亡者VC</b>」へ</li>
       </ol>
     </div>
   </section>
-
   <!-- コマンド -->
   <section class="card" aria-labelledby="c0">
     <h2 class="step" id="c0"><span class="num">/</span>Bot のコマンド</h2>
@@ -508,15 +500,15 @@ table.cmds td:first-child { white-space: nowrap; }
       <table class="cmds">
         <thead><tr><th>コマンド</th><th>できること</th></tr></thead>
         <tbody>
-          <tr><td><span class="cmd">/vc setup</span> <span class="who admin">管理者</span></td><td>近接VC用のVCを作って、接続キーを出す（もう一度やっても作り直しません）</td></tr>
-          <tr><td><span class="cmd">/vc link</span> <span class="who">みんな</span></td><td>自分の Discord とマイクラのアカウントを紐付ける（ゲーム中の人は名前が候補に出る）</td></tr>
-          <tr><td><span class="cmd">/vc unlink</span> <span class="who">みんな</span></td><td>紐付けを外す（管理者は、ほかの人の紐付けも外せる）</td></tr>
-          <tr><td><span class="cmd">/vc status</span> <span class="who">みんな</span></td><td>つながっているか・だれがどのVCにいるか・紐付けていない人を見る</td></tr>
-          <tr><td><span class="cmd">/vc distance</span> <span class="who admin">管理者</span></td><td>声が届く距離（4〜128ブロック、ふだんは20）を変える</td></tr>
+          <tr><td><span class="cmd">/vc setup</span> <span class="who admin">管理者</span></td><td>VCを作ってキーを出す</td></tr>
+          <tr><td><span class="cmd">/vc link</span> <span class="who">みんな</span></td><td>Discord とマイクラを紐付け</td></tr>
+          <tr><td><span class="cmd">/vc unlink</span> <span class="who">みんな</span></td><td>紐付けを外す</td></tr>
+          <tr><td><span class="cmd">/vc status</span> <span class="who">みんな</span></td><td>だれがどのVCにいるか</td></tr>
+          <tr><td><span class="cmd">/vc distance</span> <span class="who admin">管理者</span></td><td>声が届く距離（4〜128、ふだん20）</td></tr>
           <tr><td><span class="cmd">/vc reset</span> <span class="who admin">管理者</span></td><td>全員をロビーに戻す</td></tr>
-          <tr><td><span class="cmd">/vc addon</span> <span class="who">みんな</span></td><td>近接VCアドオンのファイルをもらう（BDS用は管理者だけ）</td></tr>
-          <tr><td><span class="cmd">/vc key</span> <span class="who admin">管理者</span></td><td>/wsserver のコマンドと接続キーをもう一度見る</td></tr>
-          <tr><td><span class="cmd">/vc rekey</span> <span class="who admin">管理者</span></td><td>接続キーと接続コードを作り直す（人に見られたとき）</td></tr>
+          <tr><td><span class="cmd">/vc addon</span> <span class="who">みんな</span></td><td>アドオンをもらう</td></tr>
+          <tr><td><span class="cmd">/vc key</span> <span class="who admin">管理者</span></td><td>コマンドとキーをもう一度見る</td></tr>
+          <tr><td><span class="cmd">/vc rekey</span> <span class="who admin">管理者</span></td><td>キーを作り直す（見られたとき）</td></tr>
         </tbody>
       </table>
     </div>
@@ -525,34 +517,28 @@ table.cmds td:first-child { white-space: nowrap; }
   <details class="help" id="help">
     <summary>？ 使い方・困ったとき</summary>
     <div class="help-body">
-      <h4>■ /wsserver でつながらない（「サーバーに接続できませんでした」）</h4>
+      <h4>■ /wsserver でつながらない</h4>
       <ul>
-        <li data-conn="relay" hidden><b>Discord の <code>/vc key</code> で出たコマンド（<code>/wsserver ws://〜/v/〜</code>）を、そのまま送ってください。</b>リレー（中継サーバー）を通してつなぎます。「サーバーに接続できませんでした」と出るときは、リレーが止まっているか、アドレス・ポート番号がちがいます（サイトを公開した人は <a href="../../setup/">設定ページ</a> の「リレーをためす」で確認できます）。</li>
-        <li><b>近接VC コネクターを使ってください。</b>Minecraft の <code>/wsserver</code> は、Cloudflare 上の Bot に直接つなぐと 0.3 秒ほどで切れてしまいます（接続チェックに「コード 59907＝1002: プロトコルエラー」と出ます）。コネクターを使うと、Minecraft は PC の中のコネクターにつなぐので、この問題が起きません。</li>
-        <li>コネクターの画面が「つながっています」にならないときは、<b>接続チェック</b>（④ のリンク、または Discord の「接続チェック」ボタン）をひらいたまま、もう一度送ってください。「コネクター経由で Minecraft から接続がきました」と出れば、コネクターから Bot までは届いています。</li>
-        <li>コネクターの画面に何も出ないときは、Minecraft のコマンドが <code>/wsserver ws://127.0.0.1:19131</code> になっているか（コネクターに表示されたものと同じか）確認してください。</li>
-        <li>ワールドのチートがオンになっているか確認してください（ホストがオペレーター権限を持っている必要があります）。</li>
-        <li>「設定」→「一般」の WebSocket の項目：「WebSocket を有効にする」のようなスイッチがあればオン、「暗号化された WebSocket を要求」はオフにして、Minecraft を一度終了してからひらき直してください。</li>
-        <li>コマンドの <code>ws://</code> を <code>wss://</code> に変えると、つながることがあります。</li>
-        <li>学校などの Wi-Fi や、セキュリティソフトの「Web保護」が止めていることがあります。スマホのテザリングなど、ちがう回線でも試してください。</li>
-        <li>Discord で <code>/vc rekey</code> をした後は、新しいコマンド（接続コードが変わります）を使ってください（<code>/vc key</code> で見られます）。</li>
+        <li data-conn="relay" hidden><code>/vc key</code> で出たコマンドをそのまま送ってください。だめなら<a href="../../setup/">設定ページ</a>の「リレーをためす」で確認。</li>
+        <li>近接VC コネクターを使ってください（Bot に直接つなぐと切れます）。</li>
+        <li>接続チェック（④）をひらいたまま送り直すと、どこで止まっているか分かります。</li>
+        <li>チートON か・コマンドがコネクターと同じか確認。</li>
+        <li>「設定」→「一般」で WebSocket をオン・「暗号化を要求」をオフにして再起動。</li>
+        <li><code>ws://</code> を <code>wss://</code> にすると、つながることがあります。</li>
+        <li>学校の Wi-Fi やセキュリティソフトが止めていることも。ちがう回線でためしてください。</li>
+        <li><code>/vc rekey</code> の後は新しいコマンド（<code>/vc key</code>）を使う。</li>
       </ul>
       <h4>■ VCが切り替わらない</h4>
       <ul>
-        <li>Discord で <code>/vc status</code> を送ると、だれがどうなっているか見られます。</li>
-        <li>「VCに入っていません」→ 先に「🎮 近接VC ロビー」に入ってください。Bot は、VCに入っていない人を動かせません。</li>
-        <li>「近接VC以外のVCにいます」→ 近接VCとは関係ないVCにいる人は、勝手に動かしません。ロビーに移ってください。</li>
-        <li>「ゲームにいるけど紐付けていない人」に名前があったら、その人は <code>/vc link</code> をしてください。</li>
-        <li>Bot の役職（ロール）に「メンバーを移動」の権限があるか確認してください。</li>
+        <li><code>/vc status</code> で状態を見る</li>
+        <li>先に「🎮 近接VC ロビー」に入る（ほかのVCの人は動かしません）</li>
+        <li>紐付けていない人は <code>/vc link</code></li>
+        <li>Bot に「メンバーを移動」の権限があるか確認</li>
       </ul>
-      <h4>■ 死亡者VCについて</h4>
-      <p>死んだ人は「💀 死亡者VC」に移動して、死亡者どうしだけで話せます。生きている人には聞こえません。リスポーンすると、近くの人のVCに戻ります。</p>
-      <h4>■ 近接VCの数が足りない・増えた</h4>
-      <p>グループが増えると「🔊 近接VC 5」「6」… と自動で作ります（最大30）。</p>
-      <h4>■ 声の大きさが距離で変わらない</h4>
-      <p>Discord の Bot は、ほかの人の声の大きさを変えられないため、「近い人どうしは同じVC・離れたら別のVC」という方式です。声が届く距離は <code>/vc distance</code> で変えられます。</p>
-      <h4>■ データについて</h4>
-      <p>アドオンが Bot に送るのは「だれとだれが同じグループか（部屋の番号）」だけで、座標は送りません。Bot（Cloudflare）には、Discord のユーザーIDと名前・マイクラの名前・紐付け・接続キーが保存されます。</p>
+      <h4>■ 近接VCの数</h4>
+      <p>人が増えると「🔊 近接VC 5」… を自動で作ります（最大30）。</p>
+      <h4>■ データ</h4>
+      <p>座標は送りません（同じグループかどうかだけ）。Bot には Discord とマイクラの名前・紐付け・キーを保存します。</p>
     </div>
   </details>
 
@@ -575,7 +561,7 @@ table.cmds td:first-child { white-space: nowrap; }
             <div class="psub">高校1年生</div>
           </div>
         </div>
-        <p>普段は、マインクラフトの PvP クライアントを作ったり、Roblox でゲームを作ったり、アドオンを作ったり、マインクラフトのマップを作ったりしています。</p>
+        <p>マイクラの PvP クライアント・アドオン・マップや、Roblox のゲームを作っています。</p>
         <p class="label">好きなゲーム</p>
         <div class="chips">
           <span>マインクラフト</span><span>第五人格</span><span>崩壊：スターレイル</span><span>Roblox</span><span>Dead by Daylight</span><span class="more">など</span>
@@ -603,15 +589,7 @@ table.cmds td:first-child { white-space: nowrap; }
       </div>
     </div>
     <div class="license">
-      <b>クレジット・二次配布について</b><br>
-      このスキン登録ページと「プレイヤーの死体アドオン」は、<b>MaYo（mayo01297）</b>が制作しました。<br>
-      <b class="ng">二次配布は禁止です。</b>次のことはしないでください。
-      <ul>
-        <li>このページのファイルやアドオンを、ほかのサイト・SNS・Discord サーバーなどにアップロードして配ること</li>
-        <li>改変して配ること</li>
-        <li>自分が作ったと言うこと（自作発言）</li>
-      </ul>
-      紹介するときは、このページのURLを共有してください。
+      <b class="ng">二次配布禁止</b>：再アップロード・改変して配布・自作発言はしないでください。紹介はこのページの URL でお願いします。
     </div>
     </div>
   </details>
@@ -657,7 +635,7 @@ table.cmds td:first-child { white-space: nowrap; }
   <p class="small">近接VC（Discord 版）<br>© 2026 MaYo（mayo01297）　・　二次配布禁止　・　<a href="#about">制作者について</a></p>
 </main>
 
-<div id="status" class="info" role="status" aria-live="polite"><span class="dot">i</span><span id="statusText">① から順番にやってください。</span></div>
+<div id="status" class="info" role="status" aria-live="polite"><span class="dot">i</span><span id="statusText">① から順番に。</span></div>
 
 <script>
 "use strict";
@@ -750,8 +728,8 @@ function render() {
   $("panelWorld").hidden = state.mode !== "world";
   $("panelBds").hidden = state.mode !== "bds";
   $("dlNote").textContent = state.mode === "bds"
-    ? "BDS用は、接続キーと Bot の URL が入ったアドオンになります（ほかの人に配らないでください）。"
-    : "ワールド用は、接続キーがなくても作れます（キーは /wsserver のコマンドで使います）。";
+    ? "BDS用はキー入りです（人に配らないでください）。"
+    : "ワールド用はキーなしでも作れます。";
   const cmd = valid && configured
     ? (info && info.shortCode ? `/wsserver ws://${wsHost()}/v/${info.shortCode}` : `/wsserver ws://${wsHost()}/ws/${key}`)
     : "";
@@ -769,8 +747,8 @@ function render() {
   $("connectorTitle").hidden = !!RELAY;
   for (const el of document.querySelectorAll("[data-conn]")) el.hidden = (el.dataset.conn === "relay") !== !!RELAY;
   $("modeWorldNote").textContent = RELAY
-    ? "ホストがワールドを開いて、チャットで /wsserver を送る（チートON）。Realms では使えません。"
-    : "ホストが Windows の PC でワールドを開いて、近接VC コネクターを使う（チートON）。Realms では使えません。";
+    ? "ホストが /wsserver を送る（チートON・Realms 不可）"
+    : "ホストが Windows でコネクターを使う（チートON・Realms 不可）";
   const checkUrl = valid && configured && info && info.shortCode ? `${BOT}/v/${info.shortCode}` : "";
   for (const a of document.querySelectorAll("a.checkLink")) {
     a.href = checkUrl || "#help";
@@ -804,7 +782,7 @@ function renderProgress(valid) {
     const lastText = last ? `（最後の記録: ${agoText((info.now || Date.now()) - last.t)}「${last.text}」）` : "";
     live.textContent = connected
       ? `🟢 ${info.mode === "ws" ? "ワールド" : "BDS"}とつながっています（ゲームにいる人: ${info.inGame || 0}人・紐付けた人: ${info.linked}人）`
-      : "⚪ まだゲームとつながっていません。下のとおりにつなぐと、ここが緑になります。" + lastText;
+      : "⚪ まだゲームとつながっていません" + lastText;
   }
 }
 
@@ -813,7 +791,7 @@ async function checkKey() {
   const key = $("keyInput").value.trim();
   const out = $("checkResult");
   out.className = "check-result";
-  if (!parseKey(key)) { out.classList.add("ng"); out.textContent = "接続キーの形がちがいます。Discord の /vc setup（または /vc key）で出たキーを、そのまま貼り付けてください。"; return false; }
+  if (!parseKey(key)) { out.classList.add("ng"); out.textContent = "キーの形がちがいます。/vc key で出たキーを貼ってください。"; return false; }
   if (!configured) { out.classList.add("ng"); out.textContent = "まだ Bot の設定が終わっていないため、確認できません。"; return false; }
   out.textContent = "確認しています…";
   try {
@@ -823,14 +801,14 @@ async function checkKey() {
     info = data;
     render();
     startPolling();
-    setStatus("ok", data.mode ? "接続キーを確認しました。ゲームともつながっています！" : "接続キーを確認しました。次はアドオンを入れて、ゲームとつなぎます（④）。");
+    setStatus("ok", data.mode ? "接続キーを確認しました。ゲームともつながっています！" : "キーを確認しました。次は ④ へ。");
     out.classList.add("ok");
     const mode = data.mode === "ws" ? "ワールドとつながっています" : data.mode === "bds" ? "BDS とつながっています" : "ゲームとはまだつながっていません";
     out.textContent = `✓ Discord サーバー「${data.guildName}」の接続キーです（紐付けた人: ${data.linked}人・声が届く距離: ${data.radius}ブロック・${mode}）`;
     return true;
   } catch (e) {
     out.classList.add("ng");
-    out.textContent = "✗ Bot につながりませんでした。インターネットの接続を確認してください。";
+    out.textContent = "✗ Bot につながりませんでした。";
     return false;
   }
 }
@@ -943,8 +921,8 @@ async function download() {
   const key = $("keyInput").value.trim();
   const mode = state.mode;
   if (mode === "bds") {
-    if (!configured) { setStatus("warn", "まだ Bot の設定が終わっていないため、BDS用は作れません。"); return; }
-    if (!parseKey(key)) { setStatus("warn", "BDS用は接続キーが必要です。③ の欄に、/vc setup で出たキーを貼り付けてください。"); $("keyInput").focus(); return; }
+    if (!configured) { setStatus("warn", "Bot の設定がまだなので、BDS用は作れません。"); return; }
+    if (!parseKey(key)) { setStatus("warn", "BDS用はキーが必要です。③ に貼ってください。"); $("keyInput").focus(); return; }
   }
   try {
     const r = buildAddon(mode, key);
@@ -953,7 +931,7 @@ async function download() {
     saveState();
     if (mode === "bds") $("packJson").textContent = JSON.stringify([{ pack_id: r.uuid, version: r.version }], null, 2);
     render();
-    setStatus("ok", `ダウンロードしました（近接VC BP【${r.label}】）。ひらくと Minecraft に読み込まれます。次は ④ へ。`);
+    setStatus("ok", `ダウンロードしました【${r.label}】。ひらいたら ④ へ。`);
   } catch (e) {
     console.error(e);
     setStatus("warn", "アドオンを作れませんでした: " + (e.message || e));
@@ -999,7 +977,7 @@ loadState();
   }
 }
 $("keyInput").value = state.key;
-$("inviteBtn").addEventListener("click", ev => { if (!configured) { ev.preventDefault(); setStatus("warn", "まだ Bot の設定が終わっていません（サイトを公開した人が、設定ページでトークンを入れてください）。"); } });
+$("inviteBtn").addEventListener("click", ev => { if (!configured) { ev.preventDefault(); setStatus("warn", "Bot の設定がまだです。"); } });
 $("keyInput").addEventListener("input", () => { state.key = $("keyInput").value.trim(); saveState(); info = null; $("checkResult").textContent = ""; render(); });
 $("checkBtn").addEventListener("click", checkKey);
 for (const r of document.querySelectorAll('input[name="mode"]'))

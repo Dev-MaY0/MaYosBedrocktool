@@ -59,22 +59,22 @@ export function checkPage({ host, code, relay = "" }) {
     <p style="margin:8px 0"><a class="dl" href="/download/MaYoVCConnector.zip">近接VC コネクターをダウンロード（.zip）</a></p>
     <p class="label">コネクターに貼り付けて「スタート」</p>
     <div class="cmd"><code id="c1">${esc(ws)}</code><button type="button" data-copy="c1">コピー</button></div>
-    <p class="label">このページをひらいたまま、Minecraft のチャットで送る</p>
+    <p class="label">ページをひらいたまま、マイクラのチャットで送る</p>
     <div class="cmd"><code id="c3">/wsserver ws://127.0.0.1:19131</code><button type="button" data-copy="c3">コピー</button></div>`;
   const first = relay ? `
   <section class="card">
-    <h2>① Minecraft のチャットで送る</h2>
-    <p class="label" style="margin-top:0">このページをひらいたまま、ワールドに入って、チャットでこれを送ってください（リレー経由でつながります）。</p>
+    <h2>① マイクラのチャットで送る</h2>
+    <p class="label" style="margin-top:0">ページをひらいたまま、ワールドでこれを送ってください。</p>
     <div class="cmd"><code id="c0">${esc(viaRelay)}</code><button type="button" data-copy="c0">コピー</button></div>
-    <p class="label">リレーが動いているかは、ブラウザで <a href="http://${esc(relay)}/" target="_blank" rel="noopener">http://${esc(relay)}/</a> をひらくと分かります（「MaYoVCRelay … OK」と出れば動いています）。</p>
-    <details style="margin-top:10px"><summary class="label" style="cursor:pointer">予備: リレーが動かないとき（近接VC コネクター・Windows）</summary>${connectorSteps}
+    <p class="label">リレーの確認: <a href="http://${esc(relay)}/" target="_blank" rel="noopener">http://${esc(relay)}/</a>（「MaYoVCRelay … OK」なら動いています）</p>
+    <details style="margin-top:10px"><summary class="label" style="cursor:pointer">予備: コネクター（Windows）</summary>${connectorSteps}
     </details>
   </section>
 ` : `
   <section class="card">
     <h2>① 近接VC コネクター（Windows）でつなぐ</h2>
-    <p class="label" style="margin-top:0">Minecraft の /wsserver は、Cloudflare 上の Bot に直接つなぐと、すぐ切れてしまいます。PC の中で中継する「近接VC コネクター」を使ってください。</p>${connectorSteps}
-    <details style="margin-top:10px"><summary class="label" style="cursor:pointer">コネクターを使わずに直接つなぐ（ほとんどの場合、すぐ切れます）</summary>
+    <p class="label" style="margin-top:0">Bot に直接つなぐと切れるので、コネクターで中継します。</p>${connectorSteps}
+    <details style="margin-top:10px"><summary class="label" style="cursor:pointer">直接つなぐ（ほぼ切れます）</summary>
       <div class="cmd"><code id="c2">${esc(wss)}</code><button type="button" data-copy="c2">コピー</button></div>
     </details>
   </section>
@@ -83,31 +83,31 @@ export function checkPage({ host, code, relay = "" }) {
 <!-- 近接VC 接続チェック  制作: MaYo (mayo01297)  二次配布禁止 -->
 <html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex">
 <title>接続チェック</title><style>${STYLE}</style></head><body>
-<header><h1>近接VC 接続チェック</h1><p>Minecraft の /wsserver が Bot まで届いているかを見るページ　｜　制作: MaYo（mayo01297）</p></header>
+<header><h1>近接VC 接続チェック</h1><p>/wsserver が届いているか見るページ　｜　制作: MaYo（mayo01297）</p></header>
 <main>
   <section class="card" aria-live="polite">
     <div class="state" id="state"><div class="big" id="icon">…</div><div><b id="title">確認しています…</b><p id="sub"></p></div></div>
   </section>
 ${first}
   <section class="card" aria-live="polite">
-    <h2>② Minecraft からの接続の記録（3秒ごとに更新）</h2>
+    <h2>② 接続の記録（3秒ごとに更新）</h2>
     <ul class="tries" id="tries"></ul>
     <p class="empty" id="empty">まだ何も届いていません。</p>
     <p class="hint" id="hint" hidden></p>
   </section>
 
   <section class="card">
-    <h2>③ 記録が出ないとき（Minecraft 側で止まっています）</h2>
+    <h2>③ 記録が出ないとき</h2>
     <ol class="check">
-      <li>ワールドの設定で <b>チート</b> がオン、コマンドを打つ人が <b>オペレーター</b>（ホスト）になっている</li>
-      <li>Minecraft の「設定」→「一般」にある <b>WebSocket</b> の項目を見る：「WebSocket を有効にする」のようなスイッチがあれば <b>オン</b>、「<b>暗号化された WebSocket を要求</b>」は <b>オフ</b></li>
-      <li>設定を変えたら、<b>Minecraft を一度完全に終了</b>して、ひらき直す</li>
-      <li>コマンドを <b>2〜3回</b> 送ってみる（1回目は失敗することがあります）</li>
-      ${relay ? `<li>Minecraft のコマンドが ① のもの（<b>${esc(viaRelay)}</b>）と同じか確認する。ポート番号（<b>:</b> のあとの数字）も必要です</li>
-      <li>ブラウザで <b>http://${esc(relay)}/</b> がひらけないときは、リレー（中継サーバー）が止まっています。Google Cloud の VM・Railway のサービスが動いているか、アドレスが変わっていないか確認する</li>` : ""}
-      <li>コネクターを使っているときは、コネクターの画面が「Minecraft からの接続を待っています」になっているか、Minecraft のコマンドがコネクターに出ているもの（<b>/wsserver ws://127.0.0.1:19131</b>）と同じか確認する</li>
-      <li>学校・お店などの Wi-Fi や、セキュリティソフトの「Web保護」が止めていることがあります。<b>スマホのテザリング</b>など、ちがう回線でも試す</li>
-      <li>Realms のワールドでは使えません（自分のワールドで、ホストが送ってください）</li>
+      <li><b>チート</b>がオン・送る人が<b>オペレーター</b></li>
+      <li>「設定」→「一般」で <b>WebSocket</b> をオン・「<b>暗号化を要求</b>」はオフ</li>
+      <li>変えたら<b>マイクラを完全に終了</b>してひらき直す</li>
+      <li>コマンドを <b>2〜3回</b> 送る</li>
+      ${relay ? `<li>コマンドが ① と同じか（ポート番号も）</li>
+      <li><b>http://${esc(relay)}/</b> がひらけないなら、リレーが止まっています</li>` : ""}
+      <li>コネクターのときは、マイクラで <b>/wsserver ws://127.0.0.1:19131</b> を送っているか</li>
+      <li>学校の Wi-Fi やセキュリティソフトが止めていることも。<b>テザリング</b>などでためす</li>
+      <li>Realms では使えません</li>
     </ol>
   </section>
 </main>
@@ -144,11 +144,11 @@ async function load() {
   const fresh = (d.tries || []).filter(x => x.t >= opened + skew - 2000);
   const hint = $("hint");
   hint.hidden = false; hint.className = "hint";
-  if (d.mode === "ws") hint.textContent = "うまくいっています。Minecraft のチャットに「[近接VC] … とつながりました」が出ていれば完成です。";
-  else if (!fresh.length) hint.textContent = "このページをひらいてから、まだ何も届いていません。Minecraft でコマンドを送ると、数秒でここに出ます。出なければ ③ を見てください。" + (RELAY ? "（「サーバーに接続できませんでした」と出るときは、リレーが止まっているか、アドレス・ポートがちがいます）" : "");
-  else if (fresh.some(x => x.kind === "close" && /1002/.test(x.text)) && !fresh.some(x => x.kind === "open" && /コネクター|リレー/.test(x.text))) { hint.className = "hint warn"; hint.textContent = RELAY ? "Minecraft から Bot（Cloudflare）に直接つないだため、すぐ切れました。上の ① のコマンド（リレー経由）を送ってください。" : "Minecraft から直接つないだため、すぐ切れました（Minecraft と Cloudflare の相性の問題です）。上の「近接VC コネクター」を使ってつないでください。"; }
-  else if (fresh.some(x => x.kind === "close" || x.kind === "error")) { hint.className = "hint warn"; hint.textContent = "Bot までは届いていますが、すぐ切れています。記録の「切れました」の行と、その下の灰色の行を見ると、原因が分かります。スクリーンショットを残しておいてください。"; }
-  else if (fresh.some(x => x.kind === "noupgrade")) { hint.className = "hint warn"; hint.textContent = "Bot までは届いていますが、とちゅうで WebSocket の形がこわされています。wss:// のほうを試すか、ちがう回線で試してください。"; }
+  if (d.mode === "ws") hint.textContent = "うまくいっています。マイクラに「[近接VC] … とつながりました」と出れば完成です。";
+  else if (!fresh.length) hint.textContent = "まだ何も届いていません。コマンドを送ると数秒で出ます（出なければ ③）。" + (RELAY ? "「サーバーに接続できませんでした」なら、リレーかアドレスの問題です。" : "");
+  else if (fresh.some(x => x.kind === "close" && /1002/.test(x.text)) && !fresh.some(x => x.kind === "open" && /コネクター|リレー/.test(x.text))) { hint.className = "hint warn"; hint.textContent = RELAY ? "直接つないだので切れました。① のコマンドを送ってください。" : "直接つないだので切れました。コネクターを使ってください。"; }
+  else if (fresh.some(x => x.kind === "close" || x.kind === "error")) { hint.className = "hint warn"; hint.textContent = "届いていますが、すぐ切れています。記録の「切れました」の行で原因が分かります。"; }
+  else if (fresh.some(x => x.kind === "noupgrade")) { hint.className = "hint warn"; hint.textContent = "とちゅうで WebSocket がこわされています。wss:// か、ちがう回線でためしてください。"; }
   else hint.textContent = "Bot まで届いています。";
 }
 for (const b of document.querySelectorAll("button[data-copy]")) {

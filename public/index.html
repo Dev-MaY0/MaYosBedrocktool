@@ -1,6 +1,6 @@
 <!doctype html>
 <!--
-  マイクラ統合版ツール（死体スキン・近接VC）
+  MaYo鯖 BEツール（死体スキン・近接VC）
   制作: MaYo (mayo01297)  https://github.com/Dev-MaY0
   このサイトとアドオンの二次配布（再アップロード・改変しての配布・自作発言）は禁止です。
 -->
@@ -10,17 +10,19 @@
 <meta name="author" content="MaYo (mayo01297)">
 <meta name="copyright" content="© 2026 MaYo (mayo01297) 二次配布禁止">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>マイクラ統合版ツール</title>
-<meta name="description" content="Minecraft 統合版のアドオンツール。死んだ場所に本人スキンの死体を残す「死体スキン」と、近くの人とだけ話せる「近接VC」（ブラウザ版・Discord 版）、ゲストで使えるチャット。制作: MaYo (mayo01297)">
-<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAACjUlEQVR42u2bPUwUQRiG3zEYG0KLpbEQOI0o0cRwWBAiojmD+NOoUBgbCgv5CYeJFQUSwMbWigMafhovglhcg8TExAQKEygulppY2liNxd0YdnK7s8Pt3jF379ftfjt7O/s+837f7t0JGOLcxQcSDsfB3qoIyp9AnYfwV/6+rKWJHuytCRIQhoCWGlNej32NBBLwX/n2e7KeJr6/uy5IAADR6rjyOx9HPNudN99YjScBrZcGnCRgZ3M0MN/ZN08CQhHQFjMBk+OPA/PTs0tW5/tsUF6PpIGEuiegASJaACbHnpRFyPTcYsSMSxIQeH8Sl+9GgkDaUnlTvDaQsL0xFpjvujXHKhCOgI7+sghIjw6GOi77PgsASN1J2ZEwnwkm4cO4V/nbs+wEraqAcO2FhRbXNcVt50MCjjpwIuTaLzfU58wYvOCoQQJExJ2gcnvbfOL8hWAvEJIEHCsP8Au/Om/qA/L5H1W5ASQgrrUVeT9AD+AS4A2gB5AAB/qAqOJld1bbjvb8V140kgCnPCAuTyEBrlxo4lF5zwrfl8+wCtAD6AFV9ADb7wP4LFAxD3DsgrffjVgd3/Ws9G+GBAlQHuBIFVDKN994DgBoH1wBAGwN/fQc17twGgCwm3lYHKcy6xoCrAKlPeDs0F8AQH7hVKj9lY5fn94WlS+dV0So43z7AHqA5gFNPb8BACvDXwuZYZ8Rxf2Z5bWqXviX7LfA/LVUh6EVpAd4PSA3VVC++9XVUAOftqWreuFGhU3PAvQAtRKklDbKVyq2+hpjPf/JZI4EqKdBtRzq7cUA/zGivw84ViT0bv6JVflcklXAozqKxeBwNZC1OFfV7wghSICHAJ2Ew7tqaY5KebATLMQ/lnufS6vEI9gAAAAASUVORK5CYII=">
+<title>MaYo鯖 BEツール</title>
+<meta name="description" content="MaYo鯖 BEツール … Minecraft 統合版のアドオンツール。死んだ場所に本人スキンの死体を残す「死体スキン」と、近くの人とだけ話せる「近接VC」（ブラウザ版・Discord 版）、ゲストで使えるチャット。制作: MaYo (mayo01297)">
+<link rel="icon" type="image/png" href="img/mayosaba-64.png">
+<link rel="apple-touch-icon" href="img/mayosaba.png">
 <script src="config.js"></script>
 <style>
 /* =====================================================================
    共通スタイル（全ページ）  制作: MaYo (mayo01297)  二次配布禁止
-   白ベース・角の丸いカード・グラデーションのアクセント（SNS アプリのような雰囲気）
+   シンプル: 白ベース・細い線のカード（影なし）・アクセントはピンク→紫・ボタンは青
    ===================================================================== */
 :root {
   --back: #fafafa; --panel: #ffffff; --border: #dbdbdb; --border-soft: #efefef; --input: #fafafa;
+  --line: #e8e8e8; --soft: #f3f3f4; --accent: #d62976;
   --text: #262626; --sub: #737373; --link: #00376b;
   --header: #ffffff; --header-sub: #737373;
   --blue: #0095f6; --blue-hover: #1877f2; --blue-pale: #e8f3ff;
@@ -28,8 +30,8 @@
   --red: #ed4956; --orange: #f39c12; --preview: #f2f2f2;
   --grad: linear-gradient(45deg, #feda75 0%, #fa7e1e 25%, #d62976 50%, #962fbf 75%, #4f5bd5 100%);
   --grad-btn: linear-gradient(90deg, #f56040 0%, #e1306c 45%, #833ab4 100%);
-  --radius: 16px;
-  --shadow: 0 1px 2px rgba(0, 0, 0, .04), 0 6px 20px rgba(0, 0, 0, .05);
+  --radius: 14px;
+  --shadow: none;
   --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic UI", Meiryo, system-ui, sans-serif;
 }
 * { box-sizing: border-box; }
@@ -41,19 +43,20 @@ a { color: var(--link); }
 .pixel { image-rendering: pixelated; image-rendering: crisp-edges; }
 
 /* ---- header ---- */
-header { background: rgba(255, 255, 255, .92); color: var(--text); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 20; -webkit-backdrop-filter: saturate(180%) blur(12px); backdrop-filter: saturate(180%) blur(12px); }
-.header-in { max-width: 920px; margin: 0 auto; padding: 10px 16px; display: flex; align-items: center; gap: 12px; }
-.header-in img { width: 42px; height: 42px; flex: none; border-radius: 12px; padding: 2px; background: var(--grad); }
-.header-in h1 { margin: 0; font-size: 20px; line-height: 1.25; font-weight: 800; letter-spacing: -.01em; background: var(--grad-btn); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.header-in p { margin: 1px 0 0; color: var(--header-sub); font-size: 12.5px; }
-.header-in .help-btn { margin-left: auto; flex: none; color: var(--text); background: #efefef; border: 0; border-radius: 10px; padding: 7px 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none; white-space: nowrap; }
-.header-in .help-btn:hover { background: #e3e3e3; }
+header { background: #fff; color: var(--text); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 20; }
+.header-in { max-width: 920px; height: 60px; margin: 0 auto; padding: 0 16px; display: flex; align-items: center; gap: 11px; }
+.header-in img { width: 40px; height: 40px; flex: none; border-radius: 10px; box-shadow: 0 0 0 1px rgba(0, 0, 0, .06); }
+.header-in > div { min-width: 0; }
+.header-in h1 { margin: 0; font-size: 18.5px; line-height: 1.25; font-weight: 800; letter-spacing: -.01em; color: var(--text); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.header-in p { margin: 1px 0 0; color: var(--header-sub); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.header-in .help-btn { margin-left: auto; flex: none; color: var(--text); background: var(--soft); border: 0; border-radius: 10px; padding: 7px 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none; white-space: nowrap; }
+.header-in .help-btn:hover { background: #e8e8e9; }
 
-main { max-width: 920px; margin: 0 auto; padding: 18px 16px 90px; }
-.card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
-.step { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; font-size: 17px; font-weight: 700; }
-.num { width: 30px; height: 30px; flex: none; border-radius: 50%; background: var(--grad); color: #fff; display: grid; place-items: center; font-size: 15px; font-weight: 700; box-shadow: 0 2px 8px rgba(214, 41, 118, .25); }
-.indent { padding-left: 40px; }
+main { max-width: 920px; margin: 0 auto; padding: 20px 16px 90px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 20px 20px; margin-bottom: 14px; }
+.step { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; font-size: 16.5px; font-weight: 700; }
+.num { width: 26px; height: 26px; flex: none; border-radius: 50%; background: var(--grad-btn); color: #fff; display: grid; place-items: center; font-size: 13.5px; font-weight: 700; }
+.indent { padding-left: 36px; }
 
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 10px; cursor: pointer; color: #fff; font-weight: 600; transition: filter .15s, transform .05s, background .15s; }
 .btn:active { transform: scale(.98); }
@@ -61,7 +64,7 @@ main { max-width: 920px; margin: 0 auto; padding: 18px 16px 90px; }
 .btn:disabled { background: #c7c7c7 !important; cursor: default; filter: none; }
 .btn-blue { background: var(--blue); padding: 10px 18px; font-size: 15.5px; }
 .btn-blue:hover { background: var(--blue-hover); }
-.btn-green { background: var(--grad-btn); padding: 14px 22px; font-size: 17px; width: 100%; max-width: 480px; box-shadow: 0 6px 18px rgba(225, 48, 108, .25); }
+.btn-green { background: var(--grad-btn); padding: 13px 22px; font-size: 16.5px; width: 100%; max-width: 480px; border-radius: 12px; }
 .btn-green:hover { filter: brightness(1.06); }
 .btn-green.pulse { animation: pulse 0.5s ease-in-out 3 alternate; }
 @keyframes pulse { to { box-shadow: 0 0 0 7px rgba(225, 48, 108, .22); } }
@@ -71,8 +74,8 @@ main { max-width: 920px; margin: 0 auto; padding: 18px 16px 90px; }
 .link:disabled { color: var(--sub); cursor: default; text-decoration: none; }
 .link svg { width: 15px; height: 15px; vertical-align: -2px; margin-right: 4px; }
 hr { border: 0; border-top: 1px solid var(--border-soft); margin: 14px 0 10px; }
-.btn-outline { display: inline-flex; align-items: center; gap: 6px; background: #efefef; color: var(--text); border: 0; border-radius: 10px; padding: 7px 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none; }
-.btn-outline:hover { background: #e3e3e3; }
+.btn-outline { display: inline-flex; align-items: center; gap: 6px; background: var(--soft); color: var(--text); border: 0; border-radius: 10px; padding: 7px 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none; }
+.btn-outline:hover { background: #e8e8e9; }
 .btn-outline svg { width: 15px; height: 15px; flex: none; }
 
 .notice { background: #fff8e6; border: 1px solid #f7d58a; border-radius: 12px; padding: 10px 14px; font-size: 13px; margin: 0 0 14px; }
@@ -86,7 +89,7 @@ input[type=text], input[type=password], input[type=search], input:not([type]), t
 kbd { font-family: inherit; background: #efefef; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 6px; padding: 0 6px; font-size: 13px; }
 
 /* ---- help ---- */
-details.help { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 12px; box-shadow: var(--shadow); }
+details.help { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); margin-bottom: 12px; }
 details.help summary { cursor: pointer; padding: 14px 20px; font-weight: 700; }
 details.help .help-body { padding: 0 20px 16px; font-size: 14px; }
 details.help h4 { margin: 14px 0 4px; font-size: 14px; }
@@ -114,19 +117,19 @@ details.about[open] > summary { border-radius: var(--radius) var(--radius) 0 0; 
 .about-body { padding: 2px 20px 20px; }
 .num svg { width: 16px; height: 16px; }
 .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.about-box { border: 1px solid var(--border-soft); border-radius: 14px; padding: 14px 16px 16px; background: #fff; }
+.about-box { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px 16px; background: #fff; }
 .about-box h3 { margin: 0 0 10px; font-size: 15px; }
 .profile { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
-.avatar { width: 72px; height: 72px; flex: none; border-radius: 50%; border: 3px solid #fff; outline: 2px solid transparent; object-fit: cover; background: #fff5ac; box-shadow: 0 0 0 2px #d62976; }
+.avatar { width: 64px; height: 64px; flex: none; border-radius: 50%; object-fit: cover; background: #fff5ac; box-shadow: 0 0 0 1px var(--line); }
 .pname { font-size: 18px; font-weight: 700; line-height: 1.3; }
 .psub { color: var(--sub); font-size: 13px; }
 .about-box p { margin: 0 0 8px; font-size: 14px; }
 .about-box .label { margin: 10px 0 6px; font-size: 13px; font-weight: 700; color: var(--sub); }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.chips span { background: #efefef; border-radius: 999px; padding: 3px 12px; font-size: 13px; }
+.chips span { background: var(--soft); border-radius: 999px; padding: 3px 12px; font-size: 13px; }
 .chips span.more { background: none; color: var(--sub); padding: 2px 2px; }
 .links { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
-.links li { display: flex; align-items: center; gap: 10px; border: 1px solid var(--border-soft); border-radius: 12px; padding: 8px 10px; }
+.links li { display: flex; align-items: center; gap: 10px; border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px; }
 .links .ic { width: 34px; height: 34px; flex: none; border-radius: 10px; display: grid; place-items: center; color: #fff; }
 .links .ic svg { width: 20px; height: 20px; }
 .links .lt { flex: 1; min-width: 0; line-height: 1.35; }
@@ -134,7 +137,7 @@ details.about[open] > summary { border-radius: var(--radius) var(--radius) 0 0; 
 .links .lt b { word-break: break-all; }
 .links a.go, .links button { flex: none; border: 0; color: #fff; background: var(--blue); border-radius: 8px; padding: 5px 12px; font-size: 12.5px; font-weight: 600; cursor: pointer; text-decoration: none; font-family: inherit; }
 .links a.go:hover, .links button:hover { background: var(--blue-hover); }
-.license { margin: 14px 0 0 40px; background: #fff1f2; border: 1px solid #f6c3c8; border-radius: 12px; padding: 10px 14px; font-size: 14px; }
+.license { margin: 14px 0 0 36px; background: #fafafa; border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; font-size: 14px; }
 .license b.ng { color: var(--red); }
 .license ul { margin: 4px 0; padding-left: 20px; }
 
@@ -157,9 +160,9 @@ dialog::backdrop { background: rgba(0, 0, 0, .55); }
 
 /* ---- ゲストの名前（partials/guest.js）---- */
 .gmodal { position: fixed; inset: 0; z-index: 50; background: rgba(0, 0, 0, .55); display: grid; place-items: center; padding: 16px; }
-.gmodal .gbox { width: min(400px, 100%); background: #fff; border-radius: 22px; padding: 30px 26px 24px; text-align: center; box-shadow: 0 20px 60px rgba(0, 0, 0, .3); }
-.gmodal .ring { width: 88px; height: 88px; margin: 0 auto 12px; border-radius: 50%; padding: 3px; background: var(--grad); }
-.gmodal .ring > div { width: 100%; height: 100%; border-radius: 50%; background: #fff; border: 3px solid #fff; display: grid; place-items: center; font-size: 34px; }
+.gmodal .gbox { width: min(400px, 100%); background: #fff; border-radius: 18px; padding: 28px 24px 22px; text-align: center; box-shadow: 0 20px 60px rgba(0, 0, 0, .25); }
+.gmodal .ring { width: 72px; height: 72px; margin: 0 auto 12px; border-radius: 50%; background: var(--soft); }
+.gmodal .ring > div { width: 100%; height: 100%; border-radius: 50%; display: grid; place-items: center; font-size: 32px; }
 .gmodal h2 { margin: 0 0 4px; font-size: 20px; }
 .gmodal p { margin: 0 0 16px; color: var(--sub); font-size: 13.5px; }
 .gmodal input { width: 100%; font-size: 16px; padding: 12px 14px; border: 1px solid var(--border); background: var(--input); border-radius: 12px; margin-bottom: 10px; }
@@ -172,12 +175,12 @@ dialog::backdrop { background: rgba(0, 0, 0, .55); }
 
 @media (max-width: 640px) {
   body { font-size: 14.5px; }
-  .header-in { padding: 8px 12px; gap: 10px; }
-  .header-in img { width: 36px; height: 36px; border-radius: 10px; }
-  .header-in h1 { font-size: 17px; }
+  .header-in { height: 52px; padding: 0 12px; gap: 10px; }
+  .header-in img { width: 34px; height: 34px; border-radius: 9px; }
+  .header-in h1 { font-size: 16.5px; }
   .header-in p { display: none; }
-  main { padding: 12px 12px 90px; }
-  .card { padding: 16px 14px 16px; border-radius: 14px; }
+  main { padding: 14px 12px 90px; }
+  .card { padding: 16px 14px 16px; border-radius: 12px; }
   .indent { padding-left: 0; }
   .btn-blue { width: 100%; }
   .btn-green { font-size: 16px; padding: 13px 14px; }
@@ -190,16 +193,23 @@ dialog::backdrop { background: rgba(0, 0, 0, .55); }
 }
 
 /* ---- サイトのメニュー ---- */
-.sitenav { background: rgba(255, 255, 255, .92); border-bottom: 1px solid var(--border-soft); position: sticky; top: 63px; z-index: 19; -webkit-backdrop-filter: saturate(180%) blur(12px); backdrop-filter: saturate(180%) blur(12px); }
-.sitenav-in { max-width: 920px; margin: 0 auto; padding: 8px 12px; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+/* タブのように: 文字だけ・いまのページは下に線（ピンク→紫） */
+.sitenav { background: #fff; border-bottom: 1px solid var(--line); position: sticky; top: 61px; z-index: 19; }
+.sitenav-in { max-width: 920px; margin: 0 auto; padding: 0 8px; display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
 .sitenav-in::-webkit-scrollbar { display: none; }
-.sitenav a { color: var(--text); text-decoration: none; padding: 6px 14px; font-size: 14px; font-weight: 600; border-radius: 999px; white-space: nowrap; background: #efefef; }
-.sitenav a:hover { background: #e3e3e3; }
-.sitenav a[aria-current="page"] { color: #fff; background: #262626; }
+.sitenav a { color: var(--sub); text-decoration: none; padding: 10px 12px 11px; font-size: 14px; font-weight: 600; white-space: nowrap; }
+.sitenav a:hover { color: var(--text); }
+.sitenav a[aria-current="page"] { color: var(--text); background: var(--grad-btn) left bottom / 100% 2px no-repeat; }
 @media (max-width: 640px) {
   .sitenav { top: 53px; }
-  .sitenav-in { padding: 7px 10px; gap: 5px; }
-  .sitenav a { padding: 5px 10px; font-size: 12.5px; }
+  .sitenav-in { padding: 0 4px; gap: 0; }
+  .sitenav a { padding: 9px 9px 10px; font-size: 13px; }
+}
+.sitenav .ni { margin-right: 5px; }
+@media (max-width: 480px) {
+  .sitenav-in { justify-content: space-between; }
+  .sitenav .ni { display: none; }
+  .sitenav a { padding: 10px 8px 11px; font-size: 13.5px; }
 }
 
 /* ---- 共通の部品（入力・コピー欄・かんたんな流れ・チップ）---- */
@@ -213,7 +223,7 @@ dialog::backdrop { background: rgba(0, 0, 0, .55); }
 .copybox button:hover { background: var(--blue-hover); }
 .copybox.disabled code { color: #a8a8a8; }
 .copybox.disabled button { background: #c7c7c7; cursor: default; }
-.easy, .tip { position: relative; background: linear-gradient(135deg, #fff7fb 0%, #f7f4ff 100%); border: 1px solid #f1e4f3; border-radius: var(--radius); padding: 14px 18px; margin: 0 0 16px; }
+.easy, .tip { position: relative; background: #fafafa; border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 18px; margin: 0 0 16px; }
 .tip { padding: 10px 14px; margin-top: 10px; font-size: 14px; border-radius: 12px; }
 .easy b.t { display: block; font-size: 15px; margin-bottom: 4px; }
 .easy ol { margin: 0; padding-left: 22px; font-size: 14px; }
@@ -272,49 +282,49 @@ ol.steps > li { margin: 8px 0; }
 
 
 /* ===== トップページ ===== */
-.hero { text-align: center; padding: 26px 12px 6px; }
-.hero h2 { margin: 0 0 8px; font-size: 26px; font-weight: 800; letter-spacing: -.02em; }
-.hero h2 span { background: var(--grad-btn); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.hero p { margin: 0; color: var(--sub); font-size: 14.5px; }
-.stories { display: flex; justify-content: center; gap: 18px; margin: 22px 0 6px; overflow-x: auto; padding: 4px 4px 8px; scrollbar-width: none; }
+.hero { text-align: center; padding: 18px 12px 2px; }
+.hero h2 { margin: 0 0 6px; font-size: 24px; font-weight: 800; letter-spacing: -.02em; }
+.hero p { margin: 0; color: var(--sub); font-size: 14px; }
+/* すぐにひらく（四角いボタンを横にならべる） */
+.stories { display: flex; justify-content: center; gap: 8px; margin: 18px 0 6px; overflow-x: auto; padding: 2px 2px 6px; scrollbar-width: none; }
 .stories::-webkit-scrollbar { display: none; }
-.story { display: flex; flex-direction: column; align-items: center; gap: 6px; text-decoration: none; color: var(--text); font-size: 12.5px; flex: none; width: 76px; text-align: center; }
-.story .sring { width: 70px; height: 70px; border-radius: 50%; padding: 3px; background: var(--grad); transition: transform .15s; }
-.story .sring > span { width: 100%; height: 100%; border-radius: 50%; background: #fff; border: 3px solid #fff; display: grid; place-items: center; font-size: 28px; background-clip: padding-box; box-shadow: inset 0 0 0 100px #fafafa; }
-.story:hover .sring { transform: scale(1.05); }
-.features { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 18px 0 16px; }
-.feature { display: flex; flex-direction: column; background: var(--panel); border: 1px solid var(--border); border-radius: 20px; padding: 22px 22px 20px; box-shadow: var(--shadow); }
-.feature .fhead { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
-.feature .ficon { width: 58px; height: 58px; flex: none; border-radius: 50%; padding: 2.5px; background: var(--grad); }
-.feature .ficon > span { width: 100%; height: 100%; border-radius: 50%; background: #fff; border: 2.5px solid #fff; display: grid; place-items: center; font-size: 26px; box-shadow: inset 0 0 0 100px #fafafa; }
-.feature h3 { margin: 0; font-size: 20px; font-weight: 800; }
-.feature .lead { margin: 0; color: var(--sub); font-size: 13.5px; }
-.feature ul { list-style: none; margin: 0 0 18px; padding: 0; font-size: 14px; flex: 1; }
-.feature li { position: relative; margin: 6px 0; padding-left: 26px; }
-.feature li::before { content: ""; position: absolute; left: 0; top: 3px; width: 17px; height: 17px; border-radius: 50%; background: var(--grad-btn); -webkit-mask: radial-gradient(circle, #000 60%, transparent 61%); mask: radial-gradient(circle, #000 60%, transparent 61%); }
-.feature li::after { content: "✓"; position: absolute; left: 4px; top: 0; color: #fff; font-size: 11px; font-weight: 800; }
-.feature .btn { text-decoration: none; padding: 13px 18px; font-size: 16px; width: 100%; max-width: none; }
-.feature .modes { display: flex; gap: 8px; margin: -6px 0 14px; flex-wrap: wrap; }
-.feature .modes span { font-size: 12.5px; font-weight: 600; background: #efefef; border-radius: 999px; padding: 4px 12px; }
-.chatcard { display: flex; align-items: center; gap: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 20px; padding: 18px 22px; margin: 0 0 16px; box-shadow: var(--shadow); text-decoration: none; color: var(--text); }
-.chatcard:hover { background: #fcfcfc; }
-.chatcard .cic { width: 52px; height: 52px; flex: none; border-radius: 16px; background: var(--grad-btn); display: grid; place-items: center; font-size: 26px; }
-.chatcard b { display: block; font-size: 17px; }
+.story { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: none; width: 92px; padding: 12px 4px 10px; text-decoration: none; color: var(--text); font-size: 12.5px; font-weight: 600; text-align: center; background: #fff; border: 1px solid var(--line); border-radius: 14px; transition: border-color .15s, background .15s; }
+.story:hover { border-color: #cfcfcf; background: #fcfcfc; }
+.story .sring { display: grid; place-items: center; height: 30px; }
+.story .sring > span { font-size: 25px; line-height: 1; }
+.features { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 16px 0 14px; }
+.feature { display: flex; flex-direction: column; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; }
+.feature .fhead { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.feature .ficon { width: 44px; height: 44px; flex: none; border-radius: 12px; background: var(--soft); display: grid; place-items: center; }
+.feature .ficon > span { font-size: 22px; line-height: 1; }
+.feature h3 { margin: 0; font-size: 18px; font-weight: 800; }
+.feature .lead { margin: 0; color: var(--sub); font-size: 13px; }
+.feature ul { list-style: none; margin: 0 0 16px; padding: 0; font-size: 14px; flex: 1; }
+.feature li { position: relative; margin: 5px 0; padding-left: 20px; }
+.feature li::before { content: "✓"; position: absolute; left: 1px; top: 0; color: var(--accent); font-weight: 800; font-size: 13px; }
+.feature .btn { text-decoration: none; padding: 12px 18px; font-size: 15.5px; width: 100%; max-width: none; }
+.feature .modes { display: flex; gap: 6px; margin: -4px 0 12px; flex-wrap: wrap; }
+.feature .modes span { font-size: 12px; font-weight: 600; background: var(--soft); border-radius: 999px; padding: 3px 11px; }
+.chatcard { display: flex; align-items: center; gap: 14px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 20px; margin: 0 0 14px; text-decoration: none; color: var(--text); transition: border-color .15s; }
+.chatcard:hover { border-color: #cfcfcf; }
+.chatcard .cic { width: 44px; height: 44px; flex: none; border-radius: 12px; background: var(--soft); display: grid; place-items: center; font-size: 22px; }
+.chatcard b { display: block; font-size: 16px; }
 .chatcard small { display: block; color: var(--sub); font-size: 13px; }
 .chatcard .go { margin-left: auto; flex: none; color: var(--blue); font-weight: 700; font-size: 14px; }
 @media (max-width: 640px) {
   .features { grid-template-columns: 1fr; }
-  .hero h2 { font-size: 21px; }
-  .stories { justify-content: flex-start; gap: 12px; }
-  .story { width: 68px; font-size: 11.5px; white-space: nowrap; }
-  .story .sring { width: 62px; height: 62px; }
-  .chatcard { padding: 14px 16px; }
+  .hero h2 { font-size: 20px; }
+  .stories { justify-content: flex-start; gap: 6px; margin-top: 14px; }
+  .story { width: 68px; padding: 10px 2px 8px; font-size: 11px; white-space: nowrap; }
+  .story .sring > span { font-size: 22px; }
+  .feature { padding: 16px 14px; }
+  .chatcard { padding: 14px 14px; }
   .chatcard .go { display: none; }
 }
 
 /* ===== 最新情報（お知らせ）===== */
 .nbanners { display: flex; flex-direction: column; gap: 10px; margin: 6px 0 4px; }
-.nbanner { display: flex; gap: 12px; align-items: flex-start; border-radius: 16px; padding: 12px 16px; border: 1px solid; box-shadow: var(--shadow); text-align: left; cursor: pointer; font: inherit; color: inherit; width: 100%; }
+.nbanner { display: flex; gap: 12px; align-items: flex-start; border-radius: 12px; padding: 12px 16px; border: 1px solid; text-align: left; cursor: pointer; font: inherit; color: inherit; width: 100%; }
 .nbanner .bi { flex: none; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; font-size: 19px; background: #fff; }
 .nbanner .bt { min-width: 0; flex: 1; }
 .nbanner .bt b { display: block; font-size: 15px; line-height: 1.4; overflow-wrap: anywhere; }
@@ -325,7 +335,8 @@ ol.steps > li { margin: 8px 0; }
 @keyframes npulse { 50% { box-shadow: 0 0 0 6px rgba(243, 156, 18, .25); } }
 .nbanner.maint-planned { background: #fffbef; border-color: #f7e2a8; color: #6b4a00; }
 .nbanner.important { background: #fff1f2; border-color: #f6c3c8; color: #9b1c2e; }
-.nbanner.update, .nbanner.info { background: linear-gradient(135deg, #fff7fb 0%, #f2f6ff 100%); border-color: #e6def3; color: var(--text); }
+.nbanner.update, .nbanner.info { background: #fff; border-color: var(--line); color: var(--text); }
+.nbanner.update .bi, .nbanner.info .bi { background: var(--soft); }
 .news { padding: 16px 18px 12px; }
 .news-head { display: flex; align-items: center; gap: 8px; margin: 0 0 6px; }
 .news-head h2 { margin: 0; font-size: 18px; font-weight: 800; }
@@ -368,9 +379,9 @@ ol.steps > li { margin: 8px 0; }
 .hworks .news-head { margin-bottom: 10px; }
 .hw-all { margin-left: auto; color: var(--blue); font-weight: 700; font-size: 14px; text-decoration: none; }
 .hw-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-.hw-card { display: flex; flex-direction: column; border: 1px solid var(--border-soft); border-radius: 14px; overflow: hidden; text-decoration: none; color: var(--text); background: #fff; transition: transform .12s, box-shadow .12s; }
-.hw-card:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(0,0,0,.08); }
-.hw-img { position: relative; aspect-ratio: 16 / 9; background: linear-gradient(135deg, #fff1f5 0%, #f1efff 100%); display: grid; place-items: center; overflow: hidden; font-size: 34px; }
+.hw-card { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; text-decoration: none; color: var(--text); background: #fff; transition: border-color .15s; }
+.hw-card:hover { border-color: #cfcfcf; }
+.hw-img { position: relative; aspect-ratio: 16 / 9; background: var(--soft); display: grid; place-items: center; overflow: hidden; font-size: 34px; }
 .hw-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .hw-img .hw-star { position: absolute; top: 7px; left: 7px; background: rgba(38,38,38,.85); color: #fff; font-size: 10.5px; font-weight: 700; border-radius: 999px; padding: 1px 8px; }
 .hw-b { padding: 8px 10px 10px; }
@@ -388,20 +399,20 @@ ol.steps > li { margin: 8px 0; }
 <body>
 <header>
   <div class="header-in">
-    <img class="pixel" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAACjUlEQVR42u2bPUwUQRiG3zEYG0KLpbEQOI0o0cRwWBAiojmD+NOoUBgbCgv5CYeJFQUSwMbWigMafhovglhcg8TExAQKEygulppY2liNxd0YdnK7s8Pt3jF379ftfjt7O/s+837f7t0JGOLcxQcSDsfB3qoIyp9AnYfwV/6+rKWJHuytCRIQhoCWGlNej32NBBLwX/n2e7KeJr6/uy5IAADR6rjyOx9HPNudN99YjScBrZcGnCRgZ3M0MN/ZN08CQhHQFjMBk+OPA/PTs0tW5/tsUF6PpIGEuiegASJaACbHnpRFyPTcYsSMSxIQeH8Sl+9GgkDaUnlTvDaQsL0xFpjvujXHKhCOgI7+sghIjw6GOi77PgsASN1J2ZEwnwkm4cO4V/nbs+wEraqAcO2FhRbXNcVt50MCjjpwIuTaLzfU58wYvOCoQQJExJ2gcnvbfOL8hWAvEJIEHCsP8Au/Om/qA/L5H1W5ASQgrrUVeT9AD+AS4A2gB5AAB/qAqOJld1bbjvb8V140kgCnPCAuTyEBrlxo4lF5zwrfl8+wCtAD6AFV9ADb7wP4LFAxD3DsgrffjVgd3/Ws9G+GBAlQHuBIFVDKN994DgBoH1wBAGwN/fQc17twGgCwm3lYHKcy6xoCrAKlPeDs0F8AQH7hVKj9lY5fn94WlS+dV0So43z7AHqA5gFNPb8BACvDXwuZYZ8Rxf2Z5bWqXviX7LfA/LVUh6EVpAd4PSA3VVC++9XVUAOftqWreuFGhU3PAvQAtRKklDbKVyq2+hpjPf/JZI4EqKdBtRzq7cUA/zGivw84ViT0bv6JVflcklXAozqKxeBwNZC1OFfV7wghSICHAJ2Ew7tqaY5KebATLMQ/lnufS6vEI9gAAAAASUVORK5CYII=">
+    <img alt="MaYo鯖" src="img/mayosaba.png" width="40" height="40">
     <div>
-      <h1>マイクラ統合版ツール</h1>
-      <p>死体スキン・近接VC・チャット　｜　制作: MaYo（mayo01297）</p>
+      <h1>MaYo鯖 BEツール</h1>
+      <p>死体スキン・近接VC・チャット・作品　｜　制作: MaYo（mayo01297）</p>
     </div>
   </div>
 </header>
 <nav class="sitenav" aria-label="サイトのメニュー">
   <div class="sitenav-in">
-    <a href="./" data-page="home" aria-current="page">🏠 ホーム</a>
-    <a href="./corpse/" data-page="corpse">🪦 死体スキン</a>
-    <a href="./vc/" data-page="vc">🎙 近接VC</a>
-    <a href="./chat/" data-page="chat">💬 チャット</a>
-    <a href="./works/" data-page="works">🧩 作品</a>
+    <a href="./" data-page="home" aria-current="page"><span class="ni" aria-hidden="true">🏠</span>ホーム</a>
+    <a href="./corpse/" data-page="corpse"><span class="ni" aria-hidden="true">🪦</span>死体スキン</a>
+    <a href="./vc/" data-page="vc"><span class="ni" aria-hidden="true">🎙</span>近接VC</a>
+    <a href="./chat/" data-page="chat"><span class="ni" aria-hidden="true">💬</span>チャット</a>
+    <a href="./works/" data-page="works"><span class="ni" aria-hidden="true">🧩</span>作品</a>
   </div>
 </nav>
 
@@ -411,7 +422,7 @@ ol.steps > li { margin: 8px 0; }
 
   <section class="hero">
     <h2><span>マイクラ統合版</span>をもっと楽しく</h2>
-    <p>ブラウザだけで使えるアドオンツールと、近くの人と話せる近接VC。インストールも登録もいりません。</p>
+    <p>インストール・登録なしで使えます。</p>
   </section>
 
   <nav class="stories" aria-label="すぐにひらく">
@@ -436,11 +447,8 @@ ol.steps > li { margin: 8px 0; }
         <div><h3 id="f1">死体スキン</h3><p class="lead">プレイヤーの死体アドオン</p></div>
       </div>
       <ul>
-        <li>プレイヤーが死ぬと、その場に<b>本人のスキンの死体</b>が残る</li>
-        <li>ユーザー名を入れるだけでスキンを自動で取得（PNG画像からも登録OK）</li>
-        <li>最大20人まで登録できる</li>
-        <li>死体が消えるまでの時間・1人あたりの数を選べる</li>
-        <li>アイテムはいつもどおりその場に落ちる（死体は見た目だけ）</li>
+        <li>死んだ場所に<b>本人スキンの死体</b>が残る</li>
+        <li>ユーザー名だけで登録（最大20人）</li>
       </ul>
       <a class="btn btn-green" href="corpse/">死体スキンを作る →</a>
     </section>
@@ -448,15 +456,12 @@ ol.steps > li { margin: 8px 0; }
     <section class="feature" aria-labelledby="f2">
       <div class="fhead">
         <div class="ficon" aria-hidden="true"><span>🎙</span></div>
-        <div><h3 id="f2">近接VC</h3><p class="lead">近くにいる人の声だけが聞こえるボイスチャット</p></div>
+        <div><h3 id="f2">近接VC</h3><p class="lead">近くの人の声だけ聞こえるVC</p></div>
       </div>
-      <div class="modes" aria-label="えらべる方法"><span>🎧 サイト版（ブラウザ）</span><span>🎙 Discord 版</span></div>
+      <div class="modes" aria-label="えらべる方法"><span>🎧 サイト版</span><span>🎙 Discord 版</span></div>
       <ul>
-        <li>Minecraft で<b>近くにいるプレイヤーの声だけ</b>聞こえる</li>
-        <li>サイト版: <b>距離で音量・向きで左右</b>が変わる。部屋の番号を入れるだけ</li>
-        <li>Discord 版: 自分の Discord サーバーに Bot を入れて、VC を自動で切り替え</li>
-        <li>死んだら<b>死亡者どうし</b>だけで話せる（アドオンを入れたとき）</li>
-        <li>ちがうディメンション・離れた人の声は聞こえない</li>
+        <li><b>距離で音量</b>・向きで左右が変わる</li>
+        <li>死んだら<b>死亡者どうし</b>で話せる</li>
       </ul>
       <a class="btn btn-green" href="vc/">近接VCをえらぶ →</a>
     </section>
@@ -470,7 +475,7 @@ ol.steps > li { margin: 8px 0; }
 
   <a class="chatcard" href="chat/">
     <span class="cic" aria-hidden="true">💬</span>
-    <span><b>チャット</b><small>名前を入れるだけ。みんなのチャットと DM（ゲームの部屋のチャットは、サイト版の近接VCの中にあります）</small></span>
+    <span><b>チャット</b><small>名前だけで使えるチャットと DM</small></span>
     <span class="go">ひらく →</span>
   </a>
 
@@ -493,7 +498,7 @@ ol.steps > li { margin: 8px 0; }
             <div class="psub">高校1年生</div>
           </div>
         </div>
-        <p>普段は、マインクラフトの PvP クライアントを作ったり、Roblox でゲームを作ったり、アドオンを作ったり、マインクラフトのマップを作ったりしています。</p>
+        <p>マイクラの PvP クライアント・アドオン・マップや、Roblox のゲームを作っています。</p>
         <p class="label">好きなゲーム</p>
         <div class="chips">
           <span>マインクラフト</span><span>第五人格</span><span>崩壊：スターレイル</span><span>Roblox</span><span>Dead by Daylight</span><span class="more">など</span>
@@ -521,15 +526,7 @@ ol.steps > li { margin: 8px 0; }
       </div>
     </div>
     <div class="license">
-      <b>クレジット・二次配布について</b><br>
-      このスキン登録ページと「プレイヤーの死体アドオン」は、<b>MaYo（mayo01297）</b>が制作しました。<br>
-      <b class="ng">二次配布は禁止です。</b>次のことはしないでください。
-      <ul>
-        <li>このページのファイルやアドオンを、ほかのサイト・SNS・Discord サーバーなどにアップロードして配ること</li>
-        <li>改変して配ること</li>
-        <li>自分が作ったと言うこと（自作発言）</li>
-      </ul>
-      紹介するときは、このページのURLを共有してください。
+      <b class="ng">二次配布禁止</b>：再アップロード・改変して配布・自作発言はしないでください。紹介はこのページの URL でお願いします。
     </div>
     </div>
   </details>
@@ -766,7 +763,7 @@ ol.steps > li { margin: 8px 0; }
 })();
 </script>
 
-  <p class="small">マイクラ統合版ツール<br>© 2026 MaYo（mayo01297）　・　二次配布禁止　・　<a href="#about">制作者について</a></p>
+  <p class="small">MaYo鯖 BEツール<br>© 2026 MaYo（mayo01297）　・　二次配布禁止　・　<a href="#about">制作者について</a></p>
 </main>
 </body>
 </html>

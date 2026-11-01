@@ -1,6 +1,6 @@
 #!/bin/bash
 # =====================================================================
-#  マイクラ統合版ツール … VPS（ConoHa など・Ubuntu / Debian）で「公開サイト」としてまとめて動かす
+#  MaYo鯖 BEツール … VPS（ConoHa など・Ubuntu / Debian）で「公開サイト」としてまとめて動かす
 #
 #    1. サイトと Discord Bot（Cloudflare の Worker と同じプログラムを、workerd で動かす）… 127.0.0.1:8787
 #    2. Caddy … https://<IP>.sslip.io/ でサイトを出す（証明書は Let's Encrypt から自動・ポート 443）
@@ -38,7 +38,7 @@ say() { echo "[mayo-vc] $*"; }
 die() { echo "[mayo-vc] ✗ $*" >&2; exit 1; }
 
 echo "=================================================="
-echo " マイクラ統合版ツール … VPS で公開サイトを動かす"
+echo " MaYo鯖 BEツール … VPS で公開サイトを動かす"
 echo " （サイト・Discord Bot・近接VC リレー・音声の中継） 制作: MaYo / mayo01297"
 echo "=================================================="
 [ -n "$ROOT" ] || [ "$(id -u)" = "0" ] || die "管理者（root）で実行してください（コマンドの先頭に sudo を付ける）"
@@ -246,7 +246,7 @@ TURN_SECRET="$(old TURN_SECRET)"
 DISCORD_TOKEN="$(old DISCORD_TOKEN)"
 umask 077
 cat > "$ETC/env" <<EOF
-# マイクラ統合版ツール（VPS）の設定  … vps-server.sh が作ります。SETUP_KEY と TURN_SECRET は人に見せないでください
+# MaYo鯖 BEツール（VPS）の設定  … vps-server.sh が作ります。SETUP_KEY と TURN_SECRET は人に見せないでください
 HOST=$HOST
 SITE_URL=https://$HOST
 PUBLIC_IP=$PUBLIC_IP
@@ -395,7 +395,7 @@ if [ -f "$ROOT/etc/caddy/Caddyfile" ] && ! grep -q 'mayo-vc' "$ROOT/etc/caddy/Ca
   cp "$ROOT/etc/caddy/Caddyfile" "$ROOT/etc/caddy/Caddyfile.before-mayo-vc"
 fi
 cat > "$ROOT/etc/caddy/Caddyfile" <<EOF
-# マイクラ統合版ツール（mayo-vc）… vps-server.sh が作ります
+# MaYo鯖 BEツール（mayo-vc）… vps-server.sh が作ります
 {
 	http_port 8081
 	auto_https disable_redirects
@@ -431,7 +431,7 @@ EOF
 mkdir -p "$ROOT/usr/local/bin"
 cat > "$ROOT/usr/local/bin/mayo-vc" <<'EOF'
 #!/bin/bash
-# マイクラ統合版ツール（VPS）の管理コマンド … vps-server.sh が作ります
+# MaYo鯖 BEツール（VPS）の管理コマンド … vps-server.sh が作ります
 set -u
 [ "$(id -u)" = "0" ] || { echo "sudo を付けて実行してください（例: sudo mayo-vc status）"; exit 1; }
 . /etc/mayo-vc/env

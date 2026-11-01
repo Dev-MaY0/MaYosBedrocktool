@@ -1,4 +1,4 @@
-# マイクラ統合版ツール（死体スキン・近接VC）
+# MaYo鯖 BEツール（死体スキン・近接VC）
 
 > 制作: **MaYo (mayo01297)**　／　**二次配布禁止**（再アップロード・改変しての配布・自作発言の禁止）
 
@@ -22,5 +22,6 @@
 | `relay/vps/PUBLIC_SERVER.md` | （上級者向け）このサイトと Bot をまとめて VPS に引っ越す手順（自分のドメインがあるとき） |
 | `test/` | Worker のテスト（`npm test`。Cloudflare では使いません） |
 | `src/works.js`・`public/works/` | 制作者の作品の紹介。`/setup/` の「🧩 作品の紹介」で載せると、`/works/` とホームに出ます |
+| `public/img/` | サイトのロゴ（`mayosaba.png` … ホーム・チャット・作品の名前のとなり／`mayosaba-64.png` … タブのアイコン） |
 | `src/news.js` | ホームの「最新情報」（お知らせ）。`/setup/` の「📢 お知らせ」で書くと、ホームに出ます |
 | `relay/vps/build-vps-server.mjs` | `public/download/vps-server.sh` を作り直す（`node relay/vps/build-vps-server.mjs`）。src/ や public/ を変えたら実行 |

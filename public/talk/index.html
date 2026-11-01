@@ -16,10 +16,11 @@
 <style>
 /* =====================================================================
    共通スタイル（全ページ）  制作: MaYo (mayo01297)  二次配布禁止
-   白ベース・角の丸いカード・グラデーションのアクセント（SNS アプリのような雰囲気）
+   シンプル: 白ベース・細い線のカード（影なし）・アクセントはピンク→紫・ボタンは青
    ===================================================================== */
 :root {
   --back: #fafafa; --panel: #ffffff; --border: #dbdbdb; --border-soft: #efefef; --input: #fafafa;
+  --line: #e8e8e8; --soft: #f3f3f4; --accent: #d62976;
   --text: #262626; --sub: #737373; --link: #00376b;
   --header: #ffffff; --header-sub: #737373;
   --blue: #0095f6; --blue-hover: #1877f2; --blue-pale: #e8f3ff;
@@ -27,8 +28,8 @@
   --red: #ed4956; --orange: #f39c12; --preview: #f2f2f2;
   --grad: linear-gradient(45deg, #feda75 0%, #fa7e1e 25%, #d62976 50%, #962fbf 75%, #4f5bd5 100%);
   --grad-btn: linear-gradient(90deg, #f56040 0%, #e1306c 45%, #833ab4 100%);
-  --radius: 16px;
-  --shadow: 0 1px 2px rgba(0, 0, 0, .04), 0 6px 20px rgba(0, 0, 0, .05);
+  --radius: 14px;
+  --shadow: none;
   --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic UI", Meiryo, system-ui, sans-serif;
 }
 * { box-sizing: border-box; }
@@ -40,19 +41,20 @@ a { color: var(--link); }
 .pixel { image-rendering: pixelated; image-rendering: crisp-edges; }
 
 /* ---- header ---- */
-header { background: rgba(255, 255, 255, .92); color: var(--text); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 20; -webkit-backdrop-filter: saturate(180%) blur(12px); backdrop-filter: saturate(180%) blur(12px); }
-.header-in { max-width: 920px; margin: 0 auto; padding: 10px 16px; display: flex; align-items: center; gap: 12px; }
-.header-in img { width: 42px; height: 42px; flex: none; border-radius: 12px; padding: 2px; background: var(--grad); }
-.header-in h1 { margin: 0; font-size: 20px; line-height: 1.25; font-weight: 800; letter-spacing: -.01em; background: var(--grad-btn); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.header-in p { margin: 1px 0 0; color: var(--header-sub); font-size: 12.5px; }
-.header-in .help-btn { margin-left: auto; flex: none; color: var(--text); background: #efefef; border: 0; border-radius: 10px; padding: 7px 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none; white-space: nowrap; }
-.header-in .help-btn:hover { background: #e3e3e3; }
+header { background: #fff; color: var(--text); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 20; }
+.header-in { max-width: 920px; height: 60px; margin: 0 auto; padding: 0 16px; display: flex; align-items: center; gap: 11px; }
+.header-in img { width: 40px; height: 40px; flex: none; border-radius: 10px; box-shadow: 0 0 0 1px rgba(0, 0, 0, .06); }
+.header-in > div { min-width: 0; }
+.header-in h1 { margin: 0; font-size: 18.5px; line-height: 1.25; font-weight: 800; letter-spacing: -.01em; color: var(--text); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.header-in p { margin: 1px 0 0; color: var(--header-sub); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.header-in .help-btn { margin-left: auto; flex: none; color: var(--text); background: var(--soft); border: 0; border-radius: 10px; padding: 7px 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none; white-space: nowrap; }
+.header-in .help-btn:hover { background: #e8e8e9; }
 
-main { max-width: 920px; margin: 0 auto; padding: 18px 16px 90px; }
-.card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
-.step { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; font-size: 17px; font-weight: 700; }
-.num { width: 30px; height: 30px; flex: none; border-radius: 50%; background: var(--grad); color: #fff; display: grid; place-items: center; font-size: 15px; font-weight: 700; box-shadow: 0 2px 8px rgba(214, 41, 118, .25); }
-.indent { padding-left: 40px; }
+main { max-width: 920px; margin: 0 auto; padding: 20px 16px 90px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 20px 20px; margin-bottom: 14px; }
+.step { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; font-size: 16.5px; font-weight: 700; }
+.num { width: 26px; height: 26px; flex: none; border-radius: 50%; background: var(--grad-btn); color: #fff; display: grid; place-items: center; font-size: 13.5px; font-weight: 700; }
+.indent { padding-left: 36px; }
 
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 10px; cursor: pointer; color: #fff; font-weight: 600; transition: filter .15s, transform .05s, background .15s; }
 .btn:active { transform: scale(.98); }
@@ -60,7 +62,7 @@ main { max-width: 920px; margin: 0 auto; padding: 18px 16px 90px; }
 .btn:disabled { background: #c7c7c7 !important; cursor: default; filter: none; }
 .btn-blue { background: var(--blue); padding: 10px 18px; font-size: 15.5px; }
 .btn-blue:hover { background: var(--blue-hover); }
-.btn-green { background: var(--grad-btn); padding: 14px 22px; font-size: 17px; width: 100%; max-width: 480px; box-shadow: 0 6px 18px rgba(225, 48, 108, .25); }
+.btn-green { background: var(--grad-btn); padding: 13px 22px; font-size: 16.5px; width: 100%; max-width: 480px; border-radius: 12px; }
 .btn-green:hover { filter: brightness(1.06); }
 .btn-green.pulse { animation: pulse 0.5s ease-in-out 3 alternate; }
 @keyframes pulse { to { box-shadow: 0 0 0 7px rgba(225, 48, 108, .22); } }
@@ -70,8 +72,8 @@ main { max-width: 920px; margin: 0 auto; padding: 18px 16px 90px; }
 .link:disabled { color: var(--sub); cursor: default; text-decoration: none; }
 .link svg { width: 15px; height: 15px; vertical-align: -2px; margin-right: 4px; }
 hr { border: 0; border-top: 1px solid var(--border-soft); margin: 14px 0 10px; }
-.btn-outline { display: inline-flex; align-items: center; gap: 6px; background: #efefef; color: var(--text); border: 0; border-radius: 10px; padding: 7px 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none; }
-.btn-outline:hover { background: #e3e3e3; }
+.btn-outline { display: inline-flex; align-items: center; gap: 6px; background: var(--soft); color: var(--text); border: 0; border-radius: 10px; padding: 7px 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none; }
+.btn-outline:hover { background: #e8e8e9; }
 .btn-outline svg { width: 15px; height: 15px; flex: none; }
 
 .notice { background: #fff8e6; border: 1px solid #f7d58a; border-radius: 12px; padding: 10px 14px; font-size: 13px; margin: 0 0 14px; }
@@ -85,7 +87,7 @@ input[type=text], input[type=password], input[type=search], input:not([type]), t
 kbd { font-family: inherit; background: #efefef; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 6px; padding: 0 6px; font-size: 13px; }
 
 /* ---- help ---- */
-details.help { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 12px; box-shadow: var(--shadow); }
+details.help { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); margin-bottom: 12px; }
 details.help summary { cursor: pointer; padding: 14px 20px; font-weight: 700; }
 details.help .help-body { padding: 0 20px 16px; font-size: 14px; }
 details.help h4 { margin: 14px 0 4px; font-size: 14px; }
@@ -113,19 +115,19 @@ details.about[open] > summary { border-radius: var(--radius) var(--radius) 0 0; 
 .about-body { padding: 2px 20px 20px; }
 .num svg { width: 16px; height: 16px; }
 .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.about-box { border: 1px solid var(--border-soft); border-radius: 14px; padding: 14px 16px 16px; background: #fff; }
+.about-box { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px 16px; background: #fff; }
 .about-box h3 { margin: 0 0 10px; font-size: 15px; }
 .profile { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
-.avatar { width: 72px; height: 72px; flex: none; border-radius: 50%; border: 3px solid #fff; outline: 2px solid transparent; object-fit: cover; background: #fff5ac; box-shadow: 0 0 0 2px #d62976; }
+.avatar { width: 64px; height: 64px; flex: none; border-radius: 50%; object-fit: cover; background: #fff5ac; box-shadow: 0 0 0 1px var(--line); }
 .pname { font-size: 18px; font-weight: 700; line-height: 1.3; }
 .psub { color: var(--sub); font-size: 13px; }
 .about-box p { margin: 0 0 8px; font-size: 14px; }
 .about-box .label { margin: 10px 0 6px; font-size: 13px; font-weight: 700; color: var(--sub); }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.chips span { background: #efefef; border-radius: 999px; padding: 3px 12px; font-size: 13px; }
+.chips span { background: var(--soft); border-radius: 999px; padding: 3px 12px; font-size: 13px; }
 .chips span.more { background: none; color: var(--sub); padding: 2px 2px; }
 .links { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
-.links li { display: flex; align-items: center; gap: 10px; border: 1px solid var(--border-soft); border-radius: 12px; padding: 8px 10px; }
+.links li { display: flex; align-items: center; gap: 10px; border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px; }
 .links .ic { width: 34px; height: 34px; flex: none; border-radius: 10px; display: grid; place-items: center; color: #fff; }
 .links .ic svg { width: 20px; height: 20px; }
 .links .lt { flex: 1; min-width: 0; line-height: 1.35; }
@@ -133,7 +135,7 @@ details.about[open] > summary { border-radius: var(--radius) var(--radius) 0 0; 
 .links .lt b { word-break: break-all; }
 .links a.go, .links button { flex: none; border: 0; color: #fff; background: var(--blue); border-radius: 8px; padding: 5px 12px; font-size: 12.5px; font-weight: 600; cursor: pointer; text-decoration: none; font-family: inherit; }
 .links a.go:hover, .links button:hover { background: var(--blue-hover); }
-.license { margin: 14px 0 0 40px; background: #fff1f2; border: 1px solid #f6c3c8; border-radius: 12px; padding: 10px 14px; font-size: 14px; }
+.license { margin: 14px 0 0 36px; background: #fafafa; border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; font-size: 14px; }
 .license b.ng { color: var(--red); }
 .license ul { margin: 4px 0; padding-left: 20px; }
 
@@ -156,9 +158,9 @@ dialog::backdrop { background: rgba(0, 0, 0, .55); }
 
 /* ---- ゲストの名前（partials/guest.js）---- */
 .gmodal { position: fixed; inset: 0; z-index: 50; background: rgba(0, 0, 0, .55); display: grid; place-items: center; padding: 16px; }
-.gmodal .gbox { width: min(400px, 100%); background: #fff; border-radius: 22px; padding: 30px 26px 24px; text-align: center; box-shadow: 0 20px 60px rgba(0, 0, 0, .3); }
-.gmodal .ring { width: 88px; height: 88px; margin: 0 auto 12px; border-radius: 50%; padding: 3px; background: var(--grad); }
-.gmodal .ring > div { width: 100%; height: 100%; border-radius: 50%; background: #fff; border: 3px solid #fff; display: grid; place-items: center; font-size: 34px; }
+.gmodal .gbox { width: min(400px, 100%); background: #fff; border-radius: 18px; padding: 28px 24px 22px; text-align: center; box-shadow: 0 20px 60px rgba(0, 0, 0, .25); }
+.gmodal .ring { width: 72px; height: 72px; margin: 0 auto 12px; border-radius: 50%; background: var(--soft); }
+.gmodal .ring > div { width: 100%; height: 100%; border-radius: 50%; display: grid; place-items: center; font-size: 32px; }
 .gmodal h2 { margin: 0 0 4px; font-size: 20px; }
 .gmodal p { margin: 0 0 16px; color: var(--sub); font-size: 13.5px; }
 .gmodal input { width: 100%; font-size: 16px; padding: 12px 14px; border: 1px solid var(--border); background: var(--input); border-radius: 12px; margin-bottom: 10px; }
@@ -171,12 +173,12 @@ dialog::backdrop { background: rgba(0, 0, 0, .55); }
 
 @media (max-width: 640px) {
   body { font-size: 14.5px; }
-  .header-in { padding: 8px 12px; gap: 10px; }
-  .header-in img { width: 36px; height: 36px; border-radius: 10px; }
-  .header-in h1 { font-size: 17px; }
+  .header-in { height: 52px; padding: 0 12px; gap: 10px; }
+  .header-in img { width: 34px; height: 34px; border-radius: 9px; }
+  .header-in h1 { font-size: 16.5px; }
   .header-in p { display: none; }
-  main { padding: 12px 12px 90px; }
-  .card { padding: 16px 14px 16px; border-radius: 14px; }
+  main { padding: 14px 12px 90px; }
+  .card { padding: 16px 14px 16px; border-radius: 12px; }
   .indent { padding-left: 0; }
   .btn-blue { width: 100%; }
   .btn-green { font-size: 16px; padding: 13px 14px; }
@@ -189,16 +191,23 @@ dialog::backdrop { background: rgba(0, 0, 0, .55); }
 }
 
 /* ---- サイトのメニュー ---- */
-.sitenav { background: rgba(255, 255, 255, .92); border-bottom: 1px solid var(--border-soft); position: sticky; top: 63px; z-index: 19; -webkit-backdrop-filter: saturate(180%) blur(12px); backdrop-filter: saturate(180%) blur(12px); }
-.sitenav-in { max-width: 920px; margin: 0 auto; padding: 8px 12px; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+/* タブのように: 文字だけ・いまのページは下に線（ピンク→紫） */
+.sitenav { background: #fff; border-bottom: 1px solid var(--line); position: sticky; top: 61px; z-index: 19; }
+.sitenav-in { max-width: 920px; margin: 0 auto; padding: 0 8px; display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
 .sitenav-in::-webkit-scrollbar { display: none; }
-.sitenav a { color: var(--text); text-decoration: none; padding: 6px 14px; font-size: 14px; font-weight: 600; border-radius: 999px; white-space: nowrap; background: #efefef; }
-.sitenav a:hover { background: #e3e3e3; }
-.sitenav a[aria-current="page"] { color: #fff; background: #262626; }
+.sitenav a { color: var(--sub); text-decoration: none; padding: 10px 12px 11px; font-size: 14px; font-weight: 600; white-space: nowrap; }
+.sitenav a:hover { color: var(--text); }
+.sitenav a[aria-current="page"] { color: var(--text); background: var(--grad-btn) left bottom / 100% 2px no-repeat; }
 @media (max-width: 640px) {
   .sitenav { top: 53px; }
-  .sitenav-in { padding: 7px 10px; gap: 5px; }
-  .sitenav a { padding: 5px 10px; font-size: 12.5px; }
+  .sitenav-in { padding: 0 4px; gap: 0; }
+  .sitenav a { padding: 9px 9px 10px; font-size: 13px; }
+}
+.sitenav .ni { margin-right: 5px; }
+@media (max-width: 480px) {
+  .sitenav-in { justify-content: space-between; }
+  .sitenav .ni { display: none; }
+  .sitenav a { padding: 10px 8px 11px; font-size: 13.5px; }
 }
 
 /* ---- 共通の部品（入力・コピー欄・かんたんな流れ・チップ）---- */
@@ -212,7 +221,7 @@ dialog::backdrop { background: rgba(0, 0, 0, .55); }
 .copybox button:hover { background: var(--blue-hover); }
 .copybox.disabled code { color: #a8a8a8; }
 .copybox.disabled button { background: #c7c7c7; cursor: default; }
-.easy, .tip { position: relative; background: linear-gradient(135deg, #fff7fb 0%, #f7f4ff 100%); border: 1px solid #f1e4f3; border-radius: var(--radius); padding: 14px 18px; margin: 0 0 16px; }
+.easy, .tip { position: relative; background: #fafafa; border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 18px; margin: 0 0 16px; }
 .tip { padding: 10px 14px; margin-top: 10px; font-size: 14px; border-radius: 12px; }
 .easy b.t { display: block; font-size: 15px; margin-bottom: 4px; }
 .easy ol { margin: 0; padding-left: 22px; font-size: 14px; }
@@ -278,7 +287,7 @@ ol.steps > li { margin: 8px 0; }
 .msg { margin: 8px 0 0; font-size: 13.5px; min-height: 1.4em; color: var(--sub); }
 .msg.ng { color: var(--red); }
 .msg.ok { color: var(--green-down); }
-.mebar { display: flex; align-items: center; gap: 10px; background: #fff; border: 1px solid var(--border); border-radius: 999px; padding: 5px 16px 5px 5px; margin: 0 0 16px; width: fit-content; max-width: 100%; font-size: 14px; box-shadow: var(--shadow); }
+.mebar { display: flex; align-items: center; gap: 10px; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 5px 16px 5px 5px; margin: 0 0 14px; width: fit-content; max-width: 100%; font-size: 14px; }
 .mebar .av { width: 32px; height: 32px; font-size: 14px; }
 .mebar > span { white-space: nowrap; }
 .mebar b { overflow-wrap: anywhere; }
@@ -287,12 +296,12 @@ ol.steps > li { margin: 8px 0; }
 .roomhead { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; margin: 0 0 12px; }
 .roomhead b { font-size: 18px; font-weight: 800; margin-right: 4px; }
 .roomhead .link { margin-left: auto; color: var(--red); }
-.bigcode { display: flex; align-items: stretch; gap: 6px; margin: 10px 0; max-width: 440px; background: #fafafa; border: 1px solid var(--border); border-radius: 18px; padding: 6px; }
-.bigcode code { flex: 1; padding: 8px 14px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 30px; font-weight: 800; letter-spacing: .06em; background: var(--grad-btn); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.bigcode { display: flex; align-items: stretch; gap: 6px; margin: 10px 0; max-width: 440px; background: #fafafa; border: 1px solid var(--line); border-radius: 14px; padding: 6px; }
+.bigcode code { flex: 1; padding: 8px 14px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 30px; font-weight: 800; letter-spacing: .06em; color: var(--text); }
 .bigcode button { flex: none; border: 0; border-radius: 13px; background: var(--blue); color: #fff; font-weight: 700; padding: 0 18px; cursor: pointer; font-size: 14px; }
 .bigcode button:hover { background: var(--blue-hover); }
 .controls { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; margin: 4px 0 10px; }
-.tbtn { border: 0; background: #efefef; border-radius: 999px; padding: 8px 16px; font-weight: 600; font-size: 14px; cursor: pointer; color: var(--text); }
+.tbtn { border: 0; background: var(--soft); border-radius: 999px; padding: 8px 16px; font-weight: 600; font-size: 14px; cursor: pointer; color: var(--text); }
 .tbtn:hover { background: #e3e3e3; }
 .tbtn.off { background: #ffe8ea; color: var(--red); }
 .ptt { font-size: 13.5px; display: inline-flex; align-items: center; gap: 6px; }
@@ -300,7 +309,7 @@ ol.steps > li { margin: 8px 0; }
 .meter { width: 120px; height: 8px; background: #efefef; border-radius: 4px; overflow: hidden; }
 .meter > div { height: 100%; width: 0; background: var(--grad-btn); transition: width .08s; }
 ul.players { list-style: none; margin: 10px 0 0; padding: 0; }
-ul.players li { display: grid; grid-template-columns: auto 1fr auto; gap: 1px 12px; align-items: center; padding: 10px 12px; border: 1px solid var(--border-soft); border-radius: 16px; margin: 0 0 8px; background: #fff; transition: box-shadow .15s; }
+ul.players li { display: grid; grid-template-columns: auto 1fr auto; gap: 1px 12px; align-items: center; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; margin: 0 0 8px; background: #fff; transition: box-shadow .15s; }
 ul.players li.me { background: #fafafa; }
 ul.players .av { grid-row: 1 / 3; width: 42px; height: 42px; font-size: 17px; transition: box-shadow .15s; }
 ul.players li.talking .av { box-shadow: 0 0 0 2px #fff, 0 0 0 4px #22a55b; }
@@ -315,7 +324,7 @@ ul.players .vl { font-size: 11.5px; color: var(--sub); }
 .hostset { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin: 12px 0 4px; font-size: 14px; }
 details.adv { margin-top: 12px; }
 details.adv > summary { cursor: pointer; color: var(--sub); font-size: 13.5px; font-weight: 600; }
-.rchat { display: flex; flex-direction: column; border: 1px solid var(--border-soft); border-radius: 18px; background: #fff; overflow: hidden; }
+.rchat { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 14px; background: #fff; overflow: hidden; }
 .rchat .cmsgs { height: 330px; }
 .row select { flex: 1 1 220px; min-width: 0; font-size: 16px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--input); }
 .fl { display: block; font-size: 14px; font-weight: 700; margin: 0 0 6px; }
@@ -341,7 +350,7 @@ code.cmdline { background: #efefef; border-radius: 6px; padding: 1px 6px; font-s
 #sc { flex-wrap: wrap; row-gap: 6px; }
 #sc .chip { margin-left: 4px; font-size: 12px; white-space: nowrap; }
 /* ---- 📱 バックグラウンドモード ---- */
-.bgbox { margin: 0 0 12px; padding: 12px 14px; border-radius: 14px; background: linear-gradient(135deg, #f2f6ff 0%, #fff7fb 100%); border: 1px solid #e3e6f5; }
+.bgbox { margin: 0 0 12px; padding: 12px 14px; border-radius: 12px; background: #fafafa; border: 1px solid var(--line); }
 .bghead { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 0 0 8px; }
 .bghead b { font-size: 15px; }
 .bgrow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
@@ -367,7 +376,7 @@ ul.bgsteps li { margin: 2px 0; }
 .bgbox details ul { margin: 6px 0 0; padding-left: 20px; }
 .chip.bg-ok { background: var(--green-pale); color: var(--green-down); }
 .chip.bg-warn { background: #fff1db; color: #a35b00; }
-.mobile-note { margin: 8px 0 0; font-size: 13.5px; background: #fff; border: 1px solid #f1e4f3; border-radius: 12px; padding: 8px 12px; }
+.mobile-note { margin: 8px 0 0; font-size: 13.5px; background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 8px 12px; }
 .mobile-note[hidden] { display: none; }
 @media (max-width: 640px) {
   ul.players li { grid-template-columns: auto 1fr; }
@@ -378,8 +387,8 @@ ul.bgsteps li { margin: 2px 0; }
 
 /* ===== サイトで近接VC（シンプルな画面）===== */
 .vcmain { max-width: 600px; }
-.vcard { background: var(--panel); border: 1px solid var(--border); border-radius: 22px; padding: 26px 24px 22px; margin: 4px 0 14px; box-shadow: var(--shadow); }
-.vtitle { margin: 0 0 6px; text-align: center; font-size: 21px; font-weight: 800; background: var(--grad-btn); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.vcard { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 26px 24px 22px; margin: 4px 0 14px; }
+.vtitle { margin: 0 0 6px; text-align: center; font-size: 21px; font-weight: 800; color: var(--text); }
 .vlead { margin: 0 0 18px; text-align: center; font-size: 15.5px; font-weight: 700; line-height: 1.65; }
 .vcard:has(#roomBox:not([hidden])) .vtitle, .vcard:has(#roomBox:not([hidden])) .vlead { display: none; }
 input.vcode { display: block; width: 100%; max-width: 420px; margin: 0 auto; text-align: center; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 34px; font-weight: 800; letter-spacing: .32em; text-indent: .32em; text-transform: uppercase; padding: 14px 10px; border: 2px solid var(--border); border-radius: 16px; background: var(--input); color: var(--text); transition: border-color .15s, box-shadow .15s, background .15s; }
@@ -401,7 +410,7 @@ select.vsel:focus { outline: none; border-color: #d62976; }
 #talkBox .controls[hidden] { display: none; }
 #talkBox .tbtn { padding: 12px 10px; font-size: 14.5px; border-radius: 14px; }
 .vset { margin: 10px 0 0; padding: 0; background: none; border: 0; }
-.vset > details { background: #fafafa; border: 1px solid var(--border-soft); border-radius: 14px; padding: 10px 14px; }
+.vset > details { background: #fafafa; border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; }
 .vset summary { cursor: pointer; font-weight: 700; font-size: 14px; color: var(--sub); }
 .vset-in { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
 .bgbox { margin: 0 0 12px; }
@@ -413,17 +422,17 @@ select.vsel:focus { outline: none; border-color: #d62976; }
 .vcard:has(#controls:not([hidden])) + .mobile-note { display: none; }
 .vchat { padding: 18px 18px 14px; }
 .vsub { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 0 0 10px; font-size: 16px; font-weight: 800; }
-details.vmore { background: var(--panel); border: 1px solid var(--border); border-radius: 18px; margin: 0 0 12px; box-shadow: var(--shadow); }
+details.vmore { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; margin: 0 0 12px; }
 details.vmore > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 12px; padding: 14px 18px; }
 details.vmore > summary::-webkit-details-marker { display: none; }
 details.vmore > summary::after { content: "▾"; margin-left: auto; color: var(--sub); transition: transform .2s; }
 details.vmore[open] > summary::after { transform: rotate(180deg); }
-details.vmore .vm-ic { width: 38px; height: 38px; flex: none; border-radius: 12px; background: linear-gradient(135deg, #fff1f5 0%, #f1efff 100%); display: grid; place-items: center; font-size: 19px; }
+details.vmore .vm-ic { width: 38px; height: 38px; flex: none; border-radius: 10px; background: var(--soft); display: grid; place-items: center; font-size: 19px; }
 details.vmore summary b { display: block; font-size: 15px; }
 details.vmore summary small { display: block; color: var(--sub); font-size: 12.5px; }
 .vmore-in { padding: 0 18px 16px; }
 @media (max-width: 640px) {
-  .vcard { padding: 22px 16px 18px; border-radius: 18px; }
+  .vcard { padding: 22px 16px 18px; border-radius: 14px; }
   input.vcode { font-size: 30px; letter-spacing: .26em; text-indent: .26em; }
   .vtitle { font-size: 19px; }
   .vlead { font-size: 14.5px; }
@@ -483,11 +492,11 @@ details.vmore summary small { display: block; color: var(--sub); font-size: 12.5
         '<button class="btn btn-green" type="submit">はじめる</button>' +
         '<button class="link gcancel" type="button" hidden>やめる</button>' +
         '<p class="gerr" aria-live="polite"></p>' +
-        '<p class="gnote">名前は、ほかの人に見えます。本名・学校・住所などは入れないでください。<br>登録やパスワードはいりません（このブラウザに保存されます）。</p>' +
+        '<p class="gnote">名前はほかの人に見えます。本名などは入れないでください。</p>' +
         "</form>";
       const form = wrap.querySelector("form"), input = wrap.querySelector("input"), err = wrap.querySelector(".gerr");
       wrap.querySelector("h2").textContent = opts.title || "ようこそ！";
-      wrap.querySelector(".gtext").textContent = opts.text || "チャットや近接VCで使う名前を決めてください（ゲストとして参加します）。";
+      wrap.querySelector(".gtext").textContent = opts.text || "チャットと近接VCで使う名前を決めてください。";
       wrap.querySelector("button[type=submit]").textContent = opts.button || "はじめる";
       input.placeholder = "名前（16 文字まで）";
       input.value = opts.value || "";
@@ -558,7 +567,7 @@ details.vmore summary small { display: block; color: var(--sub); font-size: 12.5
       const st = await check();
       checked = st !== "offline";
       if (st === "banned") {
-        await ask({ title: "いまは使えません", text: "このゲストは、サイトの管理者によって止められています。しばらくしてから、もう一度ためしてください。", banned: true });
+        await ask({ title: "いまは使えません", text: "管理者に止められています。しばらく待ってください。", banned: true });
         return new Promise(() => {});
       }
     }
@@ -714,40 +723,40 @@ details.vmore summary small { display: block; color: var(--sub); font-size: 12.5
     <img class="pixel" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAB40lEQVR4nO3dsU3DQBiAUYJo2SJESGnTUNGzAQ0lKzADK7AAc6RKwwBIjAE9bJAUxjrD915rWb7i0y/5fJJX6832+4ys89ELYCwBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIE4AcQKIE0CcAOIuRi+AeV0/Xx29bgLECSBOAHECiBNAnADiBBA3eR9gd3v4jXVkfd09HL3+/vQx6/NNgDgBxAkgTgBxAogTQJwA4pwHGOzUe/6p7/lT9wlMgDgBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIE4AcQKIE0CcAOIWfx7g9eXy6PX7x89F3790JkCcAOIEECeAOAHECSBOAHECiBNAnADiBBAngDgBxAkgTgBxiz8PMPV7++j7l84EiBNAnADiBBAngDgBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIG7x5wH+u7n/B3CKCRAngDgBxAkgTgBxAogTQNzkfYC3/c2k+3e3h6lLOGrq+ma3H/t4EyBOAHECiBNAnADiBBAngLg/fx5g8e/5g506T2ACxAkgTgBxAogTQJwA4gQQt/h9AO/58zIB4gQQJ4A4AcQJIE4AcQKIW6032+/Ri2AcEyBOAHECiBNAnADiBBAngDgBxAkgTgBxAogTQJwA4gQQJ4C4Hz5iK0yQ/79HAAAAAElFTkSuQmCC">
     <div>
       <h1>サイトで近接VC</h1>
-      <p>Minecraft で近くにいる人の声だけが、このページで聞こえる　｜　制作: MaYo（mayo01297）</p>
+      <p>ブラウザで近接VC　｜　制作: MaYo（mayo01297）</p>
     </div>
     <a class="help-btn" href="#help">？ 使い方</a>
   </div>
 </header>
 <nav class="sitenav" aria-label="サイトのメニュー">
   <div class="sitenav-in">
-    <a href="../" data-page="home">🏠 ホーム</a>
-    <a href="../corpse/" data-page="corpse">🪦 死体スキン</a>
-    <a href="../vc/" data-page="vc" aria-current="page">🎙 近接VC</a>
-    <a href="../chat/" data-page="chat">💬 チャット</a>
-    <a href="../works/" data-page="works">🧩 作品</a>
+    <a href="../" data-page="home"><span class="ni" aria-hidden="true">🏠</span>ホーム</a>
+    <a href="../corpse/" data-page="corpse"><span class="ni" aria-hidden="true">🪦</span>死体スキン</a>
+    <a href="../vc/" data-page="vc" aria-current="page"><span class="ni" aria-hidden="true">🎙</span>近接VC</a>
+    <a href="../chat/" data-page="chat"><span class="ni" aria-hidden="true">💬</span>チャット</a>
+    <a href="../works/" data-page="works"><span class="ni" aria-hidden="true">🧩</span>作品</a>
   </div>
 </nav>
 
 <main class="vcmain">
-  <p class="notice" id="noApi" hidden>⚠ このページは、サイトのサーバー（Cloudflare Workers か VPS）で動かしているときだけ使えます。</p>
+  <p class="notice" id="noApi" hidden>⚠ サイトのサーバー（Workers か VPS）で動かしたときだけ使えます。</p>
   <div class="inapp" id="inApp" hidden>
     <b id="inAppTitle">⚠ アプリの中のブラウザでひらいています</b>
-    <p>このままだと、マイクラに切りかえたときに声が止まります。<span id="inAppWhich"></span>でひらき直してください。</p>
+    <p>マイクラに切りかえると声が止まります。<span id="inAppWhich"></span>でひらき直してください。</p>
     <div class="inapp-btns"><a class="btn btn-green" id="inAppOpen" href="#">ひらき直す</a><button class="btn btn-sub" id="inAppCopy" type="button">URL をコピー</button></div>
     <p class="sub-hint" id="inAppHint"></p>
-    <p style="margin:8px 0 0"><button class="link" id="inAppStay" type="button">このまま使う（マイクラに切りかえない人）</button></p>
+    <p style="margin:8px 0 0"><button class="link" id="inAppStay" type="button">このまま使う</button></p>
   </div>
   <div class="mebar" id="meBar" hidden></div>
 
   <!-- 部屋に入る（入ったあとは、この中に部屋の画面が出る） -->
   <section class="vcard" aria-labelledby="s1">
     <h2 class="vtitle" id="s1">ルーム選択</h2>
-    <p class="vlead">マイクラに表示されている<br>6けたの部屋番号を入力してください</p>
+    <p class="vlead">マイクラに出た 6 けたの番号を入れてください</p>
     <div id="joinForm">
       <input type="text" class="vcode" id="roomInput" maxlength="7" inputmode="numeric" enterkeyhint="go" autocomplete="off" spellcheck="false" placeholder="000000" aria-label="部屋番号（6けた）">
       <button class="btn btn-green vbig" id="joinBtn" type="button">この部屋に入る</button>
-      <p class="msg vcenter" id="joinMsg">部屋番号は、ホストがマイクラで /wsserver を送ると、ゲームのチャットに出ます（マイクラのチャットで <code>!vc</code> と送っても出ます）。</p>
+      <p class="msg vcenter" id="joinMsg">番号はマイクラのチャットに出ます（<code>!vc</code> でも出ます）。</p>
     </div>
 
     <div id="roomBox" hidden>
@@ -765,9 +774,9 @@ details.vmore summary small { display: block; color: var(--sub); font-size: 12.5
         <label class="vstep" for="pickSel">自分をえらんでください</label>
         <select id="pickSel" class="vsel" aria-label="自分を選択"></select>
         <button class="btn btn-green vbig" id="pickBtn" type="button">これにする</button>
-        <p class="msg vcenter" id="pickMsg">ワールドにいる人の名前が出ます。ゲームに出ていない人は「観戦者」をえらんでください。</p>
+        <p class="msg vcenter" id="pickMsg">ゲームにいない人は「観戦者」をえらんでください。</p>
         <details class="adv" id="codeDetails">
-          <summary>なりすまし防止の本人確認（!vc）をする</summary>
+          <summary>本人確認（!vc）をする</summary>
           <div id="codeSlot1"></div>
         </details>
       </div>
@@ -775,9 +784,9 @@ details.vmore summary small { display: block; color: var(--sub); font-size: 12.5
       <!-- !vc で本人確認（部屋の設定で必須のとき） -->
       <div id="verifyBox" hidden>
         <p class="vstep">この部屋は<b>本人確認</b>が必要です</p>
-        <p class="vcenter" style="margin:0;font-size:14px">ワールドに入って、<b>Minecraft のチャット</b>でこれを送ってください（10 分以内）。</p>
+        <p class="vcenter" style="margin:0;font-size:14px"><b>マイクラのチャット</b>でこれを送ってください（10 分以内）。</p>
         <div id="codeSlot2"></div>
-        <p class="vcenter" style="margin:10px 0 0"><button class="btn-outline" id="specBtn" type="button">👻 観戦者で入る（ゲームに出ていない人）</button></p>
+        <p class="vcenter" style="margin:10px 0 0"><button class="btn-outline" id="specBtn" type="button">👻 観戦者で入る</button></p>
       </div>
 
       <div id="codeArea">
@@ -789,11 +798,11 @@ details.vmore summary small { display: block; color: var(--sub); font-size: 12.5
       <div id="talkBox" hidden>
         <p class="who" id="whoLine"></p>
         <details class="adv" id="upgradeDetails" hidden>
-          <summary>本人確認（!vc）をする（✓ が付いて、ゲーム中チャットがマイクラにも出ます）</summary>
+          <summary>本人確認（!vc）をする（✓ が付きます）</summary>
           <div id="codeSlot3"></div>
         </details>
         <button class="btn btn-green vbig" id="startBtn" type="button">🎧 ボイスチャットを開始</button>
-        <p class="sub-hint vcenter" id="startHint">ヘッドホン・イヤホンがおすすめです（スピーカーだと、自分の声が相手に返ってしまうことがあります）。<span id="startHintMobile" hidden><br>📱 開始したら、このページはひらいたままマイクラに切りかえてOK（ブラウザをスワイプして閉じると止まります）。</span></p>
+        <p class="sub-hint vcenter" id="startHint">イヤホンがおすすめです。<span id="startHintMobile" hidden><br>📱 開始したら、ページをひらいたままマイクラへ。</span></p>
         <div class="controls" id="controls" hidden>
           <button class="tbtn" id="muteBtn" type="button">🎙 マイク: オン</button>
           <button class="tbtn" id="deafBtn" type="button">🔊 音: オン</button>
@@ -808,30 +817,30 @@ details.vmore summary small { display: block; color: var(--sub); font-size: 12.5
           <p class="bgwarn" id="bgNote" hidden></p>
           <div class="bgprev" id="bgPrev" hidden>
             <video id="pipVideo" muted playsinline aria-label="小窓の表示"></video>
-            <p class="sub-hint">これが小窓（ピクチャー・イン・ピクチャー）に出ます。マイクラの上に出たままになり、だれが話しているか見えます。</p>
+            <p class="sub-hint">小窓に出る画面です（だれが話しているか見えます）。</p>
           </div>
           <details>
             <summary>くわしく・声が止まるとき</summary>
             <ul class="bgsteps" id="bgSteps"></ul>
             <ul id="bgTrouble">
-              <li>ブラウザを、アプリの切りかえ画面で<b>上にスワイプして閉じていない</b>か確認してください（閉じると止まります。もしページが読みこみ直されても、自動でボイスチャットを再開します）</li>
-              <li class="only-android">Android: 「<b>🎮 マイクラへ（小窓にする）</b>」を使っていますか？ 小窓にしないと、Android の仕組みで <b>約 1 分でマイクが止まります</b>（聞くことはできます）</li>
-              <li class="only-android">Android: 設定 → アプリ → Chrome → バッテリー を「<b>制限なし</b>」に。小窓が出ないときは、同じ画面の「ピクチャー イン ピクチャー」を許可</li>
-              <li>マイクラの「設定 → オーディオ」で「<b>音楽</b>」を 0 にしてみてください（マイクラの音楽が流れはじめるときに、ほかのアプリの音を止めることがあります）</li>
-              <li class="only-ios">iPhone: <b>Safari</b> で使う・<b>iOS を最新</b>にする（17.5 以上）・低電力モードをオフにする</li>
-              <li>LINE・X・Instagram などのアプリの中でひらいたページだと、裏で止まります。Safari・Chrome でひらいてください</li>
-              <li>それでもだめなときは <a href="../vc/discord/">Discord 版の近接VC</a> を使ってください（Discord のアプリは、裏でも止まりません）</li>
+              <li>ブラウザを<b>スワイプして閉じていない</b>か確認（読みこみ直されても自動で再開します）</li>
+              <li class="only-android">Android: 「<b>🎮 マイクラへ（小窓にする）</b>」を使う（使わないと約 1 分でマイクが止まります）</li>
+              <li class="only-android">Android: Chrome のバッテリーを「<b>制限なし</b>」に・ピクチャー イン ピクチャーを許可</li>
+              <li>マイクラの「オーディオ」で「<b>音楽</b>」を 0 に</li>
+              <li class="only-ios">iPhone: <b>Safari</b>・iOS 17.5 以上・低電力モードはオフ</li>
+              <li>LINE などアプリの中のブラウザでは止まります</li>
+              <li>だめなら <a href="../vc/discord/">Discord 版</a></li>
             </ul>
           </details>
         </div>
         <ul class="players" id="players"></ul>
         <div class="vset" id="vset" hidden>
           <details>
-            <summary>⚙ 音の設定（マイク音量・立体音響・押して話す）</summary>
+            <summary>⚙ 音の設定</summary>
             <div class="vset-in">
               <label class="vrow">マイク音量 <input type="range" id="micVol" min="0" max="200" step="5" value="100" aria-label="マイク音量"> <span id="micVolText">100%</span>
                 <span class="meter" title="自分の声の大きさ"><span id="micMeter"></span></span></label>
-              <label class="vrow"><input type="checkbox" id="spatialChk" checked> 立体音響を有効にする（左右から聞こえる）<small>スマホはイヤホンがおすすめ</small></label>
+              <label class="vrow"><input type="checkbox" id="spatialChk" checked> 立体音響（左右から聞こえる）</label>
               <label class="vrow"><input type="checkbox" id="pttChk"> 押して話す（<kbd>V</kbd> キー）</label>
             </div>
           </details>
@@ -840,7 +849,7 @@ details.vmore summary small { display: block; color: var(--sub); font-size: 12.5
       <p class="adminlink"><button class="link" id="adminOpen" type="button">🔒 管理者設定</button></p>
     </div>
   </section>
-  <p class="mobile-note" id="mobileNote" hidden>📱 <b>スマホ 1 台でマイクラもするとき</b>: ボイスチャットを開始したら、このページは<b>ひらいたまま</b>ホームに戻って、マイクラをひらくだけ。ブラウザをスワイプして閉じなければ、マイクラの中でも話せます（<a href="#help-bg">くわしく</a>）。</p>
+  <p class="mobile-note" id="mobileNote" hidden>📱 <b>スマホ 1 台のとき</b>: 開始したら、ページを<b>ひらいたまま</b>マイクラへ（<a href="#help-bg">くわしく</a>）。</p>
 
   <!-- ゲーム中チャット（部屋の中だけ） -->
   <section class="vcard vchat" id="chatCard" aria-labelledby="sc" hidden>
@@ -853,26 +862,25 @@ details.vmore summary small { display: block; color: var(--sub); font-size: 12.5
         <button class="send" type="submit">送信</button>
       </form>
     </div>
-    <p class="sub-hint">この部屋の人と、ワールドのマイクラのチャットが見えます。<b>本人確認（!vc）をした人</b>のメッセージは、マイクラのチャットにも出ます（ほかの人のメッセージはこのページだけ）。<br>
-      200 文字まで・10 秒に 5 回・1 分に 20 回まで。悪口・個人情報（本名・学校・住所）は書かないでください。</p>
+    <p class="sub-hint"><b>本人確認した人</b>のメッセージはマイクラにも出ます。200 文字まで・悪口や個人情報は禁止。</p>
   </section>
 
   <!-- 部屋を作る（ホスト）・はじめての人へ … ふだんはとじておく -->
   <details class="vmore" id="hostMore">
-    <summary><span class="vm-ic">🏠</span><span><b>部屋を作る</b><small>ワールドを開く人（ホスト）はこちら</small></span></summary>
+    <summary><span class="vm-ic">🏠</span><span><b>部屋を作る</b><small>ワールドを開く人（ホスト）</small></span></summary>
     <div class="vmore-in" aria-labelledby="s2">
-      <h3 class="vsub" id="s2">部屋を作る（ワールドを開く人 = ホスト）</h3>
+      <h3 class="vsub" id="s2">部屋を作る（ホスト）</h3>
       <ol class="steps">
-        <li>ワールドの設定で「<b>チートを有効にする</b>」をオン</li>
-        <li>ワールドに入って、<b>チャットでこれを送る</b>（ワールドを開くたびに）
+        <li>「<b>チートを有効にする</b>」をオン</li>
+        <li>ワールドを開くたびに、<b>チャットでこれを送る</b>
           <div class="copybox"><code id="newCmd">読みこみ中…</code><button type="button" data-copy="newCmd">コピー</button></div>
-          <p class="sub-hint" id="noRelayNote" hidden>⚠ このサイトにはまだリレー（中継サーバー）が設定されていないので、マイクラで部屋を作れません。下の「サイトで先に部屋を作る」を使ってください（Windows の近接VC コネクターが必要です）。</p>
+          <p class="sub-hint" id="noRelayNote" hidden>⚠ リレーが未設定なので、マイクラでは部屋を作れません。下の「サイトで先に部屋を作る」を使ってください（コネクターが必要）。</p>
         </li>
-        <li>ゲームのチャットに出た<b>6けたの部屋番号</b>を、みんなに教える（自分も上で入る）<br>
-          <span class="sub-hint">「<b>管理キー</b>」はあなたにだけ出ます。部屋の中の「🔒 管理者設定」で、声が届く距離・人狼・観戦者のルールを変えるのに使います。</span></li>
+        <li>出た<b>6けたの番号</b>をみんなに教える<br>
+          <span class="sub-hint">「<b>管理キー</b>」は「🔒 管理者設定」で使います。</span></li>
       </ol>
       <details class="adv" id="siteCreate">
-        <summary>サイトで先に部屋を作る（リンクで招待したいとき・同じ部屋をずっと使うとき）</summary>
+        <summary>サイトで先に部屋を作る（リンクで招待・同じ部屋をずっと使う）</summary>
         <div id="createForm" style="margin-top:10px">
           <div class="row">
             <input type="text" id="roomNameInput" maxlength="40" autocomplete="off" placeholder="部屋の名前（例: MaYo のサバイバル）" aria-label="部屋の名前">
@@ -882,32 +890,30 @@ details.vmore summary small { display: block; color: var(--sub); font-size: 12.5
         </div>
         <div id="hostBox" hidden>
           <ol class="steps">
-            <li><b>みんなにこのリンクを送る</b>（Discord・LINE など）
+            <li><b>このリンクをみんなに送る</b>
               <div class="copybox"><code id="shareLink"></code><button type="button" data-copy="shareLink">コピー</button></div>
             </li>
-            <li>ワールドで「チートを有効にする」をオン → <b>チャットでこれを送る</b>（この部屋専用のコマンド）
+            <li>チートON → <b>チャットでこれを送る</b>
               <div class="copybox"><code id="wsCmd">読みこみ中…</code><button type="button" data-copy="wsCmd">コピー</button></div>
               <div id="connectorNote" class="sub-hint" hidden>
-                ※ このサイトにはまだリレー（中継サーバー）が設定されていません。いまは Windows の PC で
-                <a href="../download/MaYoVCConnector.zip">近接VC コネクター</a> をひらき、上のコマンドを貼り付けて「スタート」→ Minecraft では
-                <code>/wsserver ws://127.0.0.1:19131</code> を送ってください。
+                ※ リレーが未設定です。Windows で <a href="../download/MaYoVCConnector.zip">コネクター</a> にこのコマンドを貼って「スタート」→ マイクラでは <code>/wsserver ws://127.0.0.1:19131</code>
               </div>
             </li>
           </ol>
           <p class="sub-hint"><span class="chip" id="hostWorld">確認中…</span>　いま入っている人: <span id="hostMembers">-</span></p>
-          <p><button class="btn-outline" id="hostAdminBtn" type="button">🔒 管理者設定をひらく</button></p>
+          <p><button class="btn-outline" id="hostAdminBtn" type="button">🔒 管理者設定</button></p>
         </div>
       </details>
     </div>
   </details>
 
   <details class="vmore" id="easyMore">
-    <summary><span class="vm-ic">⚡</span><span><b>はじめての人へ</b><small>かんたんな流れ（Discord はいりません）</small></span></summary>
+    <summary><span class="vm-ic">⚡</span><span><b>はじめての人へ</b><small>かんたんな流れ</small></span></summary>
     <div class="vmore-in">
       <ol class="steps">
-        <li><b>ホスト</b>（ワールドを開く人）: ワールドで<b>チートをオン</b>にして、チャットで <code class="cmdline" id="easyNew">/wsserver …/new</code> を送る → ゲームに<b>6けたの部屋番号</b>が出る</li>
-        <li><b>みんな</b>: このページで部屋番号を入れて「この部屋に入る」</li>
-        <li>「<b>自分をえらぶ</b>」で自分の名前をえらんで「<b>ボイスチャットを開始</b>」→ 近くの人の声が聞こえます（遠いほど小さく、左右からも）</li>
+        <li><b>ホスト</b>: チートON で <code class="cmdline" id="easyNew">/wsserver …/new</code> → 6けたの番号が出る</li>
+        <li><b>みんな</b>: 番号を入れて「この部屋に入る」</li>
+        <li>自分をえらんで「<b>ボイスチャットを開始</b>」</li>
       </ol>
     </div>
   </details>
@@ -917,50 +923,39 @@ details.vmore summary small { display: block; color: var(--sub); font-size: 12.5
     <div class="help-body">
       <h4>■ 必要なもの</h4>
       <ul>
-        <li>ホスト: ワールドの設定で<b>チートをオン</b>（/wsserver と、位置を読むコマンドを使うため）</li>
-        <li>みんな: マイクのついたパソコンかスマホと、ブラウザ（Chrome・Edge・Safari など）。<b>ヘッドホン</b>がおすすめ</li>
-        <li>Minecraft と同じ端末でも、別の端末（スマホなど）でもOK。スマホ 1 台で両方使うときは、下の「<a href="#help-bg">スマホ 1 台で、マイクラと同時に使う</a>」を見てください</li>
+        <li>ホスト: チートをオン</li>
+        <li>みんな: マイク付きの PC かスマホ（イヤホン推奨）</li>
       </ul>
-      <h4 id="help-bg">■ スマホ 1 台で、マイクラと同時に使う</h4>
+      <h4 id="help-bg">■ スマホ 1 台で使う</h4>
       <ul>
-        <li>「ボイスチャットを開始」したら、このページは<b>ひらいたまま</b>マイクラに切りかえます。ブラウザを<b>スワイプして閉じない</b>かぎり、マイクラの中でも聞こえて、話せます</li>
-        <li><b>iPhone・iPad</b>（iOS 17.5 以上の Safari）: ホームに戻ってマイクラをひらくだけ。マイクラ中も、立体音響・距離での音量・マイク音量はそのままです。iOS 17.4 以下や Safari 以外のブラウザでは、マイクラ中は立体音響がお休みになり、音量は「聞こえる／聞こえない」になります</li>
-        <li><b>Android</b>: 「<b>🎮 マイクラへ（小窓にする）</b>」を押して、小窓にしてからマイクラをひらきます。Android は、ブラウザが小窓になっていないと、<b>約 1 分でマイクを止めてしまう</b>仕組みです（Chrome の仕様）。小窓にはだれが話しているかが出ます</li>
-        <li>通知（Android）・ロック画面（iPhone）の ⏸ / ▶ で、マイクのミュートを切りかえられます</li>
-        <li>このページに戻ると、切れていたところ（部屋・音・マイク・相手とのつながり）を自動でつなぎ直します。スマホがページを読みこみ直していても、ボイスチャットを自動で再開します（音が出ないときは画面をタップ）</li>
-        <li>LINE・X・Instagram などのアプリの中でひらくと、裏で止まります。ページの上の案内から Safari・Chrome でひらき直してください（LINE は自動でひらき直します）</li>
-        <li>それでも止まるときは <a href="../vc/discord/">Discord 版</a>（Discord のアプリは裏でも動きます）か、別の端末でこのページをひらいてください</li>
+        <li>開始したら、ページを<b>ひらいたまま</b>マイクラへ。<b>スワイプで閉じない</b>かぎり話せます</li>
+        <li>iPhone: <b>Safari</b>（iOS 17.5 以上）がおすすめ</li>
+        <li>Android: 「<b>🎮 マイクラへ（小窓にする）</b>」を押してから（押さないと約 1 分でマイクが止まります）</li>
+        <li>通知・ロック画面の ⏸ / ▶ でミュート。戻ると自動でつなぎ直します</li>
+        <li>LINE などアプリの中では止まるので、Safari・Chrome で</li>
       </ul>
-      <h4>■ 自分を選択・本人確認</h4>
+      <h4>■ 自分をえらぶ・本人確認</h4>
       <ul>
-        <li>「自分を選択」は、ワールドにいる人の一覧から自分の名前をえらぶだけで入れます（かんたん）。ほかの人が使っている名前はえらべません</li>
-        <li>なりすましが心配なときは、マイクラのチャットで <b>!vc 6けたの数字</b> を送る「本人確認」をしてください（✓ が付き、同じ名前で入っていた人は外れます）。管理者は「入り方」を「!vc で本人確認」にすると、全員に本人確認をしてもらえます</li>
-        <li>ゲームに出ていない人は「👻 観戦者」で入れます</li>
+        <li>一覧から自分の名前をえらぶだけ。ゲームにいない人は「👻 観戦者」</li>
+        <li>なりすましが心配なら、マイクラで <b>!vc 6けた</b> を送って本人確認（✓ が付きます）</li>
       </ul>
       <h4>■ 聞こえ方</h4>
       <ul>
-        <li>近いほど大きく、離れると小さくなり、<b>声が届く距離</b>（管理者が選ぶ・最初は 20 ブロック）をこえると聞こえません</li>
-        <li>相手のいる方向（左・右）から聞こえます（「立体音響」をオフにすると、左右は変わりません）</li>
-        <li>ちがうディメンション（ネザー・エンド）の人の声は聞こえません。ワールドが閉じているときは、ロビーとして全員の声が聞こえます</li>
-        <li><b>観戦者</b>（死んだ人と、観戦者で入った人）の聞こえ方は、管理者が選べます: 「話せない」「近くだけ」「すべての観戦者と」。「観戦者は生きている人の声を聞ける」もあります</li>
-        <li><b>人狼</b>テンプレート: 死んだ人は観戦者になり、観戦者どうしだけで話せます（生きている人には聞こえない・観戦者は生きている人の声を聞ける・観戦者はゲーム中チャットに書けない）</li>
-        <li>死んだ人を見分けるには、ワールドに <a href="../vc/discord/#s3">近接VCアドオン（ワールド用）</a> を入れてください（入れなくても、距離の近接VCは使えます）</li>
+        <li>近いほど大きく、届く距離（最初は 20 ブロック）をこえると聞こえません。左右からも聞こえます</li>
+        <li>ちがうディメンションの人は聞こえません</li>
+        <li>観戦者・人狼のルールは管理者が選べます</li>
+        <li>死んだ人を見分けるには <a href="../vc/discord/#s3">近接VCアドオン</a> を入れてください</li>
       </ul>
       <h4>■ つながらないとき</h4>
       <ul>
-        <li>部屋番号を入れても「見つかりません」: ホストが送ったコマンドで出た番号か確認（ワールドを開くたびに新しい番号になります。同じ部屋をずっと使うときは「🔒 管理者設定」の「次からも同じ部屋を使うコマンド」を使う）</li>
-        <li>「自分を選択」に名前が出ない: ホストの /wsserver がつながっているか（部屋の上の「ワールド」が緑か）確認</li>
-        <li>名前の横が「つながりません」: 学校・会社の Wi-Fi などで止められていることがあります。「🔄 再接続」をためしてください</li>
-        <li>声が出ない: 「ボイスチャットを開始」を押したか、マイクの許可を「許可」にしたか、マイク音量が 0% でないか、「🔊 音: オン」になっているか確認</li>
-        <li>ほかの人に自分の声が二重に聞こえる: スピーカーではなくヘッドホンを使ってください</li>
+        <li>「見つかりません」: 番号はワールドを開くたびに変わります（同じ部屋は「🔒 管理者設定」のコマンドで）</li>
+        <li>名前が出ない: 部屋の上の「ワールド」が緑か確認</li>
+        <li>「つながりません」: 学校の Wi-Fi などで止められているかも。「🔄 再接続」を</li>
+        <li>声が出ない: マイクの許可・音量・「🔊 音: オン」を確認</li>
+        <li>声が二重に聞こえる: イヤホンを使う</li>
       </ul>
-      <h4>■ チャットとゲストの名前</h4>
-      <ul>
-        <li>はじめに入れた名前（名前#4けた）がゲストの名前です。名前は <a href="../chat/">チャット</a> のページで変えられます</li>
-        <li>ゲーム中チャットは、部屋ごとに最新 50 件だけ残ります</li>
-      </ul>
-      <h4>■ データについて</h4>
-      <p>位置（座標・向き）は、この部屋に入っている人のブラウザにだけ送ります。声はブラウザどうしで直接やりとりし、つながらないときはサイトの管理者のサーバー（VPS）を通ります。声の録音・保存はしません。チャットのメッセージは、上の件数だけサーバーに残ります。</p>
+      <h4>■ データ</h4>
+      <p>位置は部屋の人にだけ送ります。声は録音しません。チャットは部屋ごとに最新 50 件だけ残ります。名前は <a href="../chat/">チャット</a> で変えられます。</p>
     </div>
   </details>
 
@@ -983,7 +978,7 @@ details.vmore summary small { display: block; color: var(--sub); font-size: 12.5
             <div class="psub">高校1年生</div>
           </div>
         </div>
-        <p>普段は、マインクラフトの PvP クライアントを作ったり、Roblox でゲームを作ったり、アドオンを作ったり、マインクラフトのマップを作ったりしています。</p>
+        <p>マイクラの PvP クライアント・アドオン・マップや、Roblox のゲームを作っています。</p>
         <p class="label">好きなゲーム</p>
         <div class="chips">
           <span>マインクラフト</span><span>第五人格</span><span>崩壊：スターレイル</span><span>Roblox</span><span>Dead by Daylight</span><span class="more">など</span>
@@ -1011,15 +1006,7 @@ details.vmore summary small { display: block; color: var(--sub); font-size: 12.5
       </div>
     </div>
     <div class="license">
-      <b>クレジット・二次配布について</b><br>
-      このスキン登録ページと「プレイヤーの死体アドオン」は、<b>MaYo（mayo01297）</b>が制作しました。<br>
-      <b class="ng">二次配布は禁止です。</b>次のことはしないでください。
-      <ul>
-        <li>このページのファイルやアドオンを、ほかのサイト・SNS・Discord サーバーなどにアップロードして配ること</li>
-        <li>改変して配ること</li>
-        <li>自分が作ったと言うこと（自作発言）</li>
-      </ul>
-      紹介するときは、このページのURLを共有してください。
+      <b class="ng">二次配布禁止</b>：再アップロード・改変して配布・自作発言はしないでください。紹介はこのページの URL でお願いします。
     </div>
     </div>
   </details>
@@ -1069,7 +1056,7 @@ details.vmore summary small { display: block; color: var(--sub); font-size: 12.5
   <div class="dlg-body">
     <h3 id="adminTitle">⚙️ 管理者専用設定</h3>
     <div id="akBox">
-      <p>部屋を作った人の「<b>管理キー</b>」を入れてください。マイクラで作った部屋は、作った人にだけゲームのチャットに出ています（出なかったときは、チャットで <code>!vc admin</code>）。</p>
+      <p>「<b>管理キー</b>」を入れてください（マイクラで <code>!vc admin</code> でも出ます）。</p>
       <div class="row">
         <input type="password" id="akInput" maxlength="24" autocomplete="off" spellcheck="false" placeholder="管理キー" aria-label="管理キー">
         <button class="btn btn-blue" id="akBtn" type="button">ひらく</button>
@@ -1091,12 +1078,12 @@ details.vmore summary small { display: block; color: var(--sub); font-size: 12.5
         <select id="verifySel"><option value="pick">自分をえらぶ（かんたん）</option><option value="code">!vc で本人確認（なりすまし防止）</option></select></label>
       <p class="sub-hint" id="tplHint"></p>
       <hr>
-      <p class="sub-hint">次からも<b>同じ部屋</b>を使うときに、ワールドで送るコマンド:</p>
+      <p class="sub-hint"><b>同じ部屋</b>を使い続けるコマンド:</p>
       <div class="copybox"><code id="roomCmd">…</code><button type="button" data-copy="roomCmd">コピー</button></div>
-      <p class="sub-hint">管理用リンク（ほかの端末で管理するとき。<b>人に見せないでください</b>）:</p>
+      <p class="sub-hint">管理用リンク（<b>人に見せないでください</b>）:</p>
       <div class="copybox"><code id="hostLink"></code><button type="button" data-copy="hostLink">コピー</button></div>
       <p style="margin:10px 0 0;font-size:14px"><button class="btn-outline" id="newWorldCodeBtn" type="button">ワールドの接続コードを作り直す</button>
-        <a id="checkLink" href="#" target="_blank" rel="noopener" style="margin-left:8px">つながらないとき（接続チェック）</a></p>
+        <a id="checkLink" href="#" target="_blank" rel="noopener" style="margin-left:8px">接続チェック</a></p>
       <p class="msg" id="setMsg"></p>
     </div>
   </div>
@@ -1241,13 +1228,13 @@ function normChat(m) {
 async function joinRoom(id) {
   if (!GUEST) return;
   id = roomIdOf(id);
-  if (!ROOM_RE.test(id)) { $("joinMsg").textContent = "部屋番号は 6 けたの数字です（ホストのゲームのチャットに出ています）。"; $("joinMsg").className = "msg ng"; return; }
+  if (!ROOM_RE.test(id)) { $("joinMsg").textContent = "部屋番号は 6 けたの数字です。"; $("joinMsg").className = "msg ng"; return; }
   if (!BOT) { $("noApi").hidden = false; return; }
   $("joinMsg").textContent = "確認しています…"; $("joinMsg").className = "msg";
   let info, status = 0;
   try { const r = await fetch(`${BOT}/api/web/room?r=${id}`, { cache: "no-store" }); status = r.status; info = await r.json(); } catch (e) { info = null; }
   if (!info || !info.ok) {
-    $("joinMsg").textContent = !info ? "サイトにつながりません。" : status === 429 ? info.error : "この番号の部屋は見つかりません（番号をもう一度確認してください）。";
+    $("joinMsg").textContent = !info ? "サイトにつながりません。" : status === 429 ? info.error : "この番号の部屋は見つかりません。";
     $("joinMsg").className = "msg ng"; return;
   }
   leaveRoom(true);
@@ -1325,7 +1312,7 @@ async function onMsg(m) {
       break;
     case "code":
       $("codeText").textContent = "!vc " + m.code;
-      $("verifyMsg").textContent = m.world ? "Minecraft のチャットで送ってください。" : "⚠ まだホストのワールドがつながっていません。ホストが /wsserver を送ったあとに、チャットで送ってください。";
+      $("verifyMsg").textContent = m.world ? "Minecraft のチャットで送ってください。" : "⚠ まだワールドがつながっていません。";
       $("verifyMsg").className = "msg " + (m.world ? "ok" : "ng");
       break;
     case "verified": {
@@ -1468,7 +1455,7 @@ async function startAudio() {
     $("talkMsg").textContent = ""; $("talkMsg").className = "msg";
   } catch (e) {
     S.micTrack = null; S.sendTrack = null;
-    $("talkMsg").textContent = "⚠ マイクが使えないので、聞くだけで参加します（ブラウザのマイクの許可を確認してください）。"; $("talkMsg").className = "msg ng";
+    $("talkMsg").textContent = "⚠ マイクが使えないので、聞くだけで参加します。"; $("talkMsg").className = "msg ng";
   }
   S.started = true;
   applyMic();
@@ -1512,7 +1499,7 @@ async function reMic() {
     if (S.rawSend) for (const p of S.peers.values()) if (p.sendOn && p.tr && p.tr.sender) p.tr.sender.replaceTrack(curSendTrack()).catch(() => {});
     ChatUI.toast("🎙 マイクをつなぎ直しました");
   } catch (e) {
-    $("talkMsg").textContent = "⚠ マイクをつなぎ直せませんでした。「ボイスチャットを退出」→「開始」をためしてください。"; $("talkMsg").className = "msg ng";
+    $("talkMsg").textContent = "⚠ マイクをつなぎ直せませんでした。退出して開始し直してください。"; $("talkMsg").className = "msg ng";
   } finally { BG.reMicBusy = false; bgStatus(); }
 }
 function applyMic() {
@@ -1978,28 +1965,28 @@ function bgTexts() {
   const li = html => { const x = document.createElement("li"); x.innerHTML = html; return x; };
   steps.textContent = "";
   note.hidden = true; note.className = "bgwarn";
-  const full = "マイクラにいるあいだも、<b>立体音響・距離での音量・マイク音量はそのまま</b>です";
+  const full = "マイクラ中も<b>立体音響・音量はそのまま</b>";
   if (IS_ANDROID) {
-    lead.innerHTML = "マイクラに行く前に「<b>🎮 マイクラへ（小窓にする）</b>」を押してください。小窓になったら、マイクラをひらくだけ。ブラウザを<b>スワイプして閉じない</b>かぎり、マイクラの中でも聞こえて話せます。";
+    lead.innerHTML = "「<b>🎮 マイクラへ（小窓にする）</b>」を押してからマイクラへ。<b>スワイプで閉じない</b>かぎり話せます。";
     note.hidden = false;
-    note.innerHTML = "Android は、ブラウザを小窓にしないでマイクラに切りかえると、<b>約 1 分でマイクが止まります</b>（Android と Chrome の仕組み。聞くことはできます）。小窓にしておけば止まりません。";
-    steps.append(li(full), li("小窓には、だれが話しているかが出ます。小窓をタップすると、このページに戻ります"));
+    note.innerHTML = "小窓にしないと<b>約 1 分でマイクが止まります</b>（Android の仕組み）。";
+    steps.append(li(full), li("小窓をタップすると、このページに戻ります"));
   } else if (IS_IOS) {
-    lead.innerHTML = "このページを<b>ひらいたまま</b>、ホームに戻ってマイクラをひらくだけでOK。ブラウザを<b>スワイプして閉じない</b>かぎり、マイクラの中でも聞こえて話せます。";
+    lead.innerHTML = "ページを<b>ひらいたまま</b>マイクラへ。<b>スワイプで閉じない</b>かぎり話せます。";
     if (IS_STANDALONE || IS_IOS_OTHER) {
       note.hidden = false; note.className = "bgwarn ng";
       note.innerHTML = IS_STANDALONE
-        ? "⚠「ホーム画面に追加」したアプリでひらいています。iPhone ではこの形だと、マイクラに切りかえるとマイクが止まります。<a href=\"" + safariUrl() + "\"><b>Safari でひらき直す</b></a>"
-        : "iPhone は <b>Safari</b> がいちばん安定します（Safari 以外だと、マイクラ中は立体音響がお休みになります）。<a href=\"" + safariUrl() + "\"><b>Safari でひらき直す</b></a>";
+        ? "⚠ ホーム画面のアプリだと、マイクラ中にマイクが止まります。<a href=\"" + safariUrl() + "\"><b>Safari でひらき直す</b></a>"
+        : "iPhone は <b>Safari</b> がおすすめです。<a href=\"" + safariUrl() + "\"><b>Safari でひらき直す</b></a>";
     }
     if (!BG.safeWhenHidden) steps.append(li(full));
-    else steps.append(li("マイクラにいるあいだは、立体音響はお休みで、音量は「聞こえる／聞こえない」の 2 段階です" + (IOS_VER && IOS_VER < 17.05 ? "（<b>iOS を 17.5 以上</b>にすると、マイクラ中も立体音響のまま使えます）" : "")));
-    steps.append(li("ロック画面の <b>⏸ / ▶</b> で、マイクのミュートを切りかえられます"));
+    else steps.append(li("マイクラ中は立体音響がお休み（音量は 2 段階）" + (IOS_VER && IOS_VER < 17.05 ? "。<b>iOS 17.5 以上</b>ならそのまま使えます" : "")));
+    steps.append(li("ロック画面の <b>⏸ / ▶</b> でミュート"));
   } else {
-    lead.innerHTML = "このページをひらいたまま、ほかのアプリ（マイクラなど）に切りかえても、そのまま聞こえて話せます。";
-    steps.append(li("「🪟 小窓で表示」で、ゲームの上に、だれが話しているかの小さな窓を出せます"));
+    lead.innerHTML = "ほかのアプリに切りかえても、そのまま話せます。";
+    steps.append(li("「🪟 小窓で表示」で、だれが話しているかを小窓に出せます"));
   }
-  steps.append(li("このページに戻ると、切れていたところを自動でつなぎ直します"));
+  steps.append(li("戻ると自動でつなぎ直します"));
   $("pipBtn").textContent = PIP_LABEL;
   $("pipBtn").className = IS_ANDROID ? "btn btn-green bgpip" : "tbtn";
 }
@@ -2174,7 +2161,7 @@ async function pipOpen() {
         bgStatus(); return;
       }
     }
-    ChatUI.toast("⚠ 小窓をひらけませんでした" + (IS_ANDROID ? "（Android の設定 → アプリ → Chrome で「ピクチャー イン ピクチャー」を許可してください）" : ""));
+    ChatUI.toast("⚠ 小窓をひらけませんでした" + (IS_ANDROID ? "（Chrome の「ピクチャー イン ピクチャー」を許可してください）" : ""));
   }
   bgStatus();
 }
@@ -2259,11 +2246,11 @@ function bgRecover(why) {
   // 裏にいたあいだのことを知らせる
   if (why === "visible") {
     let msg = "";
-    if (BG.interruptedAway) msg = "⚠ マイクラに切りかえているあいだ、iPhone にボイスチャットの音を止められていたようです（いま、つなぎ直しました）。マイクラの「設定 → オーディオ」で「音楽」を 0 にすると、止められにくくなることがあります。";
-    else if (BG.micMutedAway) msg = "⚠ マイクラに切りかえているあいだ、スマホにマイクを止められていたようです（いま、つなぎ直しました）。";
+    if (BG.interruptedAway) msg = "⚠ マイクラ中に音を止められていました（つなぎ直しました）。マイクラの「音楽」を 0 にすると止まりにくくなります。";
+    else if (BG.micMutedAway) msg = "⚠ マイクラ中にマイクを止められていました（つなぎ直しました）。";
     else if (IS_ANDROID && away > 55000 && !BG.pipWasActive && !BG.androidTipShown) {
       BG.androidTipShown = true;
-      msg = "💡 Android は、小窓にしないでマイクラに切りかえると、約 1 分でマイクが止まります。次からは「🎮 マイクラへ（小窓にする）」を押してから切りかえてください。";
+      msg = "💡 次からは「🎮 マイクラへ（小窓にする）」を押してから切りかえてください（約 1 分でマイクが止まります）。";
     }
     if (msg) { $("talkMsg").textContent = msg; $("talkMsg").className = "msg ng"; }
     BG.interruptedAway = false; BG.micMutedAway = false; BG.pipWasActive = pipActive();
@@ -2339,8 +2326,8 @@ function chromeIntentUrl() {
   $("inAppOpen").textContent = IS_IOS ? "Safari でひらく" : "Chrome でひらく";
   $("inAppOpen").href = IS_IOS ? safariUrl() : chromeIntentUrl();
   $("inAppHint").textContent = IS_IOS
-    ? "ひらかないときは、右下（または右上）の「…」→「Safari で開く」/「ブラウザで開く」をえらぶか、URL をコピーして Safari に貼り付けてください。"
-    : "ひらかないときは、右上の「︙」→「Chrome で開く」/「ブラウザで開く」をえらぶか、URL をコピーして Chrome に貼り付けてください。";
+    ? "ひらかないときは「…」→「Safari で開く」か、URL をコピーして貼り付けてください。"
+    : "ひらかないときは「︙」→「Chrome で開く」か、URL をコピーして貼り付けてください。";
   $("inAppCopy").addEventListener("click", () => copyText(cleanHref(), $("inAppCopy")));
 })();
 // 「くわしく」→ 使い方をひらく
@@ -2348,8 +2335,8 @@ for (const el of document.querySelectorAll('a[href="#help-bg"]')) el.addEventLis
 if (IS_MOBILE) {
   $("mobileNote").hidden = false; $("startHintMobile").hidden = false;
   if (IS_ANDROID) {
-    $("mobileNote").innerHTML = "📱 <b>スマホ 1 台でマイクラもするとき</b>: ボイスチャットを開始したら「<b>🎮 マイクラへ（小窓にする）</b>」を押して、マイクラをひらくだけ。ブラウザをスワイプして閉じなければ、マイクラの中でも話せます（<a href=\"#help-bg\">くわしく</a>）。";
-    $("startHintMobile").innerHTML = "<br>📱 開始したら「🎮 マイクラへ（小窓にする）」でマイクラに切りかえてください。";
+    $("mobileNote").innerHTML = "📱 <b>スマホ 1 台のとき</b>: 開始したら「<b>🎮 マイクラへ（小窓にする）</b>」を押してマイクラへ（<a href=\"#help-bg\">くわしく</a>）。";
+    $("startHintMobile").innerHTML = "<br>📱 開始したら「🎮 マイクラへ（小窓にする）」で切りかえてください。";
     for (const el of document.querySelectorAll('#mobileNote a[href="#help-bg"]')) el.addEventListener("click", () => { $("help").open = true; });
   }
 }
@@ -2406,8 +2393,8 @@ const A = { room: "", key: "" };
 const TPL = { none: { talk: "spectators", listen: false }, werewolf: { talk: "spectators", listen: true } };
 function tplHint() {
   $("tplHint").textContent = $("tplSel").value === "werewolf"
-    ? "人狼: 死んだ人は観戦者になり、観戦者どうしだけで話せます。生きている人には聞こえません。観戦者は生きている人の声を聞けます。観戦者はゲーム中チャットに書けません。"
-    : "観戦者 = 死んだ人（近接VCアドオンを入れたワールド）と、サイトで「観戦者」をえらんだ人。";
+    ? "人狼: 死んだ人は観戦者どうしで話せます（生きている人には聞こえない・チャットは書けない）。"
+    : "観戦者 = 死んだ人と「観戦者」をえらんだ人";
 }
 function renderSettings(j) {
   const rules = { ...DEFAULT_RULES, ...(j.rules || {}) };

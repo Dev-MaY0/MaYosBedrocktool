@@ -21,10 +21,11 @@ if (/(^#|&)key=/.test(location.hash)) location.replace("discord/" + location.has
 <style>
 /* =====================================================================
    共通スタイル（全ページ）  制作: MaYo (mayo01297)  二次配布禁止
-   白ベース・角の丸いカード・グラデーションのアクセント（SNS アプリのような雰囲気）
+   シンプル: 白ベース・細い線のカード（影なし）・アクセントはピンク→紫・ボタンは青
    ===================================================================== */
 :root {
   --back: #fafafa; --panel: #ffffff; --border: #dbdbdb; --border-soft: #efefef; --input: #fafafa;
+  --line: #e8e8e8; --soft: #f3f3f4; --accent: #d62976;
   --text: #262626; --sub: #737373; --link: #00376b;
   --header: #ffffff; --header-sub: #737373;
   --blue: #0095f6; --blue-hover: #1877f2; --blue-pale: #e8f3ff;
@@ -32,8 +33,8 @@ if (/(^#|&)key=/.test(location.hash)) location.replace("discord/" + location.has
   --red: #ed4956; --orange: #f39c12; --preview: #f2f2f2;
   --grad: linear-gradient(45deg, #feda75 0%, #fa7e1e 25%, #d62976 50%, #962fbf 75%, #4f5bd5 100%);
   --grad-btn: linear-gradient(90deg, #f56040 0%, #e1306c 45%, #833ab4 100%);
-  --radius: 16px;
-  --shadow: 0 1px 2px rgba(0, 0, 0, .04), 0 6px 20px rgba(0, 0, 0, .05);
+  --radius: 14px;
+  --shadow: none;
   --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic UI", Meiryo, system-ui, sans-serif;
 }
 * { box-sizing: border-box; }
@@ -45,19 +46,20 @@ a { color: var(--link); }
 .pixel { image-rendering: pixelated; image-rendering: crisp-edges; }
 
 /* ---- header ---- */
-header { background: rgba(255, 255, 255, .92); color: var(--text); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 20; -webkit-backdrop-filter: saturate(180%) blur(12px); backdrop-filter: saturate(180%) blur(12px); }
-.header-in { max-width: 920px; margin: 0 auto; padding: 10px 16px; display: flex; align-items: center; gap: 12px; }
-.header-in img { width: 42px; height: 42px; flex: none; border-radius: 12px; padding: 2px; background: var(--grad); }
-.header-in h1 { margin: 0; font-size: 20px; line-height: 1.25; font-weight: 800; letter-spacing: -.01em; background: var(--grad-btn); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.header-in p { margin: 1px 0 0; color: var(--header-sub); font-size: 12.5px; }
-.header-in .help-btn { margin-left: auto; flex: none; color: var(--text); background: #efefef; border: 0; border-radius: 10px; padding: 7px 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none; white-space: nowrap; }
-.header-in .help-btn:hover { background: #e3e3e3; }
+header { background: #fff; color: var(--text); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 20; }
+.header-in { max-width: 920px; height: 60px; margin: 0 auto; padding: 0 16px; display: flex; align-items: center; gap: 11px; }
+.header-in img { width: 40px; height: 40px; flex: none; border-radius: 10px; box-shadow: 0 0 0 1px rgba(0, 0, 0, .06); }
+.header-in > div { min-width: 0; }
+.header-in h1 { margin: 0; font-size: 18.5px; line-height: 1.25; font-weight: 800; letter-spacing: -.01em; color: var(--text); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.header-in p { margin: 1px 0 0; color: var(--header-sub); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.header-in .help-btn { margin-left: auto; flex: none; color: var(--text); background: var(--soft); border: 0; border-radius: 10px; padding: 7px 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none; white-space: nowrap; }
+.header-in .help-btn:hover { background: #e8e8e9; }
 
-main { max-width: 920px; margin: 0 auto; padding: 18px 16px 90px; }
-.card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
-.step { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; font-size: 17px; font-weight: 700; }
-.num { width: 30px; height: 30px; flex: none; border-radius: 50%; background: var(--grad); color: #fff; display: grid; place-items: center; font-size: 15px; font-weight: 700; box-shadow: 0 2px 8px rgba(214, 41, 118, .25); }
-.indent { padding-left: 40px; }
+main { max-width: 920px; margin: 0 auto; padding: 20px 16px 90px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 20px 20px; margin-bottom: 14px; }
+.step { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; font-size: 16.5px; font-weight: 700; }
+.num { width: 26px; height: 26px; flex: none; border-radius: 50%; background: var(--grad-btn); color: #fff; display: grid; place-items: center; font-size: 13.5px; font-weight: 700; }
+.indent { padding-left: 36px; }
 
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 10px; cursor: pointer; color: #fff; font-weight: 600; transition: filter .15s, transform .05s, background .15s; }
 .btn:active { transform: scale(.98); }
@@ -65,7 +67,7 @@ main { max-width: 920px; margin: 0 auto; padding: 18px 16px 90px; }
 .btn:disabled { background: #c7c7c7 !important; cursor: default; filter: none; }
 .btn-blue { background: var(--blue); padding: 10px 18px; font-size: 15.5px; }
 .btn-blue:hover { background: var(--blue-hover); }
-.btn-green { background: var(--grad-btn); padding: 14px 22px; font-size: 17px; width: 100%; max-width: 480px; box-shadow: 0 6px 18px rgba(225, 48, 108, .25); }
+.btn-green { background: var(--grad-btn); padding: 13px 22px; font-size: 16.5px; width: 100%; max-width: 480px; border-radius: 12px; }
 .btn-green:hover { filter: brightness(1.06); }
 .btn-green.pulse { animation: pulse 0.5s ease-in-out 3 alternate; }
 @keyframes pulse { to { box-shadow: 0 0 0 7px rgba(225, 48, 108, .22); } }
@@ -75,8 +77,8 @@ main { max-width: 920px; margin: 0 auto; padding: 18px 16px 90px; }
 .link:disabled { color: var(--sub); cursor: default; text-decoration: none; }
 .link svg { width: 15px; height: 15px; vertical-align: -2px; margin-right: 4px; }
 hr { border: 0; border-top: 1px solid var(--border-soft); margin: 14px 0 10px; }
-.btn-outline { display: inline-flex; align-items: center; gap: 6px; background: #efefef; color: var(--text); border: 0; border-radius: 10px; padding: 7px 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none; }
-.btn-outline:hover { background: #e3e3e3; }
+.btn-outline { display: inline-flex; align-items: center; gap: 6px; background: var(--soft); color: var(--text); border: 0; border-radius: 10px; padding: 7px 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none; }
+.btn-outline:hover { background: #e8e8e9; }
 .btn-outline svg { width: 15px; height: 15px; flex: none; }
 
 .notice { background: #fff8e6; border: 1px solid #f7d58a; border-radius: 12px; padding: 10px 14px; font-size: 13px; margin: 0 0 14px; }
@@ -90,7 +92,7 @@ input[type=text], input[type=password], input[type=search], input:not([type]), t
 kbd { font-family: inherit; background: #efefef; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 6px; padding: 0 6px; font-size: 13px; }
 
 /* ---- help ---- */
-details.help { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 12px; box-shadow: var(--shadow); }
+details.help { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); margin-bottom: 12px; }
 details.help summary { cursor: pointer; padding: 14px 20px; font-weight: 700; }
 details.help .help-body { padding: 0 20px 16px; font-size: 14px; }
 details.help h4 { margin: 14px 0 4px; font-size: 14px; }
@@ -118,19 +120,19 @@ details.about[open] > summary { border-radius: var(--radius) var(--radius) 0 0; 
 .about-body { padding: 2px 20px 20px; }
 .num svg { width: 16px; height: 16px; }
 .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.about-box { border: 1px solid var(--border-soft); border-radius: 14px; padding: 14px 16px 16px; background: #fff; }
+.about-box { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px 16px; background: #fff; }
 .about-box h3 { margin: 0 0 10px; font-size: 15px; }
 .profile { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
-.avatar { width: 72px; height: 72px; flex: none; border-radius: 50%; border: 3px solid #fff; outline: 2px solid transparent; object-fit: cover; background: #fff5ac; box-shadow: 0 0 0 2px #d62976; }
+.avatar { width: 64px; height: 64px; flex: none; border-radius: 50%; object-fit: cover; background: #fff5ac; box-shadow: 0 0 0 1px var(--line); }
 .pname { font-size: 18px; font-weight: 700; line-height: 1.3; }
 .psub { color: var(--sub); font-size: 13px; }
 .about-box p { margin: 0 0 8px; font-size: 14px; }
 .about-box .label { margin: 10px 0 6px; font-size: 13px; font-weight: 700; color: var(--sub); }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.chips span { background: #efefef; border-radius: 999px; padding: 3px 12px; font-size: 13px; }
+.chips span { background: var(--soft); border-radius: 999px; padding: 3px 12px; font-size: 13px; }
 .chips span.more { background: none; color: var(--sub); padding: 2px 2px; }
 .links { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
-.links li { display: flex; align-items: center; gap: 10px; border: 1px solid var(--border-soft); border-radius: 12px; padding: 8px 10px; }
+.links li { display: flex; align-items: center; gap: 10px; border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px; }
 .links .ic { width: 34px; height: 34px; flex: none; border-radius: 10px; display: grid; place-items: center; color: #fff; }
 .links .ic svg { width: 20px; height: 20px; }
 .links .lt { flex: 1; min-width: 0; line-height: 1.35; }
@@ -138,7 +140,7 @@ details.about[open] > summary { border-radius: var(--radius) var(--radius) 0 0; 
 .links .lt b { word-break: break-all; }
 .links a.go, .links button { flex: none; border: 0; color: #fff; background: var(--blue); border-radius: 8px; padding: 5px 12px; font-size: 12.5px; font-weight: 600; cursor: pointer; text-decoration: none; font-family: inherit; }
 .links a.go:hover, .links button:hover { background: var(--blue-hover); }
-.license { margin: 14px 0 0 40px; background: #fff1f2; border: 1px solid #f6c3c8; border-radius: 12px; padding: 10px 14px; font-size: 14px; }
+.license { margin: 14px 0 0 36px; background: #fafafa; border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; font-size: 14px; }
 .license b.ng { color: var(--red); }
 .license ul { margin: 4px 0; padding-left: 20px; }
 
@@ -161,9 +163,9 @@ dialog::backdrop { background: rgba(0, 0, 0, .55); }
 
 /* ---- ゲストの名前（partials/guest.js）---- */
 .gmodal { position: fixed; inset: 0; z-index: 50; background: rgba(0, 0, 0, .55); display: grid; place-items: center; padding: 16px; }
-.gmodal .gbox { width: min(400px, 100%); background: #fff; border-radius: 22px; padding: 30px 26px 24px; text-align: center; box-shadow: 0 20px 60px rgba(0, 0, 0, .3); }
-.gmodal .ring { width: 88px; height: 88px; margin: 0 auto 12px; border-radius: 50%; padding: 3px; background: var(--grad); }
-.gmodal .ring > div { width: 100%; height: 100%; border-radius: 50%; background: #fff; border: 3px solid #fff; display: grid; place-items: center; font-size: 34px; }
+.gmodal .gbox { width: min(400px, 100%); background: #fff; border-radius: 18px; padding: 28px 24px 22px; text-align: center; box-shadow: 0 20px 60px rgba(0, 0, 0, .25); }
+.gmodal .ring { width: 72px; height: 72px; margin: 0 auto 12px; border-radius: 50%; background: var(--soft); }
+.gmodal .ring > div { width: 100%; height: 100%; border-radius: 50%; display: grid; place-items: center; font-size: 32px; }
 .gmodal h2 { margin: 0 0 4px; font-size: 20px; }
 .gmodal p { margin: 0 0 16px; color: var(--sub); font-size: 13.5px; }
 .gmodal input { width: 100%; font-size: 16px; padding: 12px 14px; border: 1px solid var(--border); background: var(--input); border-radius: 12px; margin-bottom: 10px; }
@@ -176,12 +178,12 @@ dialog::backdrop { background: rgba(0, 0, 0, .55); }
 
 @media (max-width: 640px) {
   body { font-size: 14.5px; }
-  .header-in { padding: 8px 12px; gap: 10px; }
-  .header-in img { width: 36px; height: 36px; border-radius: 10px; }
-  .header-in h1 { font-size: 17px; }
+  .header-in { height: 52px; padding: 0 12px; gap: 10px; }
+  .header-in img { width: 34px; height: 34px; border-radius: 9px; }
+  .header-in h1 { font-size: 16.5px; }
   .header-in p { display: none; }
-  main { padding: 12px 12px 90px; }
-  .card { padding: 16px 14px 16px; border-radius: 14px; }
+  main { padding: 14px 12px 90px; }
+  .card { padding: 16px 14px 16px; border-radius: 12px; }
   .indent { padding-left: 0; }
   .btn-blue { width: 100%; }
   .btn-green { font-size: 16px; padding: 13px 14px; }
@@ -194,16 +196,23 @@ dialog::backdrop { background: rgba(0, 0, 0, .55); }
 }
 
 /* ---- サイトのメニュー ---- */
-.sitenav { background: rgba(255, 255, 255, .92); border-bottom: 1px solid var(--border-soft); position: sticky; top: 63px; z-index: 19; -webkit-backdrop-filter: saturate(180%) blur(12px); backdrop-filter: saturate(180%) blur(12px); }
-.sitenav-in { max-width: 920px; margin: 0 auto; padding: 8px 12px; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+/* タブのように: 文字だけ・いまのページは下に線（ピンク→紫） */
+.sitenav { background: #fff; border-bottom: 1px solid var(--line); position: sticky; top: 61px; z-index: 19; }
+.sitenav-in { max-width: 920px; margin: 0 auto; padding: 0 8px; display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
 .sitenav-in::-webkit-scrollbar { display: none; }
-.sitenav a { color: var(--text); text-decoration: none; padding: 6px 14px; font-size: 14px; font-weight: 600; border-radius: 999px; white-space: nowrap; background: #efefef; }
-.sitenav a:hover { background: #e3e3e3; }
-.sitenav a[aria-current="page"] { color: #fff; background: #262626; }
+.sitenav a { color: var(--sub); text-decoration: none; padding: 10px 12px 11px; font-size: 14px; font-weight: 600; white-space: nowrap; }
+.sitenav a:hover { color: var(--text); }
+.sitenav a[aria-current="page"] { color: var(--text); background: var(--grad-btn) left bottom / 100% 2px no-repeat; }
 @media (max-width: 640px) {
   .sitenav { top: 53px; }
-  .sitenav-in { padding: 7px 10px; gap: 5px; }
-  .sitenav a { padding: 5px 10px; font-size: 12.5px; }
+  .sitenav-in { padding: 0 4px; gap: 0; }
+  .sitenav a { padding: 9px 9px 10px; font-size: 13px; }
+}
+.sitenav .ni { margin-right: 5px; }
+@media (max-width: 480px) {
+  .sitenav-in { justify-content: space-between; }
+  .sitenav .ni { display: none; }
+  .sitenav a { padding: 10px 8px 11px; font-size: 13.5px; }
 }
 
 /* ---- 共通の部品（入力・コピー欄・かんたんな流れ・チップ）---- */
@@ -217,7 +226,7 @@ dialog::backdrop { background: rgba(0, 0, 0, .55); }
 .copybox button:hover { background: var(--blue-hover); }
 .copybox.disabled code { color: #a8a8a8; }
 .copybox.disabled button { background: #c7c7c7; cursor: default; }
-.easy, .tip { position: relative; background: linear-gradient(135deg, #fff7fb 0%, #f7f4ff 100%); border: 1px solid #f1e4f3; border-radius: var(--radius); padding: 14px 18px; margin: 0 0 16px; }
+.easy, .tip { position: relative; background: #fafafa; border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 18px; margin: 0 0 16px; }
 .tip { padding: 10px 14px; margin-top: 10px; font-size: 14px; border-radius: 12px; }
 .easy b.t { display: block; font-size: 15px; margin-bottom: 4px; }
 .easy ol { margin: 0; padding-left: 22px; font-size: 14px; }
@@ -276,21 +285,21 @@ ol.steps > li { margin: 8px 0; }
 
 
 /* ===== 近接VC（えらぶページ）===== */
-.hero { text-align: center; padding: 22px 12px 4px; }
+.hero { text-align: center; padding: 18px 12px 2px; }
 .hero h2 { margin: 0 0 6px; font-size: 24px; font-weight: 800; letter-spacing: -.02em; }
 .hero p { margin: 0; color: var(--sub); font-size: 14px; }
-.choices { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0 16px; }
-.choice { position: relative; display: flex; flex-direction: column; background: var(--panel); border: 1px solid var(--border); border-radius: 20px; padding: 22px 22px 20px; box-shadow: var(--shadow); color: var(--text); text-decoration: none; transition: transform .15s, box-shadow .15s; }
-.choice:hover { transform: translateY(-2px); box-shadow: 0 2px 4px rgba(0, 0, 0, .04), 0 12px 30px rgba(0, 0, 0, .08); }
+.choices { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 18px 0 14px; }
+.choice { position: relative; display: flex; flex-direction: column; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; color: var(--text); text-decoration: none; transition: border-color .15s; }
+.choice:hover { border-color: #cfcfcf; }
 .choice .badge { position: absolute; top: 16px; right: 16px; background: var(--grad-btn); color: #fff; font-size: 12px; font-weight: 700; border-radius: 999px; padding: 3px 11px; }
-.choice .cicon { width: 62px; height: 62px; border-radius: 50%; padding: 2.5px; background: var(--grad); margin-bottom: 12px; }
-.choice .cicon > span { width: 100%; height: 100%; border-radius: 50%; border: 2.5px solid #fff; display: grid; place-items: center; font-size: 28px; background: #fafafa; }
-.choice.discord .cicon { background: #5865f2; }
-.choice h3 { margin: 0 0 4px; font-size: 20px; font-weight: 800; }
-.choice .lead { margin: 0 0 12px; color: var(--sub); font-size: 13.5px; }
+.choice .cicon { width: 46px; height: 46px; border-radius: 12px; background: var(--soft); margin-bottom: 12px; display: grid; place-items: center; }
+.choice .cicon > span { font-size: 23px; line-height: 1; }
+.choice.discord .cicon { background: #eef0ff; }
+.choice h3 { margin: 0 0 4px; font-size: 18px; font-weight: 800; }
+.choice .lead { margin: 0 0 10px; color: var(--sub); font-size: 13px; }
 .choice ul { margin: 0 0 18px; padding-left: 20px; font-size: 14px; flex: 1; }
 .choice li { margin: 4px 0; }
-.choice .btn { padding: 13px 18px; font-size: 16px; width: 100%; max-width: none; }
+.choice .btn { padding: 12px 18px; font-size: 15.5px; width: 100%; max-width: none; border-radius: 12px; }
 .compare { width: 100%; border-collapse: collapse; font-size: 14px; }
 .compare th, .compare td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--border-soft); vertical-align: top; }
 .compare thead th { font-size: 13px; color: var(--sub); font-weight: 700; }
@@ -310,24 +319,24 @@ ol.steps > li { margin: 8px 0; }
     <img class="pixel" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAB40lEQVR4nO3dsU3DQBiAUYJo2SJESGnTUNGzAQ0lKzADK7AAc6RKwwBIjAE9bJAUxjrD915rWb7i0y/5fJJX6832+4ys89ELYCwBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIE4AcQKIE0CcAOIuRi+AeV0/Xx29bgLECSBOAHECiBNAnADiBBA3eR9gd3v4jXVkfd09HL3+/vQx6/NNgDgBxAkgTgBxAogTQJwA4pwHGOzUe/6p7/lT9wlMgDgBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIE4AcQKIE0CcAOIWfx7g9eXy6PX7x89F3790JkCcAOIEECeAOAHECSBOAHECiBNAnADiBBAngDgBxAkgTgBxiz8PMPV7++j7l84EiBNAnADiBBAngDgBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIG7x5wH+u7n/B3CKCRAngDgBxAkgTgBxAogTQNzkfYC3/c2k+3e3h6lLOGrq+ma3H/t4EyBOAHECiBNAnADiBBAngLg/fx5g8e/5g506T2ACxAkgTgBxAogTQJwA4gQQt/h9AO/58zIB4gQQJ4A4AcQJIE4AcQKIW6032+/Ri2AcEyBOAHECiBNAnADiBBAngDgBxAkgTgBxAogTQJwA4gQQJ4C4Hz5iK0yQ/79HAAAAAElFTkSuQmCC">
     <div>
       <h1>近接VC</h1>
-      <p>Minecraft で近くにいる人の声だけが聞こえる　｜　制作: MaYo（mayo01297）</p>
+      <p>近くの人の声だけ聞こえる　｜　制作: MaYo（mayo01297）</p>
     </div>
   </div>
 </header>
 <nav class="sitenav" aria-label="サイトのメニュー">
   <div class="sitenav-in">
-    <a href="../" data-page="home">🏠 ホーム</a>
-    <a href="../corpse/" data-page="corpse">🪦 死体スキン</a>
-    <a href="../vc/" data-page="vc" aria-current="page">🎙 近接VC</a>
-    <a href="../chat/" data-page="chat">💬 チャット</a>
-    <a href="../works/" data-page="works">🧩 作品</a>
+    <a href="../" data-page="home"><span class="ni" aria-hidden="true">🏠</span>ホーム</a>
+    <a href="../corpse/" data-page="corpse"><span class="ni" aria-hidden="true">🪦</span>死体スキン</a>
+    <a href="../vc/" data-page="vc" aria-current="page"><span class="ni" aria-hidden="true">🎙</span>近接VC</a>
+    <a href="../chat/" data-page="chat"><span class="ni" aria-hidden="true">💬</span>チャット</a>
+    <a href="../works/" data-page="works"><span class="ni" aria-hidden="true">🧩</span>作品</a>
   </div>
 </nav>
 
 <main>
   <section class="hero">
     <h2>どちらで話しますか？</h2>
-    <p>どちらも無料です。わからないときは「サイト版」がかんたんです。</p>
+    <p>どちらも無料。迷ったらサイト版。</p>
   </section>
 
   <div class="choices">
@@ -335,13 +344,11 @@ ol.steps > li { margin: 8px 0; }
       <span class="badge">かんたん</span>
       <div class="cicon" aria-hidden="true"><span>🎧</span></div>
       <h3>サイト版（ブラウザ）</h3>
-      <p class="lead">Discord なし。ゲームに出た部屋番号を入れて、自分をえらぶだけ</p>
+      <p class="lead">Discord なし。部屋番号を入れるだけ</p>
       <ul>
-        <li><b>近いほど大きく、遠いほど小さく</b>聞こえる</li>
-        <li>相手のいる方向（<b>左右</b>）から聞こえる</li>
-        <li>パソコン・スマホのブラウザで使える</li>
-        <li>観戦者・人狼のルール、部屋のチャットつき</li>
-        <li>ホストはワールドで <span class="cmd">/wsserver</span> を送るだけ</li>
+        <li><b>距離で音量</b>・向きで左右が変わる</li>
+        <li>パソコン・スマホで使える</li>
+        <li>観戦者・部屋のチャットつき</li>
       </ul>
       <span class="btn btn-green">サイト版ではじめる →</span>
     </a>
@@ -349,13 +356,11 @@ ol.steps > li { margin: 8px 0; }
     <a class="choice discord" href="discord/">
       <div class="cicon" aria-hidden="true"><span>🎙</span></div>
       <h3>Discord 版</h3>
-      <p class="lead">自分の Discord サーバーに Bot を入れて使う</p>
+      <p class="lead">自分のサーバーに Bot を入れて使う</p>
       <ul>
-        <li>近くにいる人どうしを、<b>Discord の VC に自動で分ける</b></li>
-        <li>離れると別の VC へ（声の大きさは距離で変わらない）</li>
-        <li>いつもの Discord のまま話せる</li>
-        <li>BDS・レンタルサーバーにも対応</li>
-        <li>Bot のコマンドで、紐付け・距離などを管理</li>
+        <li>近い人どうしを <b>VC に自動で分ける</b></li>
+        <li>いつもの Discord で話せる</li>
+        <li>BDS・レンタルサーバー対応</li>
       </ul>
       <span class="btn btn-indigo">Discord 版ではじめる →</span>
     </a>
@@ -367,12 +372,12 @@ ol.steps > li { margin: 8px 0; }
       <table class="compare">
         <thead><tr><th></th><th>🎧 サイト版</th><th>🎙 Discord 版</th></tr></thead>
         <tbody>
-          <tr><th>必要なもの</th><td>ブラウザとマイク</td><td>Discord と、Bot を入れたサーバー</td></tr>
-          <tr><th>聞こえ方</th><td>距離で音量が少しずつ変わる・左右もわかる</td><td>近い人どうしが同じ VC に入る</td></tr>
-          <tr><th>ホストの準備</th><td>チートをオンにして <span class="cmd">/wsserver …/new</span> を送るだけ</td><td>Bot の招待・<span class="cmd">/vc setup</span>・アドオン・<span class="cmd">/wsserver</span></td></tr>
-          <tr><th>入り方</th><td>ゲームに出た部屋番号を入れて「自分を選択」（<span class="cmd">!vc 数字</span> で本人確認もできる）</td><td>Discord とマイクラの名前を紐付け</td></tr>
-          <tr><th>死亡者どうし</th><td>アドオンを入れると話せる</td><td>アドオンを入れると死亡者VCへ</td></tr>
-          <tr><th>チャット</th><td>部屋のチャット（ゲストでも書ける）</td><td>Discord のチャット</td></tr>
+          <tr><th>必要なもの</th><td>ブラウザ・マイク</td><td>Discord・Bot</td></tr>
+          <tr><th>聞こえ方</th><td>距離で音量・左右</td><td>近い人が同じ VC</td></tr>
+          <tr><th>ホストの準備</th><td><span class="cmd">/wsserver …/new</span> を送る</td><td>Bot 招待・<span class="cmd">/vc setup</span>・アドオン</td></tr>
+          <tr><th>入り方</th><td>部屋番号 → 自分をえらぶ</td><td>名前を紐付け</td></tr>
+          <tr><th>死亡者どうし</th><td>アドオンで話せる</td><td>アドオンで死亡者VCへ</td></tr>
+          <tr><th>チャット</th><td>部屋のチャット</td><td>Discord</td></tr>
         </tbody>
       </table>
     </div>
@@ -397,7 +402,7 @@ ol.steps > li { margin: 8px 0; }
             <div class="psub">高校1年生</div>
           </div>
         </div>
-        <p>普段は、マインクラフトの PvP クライアントを作ったり、Roblox でゲームを作ったり、アドオンを作ったり、マインクラフトのマップを作ったりしています。</p>
+        <p>マイクラの PvP クライアント・アドオン・マップや、Roblox のゲームを作っています。</p>
         <p class="label">好きなゲーム</p>
         <div class="chips">
           <span>マインクラフト</span><span>第五人格</span><span>崩壊：スターレイル</span><span>Roblox</span><span>Dead by Daylight</span><span class="more">など</span>
@@ -425,15 +430,7 @@ ol.steps > li { margin: 8px 0; }
       </div>
     </div>
     <div class="license">
-      <b>クレジット・二次配布について</b><br>
-      このスキン登録ページと「プレイヤーの死体アドオン」は、<b>MaYo（mayo01297）</b>が制作しました。<br>
-      <b class="ng">二次配布は禁止です。</b>次のことはしないでください。
-      <ul>
-        <li>このページのファイルやアドオンを、ほかのサイト・SNS・Discord サーバーなどにアップロードして配ること</li>
-        <li>改変して配ること</li>
-        <li>自分が作ったと言うこと（自作発言）</li>
-      </ul>
-      紹介するときは、このページのURLを共有してください。
+      <b class="ng">二次配布禁止</b>：再アップロード・改変して配布・自作発言はしないでください。紹介はこのページの URL でお願いします。
     </div>
     </div>
   </details>
