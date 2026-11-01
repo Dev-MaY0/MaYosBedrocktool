@@ -2,6 +2,8 @@
 
 > 制作: **MaYo (mayo01297)**　／　**二次配布禁止**（再アップロード・改変しての配布・自作発言の禁止）
 
+公開サイト: **https://m-ayosaba.com/**（`wrangler.toml` の `SITE_URL` と `public/config.js` の `mainSite` に書いてあります）
+
 このフォルダを GitHub に置いて、Cloudflare で「リポジトリをインポート」するだけで動きます（ブラウザだけでOK）。
 
 1. このフォルダを GitHub のリポジトリ（Private でOK）にアップロード

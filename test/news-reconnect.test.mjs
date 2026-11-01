@@ -9,6 +9,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { spawn } from "node:child_process";
+import http from "node:http";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 
@@ -199,6 +200,23 @@ try {
   const lastPeers = [...obs.msgs].reverse().find(x => x.t === "peers");
   check(lastPeers && lastPeers.peers.filter(p => p.sid === sid).length === 1, "古い接続が閉じても、ほかの人の一覧からスマホの人が消えない（1 人だけ）");
   a2.ws.close(); obs.ws.close();
+} catch (e) {
+  console.error(e);
+  fail++;
+}
+
+// ---- www.<サイトのドメイン> → www なしへ ----
+try {
+  const hostGet = (host, p, method = "GET", extra = {}) => new Promise((resolve, reject) => {
+    const r = http.request({ host: "127.0.0.1", port: PORT, path: p, method, headers: { Host: host, ...extra } }, res => { res.resume(); res.on("end", () => resolve(res)); });
+    r.on("error", reject); r.end();
+  });
+  const w = await hostGet("www.example.workers.dev", "/talk/?r=123456");
+  check(w.statusCode === 301 && w.headers.location === "https://example.workers.dev/talk/?r=123456", "www でひらく → www なしへ 301 → " + w.statusCode + " " + w.headers.location);
+  const n = await hostGet("example.workers.dev", "/health");
+  check(n.statusCode === 200, "www なしはそのまま → " + n.statusCode);
+  const p = await hostGet("www.example.workers.dev", "/api/news", "POST");
+  check(p.statusCode !== 301, "POST は移動しない → " + p.statusCode);
 } catch (e) {
   console.error(e);
   fail++;

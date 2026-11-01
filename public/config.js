@@ -8,10 +8,9 @@ window.SITE_CONFIG = {
   // botUrl: "https://…workers.dev",
   // discordAppId: "…",
 
-  // 公開サイトをほかの場所（自分のドメインの VPS など）に引っ越したときだけ、そのアドレスを書きます（例: "https://vc.example.com"）。
-  // ほかのアドレス（Cloudflare の workers.dev など）でひらいた人は、そこへ自動で移動します（/setup/ と /download/ はそのまま。
-  // 引っ越し先が動いていないときは移動しません）。ふつうは "" のまま（このサイトをそのまま使う）。
-  mainSite: "",
+  // 公開サイトのアドレス。ほかのアドレス（Cloudflare の workers.dev など）でひらいた人は、ここへ自動で移動します
+  // （/setup/ と /download/ はそのまま。移動先が動いていないときは移動しません）。"" にすると移動しません。
+  mainSite: "https://m-ayosaba.com",
 };
 
 // ---- 公開サイト（mainSite）へ移動する ----
@@ -20,6 +19,7 @@ window.SITE_CONFIG = {
   if (!/^https:\/\/[A-Za-z0-9.-]+(:\d+)?$/.test(main)) return;
   try {
     if (location.origin === main || !/^https?:$/.test(location.protocol)) return;
+    if (/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname)) return;   // 自分の PC でためしているとき
     if (/^\/(setup|download)\//.test(location.pathname)) return;   // 管理者用のページ・ダウンロードはそのまま
     // 移動先が動いているときだけ移動する（準備中・止まっているときは、このサイトのまま）
     fetch(main + "/health", { mode: "no-cors", cache: "no-store" }).then(function () {

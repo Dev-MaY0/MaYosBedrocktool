@@ -158,11 +158,25 @@ async function markTried(env) {
   await saveStored(env, { triedAt: Date.now() });
 }
 
+/** www.<SITE_URL のドメイン> → SITE_URL（GET・HEAD のページだけ。なければ null） */
+function wwwRedirect(request, url, siteUrl) {
+  if (request.method !== "GET" && request.method !== "HEAD") return null;
+  if ((request.headers.get("Upgrade") || "").toLowerCase() === "websocket") return null;
+  let main;
+  try { main = new URL(String(siteUrl || "").trim()); } catch (e) { return null; }
+  if (main.protocol !== "https:" || url.hostname !== "www." + main.hostname) return null;
+  return new Response(null, { status: 301, headers: { Location: main.origin + url.pathname + url.search, "Cache-Control": "public, max-age=3600" } });
+}
+
 export default {
   async fetch(request, env, ctx) {
     env = withSetupKey(env);   // SETUP_KEY が未登録なら、あらかじめ決めたパスワードを使う
     const url = new URL(request.url);
     const path = url.pathname.replace(/\/+$/, "") || "/";
+
+    // www.<サイトのドメイン> でひらいたら、www なしへ（ページを見るときだけ。WebSocket・API はそのまま）
+    const toMain = wwwRedirect(request, url, env.SITE_URL);
+    if (toMain) return toMain;
 
     if (request.method === "OPTIONS") return cors(new Response(null, { status: 204 }));
 

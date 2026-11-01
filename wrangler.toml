@@ -36,6 +36,8 @@ run_worker_first = ["/v/*", "/ws/*", "/connect/*", "/api/*", "/interactions", "/
 [vars]
 # ふつうは変えない
 DISCORD_API = "https://discord.com/api/v10"
+# 公開サイトのアドレス（Discord のボタンやマイクラのチャットに出すリンク）。www.〜 でひらいた人は、ここへ移動します
+SITE_URL = "https://m-ayosaba.com"
 # リレー（中継サーバー）のアドレス。ふつうはサイトの /setup/ で入れるので、ここは書かなくてOK。
 # ここに書くと /setup/ で保存したものより優先されます
 #   例: "34.82.1.2"（Google Cloud の VM の外部 IP・ポート 80）／ "vc.example.com"（独自ドメイン）／ "shuttle.proxy.rlwy.net:15140"（Railway）
