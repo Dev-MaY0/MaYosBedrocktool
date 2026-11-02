@@ -12,14 +12,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>死体スキン | MaYoSaBa BE TOOL</title>
 <meta name="description" content="Minecraft 統合版「プレイヤーの死体アドオン」用。ユーザー名を入れるだけで、死体をあなたのスキンにしたアドオンをダウンロードできます。制作: MaYo (mayo01297)">
-<link rel="canonical" href="https://m-ayosaba.com/corpse/">
+<link rel="canonical" href="https://tool.m-ayosaba.com/corpse/">
 <meta name="theme-color" content="#07090c">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="MaYoSaBa BE TOOL">
 <meta property="og:title" content="死体スキン | MaYoSaBa BE TOOL">
 <meta property="og:description" content="Minecraft 統合版「プレイヤーの死体アドオン」用。ユーザー名を入れるだけで、死体をあなたのスキンにしたアドオンをダウンロードできます。制作: MaYo (mayo01297)">
-<meta property="og:url" content="https://m-ayosaba.com/corpse/">
-<meta property="og:image" content="https://m-ayosaba.com/img/mayosaba.png">
+<meta property="og:url" content="https://tool.m-ayosaba.com/corpse/">
+<meta property="og:image" content="https://tool.m-ayosaba.com/img/mayosaba.png">
 <meta name="twitter:card" content="summary">
 <script src="../config.js"></script>
 <link rel="icon" type="image/png" href="../img/mayosaba-64.png">
@@ -127,6 +127,8 @@ details.help code { background: var(--s2); border-radius: 6px; padding: 1px 6px;
 .foot p { margin: 0; }
 .aboutbtn { display: inline-flex; align-items: center; gap: 6px; color: var(--text); background: var(--s1); border: 1px solid var(--line); border-radius: 999px; padding: 7px 16px; font-size: 13px; font-weight: 600; cursor: pointer; }
 .aboutbtn:hover { border-color: rgba(255, 138, 31, .6); }
+.footrow { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+a.aboutbtn { text-decoration: none; }
 
 /* ---- 制作者について（ダイアログ）---- */
 dialog.aboutdlg { max-width: 640px; }
@@ -561,7 +563,10 @@ ol.steps > li { margin: 8px 0; }
 
   <footer class="foot">
     <p>© 2026 MaYo（mayo01297）　・　二次配布禁止</p>
-    <button class="aboutbtn" type="button" data-about>制作者について</button>
+    <div class="footrow">
+      <button class="aboutbtn" type="button" data-about>制作者について</button>
+      <a class="aboutbtn" href="https://m-ayosaba.com/">まよ鯖.COM</a>
+    </div>
   </footer>
 </main>
 

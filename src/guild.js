@@ -164,7 +164,7 @@ export class GuildRoom {
       return json({ ok: true });
     }
     // お知らせ（"__config__" の部屋だけが使う。中身は src/news.js）
-    if (url.pathname === "/news/list") return json({ ok: true, items: publicNews(await loadNews(this.storage)) });
+    if (url.pathname === "/news/list") return json({ ok: true, items: publicNews(await loadNews(this.storage, url.searchParams.get("site") || "tool")) });
     if (url.pathname === "/news/op" && request.method === "POST") {
       let body = {};
       try { body = await request.json(); } catch (e) { body = {}; }

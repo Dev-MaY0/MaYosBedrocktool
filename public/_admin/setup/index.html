@@ -354,6 +354,7 @@ ul.worklist .nl-btns button.go { background: var(--blue); color: #fff; }
 .nf-grid .field { width: 100%; }
 .nf-grid textarea.field { resize: vertical; min-height: 120px; line-height: 1.55; font-size: 15px; }
 .nf-type { display: flex; flex-wrap: wrap; gap: 6px; }
+.nf-site { margin: 0 0 10px; padding: 0 0 12px; border-bottom: 1px solid var(--line); }
 .nf-type label { display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--border); border-radius: 999px; padding: 5px 12px; font-size: 13.5px; font-weight: 600; cursor: pointer; background: var(--s1); }
 .nf-type label { position: relative; }
 .nf-type input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; pointer-events: none; }
@@ -433,7 +434,11 @@ ul.newslist .empty { color: var(--sub); text-align: center; font-size: 13.5px; }
   <section class="card" id="newsCard" aria-labelledby="tn">
     <h2 class="step" id="tn"><span class="num">📢</span><span>お知らせ</span></h2>
     <div class="indent">
-      <p class="nf-lead"><a href="../" target="_blank" rel="noopener">ホーム</a>の「最新情報」に出ます。</p>
+      <div class="nf-type nf-site" role="radiogroup" aria-label="お知らせを出す場所">
+        <label><input type="radio" name="nfSite" value="tool" checked> 🧰 ツール</label>
+        <label><input type="radio" name="nfSite" value="home"> 🏠 まよ鯖ホーム</label>
+      </div>
+      <p class="nf-lead" id="nfLead"></p>
       <form id="newsForm" class="nf-grid" autocomplete="off" novalidate>
         <p class="nf-editing" id="nfEditing" hidden></p>
         <div class="nf-type" role="radiogroup" aria-label="お知らせの種類">
@@ -946,7 +951,13 @@ $("unbanBtn").addEventListener("click", async () => {
 });
 // ---- お知らせ（ホームの「最新情報」） ----
 const NEWS_LABEL = { update: "🆕 アップデート", maintenance: "🛠 メンテナンス", info: "📢 お知らせ", important: "⚠ 重要" };
-const N = { items: [], editing: "", busy: false };
+const N = { items: [], editing: "", busy: false, site: "tool" };
+// 出す場所: ツールのホーム（tool.m-ayosaba.com）／まよ鯖のホーム（m-ayosaba.com）
+const SITE_LEAD = {
+  tool: '<a href="../" target="_blank" rel="noopener">ツールのホーム</a>の「最新情報」に出ます。',
+  home: '<a href="https://m-ayosaba.com/#news" target="_blank" rel="noopener">まよ鯖のホーム（m-ayosaba.com）</a>の「最新情報」に出ます（イベントなど）。',
+};
+function nfSite() { const r = document.querySelector('input[name="nfSite"]:checked'); return r ? r.value : "tool"; }
 const pad2 = n => String(n).padStart(2, "0");
 /** ミリ秒 → <input type="datetime-local"> の値（この PC の時刻） */
 function toLocalInput(ms) {
@@ -1003,9 +1014,10 @@ function nfEdit(n) {
   setTimeout(() => $("nfTitle").focus({ preventScroll: true }), 300);
 }
 async function newsCall(action, extra = {}) {
-  const res = await fetch("../api/admin/news", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action, ...extra }), cache: "no-store" });
+  const site = N.site;
+  const res = await fetch("../api/admin/news", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action, site, ...extra }), cache: "no-store" });
   const j = await res.json().catch(() => ({ ok: false, error: "サーバーの返事が読めませんでした。" }));
-  if (j.ok && Array.isArray(j.items)) { N.items = j.items; renderNews(); }
+  if (j.ok && Array.isArray(j.items) && site === N.site) { N.items = j.items; renderNews(); }
   return j;
 }
 function renderNews() {
@@ -1092,8 +1104,17 @@ for (const r of document.querySelectorAll('input[name="nfType"]')) r.addEventLis
 $("nfBody").addEventListener("input", nfSync);
 $("nfTitle").addEventListener("keydown", ev => { if (ev.key === "Enter" && !ev.isComposing) ev.preventDefault(); });
 $("nfReload").addEventListener("click", () => newsCall("list").then(r => { if (!r.ok) nfLine("ng", r.error || "読みこめませんでした。"); }).catch(() => nfLine("ng", "つながりませんでした。")));
+// 出す場所を切りかえる → その場所のお知らせを読みこむ
+function nfSiteChanged() {
+  N.site = nfSite();
+  $("nfLead").innerHTML = SITE_LEAD[N.site];
+  nfReset(); $("nfResult").textContent = "";
+  N.items = []; $("newsList").innerHTML = '<li><span class="empty">読みこんでいます…</span></li>';
+  newsCall("list").catch(() => { $("newsList").innerHTML = '<li><span class="empty">読みこめませんでした。↻ を押してください。</span></li>'; });
+}
+for (const r of document.querySelectorAll('input[name="nfSite"]')) r.addEventListener("change", nfSiteChanged);
 nfSync();
-newsCall("list").catch(() => { $("newsList").innerHTML = '<li><span class="empty">読みこめませんでした。↻ を押してください。</span></li>'; });
+nfSiteChanged();
 // メンテナンスの「予定 → 中 → 終了」の表示を、時間がたったら直す
 setInterval(() => { if (!document.hidden && N.items.some(n => n.type === "maintenance")) renderNews(); }, 30000);
 

@@ -31,13 +31,22 @@ binding = "ASSETS"
 #   /interactions … Discord のスラッシュコマンド
 #   /setup        … 管理者用の設定ページ。パスワード（シークレット SETUP_KEY）を入れた人にだけ、本体（public/_admin/setup/）を返す
 #   /_admin/*     … 設定ページの本体の置き場。外から直接は見せない（いつも 404）
-run_worker_first = ["/v/*", "/ws/*", "/connect/*", "/api/*", "/interactions", "/health", "/new", "/setup", "/setup/*", "/_admin/*"]
+#   /             … トップ。ひらいたアドレスで、ツール・まよ鯖のホーム・かめん部のどれかを返す
+run_worker_first = ["/", "/v/*", "/ws/*", "/connect/*", "/api/*", "/interactions", "/health", "/new", "/setup", "/setup/*", "/_admin/*"]
 
 [vars]
 # ふつうは変えない
 DISCORD_API = "https://discord.com/api/v10"
-# 公開サイトのアドレス（Discord のボタンやマイクラのチャットに出すリンク）。www.〜 でひらいた人は、ここへ移動します
-SITE_URL = "https://m-ayosaba.com"
+# ツールのアドレス（Discord のボタンやマイクラのチャットに出すリンク）。www.〜 でひらいた人は、ここへ移動します
+SITE_URL = "https://tool.m-ayosaba.com"
+# 1 つの Worker で 3 つのサイトを出します（トップ「/」だけ、ひらいたアドレスで中身が変わる）
+#   HOME_HOST  … まよ鯖のホーム（public/_home/）  ／ KAMEN_HOST … かめん部（public/_kamen/）
+#   それ以外（tool.m-ayosaba.com・workers.dev など）… このツール（public/index.html）
+#   ※ どのアドレスも、Cloudflare の「設定」→「ドメインとルート」→「カスタムドメイン」で、この Worker に追加してください
+HOME_HOST = "m-ayosaba.com"
+KAMEN_HOST = "kamen.m-ayosaba.com"
+# まよ鯖のホームに出す人数を読む Discord の招待コード（discord.gg/〜 の 〜）。"" にすると、ページに書いた人数のまま
+HOME_DISCORD_INVITE = "rnNZg3bsq3"
 # リレー（中継サーバー）のアドレス。ふつうはサイトの /setup/ で入れるので、ここは書かなくてOK。
 # ここに書くと /setup/ で保存したものより優先されます
 #   例: "34.82.1.2"（Google Cloud の VM の外部 IP・ポート 80）／ "vc.example.com"（独自ドメイン）／ "shuttle.proxy.rlwy.net:15140"（Railway）

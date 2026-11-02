@@ -2,7 +2,15 @@
 
 > 制作: **MaYo (mayo01297)**　／　**二次配布禁止**（再アップロード・改変しての配布・自作発言の禁止）
 
-公開サイト: **https://m-ayosaba.com/**（`wrangler.toml` の `SITE_URL` と `public/config.js` の `mainSite` に書いてあります）
+この Worker 1 つで 3 つのサイトを出します（トップ「/」だけ、ひらいたアドレスで中身が変わります）。
+
+| アドレス | 中身 | 場所 |
+|---|---|---|
+| **https://m-ayosaba.com/** | まよ鯖のホーム（2 つのサイトへの入口・まよ鯖の紹介・最新情報） | `public/_home/`（`HOME_HOST`） |
+| **https://tool.m-ayosaba.com/** | このツール（死体スキン・近接VC・チャット・作品） | `public/`（`SITE_URL`・`config.js` の `mainSite`） |
+| **https://kamen.m-ayosaba.com/** | かめん部（YouTube グループ） | `public/_kamen/`（`KAMEN_HOST`） |
+
+3 つのアドレスはどれも、Worker の「設定」→「ドメインとルート」→「カスタムドメイン」で追加します。
 
 このフォルダを GitHub に置いて、Cloudflare で「リポジトリをインポート」するだけで動きます（ブラウザだけでOK）。
 
@@ -25,5 +33,7 @@
 | `test/` | Worker のテスト（`npm test`。Cloudflare では使いません） |
 | `src/works.js`・`public/works/` | 制作者の作品の紹介。`/setup/` の「🧩 作品の紹介」で載せると、`/works/` とホームに出ます |
 | `public/img/` | サイトのロゴ（`mayosaba.png` … ホーム・チャット・作品の名前のとなり／`mayosaba-64.png` … タブのアイコン） |
-| `src/news.js` | ホームの「最新情報」（お知らせ）。`/setup/` の「📢 お知らせ」で書くと、ホームに出ます |
+| `src/news.js` | 「最新情報」（お知らせ）。`/setup/` の「📢 お知らせ」で、出す場所（ツール／まよ鯖のホーム）を選んで書きます |
+| `public/_home/` | まよ鯖のホーム（m-ayosaba.com）。画像は `public/_home/img/` |
+| `public/_kamen/` | かめん部（kamen.m-ayosaba.com）。画像は `public/_kamen/img/` |
 | `relay/vps/build-vps-server.mjs` | `public/download/vps-server.sh` を作り直す（`node relay/vps/build-vps-server.mjs`）。src/ や public/ を変えたら実行 |

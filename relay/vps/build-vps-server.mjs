@@ -26,8 +26,10 @@ function walk(dir) {
   }
   return out;
 }
+// まよ鯖のホーム（public/_home/）とかめん部（public/_kamen/）は Cloudflare だけで出すので、VPS には入れない
+const OTHER_SITES = /^public\/_(home|kamen)\//;
 const files = [
-  ...walk("public").filter(f => !SKIP.has(f)),
+  ...walk("public").filter(f => !SKIP.has(f) && !OTHER_SITES.test(f)),
   "relay/relay.mjs",
   ...fs.readdirSync(path.join(ROOT, "src")).filter(f => f.endsWith(".js")).map(f => "src/" + f),
   "wrangler.toml",

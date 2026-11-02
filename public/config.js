@@ -10,7 +10,7 @@ window.SITE_CONFIG = {
 
   // 公開サイトのアドレス。ほかのアドレス（Cloudflare の workers.dev など）でひらいた人は、ここへ自動で移動します
   // （/setup/ と /download/ はそのまま。移動先が動いていないときは移動しません）。"" にすると移動しません。
-  mainSite: "https://m-ayosaba.com",
+  mainSite: "https://tool.m-ayosaba.com",
 };
 
 // ---- 公開サイト（mainSite）へ移動する ----

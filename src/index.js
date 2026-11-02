@@ -102,7 +102,7 @@ const chatRoom = env => room(env, "__chat__");
 const newsRoom = env => room(env, "__config__");
 // お知らせの読み出しを少しだけ覚えておく（みんながホームをひらくたびに部屋を起こさないように）
 const NEWS_CACHE_MS = 15000;
-let newsCache = null, newsCacheAt = 0;
+const newsCaches = new Map();   // site → { items, at }
 let worksCache = null, worksCacheAt = 0;
 
 /**
@@ -158,14 +158,56 @@ async function markTried(env) {
   await saveStored(env, { triedAt: Date.now() });
 }
 
-/** www.<SITE_URL のドメイン> → SITE_URL（GET・HEAD のページだけ。なければ null） */
-function wwwRedirect(request, url, siteUrl) {
+/** www.<ドメイン> → www なし（SITE_URL・HOME_HOST・KAMEN_HOST のドメイン。GET・HEAD のページだけ。なければ null） */
+function wwwRedirect(request, url, env) {
   if (request.method !== "GET" && request.method !== "HEAD") return null;
   if ((request.headers.get("Upgrade") || "").toLowerCase() === "websocket") return null;
-  let main;
-  try { main = new URL(String(siteUrl || "").trim()); } catch (e) { return null; }
-  if (main.protocol !== "https:" || url.hostname !== "www." + main.hostname) return null;
-  return new Response(null, { status: 301, headers: { Location: main.origin + url.pathname + url.search, "Cache-Control": "public, max-age=3600" } });
+  const mains = [];
+  try { const m = new URL(String(env.SITE_URL || "").trim()); if (m.protocol === "https:") mains.push(m.hostname.toLowerCase()); } catch (e) { /* なし */ }
+  for (const h of [env.HOME_HOST, env.KAMEN_HOST]) if (h && String(h).trim()) mains.push(String(h).trim().toLowerCase());
+  const host = url.hostname.toLowerCase();
+  const to = mains.find(m => host === "www." + m);
+  if (!to) return null;
+  return new Response(null, { status: 301, headers: { Location: "https://" + to + url.pathname + url.search, "Cache-Control": "public, max-age=3600" } });
+}
+
+/**
+ * どのサイトか（ホスト名で決める）
+ *   "home"  … HOME_HOST（m-ayosaba.com）… まよ鯖のホーム（public/_home/）
+ *   "kamen" … KAMEN_HOST（kamen.m-ayosaba.com）… かめん部（public/_kamen/）
+ *   "tool"  … それ以外ぜんぶ（tool.m-ayosaba.com・workers.dev・VPS）… このツール
+ */
+export function siteOfHost(host, env) {
+  const h = String(host || "").toLowerCase();
+  const home = String(env.HOME_HOST || "").trim().toLowerCase();
+  const kamen = String(env.KAMEN_HOST || "").trim().toLowerCase();
+  if (home && h === home) return "home";
+  if (kamen && h === kamen) return "kamen";
+  return "tool";
+}
+
+// まよ鯖の Discord の人数（招待リンクから読む。10 分おぼえておく）
+const DISCORD_COUNT_MS = 10 * 60000;
+let discordCount = null, discordFailAt = 0;
+async function homeDiscordCount(env) {
+  const code = String(env.HOME_DISCORD_INVITE || "").trim();
+  if (!/^[A-Za-z0-9-]{2,32}$/.test(code)) return null;
+  if (discordCount && discordCount.code === code && Date.now() - discordCount.at < DISCORD_COUNT_MS) return discordCount;
+  if (!(discordCount && discordCount.code === code) && Date.now() - discordFailAt < 60000) return null;   // 読めなかったら 1 分待つ
+  try {
+    const api = String(env.DISCORD_API || "https://discord.com/api/v10").replace(/\/$/, "");
+    const r = await fetch(`${api}/invites/${code}?with_counts=true`, { headers: { "User-Agent": "MaYoSaBa (https://m-ayosaba.com, 1.0)" } });
+    if (!r.ok) throw new Error("status " + r.status);
+    const j = await r.json();
+    const members = Number(j.approximate_member_count), online = Number(j.approximate_presence_count);
+    if (!Number.isFinite(members)) throw new Error("no count");
+    discordCount = { code, members, online: Number.isFinite(online) ? online : null, at: Date.now() };
+  } catch (e) {
+    discordFailAt = Date.now();
+    if (discordCount && discordCount.code === code) discordCount.at = Date.now() - DISCORD_COUNT_MS + 60000;   // 前の数のまま。1 分後にもう一度
+    else return null;
+  }
+  return discordCount;
 }
 
 export default {
@@ -175,8 +217,24 @@ export default {
     const path = url.pathname.replace(/\/+$/, "") || "/";
 
     // www.<サイトのドメイン> でひらいたら、www なしへ（ページを見るときだけ。WebSocket・API はそのまま）
-    const toMain = wwwRedirect(request, url, env.SITE_URL);
+    const toMain = wwwRedirect(request, url, env);
     if (toMain) return toMain;
+
+    // ---- トップ（/）: m-ayosaba.com はまよ鯖のホーム、kamen.m-ayosaba.com はかめん部、ほかはこのツール ----
+    //      ページの画像などは /_home/〜・/_kamen/〜 にあるので、ここを通らずにそのまま返る
+    if (path === "/" && (request.method === "GET" || request.method === "HEAD") && env.ASSETS) {
+      const site = siteOfHost(url.hostname, env);
+      if (site === "tool") return env.ASSETS.fetch(request);
+      return env.ASSETS.fetch(new Request(url.origin + (site === "home" ? "/_home/" : "/_kamen/"), { method: request.method, headers: request.headers }));
+    }
+    // まよ鯖の Discord の人数と招待コード（ホームに出す。招待リンクは HOME_DISCORD_INVITE を変えるだけでページのボタンも変わる）
+    if (path === "/api/home/discord") {
+      const c = await homeDiscordCount(env);
+      const code = String(env.HOME_DISCORD_INVITE || "").trim();
+      const invite = /^[A-Za-z0-9-]{2,32}$/.test(code) ? code : null;
+      return cors(new Response(JSON.stringify(c ? { ok: true, members: c.members, online: c.online, invite } : { ok: false, invite }), {
+        status: 200, headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": c ? "public, max-age=600" : "no-store" } }));
+    }
 
     if (request.method === "OPTIONS") return cors(new Response(null, { status: 204 }));
 
@@ -272,15 +330,19 @@ export default {
     if (path === "/api/news") {
       if (request.method !== "GET" && request.method !== "HEAD") return new Response("Method Not Allowed", { status: 405, headers: { Allow: "GET, HEAD" } });
       const now = Date.now();
-      if (!newsCache || now - newsCacheAt > NEWS_CACHE_MS) {
+      // site=home … まよ鯖のホーム（m-ayosaba.com）のお知らせ。ないとき・ほかの値はツールのお知らせ
+      const site = url.searchParams.get("site") === "home" ? "home" : "tool";
+      let c = newsCaches.get(site);
+      if (!c || now - c.at > NEWS_CACHE_MS) {
         try {
-          const j = await (await newsRoom(env).fetch("https://room/news/list")).json();
-          newsCache = Array.isArray(j.items) ? j.items : []; newsCacheAt = now;
+          const j = await (await newsRoom(env).fetch("https://room/news/list?site=" + site)).json();
+          c = { items: Array.isArray(j.items) ? j.items : [], at: now };
+          newsCaches.set(site, c);
         } catch (e) {
-          if (!newsCache) return cors(json({ ok: false, error: "お知らせを読みこめませんでした。" }, 503));
+          if (!c) return cors(json({ ok: false, error: "お知らせを読みこめませんでした。" }, 503));
         }
       }
-      return cors(new Response(request.method === "HEAD" ? null : JSON.stringify({ ok: true, now, items: newsCache }), {
+      return cors(new Response(request.method === "HEAD" ? null : JSON.stringify({ ok: true, now, site, items: c.items }), {
         status: 200, headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "public, max-age=15" } }));
     }
     // お知らせを書く・直す・消す（ログインした管理者だけ。上の ADMIN_API で確認ずみ）
@@ -292,7 +354,7 @@ export default {
       const text = await request.text();
       if (text.length > 20000) return new Response(JSON.stringify({ ok: false, error: "長すぎます。" }), { status: 413, headers: noStore });
       const r = await newsRoom(env).fetch("https://room/news/op", { method: "POST", body: text });
-      newsCache = null;   // このサーバーでは、すぐ新しい内容を出す（ほかの場所のサーバーも 15 秒以内に変わる）
+      newsCaches.clear();   // このサーバーでは、すぐ新しい内容を出す（ほかの場所のサーバーも 15 秒以内に変わる）
       return new Response(r.body, { status: r.status, headers: noStore });
     }
 

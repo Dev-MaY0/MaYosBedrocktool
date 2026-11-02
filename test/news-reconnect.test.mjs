@@ -28,7 +28,8 @@ const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "vc-news-"));
 fs.mkdirSync(path.join(tmp, "src"));
 const mods = fs.readdirSync(path.join(ROOT, "src")).filter(f => f.endsWith(".js"));
 for (const f of mods) fs.copyFileSync(path.join(ROOT, "src", f), path.join(tmp, "src", f));
-fs.writeFileSync(path.join(tmp, "assets.js"), `export default { fetch() { return new Response("not found", { status: 404 }); } };\n`);
+// サイトのファイルの代わり（どのパスを読みにきたかを返す）
+fs.writeFileSync(path.join(tmp, "assets.js"), `export default { fetch(req) { return new Response("asset:" + new URL(req.url).pathname, { status: 404 }); } };\n`);
 fs.writeFileSync(path.join(tmp, "config.capnp"), `using Workerd = import "/workerd/workerd.capnp";
 const config :Workerd.Config = (
   services = [ (name = "main", worker = .w), (name = "assets", worker = .a), (name = "net", network = (allow = ["public", "private", "local"])) ],
@@ -44,7 +45,9 @@ ${mods.filter(f => f !== "index.js").map(f => `    (name = "${f}", esModule = em
   globalOutbound = "net",
   bindings = [ (name = "GUILD", durableObjectNamespace = (className = "GuildRoom")), (name = "ASSETS", service = "assets"),
                (name = "DISCORD_API", text = "http://127.0.0.1:9/api/v10"), (name = "SETUP_KEY", text = "${KEY}"),
-               (name = "SITE_URL", text = "https://example.workers.dev") ],
+               (name = "SITE_URL", text = "https://example.workers.dev"),
+               (name = "HOME_HOST", text = "home.example"), (name = "KAMEN_HOST", text = "kamen.example"),
+               (name = "HOME_DISCORD_INVITE", text = "abcDEF12") ],
 );
 const a :Workerd.Worker = ( modules = [ (name = "assets.js", esModule = embed "assets.js") ], compatibilityDate = "${compatDate}" );
 `);
@@ -217,6 +220,55 @@ try {
   check(n.statusCode === 200, "www なしはそのまま → " + n.statusCode);
   const p = await hostGet("www.example.workers.dev", "/api/news", "POST");
   check(p.statusCode !== 301, "POST は移動しない → " + p.statusCode);
+  const wh = await hostGet("www.home.example", "/?a=1");
+  check(wh.statusCode === 301 && wh.headers.location === "https://home.example/?a=1", "www.<まよ鯖のホーム> → www なしへ 301 → " + wh.headers.location);
+  const wk = await hostGet("www.kamen.example", "/");
+  check(wk.statusCode === 301 && wk.headers.location === "https://kamen.example/", "www.<かめん部> → www なしへ 301 → " + wk.headers.location);
+} catch (e) {
+  console.error(e);
+  fail++;
+}
+
+// ---- 3 つのサイト（トップ「/」はホスト名で中身が変わる） ----
+try {
+  const hostBody = (host, p, method = "GET") => new Promise((resolve, reject) => {
+    const r = http.request({ host: "127.0.0.1", port: PORT, path: p, method, headers: { Host: host } }, res => {
+      let b = ""; res.setEncoding("utf8"); res.on("data", d => (b += d)); res.on("end", () => resolve({ status: res.statusCode, body: b, headers: res.headers }));
+    });
+    r.on("error", reject); r.end();
+  });
+  check((await hostBody("home.example", "/")).body === "asset:/_home/", "まよ鯖のホームの「/」→ public/_home/");
+  check((await hostBody("HOME.example", "/")).body === "asset:/_home/", "ホスト名の大文字・小文字はちがってもよい");
+  check((await hostBody("kamen.example", "/")).body === "asset:/_kamen/", "かめん部の「/」→ public/_kamen/");
+  check((await hostBody("example.workers.dev", "/")).body === "asset:/", "ツールのアドレスの「/」→ ツールのトップ（public/index.html）");
+  check((await hostBody("tool.example", "/")).body === "asset:/", "知らないアドレスの「/」→ ツールのトップ");
+  check((await hostBody("home.example", "/corpse/")).body === "asset:/corpse/", "まよ鯖のホームでも /corpse/ などはそのまま（config.js がツールのアドレスへ移す）");
+  const hd = await hostBody("home.example", "/", "HEAD");
+  check(hd.status === 404 && hd.body === "", "HEAD も同じように返す（中身なし）");
+  check((await hostBody("home.example", "/health")).status === 200, "まよ鯖のホームでも /health は Worker");
+  // 人数: Discord に届かないとき → ok:false（招待コードは返す）
+  const dc = await hostBody("home.example", "/api/home/discord");
+  const dj = JSON.parse(dc.body);
+  check(dc.status === 200 && dj.ok === false && dj.invite === "abcDEF12" && dc.headers["cache-control"] === "no-store", "Discord の人数が読めないとき → ok:false（ページに書いた人数のまま）・招待コードは返す");
+  // お知らせ: まよ鯖のホーム（site=home）とツールは別々
+  const login = await post("/api/setup/auth", { key: KEY });
+  const cookie = (login.headers.get("set-cookie") || "").split(";")[0];
+  const admin = async body => { const r = await post("/api/admin/news", body, { headers: { Cookie: cookie } }); return { status: r.status, j: await r.json() }; };
+  const before = (await (await req("/api/news")).json()).items.length;
+  const h0 = await admin({ action: "list", site: "home" });
+  check(h0.j.ok && h0.j.site === "home" && h0.j.items.length === 0, "まよ鯖のホームのお知らせは、はじめは 0 件（ツールのものはまざらない）");
+  const hs = await admin({ action: "save", site: "home", item: { type: "info", title: "夏祭りイベント", body: "8/1 21:00〜", published: true } });
+  check(hs.j.ok && hs.j.site === "home" && hs.j.items.length === 1, "まよ鯖のホームにお知らせを投稿");
+  const hp = await (await req("/api/news?site=home")).json();
+  check(hp.ok && hp.site === "home" && hp.items.length === 1 && hp.items[0].title === "夏祭りイベント", "/api/news?site=home にだけ出る");
+  const tp = await (await req("/api/news")).json();
+  check(tp.site === "tool" && tp.items.length === before && !tp.items.some(n => n.title === "夏祭りイベント"), "ツールのお知らせ（/api/news）には出ない");
+  const odd = await (await req("/api/news?site=zzz")).json();
+  check(odd.site === "tool", "知らない site はツールのお知らせ");
+  const hdel = await admin({ action: "delete", site: "home", id: hs.j.saved });
+  check(hdel.j.ok && hdel.j.items.length === 0, "まよ鯖のホームのお知らせを消す");
+  const tl = await admin({ action: "list" });
+  check(tl.j.site === "tool" && tl.j.items.length === 50, "site なしはツールのお知らせ（そのまま 50 件）");
 } catch (e) {
   console.error(e);
   fail++;

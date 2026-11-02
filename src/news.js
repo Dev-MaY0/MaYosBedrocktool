@@ -2,6 +2,8 @@
 //  お知らせ（アップデート・メンテナンス・お知らせ）
 //   - 管理者が /setup/ で書く → ホーム（/）に出る
 //   - 保存場所: 設定の部屋（Durable Object "__config__"）。1 件ずつ "news:item:<ID>" に入れる
+//   - 出す場所（site）: "tool" … ツール（tool.m-ayosaba.com）のホーム ／ "home" … まよ鯖のホーム（m-ayosaba.com）
+//     "home" は "news:home:item:<ID>" に入れる（ツールのお知らせとはまざらない）
 //   - 公開してよい項目だけを返す（下書きは管理者にだけ見える）
 //  制作: MaYo (mayo01297)  二次配布禁止
 // =====================================================================
@@ -10,7 +12,9 @@ export const NEWS_TYPES = ["update", "maintenance", "info", "important"];
 export const NEWS_MAX = 50;          // 保存しておく数（多くなったら、ピン留めしていない古いものから消す）
 export const TITLE_MAX = 80;
 export const BODY_MAX = 2000;
-const PREFIX = "news:item:";
+export const NEWS_SITES = ["tool", "home"];
+const prefixOf = site => (site === "home" ? "news:home:item:" : "news:item:");
+export const cleanSite = v => (NEWS_SITES.includes(v) ? v : "tool");
 const ID_RE = /^[a-z0-9]{10}$/;
 const T_MIN = Date.UTC(2020, 0, 1), T_MAX = Date.UTC(2100, 0, 1);
 
@@ -69,8 +73,8 @@ export function cleanItem(input, prev, now = Date.now()) {
 }
 
 /** いま保存されているお知らせ（新しい順） */
-export async function loadNews(storage) {
-  const m = await storage.list({ prefix: PREFIX });
+export async function loadNews(storage, site = "tool") {
+  const m = await storage.list({ prefix: prefixOf(cleanSite(site)) });
   return [...m.values()].filter(v => v && ID_RE.test(v.id)).sort((a, b) => b.at - a.at);
 }
 
@@ -91,7 +95,9 @@ export function publicNews(list) {
  */
 export async function newsOp(storage, body, now = Date.now()) {
   const b = body && typeof body === "object" ? body : {};
-  const done = async extra => ({ ok: true, items: await loadNews(storage), ...extra });
+  const site = cleanSite(b.site);
+  const PREFIX = prefixOf(site);
+  const done = async extra => ({ ok: true, site, items: await loadNews(storage, site), ...extra });
   switch (b.action) {
     case "list":
       return done();
@@ -107,7 +113,7 @@ export async function newsOp(storage, body, now = Date.now()) {
       if (r.error) return { ok: false, error: r.error };
       await storage.put(PREFIX + r.item.id, r.item);
       // 多くなったら、ピン留めしていない古いものから消す
-      const all = await loadNews(storage);
+      const all = await loadNews(storage, site);
       if (all.length > NEWS_MAX) {
         const drop = all.filter(n => !n.pinned && n.id !== r.item.id).slice(-(all.length - NEWS_MAX));
         if (drop.length) await storage.delete(drop.map(n => PREFIX + n.id));
