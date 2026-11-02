@@ -13,8 +13,10 @@
 //       ・「観戦者」でも入れる（死んだ人と同じあつかい。部屋のルールで、話せる相手が決まる）
 //       ・位置を受け取って、相手との距離で音量、向きで左右を決める（音声はブラウザどうしの WebRTC）
 //       ・WebRTC のつなぎ方（シグナリング）は、この部屋が中継する
-//   - 死亡: 近接VC アドオンが入っていれば、死んだ人（グループ 31）は死んだ人どうしだけ聞こえる
+//   - 死亡: testfor @a（全員）と testfor @e[type=player]（生きている人だけ）をくらべて見分ける（アドオンなしでOK）。
+//           近接VC アドオンが入っていれば、そちら（グループ 31）でも見分ける。死んだ人の声は、生きている人には聞こえない
 //   - ゲームにいない人どうし（ワールドが閉じているときも）は、ロビーとして全員の声が聞こえる
+//     （ワールドにいる人は、位置がまだ分からなくてもロビーにしない … 遠くの人の声が聞こえてしまうので）
 //
 //  制作: MaYo (mayo01297)  二次配布禁止
 // =====================================================================
@@ -32,14 +34,16 @@ const TURN_TTL_S = 12 * 3600;
 const DEAD_ROOM = 31;
 const NAME_BAD = /["\\@\n\r\t]/;
 const LIST_MS = 2500;               // ワールドにいる人の一覧（testfor @a）を読む間隔
+const RECHECK_MS = 8000;            // 覚えている ID が正しいか、名前で 1 人ずつ確かめる間隔
 const ADMIN_SHOW_MS = 10 * 60000;   // マイクラで作った部屋の管理キーを、!vc admin で出せる時間
 // 部屋のルール（管理者設定）
 //   talk   … 観戦者（死んだ人・サイトで観戦者をえらんだ人）の声: none 話せない / near 近くだけ / spectators 観戦者どうし
 //   listen … 観戦者は、生きている人の声を（距離に関係なく）聞ける
 //   verify … 入り方: pick 自分をえらぶ / code マイクラのチャットで !vc（なりすまし防止）
 //   template … none / werewolf（人狼: 観戦者どうしで話せて、生きている人の声も聞ける）
-//   showInfo … サイトの一覧に、ほかの人との距離・ディメンションを表示するか（true 表示 / false 非表示）
-export const DEFAULT_RULES = { talk: "spectators", listen: false, verify: "pick", template: "none", showInfo: true };
+//   showInfo … サイトの一覧に、ほかの人との距離・ディメンション・座標を表示するか（true 表示 / false 非表示。ふだんは非表示）
+export const DEFAULT_RULES = { talk: "spectators", listen: false, verify: "pick", template: "none", showInfo: false };
+const RULES_V = 2;                  // 2: showInfo のふだんを「非表示」にした（前の部屋も一度だけ非表示にする）
 export function cleanRules(r) {
   r = r || {};
   return {
@@ -47,7 +51,7 @@ export function cleanRules(r) {
     listen: !!r.listen,
     verify: r.verify === "code" ? "code" : "pick",
     template: r.template === "werewolf" ? "werewolf" : "none",
-    showInfo: r.showInfo !== false,
+    showInfo: r.showInfo === true,
   };
 }
 // ゲーム中チャット（部屋のチャット）の上限
@@ -112,27 +116,29 @@ export function gainFor(me, other, radius) {
 
 /**
  * ルールつきの聞こえ方（ブラウザと同じ計算）。me が other の声をどれだけの大きさで聞くか（0〜1）
- *   p = { pos: { x, y, z, d } | null, dead: 死んでいる, spec: サイトの観戦者 }
+ *   p = { pos: { x, y, z, d } | null, dead: 死んでいる, spec: サイトの観戦者, inGame: ワールドにいる（testfor @a に名前がある） }
  */
 export function gainRule(me, other, radius, rules, world = true) {
   rules = rules || DEFAULT_RULES;
   if (!world) return 1;                                   // ワールドがつながっていない → ロビー
-  const ghost = p => !!(p.spec || (p.pos && p.dead));
-  const dist = () => (me.pos && other.pos ? gainFor(me.pos, other.pos, radius) : 0);
+  const ghost = p => !!(p.spec || p.dead);
+  const dist = () => (me.pos && other.pos && !me.dead && !other.dead ? gainFor(me.pos, other.pos, radius) : 0);
   const mg = ghost(me), og = ghost(other);
   if (!mg && !og) {
-    if (!me.pos && !other.pos) return 1;                  // どちらもゲームにいない → ロビー
+    // どちらもゲームにいない → ロビー（ワールドにいる人は、位置が分からないあいだも聞こえないようにする）
+    if (!me.pos && !other.pos) return me.inGame || other.inGame ? 0 : 1;
     return dist();
   }
   if (og) {                                               // 相手が観戦者
     if (rules.talk === "none") return 0;
     if (rules.talk === "spectators") return mg ? 1 : 0;
     if (me.spec && other.spec) return 1;                  // 近くだけ: サイトの観戦者どうし
-    return me.spec || other.spec ? 0 : dist();            // 近くだけ: 場所があれば距離で
+    if (me.spec || other.spec) return 0;
+    return me.pos && other.pos ? gainFor(me.pos, other.pos, radius) : 0;   // 近くだけ: 死んだ人どうし、場所があれば距離で
   }
   // 自分が観戦者・相手は生きている人
   if (rules.listen && other.pos && !other.dead) return 1;
-  if (rules.talk === "near" && !me.spec) return dist();
+  if (rules.talk === "near" && !me.spec) return me.pos && other.pos ? gainFor(me.pos, other.pos, radius) : 0;
   return 0;
 }
 
@@ -198,6 +204,7 @@ export const webMethods = {
       createdAt: Date.now(),
       rooms: {},
       rules: { ...DEFAULT_RULES },
+      rulesV: RULES_V,
       // マイクラで作った部屋: 管理キーを、ワールドで作った人に出す（出したら消す）
       fromGame: !!body.fromGame,
       adminShow: /^[A-Za-z0-9]{6,24}$/.test(showKey) ? { key: showKey, until: Date.now() + ADMIN_SHOW_MS, fallback: false } : null,
@@ -367,7 +374,15 @@ export const webMethods = {
     this.storage.setAlarm(Date.now() + 200).catch(() => {});
   },
 
-  webRules() { return cleanRules(this.cfg && this.cfg.rules); },
+  webRules() {
+    // 前の版で作った部屋: 距離・ディメンションの表示を、一度だけ「非表示」にする（ふだんを非表示にしたため）
+    if (this.cfg && this.cfg.kind === "web" && this.cfg.rulesV !== RULES_V) {
+      this.cfg.rules = { ...cleanRules(this.cfg.rules), showInfo: false };
+      this.cfg.rulesV = RULES_V;
+      this.saveCfg().catch(() => {});
+    }
+    return cleanRules(this.cfg && this.cfg.rules);
+  },
   /** ワールドにいる人（testfor @a で読んだ名前） */
   webPlayers() { return (this.webPos && this.webPos.players) || []; },
   /** サイトで使われている名前 */
@@ -632,6 +647,9 @@ export const webMethods = {
   // ---- Minecraft とつながったとき・切れたとき ----
   webWorld(connected) {
     this.webBroadcast({ t: "world", connected, name: this.cfg && this.cfg.guildName }, false);
+    // プレイヤーの ID（uniqueId）は、ワールド・入り直しで変わることがある → つながるたびに名前で読み直す
+    // （古い ID のままだと、ほかの人の位置をその人の位置とまちがえることがある）
+    if (connected) this.webLoad().then(w => { if (Object.keys(w.uids).length) { w.uids = {}; return this.webSave("uids"); } }).catch(() => {});
     if (!connected) {
       this.webStopPos();
       this.webBroadcast({ t: "pos", at: Date.now(), p: {} });
@@ -641,7 +659,8 @@ export const webMethods = {
 
   // ---- 位置を読む（querytarget）----
   webStartPos() {
-    if (!this.webPos) this.webPos = { pending: new Map(), sentAt: 0, timer: null, pos: {}, retry: new Map(), perName: false, lastSend: 0, players: [], listAt: 0 };
+    if (!this.webPos) this.webPos = { pending: new Map(), sentAt: 0, timer: null, pos: {}, retry: new Map(), perName: false, lastSend: 0, players: [], listAt: 0,
+      alive: new Set(), aliveOk: false, members: [] };
     this.webPosTick();
   },
   webStopPos() {
@@ -677,6 +696,9 @@ export const webMethods = {
       if (p.pending.size) { p.sentAt = now; return; }                      // 一覧の返事を待つ
       this.webSchedule(1000); return;                                     // だれもいないときは、ゆっくり
     }
+    p.members = members;
+    // 生きている人（@e は死んでいる人をえらばない。@a はえらぶ）→ 一覧（@a）にいて、ここにいない人 = 死んでいる
+    p.pending.set(this.mcCommand(ws, "testfor @e[type=player]"), { kind: "alive" });
     // ID（uniqueId）が分からない人は、名前で 1 人ずつ読む（ゲームにいなかった人は 5 秒おき）
     let n = 0;
     for (const name of members) {
@@ -687,6 +709,15 @@ export const webMethods = {
       if (++n > 12) break;
       p.retry.set(lower, now);
       p.pending.set(this.mcCommand(ws, `querytarget @a[name=${quoteName(name)}]`), { kind: "name", lower, name });
+    }
+    // 覚えている ID が、いまもその人のものか、ときどき名前で確かめる（ちがっていたら、返事で ID を直す）
+    if (!p.perName && n === 0 && now - (p.recheckAt || 0) >= RECHECK_MS) {
+      const known = members.filter(m => w.uids[m.toLowerCase()]);
+      if (known.length) {
+        const name = known[(p.rr = ((p.rr || 0) + 1)) % known.length];
+        p.recheckAt = now;
+        p.pending.set(this.mcCommand(ws, `querytarget @a[name=${quoteName(name)}]`), { kind: "name", lower: name.toLowerCase(), name });
+      }
     }
     if (!p.perName) p.pending.set(this.mcCommand(ws, "querytarget @a"), { kind: "all" });
     p.sentAt = now;
@@ -703,6 +734,13 @@ export const webMethods = {
     const job = p && p.pending.get(requestId);
     if (!job) return false;
     p.pending.delete(requestId);
+    if (job.kind === "alive") {
+      // 0 = だれか生きている（名前の一覧）／それ以外 = 生きている人がいない（全員死んでいる・だれもいない）
+      p.alive = new Set(body && body.statusCode === 0 && Array.isArray(body.victim) ? body.victim.map(n => String(n).toLowerCase()) : []);
+      p.aliveOk = true;
+      if (!p.pending.size) { this.webSendPositions(); this.webSchedule(); }
+      return true;
+    }
     if (job.kind === "list") {
       const names = body && body.statusCode === 0 && Array.isArray(body.victim)
         ? [...new Set(body.victim.map(String).filter(n => n && n.length <= 32 && !NAME_BAD.test(n)))].sort((x, y) => x.localeCompare(y)).slice(0, 100)
@@ -740,6 +778,17 @@ export const webMethods = {
       // 名前で読んだばかりの人は残す
       for (const [lower, v] of Object.entries(p.pos)) if (!fresh[lower] && at - v.at < 1000 && !w.uids[lower]) fresh[lower] = v;
       p.pos = fresh;
+      // ワールドにいるのに、覚えている ID で見つからない人（ワールドが変わった・入り直した）→ ID を忘れて、名前で読み直す。
+      // これをしないと、その人の位置がずっと分からないまま（前は「ロビー」になり、どれだけ離れても聞こえていた）
+      if (!p.perName) {
+        const inList = new Set(p.players.map(n => n.toLowerCase()));
+        let changed = false;
+        for (const name of p.members || []) {
+          const lower = name.toLowerCase();
+          if (w.uids[lower] && !fresh[lower] && inList.has(lower)) { delete w.uids[lower]; p.retry.delete(lower); changed = true; }
+        }
+        if (changed) await this.webSave("uids");
+      }
     }
     if (!p.pending.size) {
       this.webSendPositions();
@@ -747,18 +796,41 @@ export const webMethods = {
     }
     return true;
   },
-  /** 位置をブラウザに送る: { 名前(小文字): [x, y, z, ディメンション, 向き, 死んでいる] } */
+  /** 死んでいる人（小文字の名前）: アドオンのグループ 31 ・または一覧（@a）にいて生きている人（@e）にいない */
+  webDeadSet() {
+    const p = this.webPos;
+    const dead = new Set();
+    if (this.desired) for (const [lower, g] of this.desired) if (g && g.room === DEAD_ROOM) dead.add(lower);
+    if (p && p.aliveOk) {
+      const now = Date.now();
+      for (const n of p.players) {
+        const lower = n.toLowerCase();
+        // 念のため: 動いている人は死んでいない（死んだ人は、その場から動かない）
+        if (!p.alive.has(lower) && !(p.movedAt && now - (p.movedAt[lower] || 0) < 2000)) dead.add(lower);
+      }
+    }
+    return dead;
+  },
+  /**
+   * 位置をブラウザに送る: p = { 名前(小文字): [x, y, z, ディメンション, 向き, 死んでいる] }
+   *   inGame … ワールドにいる人（小文字）・dead … 死んでいる人（位置が分からない人もふくむ）
+   */
   webSendPositions(force = false) {
     const p = this.webPos;
     const now = Date.now();
-    if (!p) { if (force) this.webBroadcast({ t: "pos", at: now, p: {} }); return; }
+    if (!p) { if (force) this.webBroadcast({ t: "pos", at: now, p: {}, inGame: [], dead: [] }); return; }
     if (!force && now - p.lastSend < 150) return;
     p.lastSend = now;
-    const out = {};
+    // 動いたかどうか（0.3 ブロックより動いたら、その時間を覚える）
+    p.prevPos = p.prevPos || {}; p.movedAt = p.movedAt || {};
     for (const [lower, v] of Object.entries(p.pos)) {
-      const g = this.desired && this.desired.get(lower);
-      out[lower] = [v.x, v.y, v.z, v.d, v.r, g && g.room === DEAD_ROOM ? 1 : 0];
+      const o = p.prevPos[lower];
+      if (o && (o.d !== v.d || Math.hypot(o.x - v.x, o.y - v.y, o.z - v.z) > 0.3)) p.movedAt[lower] = now;
+      p.prevPos[lower] = v;
     }
-    this.webBroadcast({ t: "pos", at: now, p: out });
+    const dead = this.webDeadSet();
+    const out = {};
+    for (const [lower, v] of Object.entries(p.pos)) out[lower] = [v.x, v.y, v.z, v.d, v.r, dead.has(lower) ? 1 : 0];
+    this.webBroadcast({ t: "pos", at: now, p: out, inGame: p.players.map(n => n.toLowerCase()), dead: [...dead] });
   },
 };

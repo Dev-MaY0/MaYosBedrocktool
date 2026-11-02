@@ -947,8 +947,8 @@ details.vmore summary small { display: block; color: var(--sub); font-size: 12.5
       <ul>
         <li>近いほど大きく、届く距離（最初は 20 ブロック）をこえると聞こえません。左右からも聞こえます</li>
         <li>ちがうディメンションの人は聞こえません</li>
-        <li>観戦者・人狼のルールは管理者が選べます</li>
-        <li>死んだ人を見分けるには <a href="../vc/discord/#s3">近接VCアドオン</a> を入れてください</li>
+        <li>観戦者・人狼のルール・距離の表示は、管理者が選べます（距離の表示はふだんオフ）</li>
+        <li>死んだ人は自動で見分けます（アドオンはいりません）。死んだ人の声は、生きている人に聞こえません</li>
       </ul>
       <h4>■ つながらないとき</h4>
       <ul>
@@ -1082,7 +1082,7 @@ details.vmore summary small { display: block; color: var(--sub); font-size: 12.5
       <label class="fl">観戦者（死んだ人・観戦者で入った人）
         <select id="talkSel"><option value="none">話せない</option><option value="near">近くだけ</option><option value="spectators">すべての観戦者と</option></select></label>
       <label class="fc"><input type="checkbox" id="listenChk"> 観戦者は、生きている人の声を聞ける</label>
-      <label class="fc"><input type="checkbox" id="showInfoChk"> ほかの人との距離・ディメンションをサイトに表示する</label>
+      <label class="fc"><input type="checkbox" id="showInfoChk"> 距離・ディメンション・座標をサイトに表示する</label>
       <label class="fl">入り方
         <select id="verifySel"><option value="pick">自分をえらぶ（かんたん）</option><option value="code">!vc で本人確認（なりすまし防止）</option></select></label>
       <p class="sub-hint" id="tplHint"></p>
@@ -1123,12 +1123,12 @@ const store = {
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 使えないブラウザ */ } },
   del(k) { try { localStorage.removeItem(k); } catch (e) { /* 無視 */ } },
 };
-const DEFAULT_RULES = { talk: "spectators", listen: false, verify: "pick", template: "none", showInfo: true };
+const DEFAULT_RULES = { talk: "spectators", listen: false, verify: "pick", template: "none", showInfo: false };
 
 const S = {
   room: "", ws: null, sid: "", name: "", via: "", spec: false, verified: false, ice: null, world: false, radius: 20, roomName: "",
   rules: { ...DEFAULT_RULES }, players: [], taken: [], codeAsked: false, reconnectAll: false,
-  peers: new Map(), pos: {}, started: false, ctx: null, master: null, mic: null, micTrack: null, sendTrack: null, micGain: null, micAnalyser: null,
+  peers: new Map(), pos: {}, inGame: new Set(), dead: new Set(), started: false, ctx: null, master: null, mic: null, micTrack: null, sendTrack: null, micGain: null, micAnalyser: null,
   muted: false, deaf: false, ptt: false, pttDown: false, vol: store.get("vc-vol", {}), retry: 0, kicked: false, leaving: false,
   micVol: store.get("vc-micvol", 100), spatial: store.get("vc-spatial", true),
   micSrc: null, elemOut: false, rawSend: false, reTimer: null, lastMsgAt: 0, gone: new Map(),
@@ -1146,10 +1146,11 @@ function posOf(name) {
   const v = S.pos[String(name || "").toLowerCase()];
   return v ? { x: v[0], y: v[1], z: v[2], d: v[3], r: v[4], dead: !!v[5] } : null;
 }
-/** 人の様子: { pos, dead, spec }（観戦者で入った人は、場所なし） */
+/** 人の様子: { pos, dead, spec, inGame }（観戦者で入った人は、場所なし） */
 function personOf(name, spec) {
+  const lower = String(name || "").toLowerCase();
   const pos = spec ? null : posOf(name);
-  return { pos, dead: !!(pos && pos.dead), spec: !!spec };
+  return { pos, dead: !spec && !!((pos && pos.dead) || S.dead.has(lower)), spec: !!spec, inGame: !spec && (!!pos || S.inGame.has(lower)) };
 }
 function gainFor(me, o, radius) {
   if (me.d !== o.d) return 0;
@@ -1160,23 +1161,25 @@ function gainFor(me, o, radius) {
   const t = (dist - full) / (radius - full);
   return 0.5 * (1 + Math.cos(Math.PI * t));
 }
-const isGhost = p => !!(p.spec || (p.pos && p.dead));
+const isGhost = p => !!(p.spec || p.dead);
 function gainRule(me, o, radius, rules, world) {
   if (!world) return 1;                                   // ワールドがつながっていない → ロビー
-  const dist = () => (me.pos && o.pos ? gainFor(me.pos, o.pos, radius) : 0);
+  const near = () => (me.pos && o.pos ? gainFor(me.pos, o.pos, radius) : 0);
   const mg = isGhost(me), og = isGhost(o);
   if (!mg && !og) {
-    if (!me.pos && !o.pos) return 1;                      // どちらもゲームにいない → ロビー
-    return dist();
+    // どちらもゲームにいない → ロビー（ワールドにいる人は、位置が分からないあいだも聞こえないようにする）
+    if (!me.pos && !o.pos) return me.inGame || o.inGame ? 0 : 1;
+    return near();
   }
-  if (og) {
+  if (og) {                                               // 相手が観戦者（死んだ人・サイトの観戦者）
     if (rules.talk === "none") return 0;
     if (rules.talk === "spectators") return mg ? 1 : 0;
     if (me.spec && o.spec) return 1;
-    return me.spec || o.spec ? 0 : dist();
+    return me.spec || o.spec ? 0 : near();
   }
+  // 自分が観戦者・相手は生きている人
   if (rules.listen && o.pos && !o.dead) return 1;
-  if (rules.talk === "near" && !me.spec) return dist();
+  if (rules.talk === "near" && !me.spec) return near();
   return 0;
 }
 /** 左右（-1 = 左, +1 = 右）。Minecraft の向き yRot: 0 = 南(+Z), 90 = 西(-X) */
@@ -1345,9 +1348,9 @@ async function onMsg(m) {
     case "players": S.players = m.list || []; S.taken = m.taken || []; renderPick(); break;
     case "rules": S.rules = { ...DEFAULT_RULES, ...(m.rules || {}) }; S.codeAsked = false; showState(); updateAudio(); break;
     case "peers": onPeers(m.peers); break;
-    case "pos": S.pos = m.p || {}; updateAudio(); break;
+    case "pos": S.pos = m.p || {}; S.inGame = new Set(m.inGame || []); S.dead = new Set(m.dead || []); updateAudio(); break;
     case "world":
-      S.world = !!m.connected; if (!S.world) { S.pos = {}; S.players = []; }
+      S.world = !!m.connected; if (!S.world) { S.pos = {}; S.players = []; S.inGame = new Set(); S.dead = new Set(); }
       setWorld(); updateAudio(); renderPick();
       if (!S.verified && S.world && $("verifyMsg").textContent) { $("verifyMsg").textContent = "Minecraft とつながりました。チャットで送ってください。"; $("verifyMsg").className = "msg ok"; }
       break;
@@ -1425,7 +1428,7 @@ function leaveRoom(silent) {
   try { S.ws && S.ws.close(); } catch (e) { /* 無視 */ }
   S.ws = null; clearTimeout(S.reTimer); S.reTimer = null;
   stopAudio();
-  S.peers.clear(); S.pos = {}; S.verified = false; S.name = ""; S.via = ""; S.spec = false; S.room = ""; S.players = []; S.taken = [];
+  S.peers.clear(); S.pos = {}; S.inGame = new Set(); S.dead = new Set(); S.verified = false; S.name = ""; S.via = ""; S.spec = false; S.room = ""; S.players = []; S.taken = [];
   $("players").textContent = ""; rows.clear();
   $("chatCard").hidden = true; roomChat.set([]);
   $("roomBox").hidden = true; $("joinForm").hidden = false;
@@ -1680,7 +1683,8 @@ function updateAudio() {
     if (p.audioEl && (p.useElement || S.elemOut)) {
       // Web Audio が止められているあいだ（iPhone で裏に回したときなど）は、audio 要素から直接出す。
       // iPhone は音量を変えられないので、届く距離なら出す・届かないなら消す
-      if (S.elemOut) p.audioEl.muted = out < (IS_IOS ? 0.08 : 0.02);
+      // （iPhone は音量を変えられないので、ここでミュートしないと、どれだけ離れても聞こえてしまう）
+      p.audioEl.muted = out < (IS_IOS ? 0.08 : 0.02);
       try { p.audioEl.volume = Math.min(1, out); } catch (e) { /* iPhone は変えられない */ }
       if (S.elemOut && !p.audioEl.muted && p.audioEl.paused) p.audioEl.play().catch(() => {});
     }
@@ -1693,12 +1697,12 @@ function updateAudio() {
 //  表示
 // ---------------------------------------------------------------------
 const rows = new Map();
-const showInfoOn = () => S.rules.showInfo !== false;   // 部屋の設定: 距離・ディメンションを見せるか
+const showInfoOn = () => S.rules.showInfo === true;   // 部屋の設定: 距離・ディメンションを見せるか（ふだんは見せない）
 function stateText(p, me, o) {
-  if (!S.world || (!me.pos && !o.pos && !me.spec && !o.spec)) return "ロビー（全員の声が聞こえる）";
+  if (!S.world || (!me.pos && !o.pos && !me.spec && !o.spec && !me.inGame && !o.inGame && !me.dead && !o.dead)) return "ロビー（全員の声が聞こえる）";
   if (o.spec) return "👻 観戦者";
-  if (!o.pos) return "ゲームにいない";
   if (o.dead) return "💀 死亡中（観戦者）";
+  if (!o.pos) return o.inGame ? "ゲーム中" : "ゲームにいない";
   if (!showInfoOn()) return "ゲーム中";
   if (!me.pos) return `ゲーム中（${dimName(o.pos.d)}）`;
   if (me.pos.d !== o.pos.d) return `${dimName(o.pos.d)}にいる`;
@@ -1713,7 +1717,8 @@ function renderPlayers() {
   const ul = $("players");
   if (!S.verified) return;
   const me = personOf(S.name, S.spec);
-  const meText = !S.world ? "ロビー（ワールドがつながっていません）" : S.spec ? "👻 観戦者" : !me.pos ? "ゲームにいない（ロビー）" : me.dead ? "💀 死亡中（観戦者）" : `${dimName(me.pos.d)}  ${Math.round(me.pos.x)}, ${Math.round(me.pos.y)}, ${Math.round(me.pos.z)}`;
+  const meText = !S.world ? "ロビー（ワールドがつながっていません）" : S.spec ? "👻 観戦者" : me.dead ? "💀 死亡中（観戦者）" : !me.pos ? (me.inGame ? "ゲーム中（位置を確認中）" : "ゲームにいない（ロビー）")
+    : showInfoOn() ? `${dimName(me.pos.d)}  ${Math.round(me.pos.x)}, ${Math.round(me.pos.y)}, ${Math.round(me.pos.z)}` : "ゲーム中";
   const want = [{ key: "me", name: (S.spec ? "👻 " : "") + S.name + "（あなた）", st: meText, me: true }];
   for (const p of S.peers.values()) {
     const o = personOf(p.name, p.spec);
@@ -2409,7 +2414,7 @@ function renderSettings(j) {
   const rules = { ...DEFAULT_RULES, ...(j.rules || {}) };
   if (document.activeElement !== $("radiusSel")) $("radiusSel").value = String(j.radius);
   if (![...$("radiusSel").options].some(o => o.value === String(j.radius))) { const o = document.createElement("option"); o.textContent = String(j.radius); $("radiusSel").appendChild(o); $("radiusSel").value = String(j.radius); }
-  $("tplSel").value = rules.template; $("talkSel").value = rules.talk; $("listenChk").checked = !!rules.listen; $("showInfoChk").checked = rules.showInfo !== false; $("verifySel").value = rules.verify;
+  $("tplSel").value = rules.template; $("talkSel").value = rules.talk; $("listenChk").checked = !!rules.listen; $("showInfoChk").checked = rules.showInfo === true; $("verifySel").value = rules.verify;
   tplHint();
   $("roomCmd").textContent = j.relayCommand || j.connectorCommand || "…";
   $("hostLink").textContent = `${location.origin}${location.pathname}#r=${A.room}&host=${A.key}`;
