@@ -36,4 +36,5 @@
 | `src/news.js` | 「最新情報」（お知らせ）。`/setup/` の「📢 お知らせ」で、出す場所（ツール／まよ鯖のホーム）を選んで書きます |
 | `public/_home/` | まよ鯖のホーム（m-ayosaba.com）。画像は `public/_home/img/` |
 | `public/_kamen/` | かめん部（kamen.m-ayosaba.com）。画像は `public/_kamen/img/` |
+| `public/download/mayo-bot-setup.sh` | まよ鯖 Bot（チケット・役職パネル・募集・ログ）を VPS に入れるインストーラー。作り方は `mayo-bot/`（`node tools/build-setup.mjs`） |
 | `relay/vps/build-vps-server.mjs` | `public/download/vps-server.sh` を作り直す（`node relay/vps/build-vps-server.mjs`）。src/ や public/ を変えたら実行 |

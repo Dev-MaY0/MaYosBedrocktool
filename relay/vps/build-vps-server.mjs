@@ -15,7 +15,7 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 const OUT = path.join(ROOT, "public", "download", "vps-server.sh");
-const SKIP = new Set(["public/download/vps-server.sh", "public/download/vps-setup.sh"]);   // 自分自身と、別に配っているもの
+const SKIP = new Set(["public/download/vps-server.sh", "public/download/vps-setup.sh", "public/download/mayo-bot-setup.sh"]);   // 自分自身と、別に配っているもの（まよ鯖 Bot のインストーラーもふくむ）
 
 function walk(dir) {
   const out = [];
