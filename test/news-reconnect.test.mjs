@@ -24,6 +24,18 @@ const check = (c, m) => { console.log((c ? "  ok  " : "  NG  ") + m); if (!c) fa
 const toml = fs.readFileSync(path.join(ROOT, "wrangler.toml"), "utf8");
 const compatDate = (/^compatibility_date\s*=\s*"([^"]+)"/m.exec(toml) || [])[1];
 const flags = [...((/^compatibility_flags\s*=\s*\[([^\]]*)\]/m.exec(toml) || [])[1] || "").matchAll(/"([^"]+)"/g)].map(x => x[1]);
+// ニセの Discord（招待リンクの人数だけ）。mode で返事を変える
+const FAKE_DISCORD = 8798;
+const fakeDiscord = { mode: "down", calls: 0 };
+const fakeServer = http.createServer((req, res) => {
+  fakeDiscord.calls++;
+  const m = /^\/api\/v10\/invites\/([A-Za-z0-9-]+)/.exec(req.url);
+  if (!m || fakeDiscord.mode === "down") { res.writeHead(500); return res.end("{}"); }
+  if (m[1] !== "abcDEF12") { res.writeHead(404, { "Content-Type": "application/json" }); return res.end('{"message":"Unknown Invite","code":10006}'); }
+  res.writeHead(200, { "Content-Type": "application/json" });
+  res.end(JSON.stringify({ code: m[1], approximate_member_count: 81, approximate_presence_count: 23, expires_at: null }));
+});
+await new Promise(r => fakeServer.listen(FAKE_DISCORD, "127.0.0.1", r));
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "vc-news-"));
 fs.mkdirSync(path.join(tmp, "src"));
 const mods = fs.readdirSync(path.join(ROOT, "src")).filter(f => f.endsWith(".js"));
@@ -44,7 +56,7 @@ ${mods.filter(f => f !== "index.js").map(f => `    (name = "${f}", esModule = em
   durableObjectStorage = (inMemory = void),
   globalOutbound = "net",
   bindings = [ (name = "GUILD", durableObjectNamespace = (className = "GuildRoom")), (name = "ASSETS", service = "assets"),
-               (name = "DISCORD_API", text = "http://127.0.0.1:9/api/v10"), (name = "SETUP_KEY", text = "${KEY}"),
+               (name = "DISCORD_API", text = "http://127.0.0.1:${FAKE_DISCORD}/api/v10"), (name = "SETUP_KEY", text = "${KEY}"),
                (name = "SITE_URL", text = "https://example.workers.dev"),
                (name = "HOME_HOST", text = "home.example"), (name = "KAMEN_HOST", text = "kamen.example"),
                (name = "HOME_DISCORD_INVITE", text = "abcDEF12") ],
@@ -55,7 +67,7 @@ const wd = spawn(WORKERD, ["serve", "--experimental", path.join(tmp, "config.cap
 let wdLog = "";
 wd.stdout.on("data", d => (wdLog += d)); wd.stderr.on("data", d => (wdLog += d));
 const BASE = `http://127.0.0.1:${PORT}`;
-const stop = code => { wd.kill(); fs.rmSync(tmp, { recursive: true, force: true }); process.exit(code); };
+const stop = code => { wd.kill(); fakeServer.close(); fs.rmSync(tmp, { recursive: true, force: true }); process.exit(code); };
 for (let i = 0; i < 60; i++) { try { if ((await fetch(BASE + "/health")).ok) break; } catch (e) { /* 待つ */ } await sleep(250); }
 
 let ipN = 0;
@@ -247,9 +259,10 @@ try {
   check(hd.status === 404 && hd.body === "", "HEAD も同じように返す（中身なし）");
   check((await hostBody("home.example", "/health")).status === 200, "まよ鯖のホームでも /health は Worker");
   // 人数: Discord に届かないとき → ok:false（招待コードは返す）
+  // 人数: Discord が一度も読めていないとき → ok:false（数は出さない）・招待コードは返す
   const dc = await hostBody("home.example", "/api/home/discord");
   const dj = JSON.parse(dc.body);
-  check(dc.status === 200 && dj.ok === false && dj.invite === "abcDEF12" && dc.headers["cache-control"] === "no-store", "Discord の人数が読めないとき → ok:false（ページに書いた人数のまま）・招待コードは返す");
+  check(dc.status === 200 && dj.ok === false && dj.members === null && dj.live === false && dj.invite === "abcDEF12" && dc.headers["cache-control"] === "no-store", "Discord の人数が一度も読めていないとき → ok:false・数は出さない・招待コードは返す");
   // お知らせ: まよ鯖のホーム（site=home）とツールは別々
   const login = await post("/api/setup/auth", { key: KEY });
   const cookie = (login.headers.get("set-cookie") || "").split(";")[0];
@@ -269,6 +282,28 @@ try {
   check(hdel.j.ok && hdel.j.items.length === 0, "まよ鯖のホームのお知らせを消す");
   const tl = await admin({ action: "list" });
   check(tl.j.site === "tool" && tl.j.items.length === 50, "site なしはツールのお知らせ（そのまま 50 件）");
+
+  // ---- まよ鯖ホームの人数（招待リンクから・最後に読めた数を残す・/setup/ で招待リンクを変える） ----
+  const home = async body => { const r = body ? await post("/api/admin/home", body, { headers: { Cookie: cookie } }) : await req("/api/admin/home", { headers: { Cookie: cookie } }); return { status: r.status, j: await r.json() }; };
+  check((await req("/api/admin/home")).status === 401, "ログインなしで /api/admin/home → 401");
+  fakeDiscord.mode = "ok";
+  let h = await home();
+  check(h.j.ok && h.j.members === 81 && h.j.online === 23 && h.j.live === true && h.j.invite === "abcDEF12" && h.j.fromSetup === false && h.j.envInvite === "abcDEF12" && !h.j.error, "管理者: いまの人数（81 人・オンライン 23 人）→ " + JSON.stringify(h.j));
+  let pub2 = JSON.parse((await hostBody("home.example", "/api/home/discord")).body);
+  check(pub2.ok && pub2.members === 81 && pub2.online === 23 && pub2.live === true, "ホーム: いまの人数が出る");
+  const callsBefore = fakeDiscord.calls;
+  await hostBody("home.example", "/api/home/discord"); await hostBody("home.example", "/api/home/discord");
+  check(fakeDiscord.calls === callsBefore, "3 分のあいだは Discord に聞きに行かない（おぼえている数）");
+  h = await home({ invite: "https://discord.gg/NewCode99?event=1" });
+  check(h.j.invite === "NewCode99" && h.j.fromSetup === true && h.j.error === "invite" && h.j.members === null && /期限なし/.test(h.j.errorText), "切れた招待リンクを入れる → エラーと理由（ちがう招待リンクの古い数は出さない）→ " + JSON.stringify(h.j));
+  check((await home({ invite: "hello world" })).status === 400, "招待リンクの形がちがう → 400");
+  fakeDiscord.mode = "down";
+  h = await home({ invite: "discord.com/invite/abcDEF12" });
+  check(h.j.invite === "abcDEF12" && h.j.error === "http500" && h.j.members === 81 && h.j.live === false && typeof h.j.at === "number", "Discord が読めないとき → 最後に読めた数（81 人）と、その時間を出す");
+  pub2 = JSON.parse((await hostBody("home.example", "/api/home/discord")).body);
+  check(pub2.ok && pub2.members === 81 && pub2.live === false && pub2.invite === "abcDEF12", "ホーム: 読めないときは最後に読めた数（live:false）");
+  h = await home({ invite: "" });
+  check(h.j.invite === "abcDEF12" && h.j.fromSetup === false, "招待リンクを空にする → wrangler.toml の招待コードにもどる");
 } catch (e) {
   console.error(e);
   fail++;

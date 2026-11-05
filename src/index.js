@@ -147,7 +147,7 @@ function sameKey(a, b) {
 }
 
 // パスワード（入室の印）が必要な API
-const ADMIN_API = new Set(["/api/setup/status", "/api/setup", "/api/setup/relay", "/api/setup/relay/test", "/api/setup/vps", "/api/admin/chat", "/api/admin/news", "/api/admin/works"]);
+const ADMIN_API = new Set(["/api/setup/status", "/api/setup", "/api/setup/relay", "/api/setup/relay/test", "/api/setup/vps", "/api/admin/chat", "/api/admin/news", "/api/admin/works", "/api/admin/home"]);
 
 // 設定ボタンの連打よけ（3秒）
 async function recentlyTried(env) {
@@ -186,29 +186,63 @@ export function siteOfHost(host, env) {
   return "tool";
 }
 
-// まよ鯖の Discord の人数（招待リンクから読む。10 分おぼえておく）
-const DISCORD_COUNT_MS = 10 * 60000;
-let discordCount = null, discordFailAt = 0;
-async function homeDiscordCount(env) {
-  const code = String(env.HOME_DISCORD_INVITE || "").trim();
-  if (!/^[A-Za-z0-9-]{2,32}$/.test(code)) return null;
-  if (discordCount && discordCount.code === code && Date.now() - discordCount.at < DISCORD_COUNT_MS) return discordCount;
-  if (!(discordCount && discordCount.code === code) && Date.now() - discordFailAt < 60000) return null;   // 読めなかったら 1 分待つ
-  try {
-    const api = String(env.DISCORD_API || "https://discord.com/api/v10").replace(/\/$/, "");
-    const r = await fetch(`${api}/invites/${code}?with_counts=true`, { headers: { "User-Agent": "MaYoSaBa (https://m-ayosaba.com, 1.0)" } });
-    if (!r.ok) throw new Error("status " + r.status);
-    const j = await r.json();
-    const members = Number(j.approximate_member_count), online = Number(j.approximate_presence_count);
-    if (!Number.isFinite(members)) throw new Error("no count");
-    discordCount = { code, members, online: Number.isFinite(online) ? online : null, at: Date.now() };
-  } catch (e) {
-    discordFailAt = Date.now();
-    if (discordCount && discordCount.code === code) discordCount.at = Date.now() - DISCORD_COUNT_MS + 60000;   // 前の数のまま。1 分後にもう一度
-    else return null;
-  }
-  return discordCount;
+// ---- まよ鯖の Discord の人数（招待リンクから読む）----
+//   ・3 分ごとに Discord に聞きに行く（それまではおぼえている数を返す）
+//   ・読めた数は設定の部屋（Durable Object）にも残す → Discord に聞けないときも「最後に読めた本当の数」を出す
+//   ・招待コードは /setup/ で変えられる（なければ wrangler.toml の HOME_DISCORD_INVITE）
+const HOME_CHECK_MS = 3 * 60000;
+let homeMem = null;
+/** 招待リンク・コード → コード（だめなら ""） */
+export function cleanInvite(v) {
+  const t = String(v || "").trim().replace(/^https?:\/\//i, "").replace(/^(www\.)?(discord\.gg|discord(app)?\.com\/invite)\//i, "").replace(/[/?#].*$/, "");
+  return /^[A-Za-z0-9-]{2,32}$/.test(t) ? t : "";
 }
+async function homeSaved(env) {
+  try { return (await (await newsRoom(env).fetch("https://room/home/get")).json()) || {}; } catch (e) { return {}; }
+}
+async function homeSave(env, patch) {
+  await newsRoom(env).fetch("https://room/home/put", { method: "POST", body: JSON.stringify(patch) }).catch(() => null);
+}
+/** いまの人数（force: おぼえている数を使わず、すぐ聞きに行く） */
+async function homeStats(env, force = false) {
+  const now = Date.now();
+  if (!force && homeMem && now - homeMem.checkedAt < HOME_CHECK_MS) return homeMem;
+  const saved = await homeSaved(env);
+  const invite = cleanInvite(saved.invite) || cleanInvite(env.HOME_DISCORD_INVITE);
+  const last = saved.last && saved.last.invite === invite ? saved.last : null;
+  const st = { invite, members: last ? last.members : null, online: last ? last.online : null, at: last ? last.at : null, live: false, error: null, checkedAt: now, expiresAt: saved.expiresAt || null };
+  if (!invite) st.error = "noinvite";
+  else {
+    try {
+      const api = String(env.DISCORD_API || "https://discord.com/api/v10").replace(/\/$/, "");
+      const r = await fetch(`${api}/invites/${invite}?with_counts=true&with_expiration=true`, { headers: { "User-Agent": "DiscordBot (https://m-ayosaba.com, 1.0)", Accept: "application/json" } });
+      if (r.status === 404) st.error = "invite";            // 招待リンクが切れている・まちがっている
+      else if (r.status === 429) st.error = "ratelimit";    // Discord に聞きすぎ（しばらく前の数を出す）
+      else if (!r.ok) st.error = "http" + r.status;
+      else {
+        const j = await r.json();
+        const members = Number(j.approximate_member_count), online = Number(j.approximate_presence_count);
+        if (!Number.isFinite(members) || members <= 0) st.error = "nocount";
+        else {
+          Object.assign(st, { members, online: Number.isFinite(online) ? online : null, at: now, live: true, expiresAt: j.expires_at || null });
+          await homeSave(env, { last: { invite, members: st.members, online: st.online, at: now }, expiresAt: st.expiresAt, lastError: null, lastErrorAt: null });
+        }
+      }
+    } catch (e) {
+      st.error = "network";
+    }
+    if (st.error) await homeSave(env, { lastError: st.error, lastErrorAt: now });
+  }
+  homeMem = st;
+  return st;
+}
+const HOME_ERROR_TEXT = {
+  noinvite: "招待コードが入っていません。",
+  invite: "招待リンクが切れているか、まちがっています。「期限なし」の招待リンクを作って入れ直してください。",
+  ratelimit: "Discord に聞きすぎたので、少し待っています（最後に読めた数を出しています）。",
+  network: "Discord につながりませんでした（最後に読めた数を出しています）。",
+  nocount: "Discord が人数を返しませんでした。",
+};
 
 export default {
   async fetch(request, env, ctx) {
@@ -227,13 +261,12 @@ export default {
       if (site === "tool") return env.ASSETS.fetch(request);
       return env.ASSETS.fetch(new Request(url.origin + (site === "home" ? "/_home/" : "/_kamen/"), { method: request.method, headers: request.headers }));
     }
-    // まよ鯖の Discord の人数と招待コード（ホームに出す。招待リンクは HOME_DISCORD_INVITE を変えるだけでページのボタンも変わる）
+    // まよ鯖の Discord の人数と招待コード（ホームに出す）
     if (path === "/api/home/discord") {
-      const c = await homeDiscordCount(env);
-      const code = String(env.HOME_DISCORD_INVITE || "").trim();
-      const invite = /^[A-Za-z0-9-]{2,32}$/.test(code) ? code : null;
-      return cors(new Response(JSON.stringify(c ? { ok: true, members: c.members, online: c.online, invite } : { ok: false, invite }), {
-        status: 200, headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": c ? "public, max-age=600" : "no-store" } }));
+      const st = await homeStats(env);
+      const body = { ok: st.members > 0, members: st.members, online: st.online, at: st.at, live: st.live, invite: st.invite || null, now: Date.now() };
+      return cors(new Response(JSON.stringify(body), {
+        status: 200, headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": st.live ? "public, max-age=60" : "no-store" } }));
     }
 
     if (request.method === "OPTIONS") return cors(new Response(null, { status: 204 }));
@@ -356,6 +389,28 @@ export default {
       const r = await newsRoom(env).fetch("https://room/news/op", { method: "POST", body: text });
       newsCaches.clear();   // このサーバーでは、すぐ新しい内容を出す（ほかの場所のサーバーも 15 秒以内に変わる）
       return new Response(r.body, { status: r.status, headers: noStore });
+    }
+
+    // まよ鯖ホームの人数（招待コードを変える・いまの様子を見る。ログインした管理者だけ）
+    if (path === "/api/admin/home") {
+      const noStore = { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" };
+      if (request.method === "POST") {
+        if (!/^application\/json\b/i.test(request.headers.get("Content-Type") || ""))
+          return new Response(JSON.stringify({ ok: false, error: "JSON で送ってください。" }), { status: 415, headers: noStore });
+        let b = {};
+        try { b = await request.json(); } catch (e) { b = {}; }
+        const raw = String(b.invite || "").trim();
+        const code = cleanInvite(raw);
+        if (raw && !code) return new Response(JSON.stringify({ ok: false, error: "招待リンクの形がちがいます（例: https://discord.gg/abcd1234）。" }), { status: 400, headers: noStore });
+        await homeSave(env, { invite: code || null });
+      } else if (request.method !== "GET") return new Response("Method Not Allowed", { status: 405, headers: { Allow: "GET, POST" } });
+      const st = await homeStats(env, true);
+      const saved = await homeSaved(env);
+      return new Response(JSON.stringify({
+        ok: true, invite: st.invite || "", fromSetup: !!cleanInvite(saved.invite), envInvite: cleanInvite(env.HOME_DISCORD_INVITE),
+        members: st.members, online: st.online, at: st.at, live: st.live, expiresAt: st.expiresAt,
+        error: st.error, errorText: st.error ? (HOME_ERROR_TEXT[st.error] || `Discord がエラーを返しました（${st.error}）。`) : "",
+      }), { status: 200, headers: noStore });
     }
 
     // ---- 作品の紹介 ----

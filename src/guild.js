@@ -163,6 +163,15 @@ export class GuildRoom {
       await this.storage.put("appConfig", { ...cur, ...(await request.json()) });
       return json({ ok: true });
     }
+    // まよ鯖ホームの人数・招待コード（"__config__" の部屋だけが使う）
+    if (url.pathname === "/home/get") return json((await this.storage.get("homeStats")) || {});
+    if (url.pathname === "/home/put" && request.method === "POST") {
+      let patch = {};
+      try { patch = await request.json(); } catch (e) { patch = {}; }
+      const cur = (await this.storage.get("homeStats")) || {};
+      await this.storage.put("homeStats", { ...cur, ...(patch && typeof patch === "object" ? patch : {}) });
+      return json({ ok: true });
+    }
     // お知らせ（"__config__" の部屋だけが使う。中身は src/news.js）
     if (url.pathname === "/news/list") return json({ ok: true, items: publicNews(await loadNews(this.storage, url.searchParams.get("site") || "tool")) });
     if (url.pathname === "/news/op" && request.method === "POST") {

@@ -355,6 +355,9 @@ ul.worklist .nl-btns button.go { background: var(--blue); color: #fff; }
 .nf-grid textarea.field { resize: vertical; min-height: 120px; line-height: 1.55; font-size: 15px; }
 .nf-type { display: flex; flex-wrap: wrap; gap: 6px; }
 .nf-site { margin: 0 0 10px; padding: 0 0 12px; border-bottom: 1px solid var(--line); }
+.hm-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0 6px; }
+.hm-row .field { flex: 1 1 260px; min-width: 0; }
+.hm-ok { color: #7ee2b0; } .hm-bad { color: #ff8a8c; }
 .nf-type label { display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--border); border-radius: 999px; padding: 5px 12px; font-size: 13.5px; font-weight: 600; cursor: pointer; background: var(--s1); }
 .nf-type label { position: relative; }
 .nf-type input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; pointer-events: none; }
@@ -469,6 +472,20 @@ ul.newslist .empty { color: var(--sub); text-align: center; font-size: 13.5px; }
       <h3 class="nl-h">書いたお知らせ <span class="chip" id="nfCountAll"></span> <button class="link" id="nfReload" type="button">↻ 読みこみ直す</button></h3>
       <ul class="newslist" id="newsList"><li><span class="empty">読みこんでいます…</span></li></ul>
       <p class="small-note">50 件まで（古いものから消えます）。反映まで 15 秒ほど。</p>
+    </div>
+  </section>
+
+  <!-- まよ鯖ホーム（m-ayosaba.com）の人数と招待リンク -->
+  <section class="card" id="homeCard" aria-labelledby="th">
+    <h2 class="step" id="th"><span class="num">🏠</span><span>まよ鯖ホームの人数</span></h2>
+    <div class="indent">
+      <p class="hint" id="hmStatus">読みこんでいます…</p>
+      <div class="hm-row">
+        <input class="field" id="hmInvite" type="text" spellcheck="false" autocomplete="off" placeholder="招待リンク（例: https://discord.gg/abcd1234）" aria-label="招待リンク">
+        <button class="btn btn-blue" id="hmSave" type="button">保存</button>
+        <button class="btn btn-sub" id="hmCheck" type="button">↻ いま確かめる</button>
+      </div>
+      <p class="small-note">人数は、この招待リンクから 3 分ごとに読みます（参加ボタンのリンクにもなります）。Discord で「招待を作成」→「招待リンクを編集」→ 期限を<b>「期限なし」</b>にしたリンクを入れてください。</p>
     </div>
   </section>
 
@@ -1013,6 +1030,36 @@ function nfEdit(n) {
   $("newsCard").scrollIntoView({ behavior: "smooth", block: "start" });
   setTimeout(() => $("nfTitle").focus({ preventScroll: true }), 300);
 }
+// ---- まよ鯖ホームの人数（/api/admin/home） ----
+async function homeCall(body) {
+  $("hmStatus").textContent = "確かめています…";
+  const res = await fetch("../api/admin/home", body ? { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body), cache: "no-store" } : { cache: "no-store" });
+  const j = await res.json().catch(() => ({ ok: false, error: "サーバーの返事が読めませんでした。" }));
+  const st = $("hmStatus");
+  st.textContent = "";
+  if (!j.ok) { st.innerHTML = '<span class="hm-bad">⚠ </span>'; st.appendChild(document.createTextNode(j.error || "読めませんでした。")); return j; }
+  if (document.activeElement !== $("hmInvite")) $("hmInvite").value = j.invite ? "https://discord.gg/" + j.invite : "";
+  const when = j.at ? new Date(j.at).toLocaleString("ja-JP", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "";
+  const line = document.createElement("span");
+  if (j.members) {
+    line.className = j.live ? "hm-ok" : "";
+    line.textContent = `${j.live ? "✅" : "🕒"} いまの人数: ${j.members} 人${j.online != null ? `（オンライン ${j.online} 人）` : ""}${j.live ? "" : ` ・ ${when} に読んだ数`}`;
+    st.appendChild(line);
+  }
+  if (j.error) {
+    const e = document.createElement("span");
+    e.className = "hm-bad";
+    e.textContent = (j.members ? "　⚠ " : "⚠ ") + j.errorText;
+    st.appendChild(e);
+  }
+  if (j.expiresAt) st.appendChild(document.createTextNode(`　（この招待リンクは ${new Date(j.expiresAt).toLocaleString("ja-JP")} に切れます。「期限なし」がおすすめ）`));
+  if (!j.fromSetup && j.envInvite) st.appendChild(document.createTextNode("　※ いまは wrangler.toml の招待コードを使っています"));
+  return j;
+}
+$("hmSave").addEventListener("click", () => homeCall({ invite: $("hmInvite").value }));
+$("hmCheck").addEventListener("click", () => homeCall());
+$("hmInvite").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); homeCall({ invite: $("hmInvite").value }); } });
+
 async function newsCall(action, extra = {}) {
   const site = N.site;
   const res = await fetch("../api/admin/news", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action, site, ...extra }), cache: "no-store" });
@@ -1115,6 +1162,7 @@ function nfSiteChanged() {
 for (const r of document.querySelectorAll('input[name="nfSite"]')) r.addEventListener("change", nfSiteChanged);
 nfSync();
 nfSiteChanged();
+homeCall().catch(() => { $("hmStatus").textContent = "読みこめませんでした。↻ を押してください。"; });
 // メンテナンスの「予定 → 中 → 終了」の表示を、時間がたったら直す
 setInterval(() => { if (!document.hidden && N.items.some(n => n.type === "maintenance")) renderNews(); }, 30000);
 
