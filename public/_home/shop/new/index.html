@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<!--
+  制作依頼のフォーム（m-ayosaba.com/shop/new/）… 送ると依頼のページ（/shop/r/#ID.合言葉）へ
+  制作: MaYo (mayo01297)  二次配布禁止
+-->
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>依頼を送る | まよ鯖.COM</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#17110f">
+<link rel="icon" type="image/png" href="/_home/img/favicon.png">
+<link rel="stylesheet" href="/_home/shop/shop.css">
+</head>
+<body>
+<nav class="nav" aria-label="メニュー">
+  <a class="brand" href="/"><img src="/_home/img/logo.webp" alt="まよ鯖.COM" width="34" height="34"><span class="grad">まよ鯖.COM</span></a>
+  <ul class="nav-links">
+    <li><a href="/shop/">制作依頼</a></li>
+    <li><a href="/shop/works/">作ったもの</a></li>
+    <li><a href="/shop/r/">依頼の確認</a></li>
+  </ul>
+</nav>
+
+<header class="phead">
+  <p class="kicker">REQUEST</p>
+  <h1>依頼を送る</h1>
+  <p>作ってほしいものと金額の上限を決めて、くわしく書いてください。</p>
+</header>
+
+<main class="wrap">
+  <p class="msg info" id="needAgree" hidden>先に <a href="/shop/">利用規約</a> を読んで、同意してください。</p>
+  <form class="form box" id="form" autocomplete="off" novalidate>
+    <div>
+      <span class="field-label">作ってほしいもの</span>
+      <div class="cats" role="radiogroup" aria-label="作ってほしいもの">
+        <label class="cat"><input type="radio" name="cat" value="addon"><span class="e">🧩</span>アドオン<small>マイクラ統合版</small></label>
+        <label class="cat"><input type="radio" name="cat" value="web"><span class="e">🌐</span>ウェブサイト<small>ページ・サービス</small></label>
+        <label class="cat"><input type="radio" name="cat" value="thumb"><span class="e">🖼️</span>動画サムネ＆壁紙<small>YouTube など</small></label>
+        <label class="cat"><input type="radio" name="cat" value="bot"><span class="e">🤖</span>Discord Bot<small>サーバー用</small></label>
+      </div>
+    </div>
+
+    <div>
+      <label class="field-label" for="budget">金額の上限 <small>50〜500 円（これより高くなることはありません）</small></label>
+      <div class="budget">
+        <input type="range" id="budget" min="50" max="500" step="10" value="300" aria-describedby="yen">
+        <output class="yen" id="yen" for="budget">300<small>円</small></output>
+      </div>
+      <div class="quick" aria-label="よく使う金額">
+        <button type="button" data-yen="100">100円</button><button type="button" data-yen="200">200円</button>
+        <button type="button" data-yen="300">300円</button><button type="button" data-yen="500">500円</button>
+      </div>
+    </div>
+
+    <div>
+      <label class="field-label" for="title">タイトル <small>ひとことで</small></label>
+      <input class="input" id="title" type="text" maxlength="60" placeholder="例: サーバー紹介のサイトを作ってほしい">
+    </div>
+
+    <div>
+      <label class="field-label" for="detail">どんなものを作ってほしいか <small>くわしいほど早く進みます</small></label>
+      <textarea class="textarea" id="detail" maxlength="2000" placeholder="まず「作ってほしいもの」を選んでください"></textarea>
+      <div class="count" id="count">0 / 2000</div>
+    </div>
+
+    <div>
+      <label class="field-label" for="contact">Discord のユーザー名 <small>連絡用・ほかの人には見せません</small></label>
+      <input class="input" id="contact" type="text" maxlength="40" placeholder="例: mayokun_k">
+    </div>
+
+    <div class="hp" aria-hidden="true"><label>ウェブサイト <input id="website" type="text" tabindex="-1" autocomplete="off"></label></div>
+
+    <label class="check"><input type="checkbox" id="agree"> <span><a href="/shop/" target="_blank" rel="noopener">利用規約</a>に同意します</span></label>
+
+    <p class="msg ng" id="err" hidden role="alert"></p>
+    <div><button class="btn" id="send" type="submit">📨 依頼を送る</button></div>
+    <p class="note">送ったあとに出る URL は、依頼の確認とメッセージに使います。かならず保存してください。</p>
+  </form>
+</main>
+
+<footer class="footer">© 2026 まよ鯖.COM ・ 制作: MaYo（mayo01297） ・ <a href="/">まよ鯖.COM にもどる</a></footer>
+
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  // 規約のページから来たか（来ていなければ、規約へ）
+  var agreed = /[?&]agree=1\b/.test(location.search);
+  try { var t = Number(sessionStorage.getItem("shopAgree")); if (t && Date.now() - t < 3 * 3600e3) agreed = true; } catch (e) { /* なし */ }
+  if (agreed) $("agree").checked = true; else $("needAgree").hidden = false;
+
+  var HINT = {
+    addon: "例: 統合版 1.21 で使える、〇〇が出てくるアドオン。こんな動きをしてほしい…\n参考にしてほしい動画やアドオンがあれば URL も書いてください。",
+    web: "例: Discord サーバーの紹介ページ。入れてほしい内容（ルール・メンバー紹介など）、色の好み、参考にしたいサイトの URL…",
+    thumb: "例: YouTube の動画のサムネ。動画のタイトル、入れてほしい文字、使うスキン、雰囲気（明るい・こわい など）…",
+    bot: "例: 自分のサーバー用の Bot。ほしい機能（あいさつ・ロール・チケット など）、Bot を動かす場所（あれば）…",
+  };
+  document.querySelectorAll('input[name="cat"]').forEach(function (r) {
+    r.addEventListener("change", function () { $("detail").placeholder = HINT[r.value] || ""; });
+  });
+  function setYen(v) { $("budget").value = v; $("yen").innerHTML = $("budget").value + "<small>円</small>"; }
+  $("budget").addEventListener("input", function () { setYen($("budget").value); });
+  document.querySelectorAll("[data-yen]").forEach(function (b) { b.addEventListener("click", function () { setYen(b.getAttribute("data-yen")); }); });
+  $("detail").addEventListener("input", function () { $("count").textContent = [...$("detail").value].length + " / 2000"; });
+
+  function err(t) { $("err").textContent = t; $("err").hidden = !t; if (t) $("err").scrollIntoView({ block: "center", behavior: "smooth" }); }
+  $("form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var cat = document.querySelector('input[name="cat"]:checked');
+    if (!cat) return err("作ってほしいものを選んでください。");
+    if (!$("title").value.trim()) return err("タイトルを入れてください。");
+    if ([...$("detail").value.trim()].length < 10) return err("どんなものを作ってほしいか、もう少しくわしく書いてください（10 文字以上）。");
+    if (!$("contact").value.trim()) return err("連絡用に Discord のユーザー名を入れてください。");
+    if (!$("agree").checked) return err("利用規約に同意してください。");
+    err("");
+    $("send").disabled = true; $("send").textContent = "送っています…";
+    fetch("/api/shop/new", {
+      method: "POST", headers: { "Content-Type": "application/json" }, cache: "no-store",
+      body: JSON.stringify({ cat: cat.value, budget: Number($("budget").value), title: $("title").value, detail: $("detail").value, contact: $("contact").value, agree: true, website: $("website").value }),
+    }).then(function (r) { return r.json(); }).then(function (j) {
+      if (!j || !j.ok) throw new Error((j && j.error) || "送れませんでした。");
+      // このブラウザで送った依頼を覚えておく（依頼の確認のページに出す）
+      try {
+        var mine = JSON.parse(localStorage.getItem("shopMine") || "[]");
+        mine.unshift({ id: j.id, key: j.key, title: $("title").value.slice(0, 60), at: Date.now() });
+        localStorage.setItem("shopMine", JSON.stringify(mine.slice(0, 20)));
+      } catch (e2) { /* 使えないブラウザ */ }
+      location.href = "/shop/r/?new=1#" + j.id + "." + j.key;
+    }).catch(function (x) {
+      err(x.message || "送れませんでした。");
+      $("send").disabled = false; $("send").textContent = "📨 依頼を送る";
+    });
+  });
+})();
+</script>
+</body>
+</html>

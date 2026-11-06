@@ -355,6 +355,36 @@ ul.worklist .nl-btns button.go { background: var(--blue); color: #fff; }
 .nf-grid textarea.field { resize: vertical; min-height: 120px; line-height: 1.55; font-size: 15px; }
 .nf-type { display: flex; flex-wrap: wrap; gap: 6px; }
 .nf-site { margin: 0 0 10px; padding: 0 0 12px; border-bottom: 1px solid var(--line); }
+.sp-list > li { cursor: pointer; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.sp-list > li:hover { background: var(--s1); }
+.sp-list .t { font-weight: 700; flex: 1 1 200px; min-width: 0; overflow-wrap: anywhere; }
+.sp-list .m { color: var(--sub); font-size: 12.5px; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sp-unread { background: var(--red); color: #fff; border-radius: 999px; font-size: 11.5px; font-weight: 800; padding: 1px 8px; }
+.sp-st { display: inline-block; border-radius: 999px; padding: 2px 10px; font-size: 12.5px; font-weight: 800; background: var(--s2); }
+.sp-st.pending { background: rgba(243, 156, 18, .18); color: #ffcf73; } .sp-st.accepted { background: var(--green-pale); color: var(--green-down); }
+.sp-st.done { background: rgba(143, 179, 255, .16); color: #a9c1ff; }
+.sp-detail { margin-top: 4px; }
+.sp-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.sp-title { font-size: 18px; margin: 10px 0 6px; overflow-wrap: anywhere; }
+.sp-kv { display: grid; grid-template-columns: 100px 1fr; gap: 4px 12px; font-size: 14px; }
+.sp-kv dt { color: var(--sub); } .sp-kv dd { margin: 0; overflow-wrap: anywhere; }
+.sp-text { white-space: pre-wrap; overflow-wrap: anywhere; background: var(--s1); border: 1px solid var(--border-soft); border-radius: 12px; padding: 10px 12px; margin: 10px 0; font-size: 14px; }
+.sp-reason { color: var(--red); font-size: 14px; }
+.sp-box, .sp-chatwrap { display: flex; flex-direction: column; gap: 8px; border: 1px solid var(--border-soft); border-radius: 12px; padding: 12px; margin-top: 10px; }
+.sp-row label { display: inline-flex; align-items: center; gap: 8px; }
+.sp-price { width: 110px; }
+.sp-chat { display: flex; flex-direction: column; gap: 8px; max-height: 380px; overflow: auto; }
+.sp-b { max-width: 82%; padding: 8px 12px; border-radius: 14px; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 14px; }
+.sp-b small { display: block; color: var(--sub); font-size: 11.5px; }
+.sp-b.client { align-self: flex-start; background: var(--s2); }
+.sp-b.admin { align-self: flex-end; background: rgba(255, 122, 24, .22); }
+.sp-send { display: flex; gap: 8px; align-items: flex-end; } .sp-send textarea { flex: 1; }
+.sp-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.sp-del { color: var(--red) !important; }
+.sp-settings { margin-top: 14px; border-top: 1px solid var(--line); padding-top: 10px; }
+.sp-settings summary { cursor: pointer; font-weight: 700; }
+.sp-settings .field { width: 100%; }
+.sp-lbl { display: block; margin: 10px 0 4px; font-size: 13.5px; color: var(--sub); }
 .hm-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0 6px; }
 .hm-row .field { flex: 1 1 260px; min-width: 0; }
 .hm-ok { color: #7ee2b0; } .hm-bad { color: #ff8a8c; }
@@ -472,6 +502,70 @@ ul.newslist .empty { color: var(--sub); text-align: center; font-size: 13.5px; }
       <h3 class="nl-h">書いたお知らせ <span class="chip" id="nfCountAll"></span> <button class="link" id="nfReload" type="button">↻ 読みこみ直す</button></h3>
       <ul class="newslist" id="newsList"><li><span class="empty">読みこんでいます…</span></li></ul>
       <p class="small-note">50 件まで（古いものから消えます）。反映まで 15 秒ほど。</p>
+    </div>
+  </section>
+
+  <!-- 制作依頼（m-ayosaba.com/shop/） -->
+  <section class="card" id="shopCard" aria-labelledby="tsp">
+    <h2 class="step" id="tsp"><span class="num">🛒</span><span>制作依頼</span> <span class="chip" id="spBadge" hidden></span></h2>
+    <div class="indent">
+      <div class="nf-type" role="radiogroup" aria-label="表示する依頼">
+        <label><input type="radio" name="spFilter" value="open" checked> 📥 対応中</label>
+        <label><input type="radio" name="spFilter" value="done"> 🎉 完了</label>
+        <label><input type="radio" name="spFilter" value="closed"> 🗂 お断り・キャンセル</label>
+        <label><input type="radio" name="spFilter" value="all"> すべて</label>
+      </div>
+      <ul class="newslist sp-list" id="spList"><li><span class="empty">読みこんでいます…</span></li></ul>
+      <div class="sp-detail" id="spDetail" hidden>
+        <div class="sp-head">
+          <button class="link" id="spBack" type="button">← 一覧にもどる</button>
+          <span class="sp-st" id="spSt"></span>
+        </div>
+        <h3 class="sp-title" id="spTitle"></h3>
+        <dl class="sp-kv">
+          <dt>ID</dt><dd id="spId"></dd><dt>種類</dt><dd id="spCat"></dd><dt>上限</dt><dd id="spBudget"></dd>
+          <dt>金額</dt><dd id="spPrice"></dd><dt>Discord</dt><dd id="spContact"></dd><dt>送られた時間</dt><dd id="spAt"></dd>
+        </dl>
+        <div class="sp-text" id="spText"></div>
+        <p class="sp-reason" id="spReason" hidden></p>
+        <!-- 承認・お断り -->
+        <div class="sp-box" id="spAcceptBox" hidden>
+          <b>承認する</b>
+          <div class="sp-row"><label>金額 <input class="field sp-price" id="spPriceIn" type="number" min="0" max="500" step="10"> 円</label></div>
+          <textarea class="field" id="spNote" rows="3" placeholder="最初のメッセージ（空ならふつうのあいさつ）"></textarea>
+          <button class="btn btn-green" id="spAccept" type="button" style="width:auto;padding:10px 24px;font-size:15px">✅ 承認して、やりとりを始める</button>
+        </div>
+        <div class="sp-box" id="spRejectBox" hidden>
+          <b>お断りする</b>
+          <input class="field" id="spReasonIn" type="text" maxlength="300" placeholder="理由（依頼した人に見えます・空でもOK）">
+          <button class="btn btn-sub" id="spReject" type="button">お断りする</button>
+        </div>
+        <!-- メッセージ -->
+        <div class="sp-chatwrap" id="spChatWrap" hidden>
+          <b>💬 メッセージ</b>
+          <div class="sp-chat" id="spChat"></div>
+          <div class="sp-send" id="spSendRow">
+            <textarea class="field" id="spMsg" rows="3" maxlength="1000" placeholder="メッセージ（依頼した人に見えます）"></textarea>
+            <button class="btn btn-blue" id="spSend" type="button">送る</button>
+          </div>
+        </div>
+        <div class="sp-actions">
+          <button class="btn btn-sub" id="spDone" type="button" hidden>🎉 完了にする</button>
+          <button class="btn btn-sub" id="spReopen" type="button" hidden>やりとり中にもどす</button>
+          <button class="btn btn-sub sp-del" id="spDelete" type="button">🗑 削除</button>
+        </div>
+        <p class="hint" id="spMsgLine"></p>
+      </div>
+      <details class="sp-settings">
+        <summary>⚙ 通知と PayPay の設定</summary>
+        <label class="sp-lbl">新しい依頼・メッセージを Discord に知らせる（Webhook の URL）</label>
+        <input class="field" id="spWebhook" type="text" spellcheck="false" autocomplete="off" placeholder="https://discord.com/api/webhooks/…（チャンネルの設定 →「連携サービス」→「ウェブフック」）">
+        <label class="sp-lbl">PayPay の受け取り方法（承認した依頼の人にだけ見えます）</label>
+        <textarea class="field" id="spPaypay" rows="3" maxlength="300" placeholder="例: PayPay ID: xxxxx（送金のときに依頼 ID をメッセージに入れてください）"></textarea>
+        <button class="btn btn-blue" id="spSaveSettings" type="button" style="margin-top:8px">保存</button>
+        <p class="hint" id="spSettingsLine"></p>
+      </details>
+      <p class="small-note">依頼のページ: <a href="https://m-ayosaba.com/shop/" target="_blank" rel="noopener">m-ayosaba.com/shop/</a> ・ 今までに作ったもの: <a href="https://m-ayosaba.com/shop/works/" target="_blank" rel="noopener">/shop/works/</a>（ページの中身は public/_home/shop/）</p>
     </div>
   </section>
 
@@ -1030,6 +1124,125 @@ function nfEdit(n) {
   $("newsCard").scrollIntoView({ behavior: "smooth", block: "start" });
   setTimeout(() => $("nfTitle").focus({ preventScroll: true }), 300);
 }
+// ---- 制作依頼（/api/admin/shop） ----
+const SP = { items: [], filter: "open", openId: "", req: null, busy: false };
+const SP_ST = { pending: "⏳ 確認待ち", accepted: "✅ やりとり中", done: "🎉 完了", rejected: "お断り", canceled: "キャンセル" };
+const spFmt = ms => new Date(ms).toLocaleString("ja-JP", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" });
+async function shopCall(body) {
+  const res = await fetch("../api/admin/shop", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body), cache: "no-store" });
+  return res.json().catch(() => ({ ok: false, error: "サーバーの返事が読めませんでした。" }));
+}
+function spRenderList() {
+  const ul = $("spList"); ul.textContent = "";
+  const want = { open: ["pending", "accepted"], done: ["done"], closed: ["rejected", "canceled"], all: null }[SP.filter];
+  const list = SP.items.filter(x => !want || want.includes(x.status));
+  const attention = SP.items.filter(x => x.status === "pending" || x.unread).length;
+  $("spBadge").hidden = !attention; $("spBadge").textContent = attention ? `${attention} 件 要確認` : "";
+  if (!list.length) { const li = document.createElement("li"); li.innerHTML = '<span class="empty">依頼はありません。</span>'; li.style.cursor = "default"; ul.appendChild(li); return; }
+  for (const x of list) {
+    const li = document.createElement("li");
+    const st = document.createElement("span"); st.className = "sp-st " + x.status; st.textContent = SP_ST[x.status] || x.status;
+    const t = document.createElement("span"); t.className = "t"; t.textContent = x.title;
+    const meta = document.createElement("span"); meta.className = "chip"; meta.textContent = `${x.catName} ・ 〜${x.budget}円${x.price != null ? ` ・ ${x.price}円` : ""}`;
+    li.append(st, t, meta);
+    if (x.unread) { const u = document.createElement("span"); u.className = "sp-unread"; u.textContent = "NEW " + x.unread; li.append(u); }
+    const m = document.createElement("span"); m.className = "m";
+    m.textContent = `${spFmt(x.updated)} ・ ${x.contact}${x.last ? ` ・ ${x.last.from === "admin" ? "自分" : "相手"}: ${x.last.text}` : ""}`;
+    li.append(m);
+    li.addEventListener("click", () => spOpen(x.id));
+    ul.appendChild(li);
+  }
+}
+async function spLoad() {
+  const j = await shopCall({ action: "list" });
+  if (j.ok) { SP.items = j.items; spRenderList(); }
+  else if (j.needAuth) $("spList").innerHTML = '<li><span class="empty">ログインしてください。</span></li>';
+  return j;
+}
+function spRenderDetail() {
+  const r = SP.req; if (!r) return;
+  $("spSt").className = "sp-st " + r.status; $("spSt").textContent = SP_ST[r.status] || r.status;
+  $("spTitle").textContent = r.title; $("spId").textContent = r.id; $("spCat").textContent = r.catName;
+  $("spBudget").textContent = r.budget + " 円まで"; $("spPrice").textContent = r.price != null ? r.price + " 円" : "（まだ）";
+  $("spContact").textContent = r.contact; $("spAt").textContent = spFmt(r.at); $("spText").textContent = r.detail;
+  $("spReason").hidden = !(r.status === "rejected" && r.reason); $("spReason").textContent = "お断りの理由: " + (r.reason || "");
+  $("spAcceptBox").hidden = !["pending", "rejected"].includes(r.status);
+  if (!$("spAcceptBox").hidden && !$("spPriceIn").value) $("spPriceIn").value = r.budget;
+  $("spRejectBox").hidden = !["pending", "accepted"].includes(r.status);
+  const chat = r.status === "accepted" || r.status === "done";
+  $("spChatWrap").hidden = !chat;
+  $("spDone").hidden = r.status !== "accepted"; $("spReopen").hidden = r.status !== "done";
+  if (chat) {
+    const box = $("spChat"); box.textContent = "";
+    for (const m of r.messages) {
+      const d = document.createElement("div"); d.className = "sp-b " + m.from;
+      const s2 = document.createElement("small"); s2.textContent = `${m.from === "admin" ? "自分" : "依頼した人"} ・ ${spFmt(m.at)}`;
+      const t = document.createElement("div"); t.textContent = m.text;
+      d.append(s2, t); box.appendChild(d);
+    }
+    if (!r.messages.length) box.innerHTML = '<span class="empty">まだメッセージはありません。</span>';
+    box.scrollTop = box.scrollHeight;
+  }
+}
+async function spOpen(id) {
+  SP.openId = id; $("spMsgLine").textContent = "";
+  $("spPriceIn").value = ""; $("spNote").value = ""; $("spReasonIn").value = "";
+  const j = await shopCall({ action: "get", id });
+  if (!j.ok) { alert(j.error || "読めませんでした。"); return; }
+  SP.req = j.request;
+  $("spList").hidden = true; document.querySelector('#shopCard .nf-type').hidden = true; $("spDetail").hidden = false;
+  spRenderDetail();
+  spLoad();
+}
+function spClose() {
+  SP.openId = ""; SP.req = null;
+  $("spDetail").hidden = true; $("spList").hidden = false; document.querySelector('#shopCard .nf-type').hidden = false;
+  spLoad();
+}
+async function spAct(body, okText) {
+  if (SP.busy) return;
+  SP.busy = true; $("spMsgLine").textContent = "…";
+  try {
+    const j = await shopCall({ id: SP.openId, ...body });
+    if (!j.ok) { $("spMsgLine").textContent = "⚠ " + (j.error || "できませんでした。"); return j; }
+    if (body.action === "delete") { spClose(); return j; }
+    SP.req = j.request; spRenderDetail(); spLoad();
+    $("spMsgLine").textContent = okText || "";
+    return j;
+  } finally { SP.busy = false; }
+}
+$("spBack").addEventListener("click", spClose);
+$("spAccept").addEventListener("click", () => spAct({ action: "accept", price: $("spPriceIn").value, note: $("spNote").value }, "✅ 承認しました。依頼した人のページでメッセージが見られます。"));
+$("spReject").addEventListener("click", () => { if (confirm("この依頼をお断りしますか？")) spAct({ action: "reject", reason: $("spReasonIn").value }, "お断りしました。"); });
+$("spDone").addEventListener("click", () => { if (confirm("完了にしますか？")) spAct({ action: "done" }, "🎉 完了にしました。"); });
+$("spReopen").addEventListener("click", () => spAct({ action: "reopen" }, "やりとり中にもどしました。"));
+$("spDelete").addEventListener("click", () => { if (confirm("この依頼を削除しますか？（元にもどせません）")) spAct({ action: "delete" }); });
+$("spSend").addEventListener("click", async () => {
+  const text = $("spMsg").value.trim(); if (!text) return;
+  const j = await spAct({ action: "message", text }, "送りました。");
+  if (j && j.ok) $("spMsg").value = "";
+});
+for (const r of document.querySelectorAll('input[name="spFilter"]')) r.addEventListener("change", () => { SP.filter = r.value; spRenderList(); });
+$("spSaveSettings").addEventListener("click", async () => {
+  const w = $("spWebhook").value.trim();
+  const set = { paypay: $("spPaypay").value };
+  if (w) set.webhook = /^(なし|無し|none|-)$/i.test(w) ? "" : w;   // 空のときは、保存ずみの Webhook をそのまま
+  const j = await shopCall({ action: "settings", set });
+  $("spSettingsLine").textContent = j.ok ? "✅ 保存しました。" + (j.settings.webhook ? "（Discord に知らせます）" : "") : "⚠ " + (j.error || "保存できませんでした。");
+  if (j.ok) { $("spWebhook").value = ""; $("spWebhook").placeholder = j.settings.webhook ? `保存ずみ（…${j.settings.webhookTail}）。変えるときだけ入れる・消すときは「なし」` : "https://discord.com/api/webhooks/…（チャンネルの設定 →「連携サービス」→「ウェブフック」）"; }
+});
+async function spInit() {
+  const j = await spLoad();
+  if (!j.ok) return;
+  const s2 = await shopCall({ action: "settings" });
+  if (s2.ok) {
+    $("spPaypay").value = s2.settings.paypay || "";
+    if (s2.settings.webhook) $("spWebhook").placeholder = `保存ずみ（…${s2.settings.webhookTail}）。変えるときだけ入れる・消すときは「なし」`;
+  }
+}
+// 新しい依頼・メッセージを、ときどき見に行く
+setInterval(() => { if (document.hidden) return; if (SP.openId) { shopCall({ action: "get", id: SP.openId }).then(j => { if (j.ok) { SP.req = j.request; spRenderDetail(); } }); } else spLoad(); }, 30000);
+
 // ---- まよ鯖ホームの人数（/api/admin/home） ----
 async function homeCall(body) {
   $("hmStatus").textContent = "確かめています…";
@@ -1163,6 +1376,7 @@ for (const r of document.querySelectorAll('input[name="nfSite"]')) r.addEventLis
 nfSync();
 nfSiteChanged();
 homeCall().catch(() => { $("hmStatus").textContent = "読みこめませんでした。↻ を押してください。"; });
+spInit().catch(() => { $("spList").innerHTML = '<li><span class="empty">読みこめませんでした。</span></li>'; });
 // メンテナンスの「予定 → 中 → 終了」の表示を、時間がたったら直す
 setInterval(() => { if (!document.hidden && N.items.some(n => n.type === "maintenance")) renderNews(); }, 30000);
 

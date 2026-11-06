@@ -21,6 +21,7 @@ import { GuildRoom, CODE_RE } from "./guild.js";
 import { verifyDiscordRequest } from "./discord.js";
 import { resolveEnv, runSetup, setupStatus, isSet, loadStored, saveStored, inviteUrl, saveRelay, vpsCommand, checkAdminToken } from "./appconfig.js";
 import { sha256hex } from "./webvc.js";
+import { newKey, notifyWebhook } from "./shop.js";
 import { checkPage, badCodePage } from "./checkpage.js";
 import { testRelay } from "./relaycheck.js";
 import { gatePage, isSetupAuthed, sessionCookie, sameHash, withSetupKey } from "./setupgate.js";
@@ -147,7 +148,7 @@ function sameKey(a, b) {
 }
 
 // パスワード（入室の印）が必要な API
-const ADMIN_API = new Set(["/api/setup/status", "/api/setup", "/api/setup/relay", "/api/setup/relay/test", "/api/setup/vps", "/api/admin/chat", "/api/admin/news", "/api/admin/works", "/api/admin/home"]);
+const ADMIN_API = new Set(["/api/setup/status", "/api/setup", "/api/setup/relay", "/api/setup/relay/test", "/api/setup/vps", "/api/admin/chat", "/api/admin/news", "/api/admin/works", "/api/admin/home", "/api/admin/shop"]);
 
 // 設定ボタンの連打よけ（3秒）
 async function recentlyTried(env) {
@@ -261,6 +262,19 @@ export default {
       if (site === "tool") return env.ASSETS.fetch(request);
       return env.ASSETS.fetch(new Request(url.origin + (site === "home" ? "/_home/" : "/_kamen/"), { method: request.method, headers: request.headers }));
     }
+    // ---- 制作依頼のページ（m-ayosaba.com/shop/〜 → public/_home/shop/〜）----
+    if (/^\/shop(?:\.html|\/.*)?$/.test(url.pathname) && (request.method === "GET" || request.method === "HEAD") && env.ASSETS) {
+      const home = String(env.HOME_HOST || "").trim().toLowerCase();
+      const to = loc => new Response(null, { status: 301, headers: { Location: loc, "Cache-Control": "public, max-age=3600" } });
+      const clean = url.pathname === "/shop" || url.pathname === "/shop.html" ? "/shop/" : url.pathname;
+      if (home && siteOfHost(url.hostname, env) !== "home") return to(`https://${home}${clean}${url.search}`);   // ツールのアドレスでひらいたら、まよ鯖.COM へ
+      if (clean !== url.pathname) return to(clean + url.search);
+      if (!clean.endsWith("/") && !/\.[A-Za-z0-9]{1,5}$/.test(clean)) return to(clean + "/" + url.search);
+      const res = await env.ASSETS.fetch(new Request(url.origin + "/_home" + clean + url.search, { method: request.method, headers: request.headers }));
+      if (res.status >= 300 && res.status < 400) return new Response("Not Found", { status: 404 });
+      return res;
+    }
+
     // まよ鯖の Discord の人数と招待コード（ホームに出す）
     if (path === "/api/home/discord") {
       const st = await homeStats(env);
@@ -389,6 +403,53 @@ export default {
       const r = await newsRoom(env).fetch("https://room/news/op", { method: "POST", body: text });
       newsCaches.clear();   // このサーバーでは、すぐ新しい内容を出す（ほかの場所のサーバーも 15 秒以内に変わる）
       return new Response(r.body, { status: r.status, headers: noStore });
+    }
+
+    // ---- 制作依頼（だれでも。合言葉は URL の # のあと → ページから JSON で送ってもらう）----
+    const shopApi = /^\/api\/shop\/(new|view|post|cancel)$/.exec(path);
+    if (shopApi) {
+      const noStore = { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" };
+      const out = (data, status = 200) => new Response(JSON.stringify(data), { status, headers: noStore });
+      if (request.method !== "POST") return new Response("Method Not Allowed", { status: 405, headers: { Allow: "POST" } });
+      if (!/^application\/json\b/i.test(request.headers.get("Content-Type") || "")) return out({ ok: false, error: "JSON で送ってください。" }, 415);
+      const text = await request.text();
+      if (text.length > 12000) return out({ ok: false, error: "長すぎます。" }, 413);
+      let b = {};
+      try { b = JSON.parse(text) || {}; } catch (e) { return out({ ok: false, error: "JSON が読めません。" }, 400); }
+      const act = shopApi[1];
+      const shopFetch = async body => {
+        const r = await newsRoom(env).fetch("https://room/shop/op", { method: "POST", body: JSON.stringify(body) });
+        return { status: r.status, j: await r.json() };
+      };
+      const strip = j => { const { _webhook, _item, status, ...rest } = j; return rest; };
+      if (act === "new") {
+        if (String(b.website || "").trim()) return out({ ok: false, error: "送れませんでした。" }, 400);   // ロボットよけ（見えない入力欄）
+        if (!await underRate(env, "shopnew" + await ipKeyOf(request), 3))
+          return out({ ok: false, error: "続けて依頼しすぎです。1 時間ほど待ってからにしてください。" }, 429);
+        const key = newKey();
+        const { status, j } = await shopFetch({ action: "create", keyHash: await sha256hex("shop:" + key), item: b });
+        if (j.ok && j._webhook) ctx.waitUntil(notifyWebhook(j._webhook, { kind: "new", item: j._item }));
+        return out(j.ok ? { ...strip(j), key } : strip(j), status);
+      }
+      const key = String(b.key || "");
+      if (!/^[A-Za-z0-9]{20,40}$/.test(key) || !/^[a-z0-9]{8}$/.test(String(b.id || ""))) return out({ ok: false, error: "依頼が見つかりません（URL をもう一度確かめてください）。" }, 404);
+      if (act === "post" && !await underRate(env, "shopmsg" + b.id, 30)) return out({ ok: false, error: "メッセージを送りすぎです。少し待ってください。" }, 429);
+      const { status, j } = await shopFetch({ action: act, id: b.id, keyHash: await sha256hex("shop:" + key), text: b.text });
+      if (j.ok && act === "post" && j._webhook) ctx.waitUntil(notifyWebhook(j._webhook, { kind: "message", item: j._item, text: String(b.text || "") }));
+      return out(strip(j), status);
+    }
+    // 制作依頼の管理（ログインした管理者だけ。上の ADMIN_API で確認ずみ）
+    if (path === "/api/admin/shop" && request.method === "POST") {
+      const noStore = { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" };
+      if (!/^application\/json\b/i.test(request.headers.get("Content-Type") || ""))
+        return new Response(JSON.stringify({ ok: false, error: "JSON で送ってください。" }), { status: 415, headers: noStore });
+      const text = await request.text();
+      if (text.length > 12000) return new Response(JSON.stringify({ ok: false, error: "長すぎます。" }), { status: 413, headers: noStore });
+      let b = {};
+      try { b = JSON.parse(text) || {}; } catch (e) { b = {}; }
+      const r = await newsRoom(env).fetch("https://room/shop/op", { method: "POST", body: JSON.stringify({ ...b, admin: true }) });
+      const { _webhook, _item, status, ...j } = await r.json();
+      return new Response(JSON.stringify(j), { status: r.status, headers: noStore });
     }
 
     // まよ鯖ホームの人数（招待コードを変える・いまの様子を見る。ログインした管理者だけ）

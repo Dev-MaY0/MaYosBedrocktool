@@ -304,6 +304,68 @@ try {
   check(pub2.ok && pub2.members === 81 && pub2.live === false && pub2.invite === "abcDEF12", "ホーム: 読めないときは最後に読めた数（live:false）");
   h = await home({ invite: "" });
   check(h.j.invite === "abcDEF12" && h.j.fromSetup === false, "招待リンクを空にする → wrangler.toml の招待コードにもどる");
+
+  // ---- 制作依頼のページ（m-ayosaba.com/shop/〜） ----
+  const loc = async (host, p) => { const r = await hostBody(host, p); return { status: r.status, body: r.body, location: r.headers.location }; };
+  let pg = await loc("home.example", "/shop");
+  check(pg.status === 301 && pg.location === "/shop/", "/shop → /shop/ へ");
+  pg = await loc("home.example", "/shop.html");
+  check(pg.status === 301 && pg.location === "/shop/", "/shop.html → /shop/ へ");
+  check((await loc("home.example", "/shop/")).body === "asset:/_home/shop/", "/shop/ → public/_home/shop/");
+  check((await loc("home.example", "/shop/works/")).body === "asset:/_home/shop/works/", "/shop/works/ → public/_home/shop/works/");
+  pg = await loc("home.example", "/shop/new");
+  check(pg.status === 301 && pg.location === "/shop/new/", "/shop/new → /shop/new/ へ");
+  pg = await loc("tool.example", "/shop/r/?x=1");
+  check(pg.status === 301 && pg.location === "https://home.example/shop/r/?x=1", "ツールのアドレスで /shop/ → まよ鯖.COM へ");
+
+  // ---- 制作依頼（依頼する人） ----
+  const shopIp = "10.77.0.1";
+  const sp = (act, body, ip = freshIp()) => post("/api/shop/" + act, body, { ip }).then(async r => ({ status: r.status, j: await r.json() }));
+  const good = { cat: "web", budget: 300, title: "サーバー紹介のサイト", detail: "まよ鯖のようなサーバー紹介のページを作ってほしいです。", contact: "test_user", agree: true };
+  check((await sp("new", { ...good, cat: "nope" })).status === 400, "依頼: 種類がない → 400");
+  check(/50〜500/.test((await sp("new", { ...good, budget: 600 })).j.error), "依頼: 上限が 500 円より上 → 400");
+  check(/くわしく/.test((await sp("new", { ...good, detail: "短い" })).j.error), "依頼: 内容が短すぎる → 400");
+  check(/規約/.test((await sp("new", { ...good, agree: false })).j.error), "依頼: 規約に同意していない → 400");
+  check((await sp("new", { ...good, website: "http://spam" })).status === 400, "依頼: ロボットよけの欄に入力がある → 400");
+  check((await req("/api/shop/new", { method: "POST", body: "a=1", headers: { "Content-Type": "application/x-www-form-urlencoded" } })).status === 415, "依頼: フォームの形 → 415");
+  const n1 = await sp("new", good, shopIp);
+  check(n1.status === 200 && n1.j.ok && /^[a-z0-9]{8}$/.test(n1.j.id) && /^[A-Za-z0-9]{24}$/.test(n1.j.key) && n1.j.request.status === "pending" && !("keyHash" in n1.j.request) && !("_webhook" in n1.j), "依頼を送る → ID と合言葉（ハッシュなどは返さない）");
+  const rid = n1.j.id, rkey = n1.j.key;
+  await sp("new", good, shopIp); await sp("new", good, shopIp);
+  check((await sp("new", good, shopIp)).status === 429, "依頼: 同じ IP から 1 時間に 4 件目 → 429");
+  check((await sp("view", { id: rid, key: "x".repeat(24) })).status === 404, "依頼: 合言葉がちがう → 404");
+  let v = await sp("view", { id: rid, key: rkey });
+  check(v.j.ok && v.j.request.status === "pending" && v.j.request.canCancel && !v.j.request.canPost && v.j.request.messages.length === 0, "依頼の確認: 確認待ち・キャンセルできる");
+  check((await sp("post", { id: rid, key: rkey, text: "こんにちは" })).status === 409, "承認前はメッセージを送れない → 409");
+
+  // ---- 制作依頼（管理者） ----
+  const shop = async body => { const r = await post("/api/admin/shop", body, { headers: { Cookie: cookie } }); return { status: r.status, j: await r.json() }; };
+  check((await post("/api/admin/shop", { action: "list" })).status === 401, "ログインなしで /api/admin/shop → 401");
+  let L = await shop({ action: "list" });
+  const it = L.j.items.find(x => x.id === rid);
+  check(L.j.ok && it && it.status === "pending" && it.unread === 1 && it.contact === "test_user" && !("keyHash" in it), "管理者: 一覧に新しい依頼（NEW 1）");
+  let G = await shop({ action: "get", id: rid });
+  check(G.j.ok && G.j.request.detail === good.detail && G.j.request.unread === 0, "管理者: 依頼を見る（既読になる）");
+  check((await shop({ action: "accept", id: rid, price: 999 })).status === 400, "管理者: 金額が 500 円より上 → 400");
+  let A = await shop({ action: "accept", id: rid, price: 250, note: "承認しました！よろしくお願いします。" });
+  check(A.j.ok && A.j.request.status === "accepted" && A.j.request.price === 250 && A.j.request.messages[0].from === "admin", "管理者: 承認（250 円・最初のメッセージ）");
+  check((await shop({ action: "settings", set: { webhook: "https://example.com/hook" } })).status === 400, "管理者: Webhook の URL がちがう → 400");
+  let S = await shop({ action: "settings", set: { paypay: "PayPay ID: mayo-test" } });
+  check(S.j.ok && S.j.settings.paypay === "PayPay ID: mayo-test" && S.j.settings.webhook === false, "管理者: PayPay の受け取り方法を保存");
+  v = await sp("view", { id: rid, key: rkey });
+  check(v.j.request.status === "accepted" && v.j.request.canPost && !v.j.request.canCancel && v.j.request.price === 250 && v.j.request.paypay === "PayPay ID: mayo-test" && v.j.request.messages.length === 1, "依頼の確認: 承認・金額・PayPay・メッセージが見える");
+  const P1 = await sp("post", { id: rid, key: rkey, text: "ありがとうございます！\nよろしくお願いします。" });
+  check(P1.j.ok && P1.j.request.messages.length === 2 && P1.j.request.messages[1].from === "client" && !("_webhook" in P1.j), "依頼した人: メッセージを送る");
+  L = await shop({ action: "list" });
+  check(L.j.items.find(x => x.id === rid).unread === 1 && L.j.items.find(x => x.id === rid).last.from === "client", "管理者: 一覧で相手のメッセージが NEW になる");
+  check((await shop({ action: "message", id: rid, text: "了解です！" })).j.request.messages.length === 3, "管理者: メッセージを送る");
+  check((await shop({ action: "done", id: rid })).j.request.status === "done", "管理者: 完了にする");
+  check((await sp("post", { id: rid, key: rkey, text: "まだ？" })).status === 409, "完了したらメッセージは送れない（依頼した人）");
+  check((await shop({ action: "reopen", id: rid })).j.request.status === "accepted", "管理者: やりとり中にもどす");
+  const n2 = await sp("new", { ...good, cat: "thumb", budget: 100, title: "サムネ" });
+  check((await sp("cancel", { id: n2.j.id, key: n2.j.key })).j.request.status === "canceled", "依頼した人: 承認前にキャンセル");
+  check((await sp("cancel", { id: n2.j.id, key: n2.j.key })).status === 409, "キャンセルは 1 回だけ");
+  check((await shop({ action: "delete", id: n2.j.id })).j.ok && (await sp("view", { id: n2.j.id, key: n2.j.key })).status === 404, "管理者: 削除 → 依頼した人も見られない");
 } catch (e) {
   console.error(e);
   fail++;

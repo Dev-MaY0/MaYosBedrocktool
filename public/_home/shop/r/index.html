@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<!--
+  依頼の確認とメッセージ（m-ayosaba.com/shop/r/#<依頼ID>.<合言葉>）
+  合言葉は # のあとにあるので、サーバーのログには残らない（ページから JSON で送る）
+  制作: MaYo (mayo01297)  二次配布禁止
+-->
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>依頼の確認 | まよ鯖.COM</title>
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#17110f">
+<link rel="icon" type="image/png" href="/_home/img/favicon.png">
+<link rel="stylesheet" href="/_home/shop/shop.css">
+</head>
+<body>
+<nav class="nav" aria-label="メニュー">
+  <a class="brand" href="/"><img src="/_home/img/logo.webp" alt="まよ鯖.COM" width="34" height="34"><span class="grad">まよ鯖.COM</span></a>
+  <ul class="nav-links">
+    <li><a href="/shop/">制作依頼</a></li>
+    <li><a href="/shop/works/">作ったもの</a></li>
+    <li><a href="/shop/r/" aria-current="page">依頼の確認</a></li>
+  </ul>
+</nav>
+
+<header class="phead">
+  <p class="kicker">MY REQUEST</p>
+  <h1>依頼の確認</h1>
+  <p>依頼の様子と、承認されたあとのメッセージはここで見られます。</p>
+</header>
+
+<main class="wrap">
+  <!-- 送ったばかり -->
+  <div class="msg ok" id="newBanner" hidden>✅ 依頼を送りました！ 承認されると、このページでメッセージのやりとりができます。</div>
+
+  <!-- URL を保存 -->
+  <section class="box" id="saveBox" style="padding:18px 20px;margin-top:18px" hidden>
+    <b>🔖 この URL を保存してください</b>
+    <p class="note">この URL を知っている人だけが、この依頼を見られます。なくすと見られなくなります（ブックマーク・メモなどに）。</p>
+    <div class="linkbox"><input class="input" id="myUrl" type="text" readonly aria-label="依頼の URL"><button class="btn small" id="copy" type="button">コピー</button></div>
+  </section>
+
+  <!-- 依頼の中身 -->
+  <section class="box sec" id="reqBox" style="padding:22px 24px" hidden>
+    <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px">
+      <h2 style="font-size:1.3rem;font-weight:900;overflow-wrap:anywhere" id="rTitle"></h2>
+      <span class="status" id="rStatus"></span>
+    </div>
+    <div class="steps3" aria-hidden="true"><span id="s1"></span><span id="s2"></span><span id="s3"></span></div>
+    <p class="note" id="rStatusText"></p>
+    <dl class="kv">
+      <dt>依頼 ID</dt><dd id="rId"></dd>
+      <dt>種類</dt><dd id="rCat"></dd>
+      <dt>金額の上限</dt><dd id="rBudget"></dd>
+      <dt id="rPriceL" hidden>金額</dt><dd id="rPrice" hidden></dd>
+      <dt>Discord</dt><dd id="rContact"></dd>
+      <dt>送った時間</dt><dd id="rAt"></dd>
+    </dl>
+    <p class="field-label" style="margin-top:16px">内容</p>
+    <div class="detail" id="rDetail"></div>
+    <div class="msg ng" id="rReason" style="margin-top:14px" hidden></div>
+    <div class="paybox" id="payBox" hidden><b>💴 お支払い（PayPay）</b><div class="detail" id="payText" style="margin-top:8px;background:transparent;border:0;padding:0"></div></div>
+    <div style="margin-top:16px" id="cancelRow" hidden><button class="btn small danger" id="cancel" type="button">依頼をキャンセルする</button></div>
+  </section>
+
+  <!-- メッセージ -->
+  <section class="box sec" id="chatBox" style="padding:22px 24px" hidden>
+    <h2 class="sec-title">💬 メッセージ</h2>
+    <div class="chat" id="chat" aria-live="polite"></div>
+    <p class="note" id="chatEmpty">まだメッセージはありません。</p>
+    <form class="send" id="sendForm" hidden>
+      <textarea class="textarea" id="text" maxlength="1000" placeholder="メッセージ（Enter で改行・送るボタンで送信）" aria-label="メッセージ"></textarea>
+      <button class="btn" id="sendBtn" type="submit">送る</button>
+    </form>
+    <p class="msg ng" id="sendErr" hidden></p>
+  </section>
+
+  <!-- 依頼が見つからないとき・このブラウザで送った依頼 -->
+  <section class="sec" id="lostBox" hidden>
+    <div class="msg info" id="lostText">依頼したときの URL をひらいてください。</div>
+    <div id="mineBox" hidden>
+      <h2 class="sec-title" style="margin-top:24px">このブラウザで送った依頼</h2>
+      <ul id="mine" style="list-style:none;display:flex;flex-direction:column;gap:10px"></ul>
+    </div>
+    <p style="margin-top:20px"><a class="btn" href="/shop/">制作依頼のページへ</a></p>
+  </section>
+</main>
+
+<footer class="footer">© 2026 まよ鯖.COM ・ 制作: MaYo（mayo01297） ・ <a href="/">まよ鯖.COM にもどる</a></footer>
+
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  window.addEventListener("hashchange", function () { location.reload(); });
+  var m = /^#([a-z0-9]{8})\.([A-Za-z0-9]{20,40})$/.exec(location.hash || "");
+  var ST = {
+    pending: ["⏳ 確認待ち", "依頼を確認しています。承認されると、メッセージでやりとりができます。", 1],
+    accepted: ["✅ 承認・やりとり中", "承認されました！ 下のメッセージで相談しましょう。お支払いは PayPay のみです。", 2],
+    done: ["🎉 完了", "完成しました。ありがとうございました！", 3],
+    rejected: ["お断り", "今回はお断りになりました。", 0],
+    canceled: ["キャンセル", "この依頼はキャンセルしました。", 0],
+  };
+  function fmt(ms) {
+    var d = new Date(ms), p = function (n) { return n < 10 ? "0" + n : n; };
+    return d.getFullYear() + "/" + (d.getMonth() + 1) + "/" + d.getDate() + " " + d.getHours() + ":" + p(d.getMinutes());
+  }
+  function showLost(text) {
+    $("lostBox").hidden = false;
+    if (text) $("lostText").textContent = text;
+    try {
+      var mine = JSON.parse(localStorage.getItem("shopMine") || "[]");
+      if (mine.length) {
+        $("mineBox").hidden = false;
+        mine.forEach(function (x) {
+          if (!/^[a-z0-9]{8}$/.test(x.id) || !/^[A-Za-z0-9]{20,40}$/.test(x.key)) return;
+          var li = document.createElement("li");
+          var a = document.createElement("a"); a.className = "box"; a.style.cssText = "display:block;padding:14px 18px;text-decoration:none;color:inherit";
+          a.href = "/shop/r/#" + x.id + "." + x.key;
+          var b = document.createElement("b"); b.textContent = x.title || x.id;
+          var s = document.createElement("span"); s.className = "note"; s.textContent = "　" + fmt(x.at) + " ・ ID " + x.id;
+          a.appendChild(b); a.appendChild(s); li.appendChild(a); $("mine").appendChild(li);
+        });
+      }
+    } catch (e) { /* なし */ }
+  }
+  if (!m) { showLost(); return; }
+  var id = m[1], key = m[2];
+  if (/[?&]new=1\b/.test(location.search)) $("newBanner").hidden = false;
+  $("saveBox").hidden = false;
+  $("myUrl").value = location.origin + "/shop/r/#" + id + "." + key;
+  $("copy").addEventListener("click", function () {
+    $("myUrl").select();
+    var done = function () { $("copy").textContent = "コピーしました"; setTimeout(function () { $("copy").textContent = "コピー"; }, 2000); };
+    if (navigator.clipboard) navigator.clipboard.writeText($("myUrl").value).then(done, function () { document.execCommand("copy"); done(); });
+    else { document.execCommand("copy"); done(); }
+  });
+
+  function api(action, extra) {
+    return fetch("/api/shop/" + action, { method: "POST", headers: { "Content-Type": "application/json" }, cache: "no-store", body: JSON.stringify(Object.assign({ id: id, key: key }, extra || {})) })
+      .then(function (r) { return r.json(); });
+  }
+  var lastCount = -1;
+  function render(r) {
+    $("reqBox").hidden = false;
+    var st = ST[r.status] || ST.pending;
+    $("rTitle").textContent = r.title;
+    $("rStatus").textContent = st[0]; $("rStatus").className = "status st-" + r.status;
+    $("rStatusText").textContent = st[1];
+    ["s1", "s2", "s3"].forEach(function (s, n) { $(s).className = st[2] > n ? "on" : ""; });
+    $("rId").textContent = r.id; $("rCat").textContent = r.catName; $("rBudget").textContent = r.budget + " 円まで";
+    var hasPrice = r.price !== null && r.price !== undefined;
+    $("rPriceL").hidden = $("rPrice").hidden = !hasPrice; if (hasPrice) $("rPrice").textContent = r.price + " 円";
+    $("rContact").textContent = r.contact; $("rAt").textContent = fmt(r.at);
+    $("rDetail").textContent = r.detail;
+    $("rReason").hidden = !(r.status === "rejected" && r.reason); $("rReason").textContent = r.reason ? "理由: " + r.reason : "";
+    $("payBox").hidden = !r.paypay; $("payText").textContent = r.paypay || "";
+    $("cancelRow").hidden = !r.canCancel;
+    var showChat = r.status === "accepted" || r.status === "done";
+    $("chatBox").hidden = !showChat;
+    $("sendForm").hidden = !r.canPost;
+    if (showChat && r.messages.length !== lastCount) {
+      var box = $("chat"), near = box.scrollHeight - box.scrollTop - box.clientHeight < 60;
+      box.textContent = "";
+      r.messages.forEach(function (x) {
+        var d = document.createElement("div"); d.className = "bubble " + (x.from === "admin" ? "admin" : "client");
+        var w = document.createElement("span"); w.className = "who"; w.textContent = x.from === "admin" ? "MaYo" : "あなた";
+        var t = document.createElement("div"); t.textContent = x.text;
+        var tm = document.createElement("time"); tm.textContent = fmt(x.at);
+        d.appendChild(w); d.appendChild(t); d.appendChild(tm); box.appendChild(d);
+      });
+      $("chatEmpty").hidden = !!r.messages.length;
+      if (near || lastCount < 0) box.scrollTop = box.scrollHeight;
+      lastCount = r.messages.length;
+    }
+  }
+  var lastLoad = 0;
+  function load() {
+    lastLoad = Date.now();
+    return api("view").then(function (j) {
+      if (!j || !j.ok) { $("saveBox").hidden = true; $("newBanner").hidden = true; $("reqBox").hidden = true; $("chatBox").hidden = true; showLost((j && j.error) || "依頼が見つかりません。"); return; }
+      render(j.request);
+    }).catch(function () { /* 次にためす */ });
+  }
+  load();
+  setInterval(function () { if (!document.hidden) load(); }, 20000);
+  document.addEventListener("visibilitychange", function () { if (!document.hidden && Date.now() - lastLoad > 10000) load(); });
+
+  $("sendForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var text = $("text").value.trim();
+    if (!text) return;
+    $("sendBtn").disabled = true; $("sendErr").hidden = true;
+    api("post", { text: text }).then(function (j) {
+      if (!j || !j.ok) throw new Error((j && j.error) || "送れませんでした。");
+      $("text").value = ""; render(j.request);
+      $("chat").scrollTop = $("chat").scrollHeight;
+    }).catch(function (x) { $("sendErr").textContent = x.message; $("sendErr").hidden = false; })
+      .then(function () { $("sendBtn").disabled = false; });
+  });
+  $("cancel").addEventListener("click", function () {
+    if (!confirm("この依頼をキャンセルしますか？（元にはもどせません）")) return;
+    api("cancel").then(function (j) { if (j && j.ok) render(j.request); else alert((j && j.error) || "キャンセルできませんでした。"); });
+  });
+})();
+</script>
+</body>
+</html>

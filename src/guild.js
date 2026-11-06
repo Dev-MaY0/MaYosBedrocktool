@@ -14,6 +14,7 @@ import { WS_ENCRYPT_PROTOCOL, beginKeyExchange, finishKeyExchange, newCipherStat
 import { webMethods } from "./webvc.js";
 import { chatMethods, CHAT_TAG } from "./chat.js";
 import { loadNews, publicNews, newsOp } from "./news.js";
+import { shopOp } from "./shop.js";
 import { loadWorks, publicWorks, worksOp, loadWorkImage } from "./works.js";
 
 export const DEAD_ROOM = 31;
@@ -162,6 +163,13 @@ export class GuildRoom {
       const cur = (await this.storage.get("appConfig")) || {};
       await this.storage.put("appConfig", { ...cur, ...(await request.json()) });
       return json({ ok: true });
+    }
+    // 制作依頼（"__config__" の部屋だけが使う。中身は src/shop.js）
+    if (url.pathname === "/shop/op" && request.method === "POST") {
+      let body = {};
+      try { body = await request.json(); } catch (e) { body = {}; }
+      const r = await shopOp(this.storage, body);
+      return json(r, r.ok ? 200 : (r.status || 400));
     }
     // まよ鯖ホームの人数・招待コード（"__config__" の部屋だけが使う）
     if (url.pathname === "/home/get") return json((await this.storage.get("homeStats")) || {});

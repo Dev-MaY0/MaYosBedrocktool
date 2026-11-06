@@ -32,7 +32,8 @@ binding = "ASSETS"
 #   /setup        … 管理者用の設定ページ。パスワード（シークレット SETUP_KEY）を入れた人にだけ、本体（public/_admin/setup/）を返す
 #   /_admin/*     … 設定ページの本体の置き場。外から直接は見せない（いつも 404）
 #   /             … トップ。ひらいたアドレスで、ツール・まよ鯖のホーム・かめん部のどれかを返す
-run_worker_first = ["/", "/v/*", "/ws/*", "/connect/*", "/api/*", "/interactions", "/health", "/new", "/setup", "/setup/*", "/_admin/*"]
+#   /shop/*       … まよ鯖.COM の制作依頼のページ（public/_home/shop/）
+run_worker_first = ["/", "/shop", "/shop.html", "/shop/*", "/v/*", "/ws/*", "/connect/*", "/api/*", "/interactions", "/health", "/new", "/setup", "/setup/*", "/_admin/*"]
 
 [vars]
 # ふつうは変えない
