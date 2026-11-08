@@ -3,7 +3,8 @@
 //   - 管理者が /setup/ で書く → ホーム（/）に出る
 //   - 保存場所: 設定の部屋（Durable Object "__config__"）。1 件ずつ "news:item:<ID>" に入れる
 //   - 出す場所（site）: "tool" … ツール（tool.m-ayosaba.com）のホーム ／ "home" … まよ鯖のホーム（m-ayosaba.com）
-//     "home" は "news:home:item:<ID>" に入れる（ツールのお知らせとはまざらない）
+//                       "kamen" … かめん部（kamen.m-ayosaba.com）
+//     "home" は "news:home:item:<ID>"、"kamen" は "news:kamen:item:<ID>" に入れる（ほかの場所のお知らせとはまざらない）
 //   - 公開してよい項目だけを返す（下書きは管理者にだけ見える）
 //  制作: MaYo (mayo01297)  二次配布禁止
 // =====================================================================
@@ -12,8 +13,8 @@ export const NEWS_TYPES = ["update", "maintenance", "info", "important"];
 export const NEWS_MAX = 50;          // 保存しておく数（多くなったら、ピン留めしていない古いものから消す）
 export const TITLE_MAX = 80;
 export const BODY_MAX = 2000;
-export const NEWS_SITES = ["tool", "home"];
-const prefixOf = site => (site === "home" ? "news:home:item:" : "news:item:");
+export const NEWS_SITES = ["tool", "home", "kamen"];
+const prefixOf = site => (site === "tool" ? "news:item:" : `news:${site}:item:`);
 export const cleanSite = v => (NEWS_SITES.includes(v) ? v : "tool");
 const ID_RE = /^[a-z0-9]{10}$/;
 const T_MIN = Date.UTC(2020, 0, 1), T_MAX = Date.UTC(2100, 0, 1);

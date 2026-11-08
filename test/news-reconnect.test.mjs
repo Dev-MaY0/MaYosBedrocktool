@@ -278,6 +278,19 @@ try {
   check(tp.site === "tool" && tp.items.length === before && !tp.items.some(n => n.title === "夏祭りイベント"), "ツールのお知らせ（/api/news）には出ない");
   const odd = await (await req("/api/news?site=zzz")).json();
   check(odd.site === "tool", "知らない site はツールのお知らせ");
+  // かめん部（site=kamen）も、ほかとはまざらない
+  const k0 = await admin({ action: "list", site: "kamen" });
+  check(k0.j.ok && k0.j.site === "kamen" && k0.j.items.length === 0, "かめん部のお知らせは、はじめは 0 件");
+  const ks = await admin({ action: "save", site: "kamen", item: { type: "update", title: "新しい動画を投稿しました", body: "https://www.youtube.com/", published: true } });
+  check(ks.j.ok && ks.j.site === "kamen" && ks.j.items.length === 1, "かめん部にお知らせを投稿");
+  const kp = await (await req("/api/news?site=kamen")).json();
+  check(kp.ok && kp.site === "kamen" && kp.items.length === 1 && kp.items[0].title === "新しい動画を投稿しました", "/api/news?site=kamen にだけ出る");
+  const kh = await (await req("/api/news?site=home")).json();
+  check(kh.items.length === 1 && kh.items[0].title === "夏祭りイベント", "まよ鯖のホームには、かめん部のお知らせは出ない");
+  const kk = await (await hostBody("kamen.example", "/api/news?site=kamen")).body;
+  check(JSON.parse(kk).items.length === 1, "kamen のアドレスからも /api/news?site=kamen が読める");
+  const kdel = await admin({ action: "delete", site: "kamen", id: ks.j.saved });
+  check(kdel.j.ok && kdel.j.items.length === 0, "かめん部のお知らせを消す");
   const hdel = await admin({ action: "delete", site: "home", id: hs.j.saved });
   check(hdel.j.ok && hdel.j.items.length === 0, "まよ鯖のホームのお知らせを消す");
   const tl = await admin({ action: "list" });

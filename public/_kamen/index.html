@@ -2,6 +2,7 @@
 <!--
   かめん部（https://kamen.m-ayosaba.com/）… れいくろはいぶ と まよ の YouTube グループ
   このページは Worker が kamen.m-ayosaba.com の「/」で返します（src/index.js の siteOfHost）。画像は /_kamen/img/
+  最新情報は tool.m-ayosaba.com/setup の「📢 お知らせ」で「🎭 かめん部」をえらんで書きます。
   制作: MaYo (mayo01297)  二次配布禁止
 -->
 <html lang="ja">
@@ -9,7 +10,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>かめん部</title>
-<meta name="description" content="統合版マイクラの YouTube グループ「かめん部」。ピエロがいるサバイバルなど、いろいろな企画をしています。メンバー募集中！">
+<meta name="description" content="統合版マイクラの YouTube グループ「かめん部」。ピエロがいるサバイバルなど、いろいろな企画をしています。">
 <meta name="theme-color" content="#0a0a0a">
 <meta name="color-scheme" content="dark">
 <link rel="canonical" href="https://kamen.m-ayosaba.com/">
@@ -19,7 +20,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="かめん部">
 <meta property="og:title" content="かめん部">
-<meta property="og:description" content="統合版マイクラの YouTube グループ。メンバー募集中！">
+<meta property="og:description" content="統合版マイクラの YouTube グループ。ピエロがいるサバイバルなど、いろいろな企画をしています。">
 <meta property="og:url" content="https://kamen.m-ayosaba.com/">
 <meta property="og:image" content="https://kamen.m-ayosaba.com/_kamen/img/og.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -65,6 +66,8 @@ a { color: inherit; }
 .hero-sub { font-size: clamp(1.1rem, 2.2vw, 1.6rem); font-weight: 800; line-height: 1.4; text-shadow: 0 2px 12px rgba(0, 0, 0, .8); }
 .hero-right { text-align: right; }
 .join-now { font-size: clamp(1.8rem, 3.6vw, 3rem); font-weight: 900; line-height: 1.15; color: #fff; animation: glow 2s ease-in-out infinite alternate; }
+.join-now.closed { animation: none; font-size: clamp(1.6rem, 3.2vw, 2.6rem); text-shadow: 0 2px 16px rgba(0, 0, 0, .85); }
+.join-thanks { color: #ddd; font-weight: 700; font-size: .95rem; margin-top: 2px; text-shadow: 0 2px 10px rgba(0, 0, 0, .8); }
 @keyframes glow { from { text-shadow: 0 0 18px rgba(255, 138, 31, .4); } to { text-shadow: 0 0 50px rgba(255, 138, 31, .95), 0 0 90px rgba(255, 90, 31, .45); } }
 .btns { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 12px; margin-top: 16px; }
 .btn { display: inline-flex; align-items: center; gap: 10px; padding: 13px 26px; border-radius: 5px; text-decoration: none; font-weight: 800; font-size: 1.02rem; letter-spacing: .06em; transition: transform .2s, box-shadow .2s, background .2s; }
@@ -117,7 +120,40 @@ section.sec { padding: 80px; }
 .jobs { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-top: 14px; list-style: none; }
 .jobs li { padding: 3px 12px; border-radius: 999px; background: rgba(255, 255, 255, .06); color: #ddd; font-size: .85rem; }
 
-/* 募集 */
+/* 最新情報 */
+.feed { list-style: none; max-width: 880px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+.feed details { background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--or); border-radius: 8px; overflow: hidden; transition: border-color .2s; }
+.feed details[open] { border-color: var(--or); }
+.feed details.important { border-left-color: #ff4d4d; }
+.feed details.maintenance { border-left-color: #f5a524; }
+.feed summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 12px; padding: 16px 20px; }
+.feed summary::-webkit-details-marker { display: none; }
+.feed summary:hover .ntitle { color: var(--or); }
+.sum-l { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.badges { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: .78rem; }
+.badge { padding: 2px 10px; border-radius: 999px; font-weight: 800; letter-spacing: .04em; background: var(--or-soft); color: var(--or); }
+.badge.update { background: rgba(60, 207, 135, .14); color: #7fe3b3; }
+.badge.maintenance, .badge.now, .badge.planned { background: rgba(245, 165, 36, .16); color: #ffcf73; }
+.badge.important { background: rgba(255, 77, 77, .18); color: #ff8a8a; }
+.badge.done { background: rgba(255, 255, 255, .08); color: var(--dim); }
+.badge.pin { background: none; padding: 0; }
+.ndate { color: var(--dim); font-weight: 700; }
+.ntitle { font-weight: 900; font-size: 1.08rem; overflow-wrap: anywhere; transition: color .2s; }
+.chev { width: 20px; height: 20px; flex: none; color: var(--or); transition: transform .2s; }
+.feed details[open] .chev { transform: rotate(180deg); }
+.nbody { padding: 0 20px 20px; color: #ddd; white-space: pre-wrap; overflow-wrap: anywhere; font-size: .96rem; }
+.nbody a { color: var(--or); }
+.nmeta { display: block; color: var(--dim); font-size: .82rem; margin-bottom: 6px; white-space: normal; }
+.news-empty { max-width: 880px; margin: 0 auto; text-align: center; padding: 36px 20px; border: 2px dashed var(--line); border-radius: 8px; color: var(--gray); }
+.more { display: block; margin: 18px auto 0; padding: 10px 24px; border-radius: 5px; border: 1px solid var(--line); background: var(--card); color: #fff; font: inherit; font-weight: 800; letter-spacing: .04em; cursor: pointer; transition: border-color .2s, color .2s; }
+.more:hover { border-color: var(--or); color: var(--or); }
+
+/* 募集（終了） */
+.closed-box { max-width: 880px; margin: 0 auto; display: flex; align-items: center; gap: 22px; padding: 26px 28px; border-radius: 8px; background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--or); }
+.closed-box .big-e { font-size: 2.6rem; line-height: 1; flex: none; }
+.closed-box b { display: block; font-size: 1.25rem; font-weight: 900; color: #fff; }
+.closed-box p { color: #ddd; }
+.closed-box p + p { margin-top: 4px; }
 .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; }
 .sub { font-size: 1.15rem; font-weight: 900; margin-bottom: 14px; }
 .list { list-style: none; display: flex; flex-direction: column; gap: 14px; }
@@ -168,6 +204,9 @@ footer p + p { margin-top: 6px; }
   .about { grid-template-columns: 1fr; }
   .about-img { width: 140px; height: 140px; order: -1; }
   .members { grid-template-columns: 1fr; }
+  .feed summary { padding: 14px 16px; }
+  .nbody { padding: 0 16px 16px; }
+  .closed-box { flex-direction: column; align-items: flex-start; gap: 12px; padding: 22px 20px; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
@@ -181,9 +220,9 @@ footer p + p { margin-top: 6px; }
   <a class="logo" href="#top"><img src="/_kamen/img/icon.webp" alt="" width="32" height="32">かめん部</a>
   <ul class="links" id="links-menu">
     <li><a href="#about">かめん部とは</a></li>
+    <li><a href="#news">最新情報</a></li>
     <li><a href="#videos">企画</a></li>
     <li><a href="#members">メンバー</a></li>
-    <li><a href="#join">募集</a></li>
     <li><a href="https://discord.gg/2MQgrPfKHC" target="_blank" rel="noopener">Discord</a></li>
     <li><a class="hl" href="https://www.youtube.com/@%E4%BB%AE%E9%9D%A2%E9%83%A8" target="_blank" rel="noopener">▶ YouTube</a></li>
   </ul>
@@ -199,7 +238,8 @@ footer p + p { margin-top: 6px; }
       <p class="hero-sub">統合版マイクラで<br>いろいろな企画！</p>
     </div>
     <div class="hero-right">
-      <p class="join-now">メンバー募集中！</p>
+      <p class="join-now closed">メンバー募集終了</p>
+      <p class="join-thanks">応募してくれたみなさん、ありがとうございました！</p>
       <div class="btns">
         <a class="btn main" href="https://discord.gg/2MQgrPfKHC" target="_blank" rel="noopener"><img src="/_kamen/img/discord.png" alt="" width="26" height="26">Discord に参加</a>
         <a class="btn dark" href="https://www.youtube.com/@%E4%BB%AE%E9%9D%A2%E9%83%A8" target="_blank" rel="noopener"><img src="/_kamen/img/youtube.png" alt="" width="26" height="26">YouTube</a>
@@ -220,6 +260,16 @@ footer p + p { margin-top: 6px; }
         </div>
         <img class="about-img" src="/_kamen/img/icon.webp" alt="かめん部のアイコン" width="220" height="220" loading="lazy">
       </div>
+    </div>
+  </section>
+
+  <!-- 最新情報（tool.m-ayosaba.com/setup の「📢 お知らせ」→「🎭 かめん部」） -->
+  <section class="sec" id="news">
+    <div class="inner">
+      <h2 class="title">最新情報</h2>
+      <ul class="feed" id="feed"></ul>
+      <p class="news-empty" id="newsEmpty">📰 いまはお知らせはありません</p>
+      <button class="more" id="newsMore" type="button" hidden></button>
     </div>
   </section>
 
@@ -265,25 +315,15 @@ footer p + p { margin-top: 6px; }
 
   <section class="sec" id="join">
     <div class="inner">
-      <h2 class="title">🤡 メンバー募集中</h2>
-      <div class="cols">
+      <h2 class="title">🤡 メンバー募集</h2>
+      <div class="closed-box">
+        <span class="big-e" aria-hidden="true">🙏</span>
         <div>
-          <h3 class="sub">条件</h3>
-          <ul class="list">
-            <li><span class="n">01</span><span class="t">Discord が使える</span></li>
-            <li><span class="n">02</span><span class="t">常識のある方</span></li>
-          </ul>
-        </div>
-        <div>
-          <h3 class="sub">🎮 メンバーのなり方</h3>
-          <ul class="list">
-            <li><span class="n">01</span><span class="t">Discord サーバーに入る</span></li>
-            <li><span class="n">02</span><span class="t"><b>👤メンバー審査</b> のチケットから申請</span></li>
-            <li><span class="n">03</span><span class="t">承認されたらメンバー！</span></li>
-          </ul>
+          <b>メンバー募集は終了しました</b>
+          <p>応募してくれたみなさん、ありがとうございました！</p>
+          <p>これからもかめん部の動画をよろしくお願いします。</p>
         </div>
       </div>
-      <p class="note">※ このゲームは統合版です</p>
     </div>
   </section>
 
@@ -310,6 +350,92 @@ footer p + p { margin-top: 6px; }
   t.addEventListener("click", function () { set(!m.classList.contains("open")); });
   m.addEventListener("click", function (e) { if (e.target.closest("a")) set(false); });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape") set(false); });
+})();
+
+// ---- 最新情報（/api/news?site=kamen）----
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var LABEL = { update: "🆕 アップデート", maintenance: "🛠 メンテナンス", info: "📢 お知らせ", important: "⚠ 重要" };
+  var SHOW = 5, items = [], skew = 0, showAll = false;
+  var WD = ["日", "月", "火", "水", "木", "金", "土"];
+  var now = function () { return Date.now() + skew; };
+  function pad(n) { return n < 10 ? "0" + n : String(n); }
+  function fmt(ms) {
+    var d = new Date(ms), s = (d.getMonth() + 1) + "/" + d.getDate() + "（" + WD[d.getDay()] + "）";
+    return new Date(now()).getFullYear() !== d.getFullYear() ? d.getFullYear() + "/" + s : s;
+  }
+  function fmtT(ms) { var d = new Date(ms); return fmt(ms) + " " + d.getHours() + ":" + pad(d.getMinutes()); }
+  function maintState(n) {
+    if (n.type !== "maintenance" || (!n.start && !n.end)) return "";
+    var t = now();
+    if (n.end && t >= n.end) return "done";
+    if (n.start && t < n.start) return "planned";
+    return "now";
+  }
+  function range(n) {
+    if (!n.start && !n.end) return "";
+    var s = n.start ? fmtT(n.start) : "", e = n.end ? fmtT(n.end) : "";
+    if (n.start && n.end && new Date(n.start).toDateString() === new Date(n.end).toDateString()) { var d = new Date(n.end); e = d.getHours() + ":" + pad(d.getMinutes()); }
+    return (s || "いま") + " 〜 " + (e || "終わりしだい");
+  }
+  // 本文: 改行そのまま・URL はリンクに（HTML としては読まない）
+  function fillText(el, text) {
+    var re = /https?:\/\/[^\s<>"'（）「」『』【】、。]+/g, last = 0, m;
+    while ((m = re.exec(text))) {
+      var url = m[0].replace(/[.,!?:;)\]]+$/, "");
+      if (m.index > last) el.appendChild(document.createTextNode(text.slice(last, m.index)));
+      var a = document.createElement("a"); a.href = url; a.textContent = url; a.target = "_blank"; a.rel = "noopener noreferrer";
+      el.appendChild(a);
+      last = m.index + url.length; re.lastIndex = last;
+    }
+    if (last < text.length) el.appendChild(document.createTextNode(text.slice(last)));
+  }
+  function badge(cls, text) { var b = document.createElement("span"); b.className = "badge " + cls; b.textContent = text; return b; }
+  function render() {
+    var ul = $("feed"), open = {};
+    ul.querySelectorAll("li[data-id] > details[open]").forEach(function (d) { open[d.parentNode.getAttribute("data-id")] = 1; });
+    var first = !ul.firstChild;
+    ul.textContent = "";
+    var list = items.slice().sort(function (a, b) { return (b.pinned - a.pinned) || (b.at - a.at); });
+    (showAll ? list : list.slice(0, SHOW)).forEach(function (n, i) {
+      var li = document.createElement("li"); li.setAttribute("data-id", n.id);
+      var d = document.createElement("details"); d.className = n.type;
+      if ((first && i === 0) || open[n.id]) d.open = true;
+      var sum = document.createElement("summary");
+      var l = document.createElement("span"); l.className = "sum-l";
+      var bs = document.createElement("span"); bs.className = "badges";
+      bs.appendChild(badge(n.type, LABEL[n.type] || "📢 お知らせ"));
+      var st = maintState(n);
+      if (st) bs.appendChild(badge(st, { planned: "予定", now: "メンテナンス中", done: "終了" }[st]));
+      if (n.pinned) bs.appendChild(badge("pin", "📌"));
+      var dt = document.createElement("span"); dt.className = "ndate"; dt.textContent = fmt(n.at); bs.appendChild(dt);
+      var t = document.createElement("span"); t.className = "ntitle"; t.textContent = n.title;
+      l.appendChild(bs); l.appendChild(t); sum.appendChild(l);
+      sum.insertAdjacentHTML("beforeend", '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>');
+      var body = document.createElement("div"); body.className = "nbody";
+      var meta = document.createElement("span"); meta.className = "nmeta";
+      meta.textContent = fmtT(n.at) + (n.edited ? "（" + fmtT(n.edited) + " に更新）" : "") + (range(n) ? "　｜　" + range(n) : "");
+      body.appendChild(meta);
+      if (n.body) { var tx = document.createElement("div"); fillText(tx, n.body); body.appendChild(tx); }
+      d.appendChild(sum); d.appendChild(body); li.appendChild(d); ul.appendChild(li);
+    });
+    var more = $("newsMore");
+    more.hidden = list.length <= SHOW;
+    more.textContent = showAll ? "少なく表示" : "すべて見る（" + list.length + " 件）";
+    $("newsEmpty").hidden = !!list.length;
+  }
+  $("newsMore").addEventListener("click", function () { showAll = !showAll; render(); if (!showAll) $("news").scrollIntoView({ block: "start" }); });
+  var lastLoad = 0;
+  function load() {
+    lastLoad = Date.now();
+    fetch("/api/news?site=kamen", { cache: "no-cache" }).then(function (r) { return r.json(); }).then(function (j) {
+      if (!j || !j.ok || !Array.isArray(j.items)) return;
+      if (typeof j.now === "number") skew = j.now - Date.now();
+      items = j.items; render();
+    }).catch(function () { /* 「いまはお知らせはありません」のまま */ });
+  }
+  load();
+  document.addEventListener("visibilitychange", function () { if (!document.hidden && Date.now() - lastLoad > 60000) load(); });
 })();
 </script>
 </body>

@@ -470,6 +470,7 @@ ul.newslist .empty { color: var(--sub); text-align: center; font-size: 13.5px; }
       <div class="nf-type nf-site" role="radiogroup" aria-label="お知らせを出す場所">
         <label><input type="radio" name="nfSite" value="tool" checked> 🧰 ツール</label>
         <label><input type="radio" name="nfSite" value="home"> 🏠 まよ鯖ホーム</label>
+        <label><input type="radio" name="nfSite" value="kamen"> 🎭 かめん部</label>
       </div>
       <p class="nf-lead" id="nfLead"></p>
       <form id="newsForm" class="nf-grid" autocomplete="off" novalidate>
@@ -1067,6 +1068,7 @@ const N = { items: [], editing: "", busy: false, site: "tool" };
 const SITE_LEAD = {
   tool: '<a href="../" target="_blank" rel="noopener">ツールのホーム</a>の「最新情報」に出ます。',
   home: '<a href="https://m-ayosaba.com/#news" target="_blank" rel="noopener">まよ鯖のホーム（m-ayosaba.com）</a>の「最新情報」に出ます（イベントなど）。',
+  kamen: '<a href="https://kamen.m-ayosaba.com/#news" target="_blank" rel="noopener">かめん部（kamen.m-ayosaba.com）</a>の「最新情報」に出ます（動画・企画のお知らせなど）。',
 };
 function nfSite() { const r = document.querySelector('input[name="nfSite"]:checked'); return r ? r.value : "tool"; }
 const pad2 = n => String(n).padStart(2, "0");

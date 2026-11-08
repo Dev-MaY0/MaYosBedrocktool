@@ -11,7 +11,7 @@
 //  - /api/check    … サイトから接続キーを確認する
 //  - /api/web/…    … サイト内の近接VC（部屋を作る・ブラウザの WebSocket・ホストの操作）
 //  - /api/guest・/api/chat/… … ゲスト（名前#1234）と、みんなのチャット・DM
-//  - /api/news     … ホームに出すお知らせ（だれでも読める・公開したものだけ）
+//  - /api/news     … ホームに出すお知らせ（だれでも読める・公開したものだけ。?site=home / kamen）
 //  - /api/admin/news … お知らせを書く・直す・消す（/setup/ にログインした管理者だけ）
 //  - /api/works    … 作品の紹介（だれでも読める・公開したものだけ）。/api/works/img/<ID> は作品の画像
 //  - /api/admin/works … 作品を書く・直す・消す（/setup/ にログインした管理者だけ）
@@ -377,8 +377,9 @@ export default {
     if (path === "/api/news") {
       if (request.method !== "GET" && request.method !== "HEAD") return new Response("Method Not Allowed", { status: 405, headers: { Allow: "GET, HEAD" } });
       const now = Date.now();
-      // site=home … まよ鯖のホーム（m-ayosaba.com）のお知らせ。ないとき・ほかの値はツールのお知らせ
-      const site = url.searchParams.get("site") === "home" ? "home" : "tool";
+      // site=home … まよ鯖のホーム（m-ayosaba.com）・site=kamen … かめん部（kamen.m-ayosaba.com）。ないとき・ほかの値はツールのお知らせ
+      const qs = url.searchParams.get("site");
+      const site = qs === "home" || qs === "kamen" ? qs : "tool";
       let c = newsCaches.get(site);
       if (!c || now - c.at > NEWS_CACHE_MS) {
         try {
